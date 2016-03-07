@@ -1,0 +1,6 @@
+.RData
+.Rhistory
+*.results
+.png
+.mov
+*cache/
