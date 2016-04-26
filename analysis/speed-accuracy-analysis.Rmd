@@ -1,0 +1,212 @@
+---
+title: "Speed-Accuracy"
+author: "Kyle MacDonald"
+date: "October 1, 2015"
+output: html_document
+---
+
+# Data processing, plotting, and analysis script 
+
+There are 4 different types of center fixations in this dataset:
+
+1. ASL (27 kids: 18-60m, median age = 27 months): stimuli were a human signing
+2. Face (22 kids: 26m): stimuli were a video of human face talking
+3. Trio (18 kids at 26m and 22 kids at 36m): stimuli were static images of real world objects, e.g., cats
+4. Bull (22 kids at 26m): stimuli were different kinds of static "bullseyes"
+
+```{r chunk_options}
+rm(list=ls())
+knitr::opts_chunk$set(warning=FALSE, message=FALSE, sanitize = T, 
+                      fig.height=5, fig.width=8, echo=F, cache = T)
+```
+
+```{r, echo=FALSE, warning=F, message=F}
+library(langcog)
+library(magrittr)
+library(stringr)
+library(GGally)
+library(kmr)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+theme_set(theme_bw())
+```
+
+## Read Data
+
+Eye movement data
+
+```{r}
+df <- read.csv("../data/3_final_merged_data/speed-acc-ss-df.csv", 
+                   check.names=F, stringsAsFactors=F)
+
+df %<>% mutate(stimuli = ifelse(stimuli == "V1" | stimuli == "V2", "ASL", stimuli),
+               stimuli = factor(stimuli, levels = c("ASL", "Face", "Trio", "Bull")))
+```
+
+## Descriptives
+
+How many participants in each stimuli set and language modality? Age_code_m is a hacky way
+to track the different age group that saw the Trio stimuli.
+
+```{r}
+df %>% 
+    select(Sub.Num, language_modality, age_code, age_code_m, stimuli) %>% 
+    unique() %>% 
+    group_by(language_modality, age_code, stimuli, age_code_m) %>% 
+    summarise(count = n()) %>% 
+    knitr::kable()
+```
+
+What are the age distributions across language modalities?
+
+```{r}
+df %>% 
+    filter(age_code == "child") %>% 
+    ggplot(aes(age_years, fill = language_modality)) +
+    geom_histogram() +
+    scale_fill_solarized() +
+    facet_grid(.~language_modality) +
+    guides(fill = F)
+```
+
+ASL group is a spread of ages; whereas the spoken language kids are tightly clustered around 2 and 3 years of age.
+
+## Univariate Analysis of speed-accuracy tradeoffs
+
+First we need to get proportion correct for each participant in each age group and language modality.
+
+```{r}
+ss_prop <- df %>% 
+    group_by(Sub.Num, age_code, Months, language_modality, stimuli, age_code_m) %>% 
+    filter(trial_type != "no_shift") %>% 
+    summarise(mean_correct = mean(correct)) 
+```
+
+Plot.
+
+```{r}
+ms <- ss_prop %>%
+    filter(age_code == "child", age_code_m != "36" | stimuli == "ASL") %>% 
+    group_by(language_modality, age_code, stimuli, age_code_m) %>% 
+    multi_boot_standard(column = "mean_correct") 
+    
+ggplot(aes(x = stimuli, y = mean, fill = language_modality), data = ms) +
+    geom_bar(stat = "identity", position = position_dodge()) +
+    geom_linerange(aes(ymin = ci_lower, ymax = ci_upper),  position = position_dodge(width = 0.9)) +
+    geom_hline(yintercept = 0.5, lty = "dashed")+
+    scale_fill_solarized() 
+```
+
+When we plot the average proprotion of correct shifting, we see that the ASL group was the most accurate, followed by Face, and then Trio and Bull.
+
+We can model proportion correct as a function of stimuli set.
+
+```{r}
+m1_lm <- lm(mean_correct ~ stimuli, data = filter(ss_prop, age_code == "child"))
+knitr::kable(summary(m1_lm)$coef, digits = 3)
+```
+
+All groups were worse than the ASL kids. 
+
+TODO: Model 2 tests specific contrasts.
+
+### RT analysis
+
+Get medians and CIs for correct/inccorect shifts for each stimuli set and language modality 
+
+```{r}
+ms_rt <- df %>% 
+    filter(age_code == "child") %>% 
+    group_by(age_code, language_modality, stimuli, correct, age_code_m) %>% 
+    multi_boot_standard(column = "RT", na.rm = T, empirical_function = "median")
+```
+
+Plot the summary measures.
+
+```{r}
+ggplot(aes(x = as.factor(correct), y = median, fill = language_modality), data = ms_rt) + 
+    geom_bar(stat = "identity", position = position_dodge()) + 
+    geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), position = position_dodge(width = 0.9)) +
+    facet_grid(age_code~stimuli) +
+    scale_fill_solarized()
+```
+
+We see some evidence of speed accuracy tradeoffs in the ASL, Face, and Bull conditions, but not in the Trio condition.
+
+### Plot distributions of correct and incorrect RTs
+
+Note the RT cutoff for the long tail. When you cutoff more of the tail, the difference between median correct and inccorrect shifting increases. It's interesting to think about whether RTs in these long tails are meaningful. 
+
+```{r}
+med_all <- df %>% 
+    filter(RT <= 2000) %>% ## Here you can play with cutoffs to see how the RT distrbutions change shape
+    group_by(age_code, language_modality, stimuli, correct) %>% 
+    mutate(log_RT = log(RT)) %>% 
+    multi_boot_standard(column = "RT", na.rm = T, empirical_function = "median")
+
+
+ggplot(aes(x = RT, fill = as.factor(correct)), data = filter(df, age_code == "child", RT <= 2000)) +
+    geom_density(alpha = 0.5) + 
+    facet_grid(stimuli~age_code) +
+    geom_vline(aes(xintercept = median, color = as.factor(correct)), size = 1, 
+               data = filter(med_all, age_code == "child")) +
+    labs(fill = "Correct") +
+    guides(color = F)
+```
+
+Again we see evidence of a speed-acc tradeoff for ASL, Face, and maybe Bull. But the Trio distributions are right on top of each other. 
+
+### Plot Trio RTs as a function of age
+
+There were data from both 26 and 36 month olds on the Trio stimuli set. Here we disaggregate and plot the RT dists separately.
+
+```{r}
+med_trio <- df %>% 
+    filter(stimuli == "Trio", age_code_m %in% c("26", "36")) %>% 
+    group_by(age_code_m, language_modality, stimuli, correct) %>% 
+    multi_boot_standard(column = "RT", na.rm = T, empirical_function = "median")
+    
+ggplot(aes(x = RT, fill = as.factor(correct)), 
+       data = filter(df, age_code == "child", stimuli == "Trio")) +
+    geom_density(alpha = 0.5) + 
+    facet_grid(age_code_m~.) +
+    geom_vline(aes(xintercept = median, color = as.factor(correct)), size = 1, 
+               data = filter(med_trio, stimuli == "Trio")) +
+    labs(fill = "Correct") +
+    guides(color = F)
+```
+
+Kids aren't getting better at this between 2 and 3? 
+
+### Plot Adult data
+
+We can compare the adult data for ASL and Bull. 
+
+TODO: fix munging script to correctly label Bull adults.
+
+```{r}
+ggplot(aes(x = RT, fill = as.factor(correct)), data = filter(df, age_code == "adult")) +
+    geom_density(alpha = 0.5) + 
+    facet_grid(stimuli~.)
+```
+
+Adult data makes sense. For Bull, we see that incorrect shifts tend to occur sooner. We can also see that there are not very many incorrect shifts for the ASL participants, so hard to see any evidence of speed-accuracy tradeoffs when > 90% accurate.
+
+### Model association between acc and rt
+
+Best way to model this? Best way to 
+
+```{r}
+m1 <- lme4::glmer(correct ~ log2(RT) * stimuli + (1|Sub.Num), 
+                  data = filter(df, age_code == "child", RT <= 3000),
+                  family = "binomial",
+                  nAGQ=0)
+
+summary(m1)
+
+knitr::kable(summary(m1)$coef, digits = 3)
+```
+
+RT does predict Accuracy. Longer RTs mean you are more likely to be correct. Depending on the long tail cutoff that you use of the RT distributions, you see different interactions. At cutoff of 3000ms, the interaction between RT and Trio is marginal. At an earlier cutoff of 2500ms, the interaction is robust. At a cutoff of 2000ms, the two-way interactions between RT and both Trio and Bull stimuli are significant. 
+
