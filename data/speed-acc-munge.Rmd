@@ -174,15 +174,54 @@ trio_ps %<>%
 trio_face <- left_join(x = trio_face, y = trio_ps, by = c("Sub.Num", "Tr.Num"))
 ```
 
-### Add variable to track language, center stimuli, and age bin within kids
+### Add variables to track language, center stimuli, and age bin within kids
 
 ```{r}
-sol_df %<>% mutate(language_modality = "ASL", age_code_m = NA)
-trio_face %<>% mutate(language_modality = "English", stimuli = "Face", age_code_m = "26")
-trio_26 %<>% mutate(language_modality = "English", stimuli = "Trio", age_code_m = "26")
-trio_36 %<>% mutate(language_modality = "English", stimuli = "Trio", age_code_m = "36")
-trio_bull_adult %<>% mutate(language_modality = "English", stimuli = "Bull", age_code_m = NA)
-trio_bull_26 %<>% mutate(language_modality = "English", stimuli = "Bull", age_code_m = "26")
+sol_df %<>% mutate(language_modality = "ASL", experiment = "ASl") 
+
+## add adults ages to demo sheet
+sol_demo <- sol_df %>% 
+    filter(as.numeric(Months) > 100) %>% 
+    select(Sub.Num, Months) %>% 
+    unique() %>% 
+    left_join(sol_demo, ., by = "Sub.Num")
+
+sol_demo %<>% mutate(Months = ifelse(is.na(Months), age_peek_months, Months))
+
+include <- sol_demo %>%
+    select(Sub.Num, include,
+           reason_excluded, stimuli,
+           age_code, signs_produced, 
+           hearing_status_participant,
+           Months) 
+
+sol_df  <- left_join(sol_df, include, by = c("Sub.Num", "stimuli", "Months")) %>% 
+    mutate(age_code = ifelse(as.numeric(Months) > 60, "adult", "child"))
+
+sol_df %<>% filter(include == "yes")
+```
+
+
+```{r}
+trio_face %<>% mutate(language_modality = "English", stimuli = "Face", 
+                      experiment = "Trio_Face", age_code = "child", 
+                      hearing_status_participant = "hearing")
+
+trio_26 %<>% mutate(language_modality = "English", stimuli = "Trio", 
+                    experiment = "Trio_26", age_code = "child", 
+                    hearing_status_participant = "hearing")
+
+trio_36 %<>% mutate(language_modality = "English", stimuli = "Trio", 
+                    experiment = "Trio_36",  age_code = "child",
+                    hearing_status_participant = "hearing")
+
+trio_bull_adult %<>% mutate(language_modality = "English", stimuli = "Bull", 
+                            experiment = "Trio_Bull", age_code = "adult",
+                            hearing_status_participant = "hearing")
+
+trio_bull_26 %<>% mutate(language_modality = "English", stimuli = "Bull", 
+                         experiment = "Trio_Bull",  age_code = "child",
+                         hearing_status_participant = "hearing")
 ```
 
 ### Filter all data to keep frames 0 - 3000
@@ -191,28 +230,28 @@ trio_bull_26 %<>% mutate(language_modality = "English", stimuli = "Bull", age_co
 
 ```{r}
 sol_df_final <- sol_df %>% 
-    select(Sub.Num, Months, Tr.Num, stimuli, Months, age_code_m,
-           Prescreen.Notes, language_modality, X0:X3000) 
+    select(Sub.Num, Months, Tr.Num, stimuli, Months, experiment, age_code,
+           hearing_status_participant, Prescreen.Notes, language_modality, X0:X3000) 
 
 trio_face_final <- trio_face %>% 
-    select(Sub.Num, Months, Tr.Num, stimuli, Months, age_code_m,
-           Prescreen.Notes, language_modality, X0:X3000) 
+    select(Sub.Num, Months, Tr.Num, stimuli, Months, experiment, age_code,
+           hearing_status_participant, Prescreen.Notes, language_modality, X0:X3000) 
 
 trio_26_final <- trio_26 %>%
-     select(Sub.Num, Months, Tr.Num, stimuli, Months, age_code_m,
-           Prescreen.Notes, language_modality, X0:X3000) 
+    select(Sub.Num, Months, Tr.Num, stimuli, Months, experiment, age_code,
+           hearing_status_participant, Prescreen.Notes, language_modality, X0:X3000) 
 
 trio_36_final <- trio_36 %>%
-     select(Sub.Num, Months, Tr.Num, stimuli, Months, age_code_m,
-           Prescreen.Notes, language_modality, X0:X3000) 
+    select(Sub.Num, Months, Tr.Num, stimuli, Months, experiment, age_code,
+           hearing_status_participant, Prescreen.Notes, language_modality, X0:X3000) 
 
 trio_bull_adult_final <- trio_bull_adult %>%
-     select(Sub.Num, Months, Tr.Num, stimuli, Months, age_code_m,
-           Prescreen.Notes, language_modality, X0:X3000) 
+    select(Sub.Num, Months, Tr.Num, stimuli, Months, experiment, age_code,
+           hearing_status_participant, Prescreen.Notes, language_modality, X0:X3000) 
 
 trio_bull_26_final <- trio_bull_26 %>% 
-     select(Sub.Num, Months, Tr.Num, stimuli, Months, age_code_m,
-           Prescreen.Notes, language_modality, X0:X3000) 
+    select(Sub.Num, Months, Tr.Num, stimuli, Months, experiment, age_code,
+           hearing_status_participant, Prescreen.Notes, language_modality, X0:X3000) 
 ```
 
 ### Bind data frames together
@@ -247,41 +286,12 @@ iChart <- iChart %>%
 Filter out participants that should not go into analyses based on exclusionary criteria: a) age, b) didn’t know signs in the task, c) not enough ASL exposure.
 
 ```{r}
-## add adults ages to demo sheet
-sol_demo <- sol_df %>% 
-    filter(as.numeric(Months) > 100) %>% 
-    select(Sub.Num, Months) %>% 
-    unique() %>% 
-    left_join(sol_demo, ., by = "Sub.Num")
-
-sol_demo %<>% mutate(Months = ifelse(is.na(Months), age_peek_months, Months))
-
-include <- sol_demo %>%
-    select(Sub.Num, include,
-           reason_excluded, stimuli,
-           age_code, signs_produced, 
-           hearing_status_participant,
-           Months) 
-
-iChart  <- left_join(iChart, include, by = c("Sub.Num", "stimuli", "Months")) %>% 
-    mutate(age_code = ifelse(as.numeric(Months) > 60, "adult", "child"),
-           hearing_status_participant = ifelse(language_modality == "English", 
-                                               "hearing", hearing_status_participant)) 
-
 # check how many ss we have before starting to filter
 iChart %>% 
-    select(Sub.Num, age_code, language_modality) %>% 
-    group_by(language_modality, age_code) %>% 
+    select(Sub.Num, age_code, experiment, language_modality) %>% 
+    group_by(language_modality, age_code, experiment) %>% 
     unique() %>% 
     summarise(n())
-```
-
-now we filter, removing ss that we determined not to analyze a priori 
-
-```{r}
-iChart <- iChart %>% 
-    filter(include == "yes" | language_modality == "English", 
-           Sub.Num != "Sub Num" | Sub.Num != "") 
 ```
 
 ### Get number of ss
@@ -433,6 +443,9 @@ iChart %>%
 ### Save final/processed tidy data frame
 
 ```{r}
+write.csv(iChart, file = "3_final_merged_data/speed-acc-cleaned-iChart.csv", 
+          row.names = F, na = "NA")
+
 write.csv(ss, file = "3_final_merged_data/speed-acc-ss-df.csv", 
           row.names = F, na = "NA")
 ```
