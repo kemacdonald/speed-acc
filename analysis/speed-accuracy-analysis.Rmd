@@ -9,7 +9,7 @@ output: html_document
 
 There are 4 different types of center fixations in this dataset:
 
-1. ASL (27 kids: 18-60m, median age = 27 months): human signing
+1. ASL (27 kids: 18-54m, median age = 27 months): human signing
 2. Face (22 kids: 26m): human face talking
 3. Trio (18 kids at 26m and 22 kids at 36m): static images of real world objects, e.g., cats
 4. Bull (22 kids at 26m): different static "bullseyes"
@@ -39,10 +39,15 @@ Eye movement data
 
 ```{r}
 df <- read.csv("../data/3_final_merged_data/speed-acc-ss-df.csv", 
-                   check.names=F, stringsAsFactors=F)
+               check.names=F, stringsAsFactors=F) 
 
-df %<>% mutate(stimuli = ifelse(stimuli == "V1" | stimuli == "V2", "ASL", stimuli),
-               stimuli = factor(stimuli, levels = c("ASL", "Face", "Trio", "Bull")))
+df %<>% 
+  filter(RT <= 2000) %>% 
+  mutate(stimuli = ifelse(stimuli == "V1" | stimuli == "V2", "ASL", 
+                          ifelse(stimuli == "Trio", "Object", 
+                                 ifelse(stimuli == "Bull", "Bullseye",
+                                        stimuli))),
+         stimuli = factor(stimuli, levels = c("ASL", "Face", "Object", "Bullseye")))
 ```
 
 ## Descriptives
@@ -52,25 +57,25 @@ to track the different age groups that saw the Trio stimuli.
 
 ```{r}
 df %>% 
-    select(Sub.Num, language_modality, age_code, stimuli) %>% 
-    unique() %>% 
-    group_by(language_modality, age_code, stimuli) %>% 
-    summarise(count = n()) %>% 
-    knitr::kable()
+  select(Sub.Num, language_modality, age_code, stimuli) %>% 
+  unique() %>% 
+  group_by(language_modality, age_code, stimuli) %>% 
+  summarise(count = n()) %>% 
+  knitr::kable()
 ```
 
 What are the age distributions across language modalities?
 
 ```{r}
 df %>% 
-    filter(age_code == "child") %>% 
-    select(Sub.Num, language_modality, age_code, stimuli, age_years) %>% 
-    unique() %>%
-    ggplot(aes(age_years, fill = language_modality)) +
-    geom_histogram() +
-    scale_fill_solarized() +
-    facet_grid(.~language_modality) +
-    guides(fill = F)
+  filter(age_code == "child") %>% 
+  select(Sub.Num, language_modality, age_code, stimuli, age_years) %>% 
+  unique() %>%
+  ggplot(aes(age_years, fill = language_modality)) +
+  geom_histogram() +
+  scale_fill_solarized() +
+  facet_grid(.~language_modality) +
+  guides(fill = F)
 ```
 
 ASL group is a spread of ages; whereas the spoken language kids are tightly clustered around 2 and 3 years of age.
@@ -81,24 +86,39 @@ First we need to get proportion correct for each participant in each age group a
 
 ```{r}
 ss_prop <- df %>% 
-    group_by(Sub.Num, age_code, Months, language_modality, stimuli) %>% 
-    filter(trial_type != "no_shift") %>% 
-    summarise(mean_correct = mean(correct)) 
+  group_by(Sub.Num, age_code, Months, language_modality, 
+           stimuli, hearing_status_participant) %>% 
+  filter(trial_type != "no_shift") %>% 
+  summarise(mean_correct = mean(correct))
+
+ss_prop <- df %>% 
+  group_by(Sub.Num, age_code, Months, language_modality, stimuli, correct, 
+           hearing_status_participant) %>%
+  filter(trial_type != "no_shift") %>% 
+  summarise(mean_rt = mean(RT)) %>% 
+  left_join(ss_prop)
 ```
 
 Plot.
 
 ```{r}
 ms <- ss_prop %>%
-    filter(age_code == "child") %>% 
-    group_by(language_modality, age_code, stimuli) %>% 
-    multi_boot_standard(column = "mean_correct") 
-    
+  filter(age_code == "child", Months <= 46) %>%
+  distinct(Sub.Num) %>%
+  group_by(language_modality, age_code, stimuli) %>% 
+  multi_boot_standard(column = "mean_correct") 
+
 ggplot(aes(x = stimuli, y = mean, fill = language_modality), data = ms) +
-    geom_bar(stat = "identity", position = position_dodge()) +
-    geom_linerange(aes(ymin = ci_lower, ymax = ci_upper),  position = position_dodge(width = 0.9)) +
-    geom_hline(yintercept = 0.5, lty = "dashed") +
-    scale_fill_solarized() 
+  geom_bar(stat = "identity", position = position_dodge()) +
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper),  
+                 position = position_dodge(width = 0.9)) +
+  geom_hline(yintercept = 0.5, lty = "dashed") +
+  xlab(NULL) +
+  ylab("Mean Accuracy") +
+  scale_fill_solarized() +
+  theme(text = element_text(size=36)) +
+  guides(fill = F) +
+  ggtitle("Accuracy")
 ```
 
 When we plot the average proprotion of correct shifting, we see that the ASL group was the most accurate, followed by Face, and then Trio and Bull.
@@ -106,7 +126,7 @@ When we plot the average proprotion of correct shifting, we see that the ASL gro
 We can model proportion correct as a function of stimuli set.
 
 ```{r}
-m1_lm <- lm(mean_correct ~ stimuli, data = filter(ss_prop, age_code == "child"))
+m1_lm <- lm(mean_correct ~ stimuli, data = filter(ss_prop, age_code == "child", correct == 1))
 knitr::kable(summary(m1_lm)$coef, digits = 3)
 ```
 
@@ -119,20 +139,45 @@ TODO: Model 2 tests specific contrasts.
 Get medians and CIs for correct/inccorect shifts for each stimuli set and language modality 
 
 ```{r}
-ms_rt <- df %>% 
-    filter(age_code == "child", RT <= 2000) %>% 
-    group_by(age_code, language_modality, stimuli, correct) %>% 
-    multi_boot_standard(column = "RT", na.rm = T, empirical_function = "median")
+ms_rt <- ss_prop %>%
+  filter(age_code == "child", Months <= 46) %>% 
+  group_by(language_modality, age_code, stimuli, correct) %>% 
+  multi_boot_standard(column = "mean_rt", na.rm = T, empirical_function = "median")
 ```
 
 Plot the summary measures.
 
 ```{r}
-ggplot(aes(x = as.factor(correct), y = median, fill = language_modality), data = ms_rt) + 
-    geom_bar(stat = "identity", position = position_dodge()) + 
-    geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), position = position_dodge(width = 0.9)) +
-    facet_grid(age_code~stimuli) +
-    scale_fill_solarized()
+ms_rt$stimuli <- factor(ms_rt$stimuli, levels = c("Bullseye", "Object", "Face", "ASL"))
+
+ggplot(aes(x = stimuli, y = median, fill = language_modality), 
+       data = filter(ms_rt, correct == 1)) + 
+  geom_bar(stat = "identity", position = position_dodge()) + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+                 position = position_dodge(width = 0.9)) +
+  scale_fill_solarized() +
+  guides(fill = F) + 
+  theme(text = element_text(size=36)) +
+  xlab(NULL) +
+  ylab("Median RT") +
+  coord_flip() +
+  ggtitle("Reaction Time")
+```
+
+Plot correct and incorrect RTs
+
+```{r}
+ggplot(aes(x = as.factor(correct), y = median, fill = as.factor(correct)), data = ms_rt) + 
+  geom_bar(stat = "identity", position = position_dodge()) + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+                 position = position_dodge(width = 0.9)) +
+  facet_grid(stimuli~age_code) +
+  scale_fill_solarized() +
+  guides(fill = F) + 
+  theme(text = element_text(size=18)) +
+  xlab("Response Type") +
+  ylab("Mean RT") +
+  coord_flip()
 ```
 
 We see some evidence of speed accuracy tradeoffs in the ASL, Face, and Bull conditions, but not in the Trio condition. Why do medians look so much better than means? 
@@ -143,41 +188,53 @@ Note the RT cutoff for the long tail. When you cutoff more of the tail, the diff
 
 ```{r}
 med_all <- df %>% 
-    filter(RT <= 2000) %>% ## Here you can play with cutoffs to see how the RT distrbutions change shape
-    group_by(age_code, language_modality, stimuli, correct) %>% 
-    mutate(log_RT = log(RT)) %>% 
-    multi_boot_standard(column = "RT", na.rm = T, empirical_function = "median")
+  group_by(age_code, language_modality, stimuli, correct) %>% 
+  mutate(log_RT = log(RT)) %>% 
+  multi_boot_standard(column = "RT", na.rm = T, empirical_function = "median")
 
+med_all %<>% mutate(Response.Type = ifelse(correct == 1, "Correct", "Incorrect")) %>% 
+  mutate(Response.Type = factor(Response.Type, levels = c("Incorrect", "Correct")))
 
-ggplot(aes(x = RT, fill = as.factor(correct)), data = filter(df, age_code == "child", RT <= 2000)) +
-    geom_density(alpha = 0.5) + 
-    facet_grid(stimuli~age_code) +
-    geom_vline(aes(xintercept = median, color = as.factor(correct)), size = 1, 
-               data = filter(med_all, age_code == "child")) +
-    labs(fill = "Correct") +
-    guides(color = F)
+df %<>% mutate(Response.Type = ifelse(correct == 1, "Correct", "Incorrect")) %>% 
+  mutate(Response.Type = factor(Response.Type, levels = c("Incorrect", "Correct")))
+
+ggplot(aes(x = RT, fill = Response.Type), 
+       data = filter(df, age_code == "child")) +
+  geom_density(alpha = 0.7, adjust = 1.5) + 
+  facet_grid(.~stimuli) +
+  geom_vline(aes(xintercept = median, color = Response.Type), size = 1, lty = "dashed", 
+             data = filter(med_all, age_code == "child")) +
+  guides(color = F) + 
+  ylab("Density") +
+  scale_fill_manual(values = c("orangered", "green3")) +
+  scale_color_manual(values = c("orangered", "green4")) +
+  theme(text = element_text(size=24),
+        legend.position = "top",
+        panel.margin = unit(2, "lines")) +
+  scale_y_continuous(breaks = c(0, .001)) +
+  scale_x_continuous(breaks = c(0, 1000, 2000))
 ```
 
 Again we see evidence of a speed-acc tradeoff for ASL, Face, and maybe Bull. But the Trio distributions are right on top of each other. 
 
-### Plot Trio RTs as a function of age
+### Plot Bunny RTs as a function of age
 
 There were data from both 26 and 36 month olds on the Trio stimuli set. Here we disaggregate and plot the RT dists separately.
 
 ```{r}
 med_trio <- df %>% 
-    filter(stimuli == "Trio") %>% 
-    group_by(experiment, language_modality, stimuli, correct) %>% 
-    multi_boot_standard(column = "RT", na.rm = T, empirical_function = "median")
-    
+  filter(stimuli == "Bunny") %>% 
+  group_by(experiment, language_modality, stimuli, correct) %>% 
+  multi_boot_standard(column = "RT", na.rm = T, empirical_function = "mean")
+
 ggplot(aes(x = RT, fill = as.factor(correct)), 
-       data = filter(df, age_code == "child", stimuli == "Trio")) +
-    geom_density(alpha = 0.5) + 
-    facet_grid(experiment~.) +
-    geom_vline(aes(xintercept = median, color = as.factor(correct)), size = 1, 
-               data = filter(med_trio, stimuli == "Trio")) +
-    labs(fill = "Correct") +
-    guides(color = F)
+       data = filter(df, age_code == "child", stimuli == "Bunny")) +
+  geom_density(alpha = 0.5) + 
+  facet_grid(experiment~.) +
+  labs(fill = "Correct") +
+  guides(color = F) +
+  scale_fill_solarized() +
+  scale_color_solarized()
 ```
 
 Kids aren't getting better at this between 2 and 3? 
@@ -188,34 +245,65 @@ We can compare the adult data for ASL and Bull.
 
 ```{r}
 ms_adults <- ss_prop %>%
-    filter(age_code == "adult") %>% 
-    group_by(language_modality, stimuli) %>% 
-    multi_boot_standard(column = "mean_correct") 
-    
-ggplot(aes(x = stimuli, y = mean, fill = language_modality), data = ms_adults) +
-    geom_bar(stat = "identity", position = position_dodge()) +
-    geom_linerange(aes(ymin = ci_lower, ymax = ci_upper),  position = position_dodge(width = 0.9)) +
-    geom_hline(yintercept = 0.5, lty = "dashed") +
-    scale_fill_solarized() 
+  filter(age_code == "adult") %>% 
+  group_by(language_modality, stimuli) %>% 
+  multi_boot_standard(column = "mean_correct") 
+
+b <- ggplot(aes(x = stimuli, y = mean), data = ms_adults) +
+  geom_bar(stat = "identity", position = position_dodge()) +
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper),  
+                 position = position_dodge(width = 0.9)) +
+  geom_hline(yintercept = 0.5, lty = "dashed") +
+  xlab(NULL) +
+  ylab("Mean Accuracy") +
+  scale_fill_solarized() +
+  theme(text = element_text(size=30)) +
+  guides(fill = F) +
+  ggtitle("Accuracy")
+
+## RT
+ms_adults_rt <- ss_prop %>%
+  filter(age_code == "adult") %>% 
+  group_by(language_modality, stimuli) %>% 
+  multi_boot_standard(column = "mean_rt", empirical_function = "median") %>% 
+  mutate(stimuli = factor(stimuli, levels = c("Bullseye", "ASL")))
+
+a <- ggplot(aes(x = stimuli, y = median), data = ms_adults_rt) +
+  geom_bar(stat = "identity", position = position_dodge()) +
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper),  
+                 position = position_dodge(width = 0.9)) +
+  xlab(NULL) +
+  ylab("Mean Accuracy") +
+  scale_fill_solarized() +
+  theme(text = element_text(size=30)) +
+  scale_y_continuous(breaks = c(0, 250, 500, 750)) +
+  xlab(NULL) +
+  ylab("Median RT") +
+  coord_flip() +
+  ggtitle("Reaction Time") +
+  guides(fill = F)
+
+gridExtra::grid.arrange(a, b, ncol = 2)
 ```
 
 Plot distributions of correct and incorrect RTs
 
 ```{r}
 med_adults <- df %>% 
-    filter(RT <= 2000) %>% ## Here you can play with cutoffs to see how the RT distrbutions change shape
-    filter(age_code == "adult") %>% 
-    group_by(experiment, language_modality, stimuli, correct) %>% 
-    multi_boot_standard(column = "RT", na.rm = T, empirical_function = "median")
+  filter(age_code == "adult") %>% 
+  group_by(experiment, language_modality, stimuli, correct) %>% 
+  multi_boot_standard(column = "RT", na.rm = T, empirical_function = "mean")
 
 ggplot(aes(x = RT, fill = as.factor(correct)), 
-       data = filter(df, age_code == "adult", RT <= 2000)) +
-    geom_density(alpha = 0.5) + 
-    facet_grid(experiment~.) +
-    geom_vline(aes(xintercept = median, color = as.factor(correct)), size = 1, 
-               data = med_adults) +
-    labs(fill = "Correct") +
-    guides(color = F)
+       data = filter(df, age_code == "adult")) +
+  geom_histogram(alpha = 0.5) + 
+  facet_grid(experiment~.) +
+  geom_vline(aes(xintercept = mean, color = as.factor(correct)), size = 1, 
+             data = med_adults) +
+  labs(fill = "Correct") +
+  guides(color = F) +
+  scale_fill_solarized() +
+  scale_color_solarized()
 ```
 
 Adult data makes sense. For Bull, we see that incorrect shifts tend to occur sooner. We can also see that there are not very many incorrect shifts for the ASL participants, so hard to see any evidence of speed-accuracy tradeoffs when > 90% accurate.
@@ -226,7 +314,7 @@ Best way to model this?
 
 ```{r}
 m1 <- lme4::glmer(correct ~ log2(RT) * stimuli + (1|Sub.Num), 
-                  data = filter(df, age_code == "child", RT <= 2000),
+                  data = filter(df, age_code == "child"),
                   family = "binomial",
                   nAGQ=0)
 
@@ -234,6 +322,58 @@ knitr::kable(summary(m1)$coef, digits = 3)
 ```
 
 RT does predict Accuracy. Longer RTs mean you are more likely to be correct. Depending on the long tail cutoff that you use of the RT distributions, you see different interactions. At cutoff of 3000ms, the interaction between RT and Trio is marginal. At an earlier cutoff of 2500ms, the interaction is robust. At a cutoff of 2000ms, the two-way interactions between RT and both Trio and Bull stimuli are significant. 
+
+# Coda vs. Deaf
+
+Plot distributions of correct and incorrect RTs
+
+```{r}
+ms_coda_acc <- ss_prop %>%
+  filter(age_code == "child", stimuli == "ASL") %>% 
+  group_by(hearing_status_participant, stimuli) %>% 
+  multi_boot_standard(column = "mean_correct") %>% 
+  ungroup() %>% 
+  mutate(hearing_status_participant = factor(hearing_status_participant, 
+                                             levels=c("hearing", "deaf")))
+
+b <- ggplot(aes(x = hearing_status_participant, y = mean), 
+       data = ms_coda_acc) +
+  geom_bar(stat = "identity", position = position_dodge()) +
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper),  
+                 position = position_dodge(width = 0.9)) +
+  geom_hline(yintercept = 0.5, lty = "dashed") +
+  xlab(NULL) +
+  ylab("Mean Accuracy") +
+  theme(text = element_text(size=30)) +
+  guides(fill = F) +
+  ggtitle("Accuracy") +
+  scale_fill_solarized() 
+
+ms_coda_rt <- ss_prop %>% 
+  filter(age_code == "child", stimuli == "ASL") %>% 
+  group_by(stimuli, hearing_status_participant) %>% 
+  multi_boot_standard(column = "mean_rt", na.rm = T, empirical_function = "median") %>% 
+  mutate(hearing_status_participant = factor(hearing_status_participant, 
+                                             levels=c("hearing", "deaf")))
+
+a <- ggplot(aes(x = hearing_status_participant, y = median), 
+            data = ms_coda_rt) +
+  geom_bar(stat = "identity", position = position_dodge()) +
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper),  
+                 position = position_dodge(width = 0.9)) +
+  xlab(NULL) +
+  ylab("Mean Accuracy") +
+  scale_fill_solarized() +
+  theme(text = element_text(size=30)) +
+  xlab(NULL) +
+  ylab("Median RT") +
+  coord_flip() +
+  ggtitle("Reaction Time") +
+  guides(fill = F) +
+  scale_y_continuous(breaks = c(0, 500, 1000))
+
+gridExtra::grid.arrange(a, b, ncol = 2)
+```
 
 # Drift Diffusion Analysis
 
@@ -252,15 +392,12 @@ The parameters of the drift drift diffusion model are:
 # get the data we care about and format for Rwiener functions
 # columns need to be named "q" for RT and "resp" for response
 d <- df %>% 
-    filter(age_code == "child", trial_type != "no_shift", is.na(RT_sec) == F, RT_sec > .1) %>% 
-    select(Sub.Num, stimuli, RT_sec, correct) %>% 
-    mutate(resp = factor(correct),
-           resp = plyr::revalue(resp, c("0" = "lower", "1" = "upper")),
-           resp = relevel(resp, "upper")) %>% 
-    rename(q = RT_sec)
-
-# weiner plot showing distribution of correct and incorrect responses 
-# wiener_plot(select(d, q, resp))
+  filter(age_code == "child", trial_type != "no_shift", is.na(RT_sec) == F, RT_sec > .1) %>% 
+  select(Sub.Num, stimuli, RT_sec, correct, hearing_status_participant, Months) %>% 
+  mutate(resp = factor(correct),
+         resp = plyr::revalue(resp, c("0" = "lower", "1" = "upper")),
+         resp = relevel(resp, "upper")) %>% 
+  rename(q = RT_sec)
 ```
 
 ```{r}
@@ -269,6 +406,8 @@ sub.pars <- data.frame(Separation = numeric(),
                        Bias = numeric(),
                        Drift = numeric(),
                        Condition = character(),
+                       Hearing.Status = character(),
+                       Age.Months = character(),
                        Sub.Num = character(),
                        stringsAsFactors = F)
 
@@ -282,14 +421,16 @@ conditions <- unique(as.character(d$stimuli))
 subs <- unique(as.character(d$Sub.Num))
 
 for (j in 1:length(subs)) {
-    sid <- as.character(subs[j]) 
-    dat <- as.data.frame(filter(d, Sub.Num == sid))
-    condition_type <- unique(as.character(dat$stimuli))
-    # fit ddm for each participant 
-    opt <- optim(c(1, .1, .1, 1), wiener_deviance, 
-                 dat=select(dat, c(q, resp)), method="Nelder-Mead")
-    pars <- c(opt$par, condition_type, sid)
-    sub.pars[j,] <- pars
+  sid <- as.character(subs[j]) 
+  dat <- as.data.frame(filter(d, Sub.Num == sid))
+  condition_type <- unique(as.character(dat$stimuli))
+  hearing_status <- unique(as.character(dat$hearing_status_participant))
+  age <- unique(as.character(dat$Months))
+  # fit ddm for each participant 
+  opt <- optim(c(1, .1, .1, 1), wiener_deviance, 
+               dat=select(dat, c(q, resp)), method="Nelder-Mead")
+  pars <- c(opt$par, condition_type, hearing_status, age, sid)
+  sub.pars[j,] <- pars
 } 
 ```
 
@@ -298,6 +439,154 @@ for (j in 1:length(subs)) {
 This plot shows the mean parameter values & 95% C.I.s for each stimuli type
 
 ```{r plotpars, fig.width=8, fig.height=6}
+sub.pars$Separation <- as.numeric(sub.pars$Separation)
+sub.pars$Non.Decision <- as.numeric(sub.pars$Non.Decision)
+sub.pars$Bias <- as.numeric(sub.pars$Bias)
+sub.pars$Drift <- as.numeric(sub.pars$Drift)
+sub.pars$Age.Months <- as.numeric(sub.pars$Age.Months)
+
+sub.pars <- sub.pars %>% 
+  group_by(Condition) %>%
+  filter(Separation < mean(Separation) + 3 * sd(Separation), 
+         Separation > mean(Separation) - 3 * sd(Separation)) %>%
+  filter(Non.Decision < mean(Non.Decision) + 3 * sd(Non.Decision), 
+         Non.Decision > mean(Non.Decision) - 3 * sd(Non.Decision)) %>%
+  filter(Bias < mean(Bias) + 3 * sd(Bias), 
+         Bias > mean(Bias) - 3 * sd(Bias)) %>%
+  filter(Drift < mean(Drift) + 3 * sd(Drift), 
+         Drift > mean(Drift) - 3 * sd(Drift)) %>%
+  ungroup() %>%
+  na.omit()
+
+sub.pars %<>% gather(Param, Value, Separation:Drift)
+```
+
+Plot distributions of parameters across conditions
+
+```{r}
+ggplot(aes(x = Value, fill = Condition), 
+       data = filter(sub.pars, Param %in% c("Drift", "Separation"))) +
+  geom_density(alpha = 0.7, adjust = 1.5) + 
+  facet_grid(.~Param, scales = "free") +
+  scale_fill_solarized()
+```
+
+Get means and CIs for parameter values and plot
+
+```{r}
+sub.pars.ms <- sub.pars %>%
+  group_by(Condition, Param) %>%
+  multi_boot_standard(column = "Value", empirical_function = "mean")
+
+sub.pars.ms$Condition <- factor(sub.pars.ms$Condition, 
+                                levels = c("ASL", "Face", "Object", "Bullseye"))
+
+sub.pars.ms$language_modality <- ifelse(sub.pars.ms$Condition == "ASL", "ASL", "English")
+
+ggplot(aes(x = Condition, y = mean, fill = language_modality), 
+       data = filter(sub.pars.ms, Param %in% c("Drift", "Separation"))) +
+  geom_bar(stat = "identity") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper)) +
+  facet_wrap(~Param, ncol = 4) +
+  scale_fill_solarized() + 
+  ylab("Mean Param Value") +
+  guides(fill = F) +
+  theme(text = element_text(size = 30)) 
+```
+
+## model parameter values
+
+What is the association between age/condition and parameter values of interest (drift and boundary separation)?
+
+```{r}
+ddm1.a <- lm(Value ~ Condition + Age.Months, 
+           data = filter(sub.pars, Param %in% c("Drift")))
+
+ddm2.a <- lm(Value ~ Condition + Age.Months, 
+             data = filter(sub.pars, Param %in% c("Separation")))
+
+# models not controlling for age
+ddm1.b <- lm(Value ~ Condition, data = filter(sub.pars, Param %in% c("Drift")))
+ddm2.b <- lm(Value ~ Condition, data = filter(sub.pars, Param %in% c("Separation")))
+```
+
+What is the association between age and parameter values?
+
+```{r}
+ddm.age.drift <- lm(Value ~ Age.Months, data = filter(sub.pars, Param %in% c("Drift")))
+ddm.age.sep <- lm(Value ~ Age.Months, data = filter(sub.pars, Param %in% c("Separation")))
+
+## fit models just within ASL sample
+ddm.age_asl_drift <- lm(Value ~ Age.Months, data = filter(sub.pars, Condition == "ASL", 
+                                                 Param %in% c("Drift")))
+
+ddm.age_asl_sep <- lm(Value ~ Age.Months, data = filter(sub.pars, Condition == "ASL", 
+                                                 Param %in% c("Separation")))
+```
+
+### Compare DDM fits for Deaf and Hearing signers
+
+```{r}
+sub.pars.ms.coda <- sub.pars %>% 
+  filter(Condition == "ASL") %>% 
+  group_by(Hearing.Status, Param) %>% 
+  multi_boot_standard(column = "Value", empirical_function = "mean")
+
+ggplot(aes(x = Param, y = mean, fill = Hearing.Status), 
+       data = filter(sub.pars.ms.coda, Param %in% c("Drift", "Separation"))) +
+  geom_bar(stat = "identity", position = position_dodge()) + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+                 position = position_dodge(width=0.9)) +
+  theme(text = element_text(size = 30)) +
+  xlab("Parameter") +
+  ylab("Mean Param Value")
+```
+
+### Fit DDM to adult data for ASL and Bull
+
+```{r setuppars adults}
+# get the data we care about and format for Rwiener functions
+# columns need to be named "q" for RT and "resp" for response
+d.adults <- df %>% 
+  filter(age_code == "adult", trial_type != "no_shift", is.na(RT_sec) == F, RT_sec > .1) %>% 
+  select(Sub.Num, stimuli, RT_sec, correct) %>% 
+  mutate(resp = factor(correct),
+         resp = plyr::revalue(resp, c("0" = "lower", "1" = "upper")),
+         resp = relevel(resp, "upper")) %>% 
+  rename(q = RT_sec)
+
+sub.pars <- data.frame(Separation = numeric(),
+                       Non.Decision = numeric(),
+                       Bias = numeric(),
+                       Drift = numeric(),
+                       Condition = character(),
+                       Sub.Num = character(),
+                       stringsAsFactors = F)
+
+
+#because RWiener is finicky:
+d.adults$resp <- as.character(d.adults$resp)
+```
+
+```{r estpars adults}
+conditions <- unique(as.character(d.adults$stimuli))
+subs <- unique(as.character(d.adults$Sub.Num))
+
+for (j in 1:length(subs)) {
+  sid <- as.character(subs[j]) 
+  dat <- as.data.frame(filter(d.adults, Sub.Num == sid))
+  condition_type <- unique(as.character(dat$stimuli))
+  # fit ddm for each participant 
+  opt <- optim(c(1, .1, .1, 1), wiener_deviance, 
+               dat=select(dat, c(q, resp)), method="Nelder-Mead")
+  pars <- c(opt$par, condition_type, hearing_status, sid)
+  sub.pars[j,] <- pars
+} 
+```
+
+Munge param values.
+
+```{r plot params adults}
 sub.pars$Separation <- as.numeric(sub.pars$Separation)
 sub.pars$Non.Decision <- as.numeric(sub.pars$Non.Decision)
 sub.pars$Bias <- as.numeric(sub.pars$Bias)
@@ -320,163 +609,52 @@ sub.pars <- sub.pars %>%
 sub.pars %<>% gather(Param, Value, Separation:Drift)
 ```
 
-Plot distributions of parameters across conditions
+Summarize and plot param values.
 
 ```{r}
-ggplot(aes(x = Value, fill = Condition), data = filter(sub.pars, Param %in% c("Drift", "Separation"))) +
-    geom_density(alpha = 0.7) + 
-    facet_grid(.~Param, scales = "free") +
-    scale_fill_solarized()
+sub.pars.ms.adults <- sub.pars %>% 
+  group_by(Condition, Param) %>% 
+  multi_boot_standard(column = "Value", empirical_function = "mean")
+
+ggplot(aes(x = Param, y = mean, fill = Condition), 
+       data = filter(sub.pars.ms.adults, Param %in% c("Drift", "Separation"))) +
+  geom_bar(stat = "identity", position = position_dodge()) + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+                 position = position_dodge(width=0.9)) +
+  scale_fill_manual(values = c("#4daf4a", "#ff7f00")) +
+  theme(text = element_text(size = 30)) +
+  xlab("Parameter") +
+  ylab("Mean Param Value")
 ```
 
-Get means and CIs for parameter values and plot
+## Proportion correct at each time slice
 
 ```{r}
-sub.pars.ms <- sub.pars %>%
-    group_by(Condition, Param) %>%
-    multi_boot_standard(column = "Value", empirical_function = "mean")
+ms_time_slice <- df %>% 
+  filter(age_code == "child") %>% 
+  mutate(RT_binned = cut(RT_sec, breaks = 4),
+         RT_binned_q = lsr::quantileCut(RT_sec, 4)) %>%
+  group_by(RT_binned_q, stimuli, Sub.Num) %>% 
+  summarise(ss_acc = mean(correct, na.rm=T)) %>% 
+  group_by(RT_binned_q, stimuli) %>% 
+  multi_boot_standard("ss_acc") 
 
+ms_time_slice$RT_binned_q <- plyr::revalue(ms_time_slice$RT_binned_q, 
+                                           c("(0.031,0.3]"= "Q1", 
+                                             "(0.3,0.667]" = "Q2",
+                                             "(0.667,1]" = "Q3", 
+                                             "(1,2]" = "Q4"))
 
-ggplot(aes(x = Condition, y = mean, fill = Condition), data = sub.pars.ms) +
-    geom_bar(stat = "identity") + 
-    geom_linerange(aes(ymin = ci_lower, ymax = ci_upper)) +
-    facet_grid(.~Param) +
-    scale_fill_solarized()
-```
-
-# Plot diffusion process
-
-We can also take these parameters and visualize the actual diffusion process for each condition:
-
-```{r parvis, fig.width=8, fig.height=6, eval = F, echo = F}
-#Visualize diffusion process for each game & trial type
-condition <- unique(sub.pars.ms$Condition)
-p <- list()
-
-#graph axes
-x <- 2
-y <- 4
-
-for (a in 1:length(age)) {
-    for (g in 1:length(games)) {
-    params <- sub.pars.ms %>%
-      subset(Game == games[g] & Age == age[a]) %>%
-      gather(Name, Value, M:cil) %>%
-      unite(Stats, Param, Name) %>%
-      spread(Stats, Value)
-    params$yint_M = (params$Bias_M*params$Separation_M) - (params$Drift_M*params$Non.Decision_M)
-    params$yint_cih = (params$Bias_M*params$Separation_M) - (params$Drift_cih*params$Non.Decision_M)
-    params$yint_cil = (params$Bias_M*params$Separation_M) - (params$Drift_cil*params$Non.Decision_M)
-    
-    drift_ribbon <- data.frame(xvals = c(params$Non.Decision_M, #non-decision time
-                                         (params$Separation_M - params$yint_cih) / params$Drift_cih, #Point where high drift line hits separation boundary
-                                         (params$Separation_M - params$yint_M) / params$Drift_M, #Point where drift line hits separation boundary
-                                         ifelse(params$Drift_cil > 0, (params$Separation_M - params$yint_cil) / params$Drift_cil, (0 - params$yint_cil) / params$Drift_cil)), #Point where low drift line hits separation boundary or 0
-                               ymin = c(params$Bias_M * params$Separation_M, #point where drift starts
-                                        params$Drift_cil*((params$Separation_M - params$yint_cih) / params$Drift_cih) + params$yint_cil, #point where low drift is when high drift ends
-                                        params$Drift_cil*((params$Separation_M - params$yint_M) / params$Drift_M) + params$yint_cil, #point where low drift is when drift ends
-                                        ifelse(params$Drift_cil > 0, params$Separation_M, 0)), #point where low drift ends
-                               ymax = c(params$Bias_M * params$Separation_M, #point where drift starts
-                                        params$Separation_M, #point where drift ends
-                                         params$Separation_M, #point where drift ends
-                                        params$Separation_M),#point where drift ends
-                               Trial.Type = rep(params$Trial.Type, 4))
-    
-    nd_ribbon <- data.frame(xmin = params$Non.Decision_cil,
-                            xmax = params$Non.Decision_cih,
-                            ymin = rep(params$Bias_cil*params$Separation_cil, 2), 
-                            ymax = rep(params$Bias_cih*params$Separation_cih, 2),
-                            Trial.Type = params$Trial.Type)
-    
-    sep_ribbon <- data.frame(xmin = rep(c(0), 2),
-                             xmax = rep(x, 2),
-                             ymin = params$Separation_cil,
-                             ymax = params$Separation_cih,
-                             Trial.Type = params$Trial.Type)
-    
-    df <- data.frame()
-    
-    p[[g + 3*(a-1)]] <- ggplot(df) + coord_cartesian(xlim = c(0, x), ylim = c(0, y)) + 
-      geom_point() +  theme_bw() +
-      geom_segment(data = params, 
-                   aes(x = Non.Decision_M, 
-                       xend = (Separation_M - yint_M) / Drift_M,
-                       y = Bias_M * Separation_M, yend = Separation_M, 
-                       color = Trial.Type)) + 
-      geom_rect(data = nd_ribbon,
-                aes(xmin = xmin,
-                    xmax = xmax,
-                    ymin = ymin, 
-                    ymax = ymax,
-                    fill = Trial.Type), 
-                alpha=0.2) +
-      geom_ribbon(data = drift_ribbon, 
-                  aes(x = xvals, 
-                      ymin = ymin, 
-                      ymax = ymax,
-                      fill = Trial.Type), 
-                  alpha=0.2) +
-      geom_rect(data = sep_ribbon, 
-                aes(xmin = xmin,
-                    xmax = xmax,
-                    ymin = ymin, 
-                    ymax = ymax,
-                    fill = Trial.Type), 
-                alpha=0.2) +
-      geom_hline(data = params, 
-                 aes(yintercept = Separation_M, color = Trial.Type),
-                 linetype = "dashed") + 
-      geom_hline(yintercept = 0, linetype = "dashed") + 
-      geom_vline(data = params, 
-                 aes(xintercept = Non.Decision_M, color = Trial.Type)) + 
-      scale_fill_discrete(guide = FALSE) +
-      scale_color_discrete(guide = FALSE) +
-      xlab("Time (seconds)") + ylab(paste("Boundary \n Separation")) + 
-      ggtitle(paste(age[a], ",", games[g], sep = " ")) 
-  } 
-}
-
-plotlist <- c(list(p[[1]], p[[4]], p[[7]], p[[10]],  
-                   p[[2]], p[[5]], p[[8]], p[[11]], 
-                   p[[3]], p[[6]], p[[9]], p[[12]]), ncol = 4, nrow = 3)
-do.call(grid.arrange, plotlist)
-```
-
-Pink = control trials and green = target trials (I removed the legend to make more space)
-
-# DDM Statistics
-
-## Model changes in parameter values
-
-Can we predict parameter values based on condition: ASL, Bull, Face, Trio
-
-```{r generaldev_models, eval = F, echo = F}
-#Look at changes in paramaters in general across age: 
-sep.model <- lm(Value ~ Condition, data = filter(sub.pars, Param == "Separation"))
-knitr::kable(summary(sep.model)$coefficients, digits = 3)
-
-nd.model <- lm(Non.Decision ~ Age, data = sub.pars)
-kable(summary(nd.model)$coefficients, digits = 3)
-
-bias.model <- lm(Bias ~ Age, data = sub.pars)
-kable(summary(bias.model)$coefficients, digits = 3)
-
-drift.model <- lm(Drift ~ Age, data = sub.pars)
-kable(summary(drift.model)$coefficients, digits = 3)
-
-#Look at continuous across age group, just children
-sub.pars.cont <- filter(sub.pars, Age != "adults")
-sub.pars.cont$Age <- as.numeric(as.character(sub.pars.cont$Age))
-
-cont.sep.model <- lm(Separation ~ Age, data = sub.pars.cont)
-kable(summary(cont.sep.model)$coefficients, digits = 3)
-
-cont.nd.model <- lm(Non.Decision ~ Age, data = sub.pars.cont)
-kable(summary(cont.nd.model)$coefficients, digits = 3)
-
-cont.bias.model <- lm(Bias ~ Age, data = sub.pars.cont)
-kable(summary(cont.bias.model)$coefficients, digits = 3)
-
-cont.drift.model <- lm(Drift ~ Age, data = sub.pars.cont)
-kable(summary(cont.drift.model)$coefficients, digits = 3)
+ggplot(aes(x=RT_binned_q, y=mean, color = stimuli, group = stimuli), 
+       data = ms_time_slice) + 
+  geom_pointrange(aes(ymin = ci_lower, ymax = ci_upper), 
+                  position = position_jitter(width = .1)) +
+  geom_line() +
+  scale_color_solarized() +
+  geom_hline(yintercept = 0.5, lty = "dashed") +
+  guides(color = F) +
+  directlabels::geom_dl(aes(label = stimuli), method = list("last.qp", hjust = -0.3)) +
+  xlab("RT Quantile") +
+  ylab("Proportion Correct")  +
+  theme(text = element_text(size=30)) 
 ```
