@@ -727,10 +727,11 @@ left_join(mpt_data, select(ms_time_slice, mean_rt, stimuli, RT_binned_q), by = c
 
 # formatting to match retroact data set
 mpt_data <- mutate(mpt_data, treeid = ifelse(stimuli == "ASL", 1, ifelse(stimuli == "Face", 2, ifelse(stimuli == "Object", 3, 4))))
+mpt_data <- mutate(mpt_data, resp = as.factor(resp))
 mpt_data <- mutate(mpt_data, stimuli = treeid-1)
 mpt_data <- mutate(mpt_data, treeid = as.integer(treeid), stimuli = as.integer(stimuli), freq = as.numeric(freq))
 mpt_data <- subset(mpt_data, select=c(stimuli, treeid, resp, freq))
-  
+mpt_data <- as.data.frame(mpt_data)
 
 # write down model
 spec <- mptspec(
@@ -742,10 +743,11 @@ spec_2 <- mptspec(
   c*r
 )
 
-## TODO: make this model run!
-
 # fit model
 mpt1 <- mpt(spec, mpt_data[mpt_data$stimuli == 0, ])
+vals <- mpt1$coefficients
+
 
 # interpret model coefs
+
 ```
