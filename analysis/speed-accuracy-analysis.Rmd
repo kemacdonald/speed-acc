@@ -22,13 +22,17 @@ knitr::opts_chunk$set(warning=F, message=F, sanitize = T,
 
 set.seed(0) # to reproduce simulations
 
+# devtools::install_github("langcog/langcog")
 library(langcog)
 library(magrittr)
 library(RWiener)
 library(stringr)
 library(GGally)
 library(kmr)
+library(lme4)
 library(lsr)
+library(plyr)
+library(gridExtra)
 library(dplyr)
 library(tidyr)
 library(ggplot2)
@@ -45,9 +49,7 @@ Eye movement data
 df <- read.csv("data/3_final_merged_data/speed-acc-ss-df.csv", 
                check.names=F, stringsAsFactors=F) 
 
-df %<>% 
-  filter(RT <= 2000) %>% 
-  mutate(stimuli = ifelse(stimuli == "V1" | stimuli == "V2", "ASL", 
+df %<>% mutate(stimuli = ifelse(stimuli == "V1" | stimuli == "V2", "ASL", 
                           ifelse(stimuli == "Trio", "Object", 
                                  ifelse(stimuli == "Bull", "Bullseye",
                                         stimuli))),
@@ -82,7 +84,7 @@ df %>%
   guides(fill = F)
 ```
 
-ASL group is a spread of ages; whereas the spoken language kids are tightly clustered around 2 and 3 years of age.
+ASL group has wide range of ages; whereas the spoken language kids are tightly clustered around 2 and 3 years of age.
 
 ## Accuracy analysis
 
@@ -107,8 +109,7 @@ Plot.
 
 ```{r}
 ms <- ss_prop %>%
-  filter(age_code == "child") %>%
-  distinct(Sub.Num, .keep_all = T) %>%
+  filter(age_code == "child", correct == 1) %>%
   group_by(language_modality, age_code, stimuli) %>% 
   multi_boot_standard(column = "mean_correct") 
 
@@ -130,7 +131,7 @@ When we plot the average proprotion of correct shifting, we see that the ASL gro
 We can model proportion correct as a function of stimuli set.
 
 ```{r}
-m1_lm <- lm(mean_correct ~ stimuli - 1, 
+m1_lm <- lm(mean_correct ~ stimuli, 
             data = filter(ss_prop, age_code == "child", correct == 1))
 
 knitr::kable(summary(m1_lm)$coef, digits = 3)
@@ -170,7 +171,7 @@ ggplot(aes(x = stimuli, y = median, fill = language_modality),
   ggtitle("Reaction Time")
 ```
 
-Plot correct and incorrect RTs
+Plot RTs for coorect/incorrect tirals
 
 ```{r}
 ggplot(aes(x = as.factor(correct), y = median, fill = as.factor(correct)), 
@@ -266,7 +267,7 @@ b <- ggplot(aes(x = stimuli, y = mean), data = ms_adults) +
   xlab(NULL) +
   ylab("Mean Accuracy") +
   scale_fill_solarized() +
-  theme(text = element_text(size=30)) +
+  theme(text = element_text(size=20)) +
   guides(fill = F) +
   ggtitle("Accuracy")
 
@@ -284,7 +285,7 @@ a <- ggplot(aes(x = stimuli, y = median), data = ms_adults_rt) +
   xlab(NULL) +
   ylab("Mean Accuracy") +
   scale_fill_solarized() +
-  theme(text = element_text(size=30)) +
+  theme(text = element_text(size=20)) +
   scale_y_continuous(breaks = c(0, 250, 500, 750)) +
   xlab(NULL) +
   ylab("Median RT") +
@@ -354,7 +355,7 @@ b <- ggplot(aes(x = hearing_status_participant, y = mean),
   geom_hline(yintercept = 0.5, lty = "dashed") +
   xlab(NULL) +
   ylab("Mean Accuracy") +
-  theme(text = element_text(size=30)) +
+  theme(text = element_text(size=20)) +
   guides(fill = F) +
   ggtitle("Accuracy") +
   scale_fill_solarized() 
@@ -374,7 +375,7 @@ a <- ggplot(aes(x = hearing_status_participant, y = median),
   xlab(NULL) +
   ylab("Mean Accuracy") +
   scale_fill_solarized() +
-  theme(text = element_text(size=30)) +
+  theme(text = element_text(size=20)) +
   xlab(NULL) +
   ylab("Median RT") +
   coord_flip() +
@@ -639,13 +640,17 @@ ggplot(aes(x = Param, y = mean, fill = Condition),
   ylab("Mean Param Value")
 ```
 
-## Proportion correct at each time slice
+## Proportion correct: quintiles
+
+This timecourse analysis follows the anlaysis of Heimler et al., 2015 and Dombrowe et al., 2012. 
+
+First we compute the proportion correct for each quintile bin
 
 ```{r}
 library("directlabels")
 
 ms_time_slice <- df %>% 
-  filter(age_code == "child") %>% 
+  filter(age_code == "child", is.na(RT_sec) == F, RT <= 2000) %>% 
   mutate(RT_binned = cut(RT_sec, breaks = 4),
          RT_binned_q = lsr::quantileCut(RT_sec, 4)) %>%
   group_by(RT_binned_q, stimuli, Sub.Num) %>% 
@@ -670,5 +675,46 @@ ggplot(aes(x=RT_binned_q, y=mean, color = stimuli, group = stimuli),
   directlabels::geom_dl(aes(label = stimuli), method = list("last.qp", hjust = -0.3)) +
   xlab("RT Quantile") +
   ylab("Proportion Correct")  +
-  theme(text = element_text(size=30)) 
+  theme(text = element_text(size=20)) 
 ```
+
+
+## MPT modeling
+
+First attempt at multinomial processing tree model of proportion accuracy over time. 
+
+Here we model the increase in goal-driven behavior over time in the 
+
+```{r}
+library(mpt)
+
+# structure the data
+mpt_data <- df %>% 
+  filter(age_code == "child", is.na(RT_sec) == F) %>% 
+  mutate(RT_binned = cut(RT_sec, breaks = 4),
+         RT_binned_q = lsr::quantileCut(RT_sec, 4)) %>% 
+  select(stimuli, correct, RT_binned_q) %>% 
+  group_by(stimuli, correct) %>% 
+  summarise(freq = n()) %>% 
+  rename(resp = correct) %>% 
+  mutate(treeid = 1,
+         resp = as.factor(resp)) %>% 
+  ungroup()
+
+# write down model
+spec <- mptspec(
+  (1-exp(-rate*(time-curve_onset))) + ((1 - (1-exp(-rate*(time-curve_onset)))) * 0.5),
+  ((1 - (1-exp(-rate*(time-curve_onset)))) * 0.5)
+)
+
+spec_2 <- mptspec(
+  c*r,
+  (1 - c)*u^2
+)
+
+## TODO: make this model run!
+
+# fit model
+mpt1 <- mpt(spec, mpt_data)
+
+# interpret model coefs
