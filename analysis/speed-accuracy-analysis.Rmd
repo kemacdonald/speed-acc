@@ -443,7 +443,6 @@ for (j in 1:length(subs)) {
   pars <- c(opt$par, condition_type, hearing_status, age, sid)
   sub.pars[j,] <- pars
 } 
-## Warning: "In matrix(value, n, p) : data length [8] is not a sub-multiple or multiple of the number of columns [6]"
 ```
 
 ### Plot Parameters
@@ -697,24 +696,30 @@ mpt_data <- df %>%
   group_by(stimuli, correct) %>% 
   summarise(freq = n()) %>% 
   rename(resp = correct) %>% 
-  mutate(treeid = 1,
-         resp = as.factor(resp)) %>% 
+  mutate(treeid = 1, resp = as.factor(resp)) %>%
   ungroup()
+
+# formatting to match retroact
+mpt_data <- mutate(mpt_data, treeid = ifelse(stimuli == "ASL", 1, ifelse(stimuli == "Face", 2, ifelse(stimuli == "Object", 3, 4))))
+mpt_data <- mutate(mpt_data, stimuli = treeid-1)
+mpt_data <- mutate(mpt_data, treeid = as.integer(treeid), stimuli = as.integer(stimuli), freq = as.numeric(freq))
+mpt_data <- subset(mpt_data, select=c(stimuli, treeid, resp, freq))
+  
 
 # write down model
 spec <- mptspec(
-  (1-exp(-rate*(time-curve_onset))) + ((1 - (1-exp(-rate*(time-curve_onset)))) * 0.5),
-  ((1 - (1-exp(-rate*(time-curve_onset)))) * 0.5)
+  ((1 - (1-exp(-rate*(time-curve_onset)))) * 0.5),
+  (1-exp(-rate*(time-curve_onset))) + ((1 - (1-exp(-rate*(time-curve_onset)))) * 0.5)
 )
 
 spec_2 <- mptspec(
-  c*r,
-  (1 - c)*u^2
+  c*r
 )
 
 ## TODO: make this model run!
 
 # fit model
-mpt1 <- mpt(spec, mpt_data)
+mpt1 <- mpt(spec, mpt_data[mpt_data$stimuli == 0, ])
 
 # interpret model coefs
+```
