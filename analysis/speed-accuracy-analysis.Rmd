@@ -694,17 +694,17 @@ mpt_data <- df %>%
          RT_binned_q = lsr::quantileCut(RT_sec, 4)) %>% 
   select(stimuli, correct, RT_binned_q) %>% 
   group_by(stimuli, correct) %>% 
-  summarise(freq = n()) %>% 
+  summarise(freq = n()) %>%
   rename(resp = correct) %>% 
-  mutate(treeid = 1, resp = as.factor(resp)) %>%
   ungroup()
 
 # formatting to match retroact
 mpt_data <- mutate(mpt_data, treeid = ifelse(stimuli == "ASL", 1, ifelse(stimuli == "Face", 2, ifelse(stimuli == "Object", 3, 4))))
+mpt_data <- mutate(mpt_data, resp = as.factor(resp))
 mpt_data <- mutate(mpt_data, stimuli = treeid-1)
 mpt_data <- mutate(mpt_data, treeid = as.integer(treeid), stimuli = as.integer(stimuli), freq = as.numeric(freq))
 mpt_data <- subset(mpt_data, select=c(stimuli, treeid, resp, freq))
-  
+mpt_data <- as.data.frame(mpt_data)
 
 # write down model
 spec <- mptspec(
@@ -716,10 +716,11 @@ spec_2 <- mptspec(
   c*r
 )
 
-## TODO: make this model run!
-
 # fit model
 mpt1 <- mpt(spec, mpt_data[mpt_data$stimuli == 0, ])
+vals <- mpt1$coefficients
+
 
 # interpret model coefs
+
 ```
