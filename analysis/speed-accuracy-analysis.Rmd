@@ -685,12 +685,12 @@ mpt_data <- df %>%
   mutate(RT_binned = cut(RT_sec, breaks = 4),
          RT_binned_q = lsr::quantileCut(RT_sec, 4)) %>% 
   select(stimuli, correct, RT_binned_q) %>% 
-  group_by(stimuli, correct) %>% 
+  group_by(stimuli, correct, RT_binned_q) %>% 
   summarise(freq = n()) %>% 
   rename(resp = correct) %>% 
+  ungroup() %>% 
   mutate(treeid = 1,
-         resp = as.factor(resp)) %>% 
-  ungroup()
+         resp = as.factor(resp)) 
 
 # write down model
 spec <- mptspec(
