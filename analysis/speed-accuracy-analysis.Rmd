@@ -20,7 +20,8 @@ rm(list=ls()) # code to clear workspace
 knitr::opts_chunk$set(warning=F, message=F, sanitize = T, 
                       fig.height=5, fig.width=8, echo=T, cache = T)
 
-set.seed(0) # to reproduce simulations
+# to reproduce simulations
+set.seed(0) 
 
 # devtools::install_github("langcog/langcog")
 library(langcog)
@@ -37,16 +38,14 @@ library(dplyr)
 library(tidyr)
 library(ggplot2)
 theme_set(theme_bw()) # set the ggplot theme that we think is pretty
-setwd("/home/gryfalconess/Documents/CSLI/speed-acc")
 ```
-
 
 ## Read Data
 
 Eye movement data
 
 ```{r}
-df <- read.csv("data/3_final_merged_data/speed-acc-ss-df.csv", 
+df <- read.csv("../data/3_final_merged_data/speed-acc-ss-df.csv", 
                check.names=F, stringsAsFactors=F) 
 
 df %<>% mutate(stimuli = ifelse(stimuli == "V1" | stimuli == "V2", "ASL", 
@@ -648,20 +647,42 @@ First we compute the proportion correct for each quintile bin
 ```{r}
 library("directlabels")
 
-ms_time_slice <- df %>% 
+# compute mean accuracy for each RT quartile and experiment
+ms_time_slice_acc <- df %>% 
   filter(age_code == "child", is.na(RT_sec) == F, RT <= 2000) %>% 
   mutate(RT_binned = cut(RT_sec, breaks = 4),
          RT_binned_q = lsr::quantileCut(RT_sec, 4)) %>%
   group_by(RT_binned_q, stimuli, Sub.Num) %>% 
-  summarise(ss_acc = mean(correct, na.rm=T)) %>% 
+  summarise(ss_acc = mean(correct, na.rm=T)) %>%
   group_by(RT_binned_q, stimuli) %>% 
-  multi_boot_standard("ss_acc") 
+  multi_boot_standard("ss_acc") %>% 
+  ungroup()
 
-ms_time_slice$RT_binned_q <- plyr::revalue(ms_time_slice$RT_binned_q, 
-                                           c("(0.031,0.3]"= "Q1", 
-                                             "(0.3,0.667]" = "Q2",
-                                             "(0.667,1]" = "Q3", 
-                                             "(1,2]" = "Q4"))
+# compute mean rt for each RT quartile and experiment
+ms_time_slice_rt <- df %>% 
+  filter(age_code == "child", is.na(RT_sec) == F, RT <= 2000) %>% 
+  mutate(RT_binned = cut(RT_sec, breaks = 4),
+         RT_binned_q = lsr::quantileCut(RT_sec, 4)) %>%
+  group_by(RT_binned_q, stimuli, Sub.Num) %>% 
+  summarise(ss_rt = mean(RT, na.rm=T)) %>% 
+  group_by(RT_binned_q, stimuli) %>% 
+  multi_boot_standard("ss_rt") %>% 
+  rename(mean_rt = mean, ci_lower_rt = ci_lower, ci_upper_rt = ci_upper) %>% 
+  select(mean_rt, ci_lower_rt, ci_upper_rt) %>%
+  ungroup() %>% 
+  select(-RT_binned_q) 
+
+# now bind the columns together to join with accuracy data
+ms_time_slice <- cbind(ms_time_slice_acc, ms_time_slice_rt)
+
+ms_time_slice %<>% 
+  mutate(RT_binned_q = as.character(RT_binned_q), stimuli = as.character(stimuli)) 
+
+# ms_time_slice$RT_binned_q <- plyr::revalue(ms_time_slice$RT_binned_q, 
+#                                            c("(0.031,0.3]"= "Q1", 
+#                                              "(0.3,0.667]" = "Q2",
+#                                              "(0.667,1]" = "Q3", 
+#                                              "(1,2]" = "Q4"))
 
 ggplot(aes(x=RT_binned_q, y=mean, color = stimuli, group = stimuli), 
        data = ms_time_slice) + 
@@ -696,10 +717,15 @@ mpt_data <- df %>%
   group_by(stimuli, correct, RT_binned_q) %>% 
   summarise(freq = n()) %>% 
   rename(resp = correct) %>% 
-  mutate(treeid = 1, resp = as.factor(resp)) %>%
-  ungroup()
+  ungroup() %>% 
+  mutate(treeid = 1, resp = as.factor(resp),
+         stimuli = as.character(stimuli),
+         RT_binned_q = as.character(RT_binned_q))
 
-# formatting to match retroact
+## todo: fix merge, so we can add the mean RT data for each bin to the mpt data frame
+left_join(mpt_data, select(ms_time_slice, mean_rt, stimuli, RT_binned_q), by = c("stimuli", "RT_binned_q"))
+
+# formatting to match retroact data set
 mpt_data <- mutate(mpt_data, treeid = ifelse(stimuli == "ASL", 1, ifelse(stimuli == "Face", 2, ifelse(stimuli == "Object", 3, 4))))
 mpt_data <- mutate(mpt_data, stimuli = treeid-1)
 mpt_data <- mutate(mpt_data, treeid = as.integer(treeid), stimuli = as.integer(stimuli), freq = as.numeric(freq))
