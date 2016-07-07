@@ -593,7 +593,7 @@ for (j in 1:length(subs)) {
   pars <- c(opt$par, condition_type, hearing_status, sid)
   sub.pars[j,] <- pars
 } 
-## "Warning: In matrix(value, n, p) : data length [7] is not a sub-multiple or multiple of the number of columns [6]""
+## "Warning: In matrix(value, n, p) : data length [7] is not a sub-multiple or multiple of the number of columns [6]"
 ```
 
 Munge param values.
@@ -642,6 +642,8 @@ ggplot(aes(x = Param, y = mean, fill = Condition),
 ## Proportion correct at each time slice
 
 ```{r}
+library("directlabels")
+
 ms_time_slice <- df %>% 
   filter(age_code == "child") %>% 
   mutate(RT_binned = cut(RT_sec, breaks = 4),
