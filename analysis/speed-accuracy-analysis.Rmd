@@ -28,10 +28,12 @@ library(RWiener)
 library(stringr)
 library(GGally)
 library(kmr)
+library(lsr)
 library(dplyr)
 library(tidyr)
 library(ggplot2)
 theme_set(theme_bw()) # set the ggplot theme that we think is pretty
+setwd("/home/gryfalconess/Documents/CSLI/speed-acc")
 ```
 
 
@@ -40,7 +42,7 @@ theme_set(theme_bw()) # set the ggplot theme that we think is pretty
 Eye movement data
 
 ```{r}
-df <- read.csv("../data/3_final_merged_data/speed-acc-ss-df.csv", 
+df <- read.csv("data/3_final_merged_data/speed-acc-ss-df.csv", 
                check.names=F, stringsAsFactors=F) 
 
 df %<>% 
@@ -228,14 +230,14 @@ There were data from both 26 and 36 month olds on the Trio stimuli set. Here we 
 
 ```{r}
 med_trio <- df %>% 
-  filter(stimuli == "Bunny") %>% 
+  filter(stimuli == "Object") %>% 
   group_by(experiment, language_modality, stimuli, correct) %>% 
   multi_boot_standard(column = "RT", na.rm = T, empirical_function = "mean")
 
 ggplot(aes(x = RT, fill = as.factor(correct)), 
-       data = filter(df, age_code == "child", stimuli == "Bunny")) +
+       data = filter(df, age_code == "child", stimuli == "Object")) +
   geom_density(alpha = 0.5) + 
-  facet_grid(experiment~.) +
+  facet_wrap(~experiment) +
   labs(fill = "Correct") +
   guides(color = F) +
   scale_fill_solarized() +
@@ -249,6 +251,8 @@ Kids aren't getting better at this between 2 and 3?
 We can compare the adult data for ASL and Bull. 
 
 ```{r}
+library("gridExtra")
+
 ms_adults <- ss_prop %>%
   filter(age_code == "adult") %>% 
   group_by(language_modality, stimuli) %>% 
@@ -318,6 +322,7 @@ Adult data makes sense. For Bull, we see that incorrect shifts tend to occur soo
 Best way to model this? 
 
 ```{r}
+library("lme4")
 m1 <- lme4::glmer(correct ~ log2(RT) * stimuli + (1|Sub.Num), 
                   data = filter(df, age_code == "child"),
                   family = "binomial",
@@ -437,6 +442,7 @@ for (j in 1:length(subs)) {
   pars <- c(opt$par, condition_type, hearing_status, age, sid)
   sub.pars[j,] <- pars
 } 
+## Warning: "In matrix(value, n, p) : data length [8] is not a sub-multiple or multiple of the number of columns [6]"
 ```
 
 ### Plot Parameters
@@ -587,6 +593,7 @@ for (j in 1:length(subs)) {
   pars <- c(opt$par, condition_type, hearing_status, sid)
   sub.pars[j,] <- pars
 } 
+## "Warning: In matrix(value, n, p) : data length [7] is not a sub-multiple or multiple of the number of columns [6]""
 ```
 
 Munge param values.
