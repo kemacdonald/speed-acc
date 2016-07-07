@@ -28,6 +28,7 @@ library(magrittr)
 library(RWiener)
 library(stringr)
 library(GGally)
+library(kmr)
 library(lme4)
 library(lsr)
 library(plyr)
@@ -36,6 +37,7 @@ library(dplyr)
 library(tidyr)
 library(ggplot2)
 theme_set(theme_bw()) # set the ggplot theme that we think is pretty
+setwd("/home/gryfalconess/Documents/CSLI/speed-acc")
 ```
 
 
@@ -44,7 +46,7 @@ theme_set(theme_bw()) # set the ggplot theme that we think is pretty
 Eye movement data
 
 ```{r}
-df <- read.csv("../data/3_final_merged_data/speed-acc-ss-df.csv", 
+df <- read.csv("data/3_final_merged_data/speed-acc-ss-df.csv", 
                check.names=F, stringsAsFactors=F) 
 
 df %<>% mutate(stimuli = ifelse(stimuli == "V1" | stimuli == "V2", "ASL", 
@@ -235,8 +237,8 @@ med_trio <- df %>%
 
 ggplot(aes(x = RT, fill = as.factor(correct)), 
        data = filter(df, age_code == "child", stimuli == "Object")) +
-  geom_histogram(alpha = 0.5) + 
-  facet_grid(experiment~.) +
+  geom_density(alpha = 0.5) + 
+  facet_wrap(~experiment) +
   labs(fill = "Correct") +
   guides(color = F) +
   scale_fill_solarized() +
@@ -250,6 +252,8 @@ Kids aren't getting better at this between 2 and 3?
 We can compare the adult data for ASL and Bull. 
 
 ```{r}
+library("gridExtra")
+
 ms_adults <- ss_prop %>%
   filter(age_code == "adult") %>% 
   group_by(language_modality, stimuli) %>% 
@@ -319,6 +323,7 @@ Adult data makes sense. For Bull, we see that incorrect shifts tend to occur soo
 Best way to model this? 
 
 ```{r}
+library("lme4")
 m1 <- lme4::glmer(correct ~ log2(RT) * stimuli + (1|Sub.Num), 
                   data = filter(df, age_code == "child"),
                   family = "binomial",
@@ -588,6 +593,7 @@ for (j in 1:length(subs)) {
   pars <- c(opt$par, condition_type, hearing_status, sid)
   sub.pars[j,] <- pars
 } 
+## "Warning: In matrix(value, n, p) : data length [7] is not a sub-multiple or multiple of the number of columns [6]"
 ```
 
 Munge param values.
@@ -640,6 +646,8 @@ This timecourse analysis follows the anlaysis of Heimler et al., 2015 and Dombro
 First we compute the proportion correct for each quintile bin
 
 ```{r}
+library("directlabels")
+
 ms_time_slice <- df %>% 
   filter(age_code == "child", is.na(RT_sec) == F, RT <= 2000) %>% 
   mutate(RT_binned = cut(RT_sec, breaks = 4),
@@ -688,24 +696,30 @@ mpt_data <- df %>%
   group_by(stimuli, correct, RT_binned_q) %>% 
   summarise(freq = n()) %>% 
   rename(resp = correct) %>% 
-  ungroup() %>% 
-  mutate(treeid = 1,
-         resp = as.factor(resp)) 
+  mutate(treeid = 1, resp = as.factor(resp)) %>%
+  ungroup()
+
+# formatting to match retroact
+mpt_data <- mutate(mpt_data, treeid = ifelse(stimuli == "ASL", 1, ifelse(stimuli == "Face", 2, ifelse(stimuli == "Object", 3, 4))))
+mpt_data <- mutate(mpt_data, stimuli = treeid-1)
+mpt_data <- mutate(mpt_data, treeid = as.integer(treeid), stimuli = as.integer(stimuli), freq = as.numeric(freq))
+mpt_data <- subset(mpt_data, select=c(stimuli, treeid, resp, freq))
+  
 
 # write down model
 spec <- mptspec(
-  (1-exp(-rate*(time-curve_onset))) + ((1 - (1-exp(-rate*(time-curve_onset)))) * 0.5),
-  ((1 - (1-exp(-rate*(time-curve_onset)))) * 0.5)
+  ((1 - (1-exp(-rate*(time-curve_onset)))) * 0.5),
+  (1-exp(-rate*(time-curve_onset))) + ((1 - (1-exp(-rate*(time-curve_onset)))) * 0.5)
 )
 
 spec_2 <- mptspec(
-  c*r,
-  (1 - c)*u^2
+  c*r
 )
 
 ## TODO: make this model run!
 
 # fit model
-mpt1 <- mpt(spec, mpt_data)
+mpt1 <- mpt(spec, mpt_data[mpt_data$stimuli == 0, ])
 
 # interpret model coefs
+```
