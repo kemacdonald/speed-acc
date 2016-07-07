@@ -703,7 +703,7 @@ ggplot(aes(x=RT_binned_q, y=mean, color = stimuli, group = stimuli),
 
 First attempt at multinomial processing tree model of proportion accuracy over time. 
 
-Here we model the increase in goal-driven behavior over time in the 
+Here we model the increase in goal-driven behavior over time in the task.
 
 ```{r}
 library(mpt)
@@ -713,17 +713,15 @@ mpt_data <- df %>%
   filter(age_code == "child", is.na(RT_sec) == F) %>% 
   mutate(RT_binned = cut(RT_sec, breaks = 4),
          RT_binned_q = lsr::quantileCut(RT_sec, 4)) %>% 
-  select(stimuli, correct, RT_binned_q) %>% 
-  group_by(stimuli, correct, RT_binned_q) %>% 
+  select(stimuli, correct) %>% 
+  group_by(stimuli, correct) %>% 
   summarise(freq = n()) %>% 
   rename(resp = correct) %>% 
   ungroup() %>% 
-  mutate(treeid = 1, resp = as.factor(resp),
-         stimuli = as.character(stimuli),
-         RT_binned_q = as.character(RT_binned_q))
+  mutate(treeid = 1, resp = as.factor(resp))
 
 ## todo: fix merge, so we can add the mean RT data for each bin to the mpt data frame
-left_join(mpt_data, select(ms_time_slice, mean_rt, stimuli, RT_binned_q), by = c("stimuli", "RT_binned_q"))
+# left_join(mpt_data, select(ms_time_slice, mean_rt, stimuli, RT_binned_q), by = c("stimuli", "RT_binned_q"))
 
 # formatting to match retroact data set
 mpt_data <- mutate(mpt_data, treeid = ifelse(stimuli == "ASL", 1, ifelse(stimuli == "Face", 2, ifelse(stimuli == "Object", 3, 4))))
