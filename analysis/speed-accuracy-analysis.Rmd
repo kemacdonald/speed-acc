@@ -678,6 +678,86 @@ ggplot(aes(x=RT_binned_q, y=mean, color = stimuli, group = stimuli),
 ```
 
 
+
+Split into quantiles separately for each condition
+
+```{r}
+timeslice_setup <- df %>% 
+  filter(age_code == "child", is.na(RT_sec) == F)
+
+timeslice_ASL <- timeslice_setup %>%
+  filter(stimuli == "ASL") %>%
+  mutate(RT_binned = cut(RT_sec, breaks = 4),
+         RT_binned_q = lsr::quantileCut(RT_sec, 4)) %>%
+  group_by(RT_binned_q, stimuli, Sub.Num) %>% 
+  summarise(ss_acc = mean(correct, na.rm=T)) %>% 
+  group_by(RT_binned_q, stimuli) %>% 
+  multi_boot_standard("ss_acc") 
+timeslice_ASL$RT_binned_q <- plyr::revalue(timeslice_ASL$RT_binned_q, 
+                                           c("(0.0301,0.833]"= "Q1", 
+                                             "(0.833,1.13]" = "Q2",
+                                             "(1.13,1.5]" = "Q3", 
+                                             "(1.5,2.97]" = "Q4"))
+
+timeslice_Face <- timeslice_setup %>%
+  filter(stimuli == "Face") %>%
+  mutate(RT_binned = cut(RT_sec, breaks = 4),
+         RT_binned_q = lsr::quantileCut(RT_sec, 4)) %>%
+  group_by(RT_binned_q, stimuli, Sub.Num) %>% 
+  summarise(ss_acc = mean(correct, na.rm=T)) %>% 
+  group_by(RT_binned_q, stimuli) %>% 
+  multi_boot_standard("ss_acc") 
+timeslice_Face$RT_binned_q <- plyr::revalue(timeslice_Face$RT_binned_q, 
+                                           c("(0.0301,0.567]"= "Q1", 
+                                             "(0.567,0.867]" = "Q2",
+                                             "(0.867,1.07]" = "Q3", 
+                                             "(1.07,2.9]" = "Q4"))
+
+timeslice_Obj <- timeslice_setup %>%
+  filter(stimuli == "Object") %>%
+  mutate(RT_binned = cut(RT_sec, breaks = 4),
+         RT_binned_q = lsr::quantileCut(RT_sec, 4)) %>%
+  group_by(RT_binned_q, stimuli, Sub.Num) %>% 
+  summarise(ss_acc = mean(correct, na.rm=T)) %>% 
+  group_by(RT_binned_q, stimuli) %>% 
+  multi_boot_standard("ss_acc") 
+timeslice_Obj$RT_binned_q <- plyr::revalue(timeslice_Obj$RT_binned_q, 
+                                           c("(0.0301,0.2]"= "Q1", 
+                                             "(0.2,0.433]" = "Q2",
+                                             "(0.433,0.683]" = "Q3", 
+                                             "(0.683,2.97]" = "Q4"))
+
+timeslice_Bull <- timeslice_setup %>%
+  filter(stimuli == "Bullseye") %>%
+  mutate(RT_binned = cut(RT_sec, breaks = 4),
+         RT_binned_q = lsr::quantileCut(RT_sec, 4)) %>%
+  group_by(RT_binned_q, stimuli, Sub.Num) %>% 
+  summarise(ss_acc = mean(correct, na.rm=T)) %>% 
+  group_by(RT_binned_q, stimuli) %>% 
+  multi_boot_standard("ss_acc") 
+timeslice_Bull$RT_binned_q <- plyr::revalue(timeslice_Bull$RT_binned_q, 
+                                           c("(0.0305,0.167]"= "Q1", 
+                                             "(0.167,0.333]" = "Q2",
+                                             "(0.333,0.633]" = "Q3", 
+                                             "(0.633,2.57]" = "Q4"))
+
+timeslice_setup <- rbind(timeslice_Obj, timeslice_ASL, timeslice_Face, timeslice_Bull)
+
+ggplot(aes(x=RT_binned_q, y=mean, color = stimuli, group = stimuli), 
+       data = timeslice_setup) + 
+  geom_pointrange(aes(ymin = ci_lower, ymax = ci_upper), 
+                  position = position_jitter(width = .1)) +
+  geom_line() +
+  scale_color_solarized() +
+  geom_hline(yintercept = 0.5, lty = "dashed") +
+  guides(color = F) +
+  directlabels::geom_dl(aes(label = stimuli), method = list("last.qp", hjust = -0.3)) +
+  xlab("RT Quantile") +
+  ylab("Proportion Correct")  +
+  theme(text = element_text(size=20)) 
+```
+
+
 ## MPT modeling
 
 First attempt at multinomial processing tree model of proportion accuracy over time. 
@@ -687,29 +767,77 @@ Here we model the increase in goal-driven behavior over time in the
 ```{r}
 library(mpt)
 
+# find more information on MPT (original paper) and similar uses
+
 # structure the data
 mpt_data <- df %>% 
   filter(age_code == "child", is.na(RT_sec) == F) %>% 
   mutate(RT_binned = cut(RT_sec, breaks = 4),
-         RT_binned_q = lsr::quantileCut(RT_sec, 4)) %>% 
-  select(stimuli, correct, RT_binned_q) %>% 
-  group_by(stimuli, correct) %>% 
-  summarise(freq = n()) %>%
+         RT_binned_q = lsr::quantileCut(RT_sec, 4)) %>%
+  mutate(RTcat = as.integer(as.factor(RT_binned_q)) - 1) %>%
+  select(stimuli, correct, RTcat, RT_sec) %>% 
+  group_by(stimuli, correct, RTcat) %>% 
+  summarise(freq = n(), RTavg = mean(RT_sec)) %>%
+  mutate(treeid = as.integer(RTcat + 1)) %>%
   rename(resp = correct) %>% 
   ungroup()
+mpt_data <- mutate(mpt_data, resp = as.factor(resp), freq = as.numeric(freq), RTcat = as.integer(RTcat)) %>%
+  arrange(RTcat)
+
+mpt_ASL <- mpt_data %>% subset(stimuli == "ASL")
+mpt_Face <- mpt_data %>% subset(stimuli == "Face")
+mpt_Obj <- mpt_data %>% subset(stimuli == "Object")
+mpt_Bull <- mpt_data %>% subset(stimuli == "Bullseye")
 
 # formatting to match retroact
-mpt_data <- mutate(mpt_data, treeid = ifelse(stimuli == "ASL", 1, ifelse(stimuli == "Face", 2, ifelse(stimuli == "Object", 3, 4))))
-mpt_data <- mutate(mpt_data, resp = as.factor(resp))
-mpt_data <- mutate(mpt_data, stimuli = treeid-1)
-mpt_data <- mutate(mpt_data, treeid = as.integer(treeid), stimuli = as.integer(stimuli), freq = as.numeric(freq))
-mpt_data <- subset(mpt_data, select=c(stimuli, treeid, resp, freq))
-mpt_data <- as.data.frame(mpt_data)
+mpt_ASL <- subset(mpt_ASL, select=c(RTcat, treeid, resp, freq)) %>% as.data.frame()
+mpt_Face <- subset(mpt_Face, select=c(RTcat, treeid, resp, freq)) %>% as.data.frame()
+mpt_Obj <- subset(mpt_Obj, select=c(RTcat, treeid, resp, freq)) %>% as.data.frame()
+mpt_Bull <- subset(mpt_Bull, select=c(RTcat, treeid, resp, freq)) %>% as.data.frame()
 
-# write down model
-spec <- mptspec(
-  ((1 - (1-exp(-rate*(time-curve_onset)))) * 0.5),
-  (1-exp(-rate*(time-curve_onset))) + ((1 - (1-exp(-rate*(time-curve_onset)))) * 0.5)
+# write down model - reaction time averages copy-pasted from mpt_data
+ASLspec <- mptspec(
+  ((1 - (1 - exp(-rate*(.1667500 - onset)))) * 0.5),
+  (1 - exp(-rate*(.1582500 - onset))) + ((1 - (1 - exp(-rate*(.1582500 - onset)))) * 0.5),
+  ((1 - (1 - exp(-rate*(.5405652 - onset)))) * 0.5),
+  (1 - exp(-rate*(.5971143 - onset))) + ((1 - (1 - exp(-rate*(.5971143 - onset)))) * 0.5),
+  ((1 - (1 - exp(-rate*(.8750714 - onset)))) * 0.5),
+  (1 - exp(-rate*(.9170104 - onset))) + ((1 - (1 - exp(-rate*(.9170104 - onset)))) * 0.5),
+  ((1 - (1 - exp(-rate*(1.7082105 - onset)))) * 0.5),
+  (1 - exp(-rate*(1.5675778 - onset))) + ((1 - (1 - exp(-rate*(1.5675778 - onset)))) * 0.5)
+)
+
+Facespec <- mptspec(
+  ((1 - (1 - exp(-rate*(.1571714 - onset)))) * 0.5),
+  (1 - exp(-rate*(.1568235 - onset))) + ((1 - (1 - exp(-rate*(.1568235 - onset)))) * 0.5),
+  ((1 - (1 - exp(-rate*(.5266750 - onset)))) * 0.5),
+  (1 - exp(-rate*(.5659000 - onset))) + ((1 - (1 - exp(-rate*(.5659000 - onset)))) * 0.5),
+  ((1 - (1 - exp(-rate*(.8840000 - onset)))) * 0.5),
+  (1 - exp(-rate*(.9006147 - onset))) + ((1 - (1 - exp(-rate*(.9006147 - onset)))) * 0.5),
+  ((1 - (1 - exp(-rate*(1.7318667 - onset)))) * 0.5),
+  (1 - exp(-rate*(1.4310000 - onset))) + ((1 - (1 - exp(-rate*(1.4310000 - onset)))) * 0.5)
+)
+
+Objspec <- mptspec(
+  ((1 - (1 - exp(-rate*(.1550661 - onset)))) * 0.5),
+  (1 - exp(-rate*(.1514466 - onset))) + ((1 - (1 - exp(-rate*(.1514466 - onset)))) * 0.5),
+  ((1 - (1 - exp(-rate*(.5042054 - onset)))) * 0.5),
+  (1 - exp(-rate*(.5083750 - onset))) + ((1 - (1 - exp(-rate*(.5083750 - onset)))) * 0.5),
+  ((1 - (1 - exp(-rate*(.8271579 - onset)))) * 0.5),
+  (1 - exp(-rate*(.8647451 - onset))) + ((1 - (1 - exp(-rate*(.8647451 - onset)))) * 0.5),
+  ((1 - (1 - exp(-rate*(1.5859474 - onset)))) * 0.5),
+  (1 - exp(-rate*(1.6579474 - onset))) + ((1 - (1 - exp(-rate*(1.6579474 - onset)))) * 0.5)
+)
+
+Bullspec <- mptspec(
+  ((1 - (1 - exp(-rate*(.1600984 - onset)))) * 0.5),
+  (1 - exp(-rate*(.1473556 - onset))) + ((1 - (1 - exp(-rate*(.1473556 - onset)))) * 0.5),
+  ((1 - (1 - exp(-rate*(.5011000 - onset)))) * 0.5),
+  (1 - exp(-rate*(.5434186 - onset))) + ((1 - (1 - exp(-rate*(.5434186 - onset)))) * 0.5),
+  ((1 - (1 - exp(-rate*(.8595000 - onset)))) * 0.5),
+  (1 - exp(-rate*(.8499286 - onset))) + ((1 - (1 - exp(-rate*(.8499286 - onset)))) * 0.5),
+  ((1 - (1 - exp(-rate*(1.4398000 - onset)))) * 0.5),
+  (1 - exp(-rate*(1.9400000 - onset))) + ((1 - (1 - exp(-rate*(1.9400000 - onset)))) * 0.5)
 )
 
 spec_2 <- mptspec(
@@ -717,10 +845,25 @@ spec_2 <- mptspec(
 )
 
 # fit model
-mpt1 <- mpt(spec, mpt_data[mpt_data$stimuli == 0, ])
+mptASL <- mpt(ASLspec, mpt_ASL)
+mptFace <- mpt(Facespec, mpt_Face)
+mptObj <- mpt(Objspec, mpt_Obj)
+mptBull <- mpt(Bullspec, mpt_Bull)
+
 vals <- mpt1$coefficients
+rate <- vals[1]
+time <- vals[2]
+curve_onset <- vals[3]
 
+incorrectfunc = function(rate, time, curve_onset){
+  return ((1 - (1 - exp(-rate*(time - curve_onset)))) * 0.5)
+}
 
-# interpret model coefs
+correctfunc = function(rate, time, curve_onset){
+  return (1-exp(-rate*(time-curve_onset))) + ((1 - (1-exp(-rate*(time-curve_onset)))) * 0.5)
+}
 
+# interpret model coefs - make pretty pictures of output
+ggplot(data.frame(x = c(0, 10)), aes(x)) +
+  stat_function(fun = incorrectfunc(rate, time, curve_onset))
 ```
