@@ -992,3 +992,64 @@ correctfunc = function(rate, time, curve_onset){
 ggplot(data.frame(x = c(0, 10)), aes(x)) +
   stat_function(fun = incorrectfunc(rate, time, curve_onset))
 ```
+
+
+## Exponentially Weighted Moving Average Filter
+
+My very own ewma function
+```{r}
+library("stats")
+
+ewma <- function(data){
+  # EWMA by hand
+  lambda <- .01 # weight of previous parameters
+  cs <- .5 # control mean
+  sigma <- .5 # control standard deviation
+  L <- 1.5 # width of control limits
+  s <- 0 # counter
+  ewma_results <- data.frame(rt = integer(0), cs = integer(0), ucl = integer(0))
+  for(row in 1:nrow(data)){
+    subj <- data[row, ]
+    acc <- as.integer(subj["correct"])
+    rt <- as.integer(subj["RT"])
+    cs <- lambda*acc + (1-lambda)*cs
+    UCL <- .5 + L*sigma*sqrt((lambda/(2 - lambda))*(1-((1-lambda)^(2*row))))
+    ewma_results[row, ] <- c(rt, cs, UCL)
+    if(row != 1 && cs < UCL)
+      cutoff <- rt
+  }
+  
+  ggplot(ewma_results, aes(rt)) +
+    geom_line(aes(y = cs, color = "cs")) +
+    geom_line(aes(y = ucl, color = "UCL")) +
+    geom_vline(aes(xintercept = cutoff), linetype = 2)
+  
+  return(cutoff) # comment out to show graph instead
+}
+```
+
+Now to run data through it
+```{r}
+# organize data for use
+ewma_data <- df %>% 
+  filter(age_code == "child", is.na(RT) == F) %>%
+  arrange(RT)
+overallcut <- # comment out to show graph instead
+  ewma(ewma_data)
+
+ASL_ewma <- filter(ewma_data, stimuli == "ASL")
+ASLcut <-
+  ewma(ASL_ewma)
+
+Face_ewma <- filter(ewma_data, stimuli == "Face")
+Facecut <-
+  ewma(Face_ewma)
+
+Obj_ewma <- filter(ewma_data, stimuli == "Object")
+Objcut <-
+  ewma(Obj_ewma)
+
+Bull_ewma <- filter(ewma_data, stimuli == "Bullseye")
+Bullcut <-
+  ewma(Bull_ewma)
+```
