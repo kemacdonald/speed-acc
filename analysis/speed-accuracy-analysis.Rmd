@@ -639,7 +639,7 @@ ggplot(aes(x = Param, y = mean, fill = Condition),
   ylab("Mean Param Value")
 ```
 
-## Proportion correct: quintiles
+## Proportion correct: quantiles
 
 This timecourse analysis follows the anlaysis of Heimler et al., 2015 and Dombrowe et al., 2012. 
 
@@ -1026,6 +1026,8 @@ ewma <- function(data){
   
   return(cutoff) # comment out to show graph instead
 }
+
+# try various values of lambda (wide range)
 ```
 
 Now to run data through it
@@ -1035,21 +1037,200 @@ ewma_data <- df %>%
   filter(age_code == "child", is.na(RT) == F) %>%
   arrange(RT)
 overallcut <- # comment out to show graph instead
-  ewma(ewma_data)
+  ewma(ewma_data)/1000 # also the division
 
 ASL_ewma <- filter(ewma_data, stimuli == "ASL")
 ASLcut <-
-  ewma(ASL_ewma)
+  ewma(ASL_ewma)/1000
 
 Face_ewma <- filter(ewma_data, stimuli == "Face")
 Facecut <-
-  ewma(Face_ewma)
+  ewma(Face_ewma)/1000
 
 Obj_ewma <- filter(ewma_data, stimuli == "Object")
 Objcut <-
-  ewma(Obj_ewma)
+  ewma(Obj_ewma)/1000
 
 Bull_ewma <- filter(ewma_data, stimuli == "Bullseye")
 Bullcut <-
-  ewma(Bull_ewma)
+  ewma(Bull_ewma)/1000
+  
+## make correcting plots for ASL
+## scatterplot of RT vs dweltime on incorrect in ASL vs spoken
+```
+
+Average accuracy for all conditions past cutoff
+```{r}
+# ASL and Face after their respective cutoffs
+filteredavgs <- df %>%
+  filter(age_code == "child", is.na(RT) == F,
+         (stimuli == "ASL" & RT_sec >= ASLcut) |
+           (stimuli == "Face" & RT_sec >= Facecut)) %>%
+  group_by(stimuli) %>%
+  summarize(avg = mean(correct, na.rm=T))
+
+# All conditions past the overall cutoff
+filteredavgs_all <- df %>%
+  filter(age_code == "child", is.na(RT) == F, RT_sec >= overallcut) %>%
+  group_by(stimuli) %>%
+  summarize(avg = mean(correct, na.rm=T))
+
+```
+
+## Off the shelf DDM Filtered based on EWMA
+
+Just ASL and Face conditions
+```{r estpars}
+dfiltered <- filter(d, (stimuli == "ASL" & q >= ASLcut)
+                    | (stimuli == "Face" & q >= Facecut))
+filteredpars <- sub.pars
+conditions <- unique(as.character(dfiltered$stimuli))
+subs <- unique(as.character(dfiltered$Sub.Num))
+
+for (j in 1:length(subs)) {
+  sid <- as.character(subs[j]) 
+  dat <- as.data.frame(filter(dfiltered, Sub.Num == sid))
+  condition_type <- unique(as.character(dat$stimuli))
+  hearing_status <- unique(as.character(dat$hearing_status_participant))
+  age <- unique(as.character(dat$Months))
+  # fit ddm for each participant 
+  opt <- optim(c(1, .1, .1, 1), wiener_deviance, 
+               dat=select(dat, c(q, resp)), method="Nelder-Mead")
+  pars <- c(opt$par, condition_type, hearing_status, age, sid)
+  filteredpars[j,] <- pars
+} 
+```
+
+Graphed:
+```{r plotpars, fig.width=8, fig.height=6}
+
+# formatting data
+filteredpars$Separation <- as.numeric(filteredpars$Separation)
+filteredpars$Non.Decision <- as.numeric(filteredpars$Non.Decision)
+filteredpars$Bias <- as.numeric(filteredpars$Bias)
+filteredpars$Drift <- as.numeric(filteredpars$Drift)
+filteredpars$Age.Months <- as.numeric(filteredpars$Age.Months)
+
+filteredpars <- filteredpars %>%
+  group_by(Condition) %>%
+  # not sure whether to remove outliers
+  filter(Separation < mean(Separation) + 3 * sd(Separation),
+         Separation > mean(Separation) - 3 * sd(Separation)) %>%
+  filter(Non.Decision < mean(Non.Decision) + 3 * sd(Non.Decision),
+         Non.Decision > mean(Non.Decision) - 3 * sd(Non.Decision)) %>%
+  filter(Bias < mean(Bias) + 3 * sd(Bias),
+         Bias > mean(Bias) - 3 * sd(Bias)) %>%
+  filter(Drift < mean(Drift) + 3 * sd(Drift),
+         Drift > mean(Drift) - 3 * sd(Drift)) %>%
+  ungroup() %>%
+  na.omit()
+
+filteredpars %<>% gather(Param, Value, Separation:Drift)
+
+# actual graph
+ggplot(aes(x = Value, fill = Condition), 
+       data = filter(filteredpars, Param %in% c("Drift", "Separation"))) +
+  geom_density(alpha = 0.7, adjust = 1.5) + 
+  facet_grid(.~Param, scales = "free") +
+  scale_fill_solarized()
+```
+
+Bargraph:
+```{r}
+filteredpars.ms <- filteredpars %>%
+  group_by(Condition, Param) %>%
+  multi_boot_standard(column = "Value", empirical_function = "mean")
+
+filteredpars.ms$Condition <- factor(filteredpars.ms$Condition, 
+                                levels = c("ASL", "Face"))
+
+filteredpars.ms$language_modality <- ifelse(filteredpars.ms$Condition == "ASL", "ASL", "English")
+
+ggplot(aes(x = Condition, y = mean, fill = language_modality), 
+       data = filter(filteredpars.ms, Param %in% c("Drift", "Separation"))) +
+  geom_bar(stat = "identity") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper)) +
+  facet_wrap(~Param, ncol = 4) +
+  scale_fill_solarized() + 
+  ylab("Mean Param Value") +
+  guides(fill = F) +
+  theme(text = element_text(size = 30))
+```
+
+
+All conditions cut based on the overall cutoff
+```{r estpars}
+dfiltered_all <- filter(d, q >= overallcut)
+filteredpars_all <-sub.pars
+conditions <- unique(as.character(dfiltered$stimuli))
+subs <- unique(as.character(dfiltered_all$Sub.Num))
+
+for (j in 1:length(subs)) {
+  sid <- as.character(subs[j]) 
+  dat <- as.data.frame(filter(dfiltered_all, Sub.Num == sid))
+  condition_type <- unique(as.character(dat$stimuli))
+  hearing_status <- unique(as.character(dat$hearing_status_participant))
+  age <- unique(as.character(dat$Months))
+  # fit ddm for each participant 
+  opt <- optim(c(1, .1, .1, 1), wiener_deviance, 
+               dat=select(dat, c(q, resp)), method="Nelder-Mead")
+  pars <- c(opt$par, condition_type, hearing_status, age, sid)
+  filteredpars_all[j,] <- pars
+} 
+```
+
+Density graph:
+```{r plotpars, fig.width=8, fig.height=6}
+
+# formatting data
+filteredpars_all$Separation <- as.numeric(filteredpars_all$Separation)
+filteredpars_all$Non.Decision <- as.numeric(filteredpars_all$Non.Decision)
+filteredpars_all$Bias <- as.numeric(filteredpars_all$Bias)
+filteredpars_all$Drift <- as.numeric(filteredpars_all$Drift)
+filteredpars_all$Age.Months <- as.numeric(filteredpars_all$Age.Months)
+
+filteredpars_all <- filteredpars_all %>%
+  # not sure whether to remove outliers
+  # group_by(Condition) %>%
+  # filter(Separation < mean(Separation) + 3 * sd(Separation), 
+  #        Separation > mean(Separation) - 3 * sd(Separation)) %>%
+  # filter(Non.Decision < mean(Non.Decision) + 3 * sd(Non.Decision), 
+  #        Non.Decision > mean(Non.Decision) - 3 * sd(Non.Decision)) %>%
+  # filter(Bias < mean(Bias) + 3 * sd(Bias), 
+  #        Bias > mean(Bias) - 3 * sd(Bias)) %>%
+  # filter(Drift < mean(Drift) + 3 * sd(Drift), 
+  #        Drift > mean(Drift) - 3 * sd(Drift)) %>%
+  # ungroup() %>%
+  na.omit()
+
+filteredpars_all %<>% gather(Param, Value, Separation:Drift)
+
+# actual graph
+ggplot(aes(x = Value, fill = Condition), 
+       data = filter(filteredpars_all, Param %in% c("Drift", "Separation"))) +
+  geom_density(alpha = 0.7, adjust = 1.5) + 
+  facet_grid(.~Param, scales = "free") +
+  scale_fill_solarized()
+```
+
+Bargraph:
+```{r}
+filteredpars_all.ms <- filteredpars_all %>%
+  group_by(Condition, Param) %>%
+  multi_boot_standard(column = "Value", empirical_function = "mean")
+
+filteredpars_all.ms$Condition <- factor(filteredpars_all.ms$Condition, 
+                                levels = c("ASL", "Face", "Object", "Bullseye"))
+
+filteredpars_all.ms$language_modality <- ifelse(filteredpars_all.ms$Condition == "ASL", "ASL", "English")
+
+ggplot(aes(x = Condition, y = mean, fill = language_modality), 
+       data = filter(filteredpars_all.ms, Param %in% c("Drift", "Separation"))) +
+  geom_bar(stat = "identity") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper)) +
+  facet_wrap(~Param, ncol = 4) +
+  scale_fill_solarized() + 
+  ylab("Mean Param Value") +
+  guides(fill = F) +
+  theme(text = element_text(size = 30))
 ```
