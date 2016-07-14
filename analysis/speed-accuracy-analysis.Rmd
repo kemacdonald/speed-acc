@@ -643,25 +643,29 @@ ggplot(aes(x = Param, y = mean, fill = Condition),
 
 This timecourse analysis follows the anlaysis of Heimler et al., 2015 and Dombrowe et al., 2012. 
 
-First we compute the proportion correct for each quintile bin
+First we compute the proportion correct for each quantile bin
 
 ```{r}
 library("directlabels")
 
 ms_time_slice <- df %>% 
-  filter(age_code == "child", is.na(RT_sec) == F, RT <= 2000) %>% 
+  filter(age_code == "child", is.na(RT_sec) == F) %>% 
   mutate(RT_binned = cut(RT_sec, breaks = 4),
-         RT_binned_q = lsr::quantileCut(RT_sec, 4)) %>%
+         RT_binned_q = lsr::quantileCut(RT_sec, 4))
+count5t <- ms_time_slice %>%
+  group_by(RT_binned_q, stimuli) %>%
+  summarise(subjcount = n_distinct(Sub.Num), totalcount = n())
+ms_time_slice <- ms_time_slice %>%
   group_by(RT_binned_q, stimuli, Sub.Num) %>% 
   summarise(ss_acc = mean(correct, na.rm=T)) %>% 
   group_by(RT_binned_q, stimuli) %>% 
   multi_boot_standard("ss_acc") 
 
 ms_time_slice$RT_binned_q <- plyr::revalue(ms_time_slice$RT_binned_q, 
-                                           c("(0.031,0.3]"= "Q1", 
-                                             "(0.3,0.667]" = "Q2",
-                                             "(0.667,1]" = "Q3", 
-                                             "(1,2]" = "Q4"))
+                                           c("(0.0301,0.3]"= "Q1", 
+                                             "(0.3,0.7]" = "Q2",
+                                             "(0.7,1.07]" = "Q3", 
+                                             "(1.07,2.97]" = "Q4"))
 
 ggplot(aes(x=RT_binned_q, y=mean, color = stimuli, group = stimuli), 
        data = ms_time_slice) + 
@@ -674,75 +678,135 @@ ggplot(aes(x=RT_binned_q, y=mean, color = stimuli, group = stimuli),
   directlabels::geom_dl(aes(label = stimuli), method = list("last.qp", hjust = -0.3)) +
   xlab("RT Quantile") +
   ylab("Proportion Correct")  +
-  theme(text = element_text(size=20)) 
+  theme(text = element_text(size=30)) 
 ```
 
+Split into quintiles
+```{r}
+library("directlabels")
+
+ms_time_slice <- df %>% 
+  filter(age_code == "child", is.na(RT_sec) == F) %>% 
+  mutate(RT_binned = cut(RT_sec, breaks = 5),
+         RT_binned_q = lsr::quantileCut(RT_sec, 5)) %>%
+  group_by(RT_binned_q, stimuli, Sub.Num) %>% 
+  summarise(ss_acc = mean(correct, na.rm=T)) %>% 
+  group_by(RT_binned_q, stimuli) %>% 
+  multi_boot_standard("ss_acc") 
+
+ms_time_slice$RT_binned_q <- plyr::revalue(ms_time_slice$RT_binned_q, 
+                                           c("(0.0301,0.233]"= "Q1", 
+                                             "(0.233,0.567]" = "Q2",
+                                             "(0.567,0.833]" = "Q3", 
+                                             "(0.833,1.2]" = "Q4",
+                                             "(1.2,2.97]" = "Q5"))
+
+ggplot(aes(x=RT_binned_q, y=mean, color = stimuli, group = stimuli), 
+       data = ms_time_slice) + 
+  geom_pointrange(aes(ymin = ci_lower, ymax = ci_upper), 
+                  position = position_jitter(width = .1)) +
+  geom_line() +
+  scale_color_solarized() +
+  geom_hline(yintercept = 0.5, lty = "dashed") +
+  guides(color = F) +
+  directlabels::geom_dl(aes(label = stimuli), method = list("last.qp", hjust = -0.3)) +
+  xlab("RT Quantile") +
+  ylab("Proportion Correct")  +
+  theme(text = element_text(size=30)) 
+```
 
 
 Split into quantiles separately for each condition
 
 ```{r}
-timeslice_setup <- df %>% 
-  filter(age_code == "child", is.na(RT_sec) == F)
-
-timeslice_ASL <- timeslice_setup %>%
-  filter(stimuli == "ASL") %>%
+timeslice_condition4 <- df %>% 
+  filter(age_code == "child", is.na(RT_sec) == F) %>%
+  group_by(stimuli) %>%
   mutate(RT_binned = cut(RT_sec, breaks = 4),
-         RT_binned_q = lsr::quantileCut(RT_sec, 4)) %>%
+         RT_binned_q = lsr::quantileCut(RT_sec, 4))
+count4 <- timeslice_condition4 %>%
+  group_by(RT_binned_q, stimuli) %>%
+  summarise(subjcount = n_distinct(Sub.Num), totalcount = n())
+timeslice_condition4 <- timeslice_condition4 %>%
   group_by(RT_binned_q, stimuli, Sub.Num) %>% 
   summarise(ss_acc = mean(correct, na.rm=T)) %>% 
   group_by(RT_binned_q, stimuli) %>% 
-  multi_boot_standard("ss_acc") 
-timeslice_ASL$RT_binned_q <- plyr::revalue(timeslice_ASL$RT_binned_q, 
-                                           c("(0.0301,0.833]"= "Q1", 
+  multi_boot_standard("ss_acc")
+ 
+timeslice_condition4$RT_binned_q <- plyr::revalue(timeslice_condition4$RT_binned_q, 
+                                           c("(0.0301,0.833]"= "Q1",
                                              "(0.833,1.13]" = "Q2",
                                              "(1.13,1.5]" = "Q3", 
-                                             "(1.5,2.97]" = "Q4"))
-
-timeslice_Face <- timeslice_setup %>%
-  filter(stimuli == "Face") %>%
-  mutate(RT_binned = cut(RT_sec, breaks = 4),
-         RT_binned_q = lsr::quantileCut(RT_sec, 4)) %>%
-  group_by(RT_binned_q, stimuli, Sub.Num) %>% 
-  summarise(ss_acc = mean(correct, na.rm=T)) %>% 
-  group_by(RT_binned_q, stimuli) %>% 
-  multi_boot_standard("ss_acc") 
-timeslice_Face$RT_binned_q <- plyr::revalue(timeslice_Face$RT_binned_q, 
-                                           c("(0.0301,0.567]"= "Q1", 
+                                             "(1.5,2.97]" = "Q4",
+                                             "(0.0301,0.567]"= "Q1", 
                                              "(0.567,0.867]" = "Q2",
                                              "(0.867,1.07]" = "Q3", 
-                                             "(1.07,2.9]" = "Q4"))
-
-timeslice_Obj <- timeslice_setup %>%
-  filter(stimuli == "Object") %>%
-  mutate(RT_binned = cut(RT_sec, breaks = 4),
-         RT_binned_q = lsr::quantileCut(RT_sec, 4)) %>%
-  group_by(RT_binned_q, stimuli, Sub.Num) %>% 
-  summarise(ss_acc = mean(correct, na.rm=T)) %>% 
-  group_by(RT_binned_q, stimuli) %>% 
-  multi_boot_standard("ss_acc") 
-timeslice_Obj$RT_binned_q <- plyr::revalue(timeslice_Obj$RT_binned_q, 
-                                           c("(0.0301,0.2]"= "Q1", 
+                                             "(1.07,2.9]" = "Q4",
+                                             "(0.0301,0.2]"= "Q1", 
                                              "(0.2,0.433]" = "Q2",
                                              "(0.433,0.683]" = "Q3", 
-                                             "(0.683,2.97]" = "Q4"))
-
-timeslice_Bull <- timeslice_setup %>%
-  filter(stimuli == "Bullseye") %>%
-  mutate(RT_binned = cut(RT_sec, breaks = 4),
-         RT_binned_q = lsr::quantileCut(RT_sec, 4)) %>%
-  group_by(RT_binned_q, stimuli, Sub.Num) %>% 
-  summarise(ss_acc = mean(correct, na.rm=T)) %>% 
-  group_by(RT_binned_q, stimuli) %>% 
-  multi_boot_standard("ss_acc") 
-timeslice_Bull$RT_binned_q <- plyr::revalue(timeslice_Bull$RT_binned_q, 
-                                           c("(0.0305,0.167]"= "Q1", 
+                                             "(0.683,2.97]" = "Q4",
+                                             "(0.0305,0.167]"= "Q1", 
                                              "(0.167,0.333]" = "Q2",
                                              "(0.333,0.633]" = "Q3", 
                                              "(0.633,2.57]" = "Q4"))
 
-timeslice_setup <- rbind(timeslice_Obj, timeslice_ASL, timeslice_Face, timeslice_Bull)
+# graphing
+ggplot(aes(x=RT_binned_q, y=mean, color = stimuli, group = stimuli), 
+       data = timeslice_condition4) + 
+  geom_pointrange(aes(ymin = ci_lower, ymax = ci_upper), 
+                  position = position_jitter(width = .1)) +
+  geom_line() +
+  scale_color_solarized() +
+  geom_hline(yintercept = 0.5, lty = "dashed") +
+  guides(color = F) +
+  directlabels::geom_dl(aes(label = stimuli), method = list("last.qp", hjust = -0.3)) +
+  xlab("RT Quantile") +
+  ylab("Proportion Correct")  +
+  theme(text = element_text(size=30)) 
+```
 
+
+Split into quintiles
+
+```{r}
+timeslice_condition5 <- df %>% 
+  filter(age_code == "child", is.na(RT_sec) == F) %>%
+  group_by(stimuli) %>%
+  mutate(RT_binned = cut(RT_sec, breaks = 5),
+         RT_binned_q = lsr::quantileCut(RT_sec, 5))
+count5 <- timeslice_condition5 %>%
+  group_by(RT_binned_q, stimuli) %>%
+  summarise(subjcount = n_distinct(Sub.Num), totalcount = n())
+timeslice_condition5 <- timeslice_condition5 %>%
+  group_by(RT_binned_q, stimuli, Sub.Num) %>% 
+  summarise(ss_acc = mean(correct, na.rm=T)) %>% 
+  group_by(RT_binned_q, stimuli) %>% 
+  multi_boot_standard("ss_acc")
+
+timeslice_condition5$RT_binned_q <- plyr::revalue(timeslice_condition5$RT_binned_q, 
+                                           c("(0.0301,0.767]"= "Q1", 
+                                             "(0.767,1.03]" = "Q2",
+                                             "(1.03,1.27]" = "Q3", 
+                                             "(1.27,1.63]" = "Q4",
+                                             "(1.63,2.97]" = "Q5",
+                                             "(0.0301,0.433]"= "Q1", 
+                                             "(0.433,0.767]" = "Q2",
+                                             "(0.767,0.9]" = "Q3", 
+                                             "(0.9,1.2]" = "Q4",
+                                             "(1.2,2.9]" = "Q5",
+                                             "(0.0301,0.167]"= "Q1", 
+                                             "(0.167,0.333]" = "Q2",
+                                             "(0.333,0.52]" = "Q3", 
+                                             "(0.52,0.733]" = "Q4",
+                                             "(0.733,2.97]" = "Q5",
+                                             "(0.0305,0.133]"= "Q1", 
+                                             "(0.133,0.233]" = "Q2",
+                                             "(0.233,0.467]" = "Q3", 
+                                             "(0.467,0.667]" = "Q4",
+                                             "(0.667,2.57]" = "Q5"))
+
+# graphing
 ggplot(aes(x=RT_binned_q, y=mean, color = stimuli, group = stimuli), 
        data = timeslice_setup) + 
   geom_pointrange(aes(ymin = ci_lower, ymax = ci_upper), 
@@ -754,7 +818,69 @@ ggplot(aes(x=RT_binned_q, y=mean, color = stimuli, group = stimuli),
   directlabels::geom_dl(aes(label = stimuli), method = list("last.qp", hjust = -0.3)) +
   xlab("RT Quantile") +
   ylab("Proportion Correct")  +
-  theme(text = element_text(size=20)) 
+  theme(text = element_text(size=30)) 
+```
+
+
+X-axis by avg RT
+
+```{r}
+timeslices_avg <- df %>%
+  filter(age_code == "child", is.na(RT_sec) == F) %>%
+  group_by(stimuli) %>%
+  mutate(RT_binned = cut(RT_sec, breaks = 5),
+         RT_binned_q = lsr::quantileCut(RT_sec, 5)) %>%
+  group_by(stimuli, RT_binned_q) %>%
+  mutate(RT_bin_avg = mean(RT, na.rm = T))
+count_avg <- timeslices_avg %>%
+  group_by(RT_binned_q, stimuli) %>%
+  summarise(subjcount = n_distinct(Sub.Num), totalcount = n())
+timeslices_avg <- timeslices_avg %>%
+  group_by(RT_bin_avg, stimuli, Sub.Num) %>% 
+  summarise(ss_acc = mean(correct, na.rm=T)) %>%
+  group_by(RT_bin_avg, stimuli) %>% 
+  multi_boot_standard("ss_acc")
+
+ggplot(aes(x=RT_bin_avg, y=mean, color = stimuli, group = stimuli), 
+       data = timeslices_avg) + 
+  geom_pointrange(aes(ymin = ci_lower, ymax = ci_upper)) +
+  geom_line() +
+  scale_color_solarized() +
+  geom_hline(yintercept = 0.5, lty = "dashed") +
+  guides(color = F) +
+  xlab("Average RT by 100 ms") +
+  ylab("Proportion Correct")  +
+  theme(text = element_text(size=30)) 
+```
+
+
+### Split by RT Range
+
+```{r}
+timeslice_range <- df %>%
+  filter(age_code == "child", is.na(RT_sec) == F) %>%
+  mutate(RT_bin = cut(RT, breaks = c(0, sequence(6)*500))) %>%
+  group_by(RT_bin, stimuli) %>%
+  mutate(RT_bin_avg = mean(RT, na.rm = T))
+count_range <- timeslice_range %>%
+  group_by(RT_bin, stimuli) %>%
+  summarise(subjcount = n_distinct(Sub.Num), totalcount = n())
+timeslice_range <- timeslice_range %>%
+  group_by(RT_bin_avg, stimuli, Sub.Num) %>% 
+  summarise(ss_acc = mean(correct, na.rm=T)) %>% 
+  group_by(RT_bin_avg, stimuli) %>% 
+  multi_boot_standard("ss_acc")
+
+ggplot(aes(x=RT_bin_avg, y=mean, color = stimuli, group = stimuli), 
+       data = timeslice_range) + 
+  geom_pointrange(aes(ymin = ci_lower, ymax = ci_upper)) +
+  geom_line() +
+  scale_color_solarized() +
+  geom_hline(yintercept = 0.5, lty = "dashed") +
+  guides(color = F) +
+  xlab("Average RT by 100 ms") +
+  ylab("Proportion Correct")  +
+  theme(text = element_text(size=30)) 
 ```
 
 
@@ -762,7 +888,7 @@ ggplot(aes(x=RT_binned_q, y=mean, color = stimuli, group = stimuli),
 
 First attempt at multinomial processing tree model of proportion accuracy over time. 
 
-Here we model the increase in goal-driven behavior over time in the 
+Here we model the increase in goal-driven behavior over time
 
 ```{r}
 library(mpt)
@@ -788,6 +914,11 @@ mpt_ASL <- mpt_data %>% subset(stimuli == "ASL")
 mpt_Face <- mpt_data %>% subset(stimuli == "Face")
 mpt_Obj <- mpt_data %>% subset(stimuli == "Object")
 mpt_Bull <- mpt_data %>% subset(stimuli == "Bullseye")
+
+ASLtimes = mpt_ASL$RTavg
+Facetimes = mpt_Face$RTavg
+Objtimes = mpt_Obj$RTavg
+Bulltimes = mpt_Bull$
 
 # formatting to match retroact
 mpt_ASL <- subset(mpt_ASL, select=c(RTcat, treeid, resp, freq)) %>% as.data.frame()
@@ -840,9 +971,6 @@ Bullspec <- mptspec(
   (1 - exp(-rate*(1.9400000 - onset))) + ((1 - (1 - exp(-rate*(1.9400000 - onset)))) * 0.5)
 )
 
-spec_2 <- mptspec(
-  c*r
-)
 
 # fit model
 mptASL <- mpt(ASLspec, mpt_ASL)
@@ -850,10 +978,7 @@ mptFace <- mpt(Facespec, mpt_Face)
 mptObj <- mpt(Objspec, mpt_Obj)
 mptBull <- mpt(Bullspec, mpt_Bull)
 
-vals <- mpt1$coefficients
-rate <- vals[1]
-time <- vals[2]
-curve_onset <- vals[3]
+
 
 incorrectfunc = function(rate, time, curve_onset){
   return ((1 - (1 - exp(-rate*(time - curve_onset)))) * 0.5)
