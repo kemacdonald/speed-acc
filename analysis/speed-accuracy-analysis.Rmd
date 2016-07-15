@@ -1055,8 +1055,7 @@ Bull_ewma <- filter(ewma_data, stimuli == "Bullseye")
 Bullcut <-
   ewma(Bull_ewma)/1000
   
-## make correcting plots for ASL
-## scatterplot of RT vs dweltime on incorrect in ASL vs spoken
+## TODO - scatterplot of RT vs dweltime on incorrect in ASL vs spoken
 ```
 
 Average accuracy for all conditions past cutoff
@@ -1076,6 +1075,7 @@ filteredavgs_all <- df %>%
   summarize(avg = mean(correct, na.rm=T))
 
 ```
+
 
 ## Off the shelf DDM Filtered based on EWMA
 
@@ -1233,4 +1233,43 @@ ggplot(aes(x = Condition, y = mean, fill = language_modality),
   ylab("Mean Param Value") +
   guides(fill = F) +
   theme(text = element_text(size = 30))
+```
+
+
+## Comparing accurate versus inaccurate ASL signers
+
+Load reaction time data and merge with eyemovement data
+```{r}
+idata <- read.csv("data/3_final_merged_data/speed-acc-cleaned-iChart.csv", check.names=F, stringsAsFactors=F)
+
+idata %<>% mutate(stimuli = ifelse(stimuli == "V1" | stimuli == "V2", "ASL", ifelse(stimuli == "Trio", "Object", ifelse(stimuli == "Bull", "Bullseye", stimuli))), stimuli = factor(stimuli, levels = c("ASL", "Face", "Object", "Bullseye")))
+
+fixna <- function(col){
+  column <- numeric(0)
+  valnum <- 0
+  for(val in col){
+    valnum <- valnum + 1
+    column[valnum] <- ifelse(val == ".", NA, as.numeric(val))
+  }
+  return(column)
+}
+
+timecourse <- merge(idata, df, by = c("Sub.Num", "Tr.Num")) %>%
+  mutate_each(funs(fixna), 10:100)
+
+timecourse <- timecourse %>%
+  filter(age_code.x == "child", stimuli.x == "ASL", is.na(RT.y) == F) %>%
+  group_by(correct) %>%
+  summarise_each(funs(mean(., na.rm = T)), 10:100) %>%
+  t()
+timecourse <- data.frame(timecourse[2:92,])
+colnames(timecourse) <- c(0, 1)
+names <- rownames(timecourse)
+timecourse$time <- as.numeric(names)
+```
+
+Actually making the timecourse plot!
+```{r}
+plot <- ggplot(timecourse, aes(x = time)) + geom_line(aes(y = timecourse[, 1], color = "incorrect")) + geom_line(aes(y = timecourse[, 2], color = "correct")) + scale_y_continuous(name = "Fixation")
+plot + geom_hline(yintercept = 0, size = 1) + geom_hline(yintercept = 1, size = 1) + geom_hline(yintercept = .5, linetype = 2)
 ```
