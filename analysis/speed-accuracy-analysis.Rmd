@@ -106,21 +106,39 @@ ss_prop <- df %>%
 
 Plot.
 
-```{r}
+```{r boxplot}
+ggplot(aes(x = stimuli, y = mean_correct, fill = language_modality), 
+       data = filter(ss_prop, age_code == "child", correct == 1)) +
+  geom_boxplot(outlier.colour = "red") +
+  geom_jitter(width = 0.2, alpha = 0.35) +
+  geom_hline(yintercept = 0.5, lty = "dashed") +
+  ylim(0,1) +
+  xlab(NULL) +
+  ylab("Mean Accuracy") +
+  scale_fill_solarized() +
+  theme(text = element_text(size=20)) +
+  guides(fill = F) +
+  ggtitle("Accuracy")
+
+```
+
+```{r bar graph}
 ms <- ss_prop %>%
-  filter(age_code == "child", correct == 1) %>%
+  ungroup() %>% 
+  filter(age_code == "child") %>%
+  select(language_modality, age_code, stimuli, Sub.Num, mean_correct) %>% 
+  distinct() %>% 
   group_by(language_modality, age_code, stimuli) %>% 
   multi_boot_standard(column = "mean_correct") 
 
 ggplot(aes(x = stimuli, y = mean, fill = language_modality), data = ms) +
-  geom_bar(stat = "identity", position = position_dodge()) +
-  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper),  
-                 position = position_dodge(width = 0.9)) +
+  geom_bar(stat = "identity") +
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper)) +
   geom_hline(yintercept = 0.5, lty = "dashed") +
   xlab(NULL) +
   ylab("Mean Accuracy") +
   scale_fill_solarized() +
-  theme(text = element_text(size=36)) +
+  theme(text = element_text(size=20)) +
   guides(fill = F) +
   ggtitle("Accuracy")
 ```
@@ -164,6 +182,24 @@ ggplot(aes(x = stimuli, y = median, fill = language_modality),
   scale_fill_solarized() +
   guides(fill = F) + 
   theme(text = element_text(size=36)) +
+  xlab(NULL) +
+  ylab("Median RT") +
+  coord_flip() +
+  ggtitle("Reaction Time")
+```
+
+RT boxplot
+
+```{r rt boxplot}
+ss_prop$stimuli <- factor(ss_prop$stimuli, levels = c("Bullseye", "Object", "Face", "ASL"))
+
+ggplot(aes(x = stimuli, y = mean_rt, fill = language_modality), 
+       data = filter(ss_prop, age_code == "child", correct == 1)) + 
+  geom_boxplot(outlier.colour = "red") +
+  geom_jitter(width = 0.4, alpha = 0.35) +
+  scale_fill_solarized() +
+  guides(fill = F) + 
+  theme(text = element_text(size=20)) +
   xlab(NULL) +
   ylab("Median RT") +
   coord_flip() +
