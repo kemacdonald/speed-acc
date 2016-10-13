@@ -11,7 +11,7 @@ to.n <- function (x) {
 ## adapted from aen and dy
 ################################################################################
 
-read.smi.idf <- function (file.name, header.rows=32, suffix.len=4) {
+read.smi.idf <- function (file.name, header.rows=34, suffix.len=4) {
   
   ## read the header from the file to paste back into the new file
   header <- scan(file.name, what = character(),
@@ -39,6 +39,7 @@ read.smi.idf <- function (file.name, header.rows=32, suffix.len=4) {
   
   ## Now get "messages" - about the stimulus that's being presented
   all.d$rawx <- all.d$"L Raw X [px]"
+  
   msgs <- all.d %>% 
     filter(Type=="MSG") %>%
     select(Time, rawx) %>%
