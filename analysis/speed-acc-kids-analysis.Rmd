@@ -22,20 +22,13 @@ knitr::opts_chunk$set(warning=F, message=F, sanitize = T,
 
 # to reproduce simulations
 set.seed(0) 
+```
 
-# devtools::install_github("langcog/langcog")
-library(langcog)
-library(magrittr)
-library(RWiener)
-library(stringr)
-library(GGally)
-library(kmr)
-library(lme4)
-library(lsr)
-library(plyr)
-library(gridExtra)
-library(dplyr)
-library(tidyr)
+```{r libraries, echo = F}
+library(langcog); library(magrittr); library(RWiener)
+library(stringr); library(GGally); 
+library(lme4); library(lsr); library(plyr)
+library(gridExtra); library(dplyr); library(tidyr)
 library(ggplot2)
 theme_set(theme_bw()) # set the ggplot theme that we think is pretty
 ```
@@ -48,7 +41,8 @@ Eye movement data
 df <- read.csv("../data/3_final_merged_data/speed-acc-ss-df.csv", 
                check.names=F, stringsAsFactors=F) 
 
-df %<>% mutate(stimuli = ifelse(stimuli == "V1" | stimuli == "V2", "ASL", 
+df %<>% 
+  mutate(stimuli = ifelse(stimuli == "V1" | stimuli == "V2", "ASL", 
                           ifelse(stimuli == "Trio", "Object", 
                                  ifelse(stimuli == "Bull", "Bullseye",
                                         stimuli))),
@@ -57,15 +51,14 @@ df %<>% mutate(stimuli = ifelse(stimuli == "V1" | stimuli == "V2", "ASL",
 
 ## Descriptives
 
-How many participants in each stimuli set and language modality? `Age_code_m` is a hacky way
-to track the different age groups that saw the Trio stimuli.
+How many participants in each stimuli set and language modality? `Age_code_m` is a hacky way to track the different age groups that saw the Trio stimuli.
 
 ```{r}
 df %>% 
   select(Sub.Num, language_modality, age_code, stimuli) %>% 
   unique() %>% 
   group_by(language_modality, age_code, stimuli) %>% 
-  summarise(count = n()) %>% 
+  dplyr::summarise(count = n()) %>% 
   knitr::kable()
 ```
 
@@ -119,7 +112,6 @@ ggplot(aes(x = stimuli, y = mean_correct, fill = language_modality),
   theme(text = element_text(size=20)) +
   guides(fill = F) +
   ggtitle("Accuracy")
-
 ```
 
 ```{r bar graph}
@@ -181,7 +173,7 @@ ggplot(aes(x = stimuli, y = median, fill = language_modality),
                  position = position_dodge(width = 0.9)) +
   scale_fill_solarized() +
   guides(fill = F) + 
-  theme(text = element_text(size=36)) +
+  theme(text = element_text(size=16)) +
   xlab(NULL) +
   ylab("Median RT") +
   coord_flip() +
@@ -191,7 +183,8 @@ ggplot(aes(x = stimuli, y = median, fill = language_modality),
 RT boxplot
 
 ```{r rt boxplot}
-ss_prop$stimuli <- factor(ss_prop$stimuli, levels = c("Bullseye", "Object", "Face", "ASL"))
+ss_prop$stimuli <- factor(ss_prop$stimuli, 
+                          levels = c("Bullseye", "Object", "Face", "ASL"))
 
 ggplot(aes(x = stimuli, y = mean_rt, fill = language_modality), 
        data = filter(ss_prop, age_code == "child", correct == 1)) + 
@@ -251,7 +244,7 @@ ggplot(aes(x = RT, fill = Response.Type),
   ylab("Density") +
   scale_fill_manual(values = c("orangered", "green3")) +
   scale_color_manual(values = c("orangered", "green4")) +
-  theme(text = element_text(size=24),
+  theme(text = element_text(size=18),
         legend.position = "top",
         panel.margin = unit(2, "lines")) +
   scale_y_continuous(breaks = c(0, .001)) +
@@ -462,7 +455,7 @@ sub.pars <- data.frame(Separation = numeric(),
 d$resp <- as.character(d$resp)
 ```
 
-```{r estpars}
+```{r}
 conditions <- unique(as.character(d$stimuli))
 subs <- unique(as.character(d$Sub.Num))
 
@@ -537,7 +530,7 @@ ggplot(aes(x = Condition, y = mean, fill = language_modality),
   scale_fill_solarized() + 
   ylab("Mean Param Value") +
   guides(fill = F) +
-  theme(text = element_text(size = 30)) 
+  theme(text = element_text(size = 16)) 
 ```
 
 ## model parameter values
@@ -594,7 +587,8 @@ ggplot(aes(x = Param, y = mean, fill = Hearing.Status),
 # get the data we care about and format for Rwiener functions
 # columns need to be named "q" for RT and "resp" for response
 d.adults <- df %>% 
-  filter(age_code == "adult", trial_type != "no_shift", is.na(RT_sec) == F, RT_sec > .1) %>% 
+  filter(age_code == "adult", trial_type != "no_shift", is.na(RT_sec) == F, 
+         RT_sec > .1) %>% 
   select(Sub.Num, stimuli, RT_sec, correct) %>% 
   mutate(resp = factor(correct),
          resp = plyr::revalue(resp, c("0" = "lower", "1" = "upper")),
@@ -1101,10 +1095,11 @@ Bull_ewma <- filter(ewma_data, stimuli == "Bullseye")
 Bullcut <-
   ewma(Bull_ewma)/1000
   
-## TODO - scatterplot of RT vs dweltime on incorrect in ASL vs spoken
+## TODO - scatterplot of RT vs dwelltime on incorrect in ASL vs spoken
 ```
 
 Average accuracy for all conditions past cutoff
+
 ```{r}
 # ASL and Face after their respective cutoffs
 filteredavgs <- df %>%
@@ -1126,7 +1121,7 @@ filteredavgs_all <- df %>%
 ## Off the shelf DDM Filtered based on EWMA
 
 Just ASL and Face conditions
-```{r estpars}
+```{r}
 dfiltered <- filter(d, (stimuli == "ASL" & q >= ASLcut)
                     | (stimuli == "Face" & q >= Facecut))
 filteredpars <- sub.pars
@@ -1148,7 +1143,7 @@ for (j in 1:length(subs)) {
 ```
 
 Graphed:
-```{r plotpars, fig.width=8, fig.height=6}
+```{r plotpars3, fig.width=8, fig.height=6}
 
 # formatting data
 filteredpars$Separation <- as.numeric(filteredpars$Separation)
@@ -1226,7 +1221,7 @@ for (j in 1:length(subs)) {
 ```
 
 Density graph:
-```{r plotpars, fig.width=8, fig.height=6}
+```{r plotpars2, fig.width=8, fig.height=6}
 
 # formatting data
 filteredpars_all$Separation <- as.numeric(filteredpars_all$Separation)

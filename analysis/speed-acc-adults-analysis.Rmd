@@ -15,25 +15,27 @@ knitr::opts_chunk$set(echo=F, warning=F, cache=F, message=F, sanitize = T)
 
 This script munges eye-tracking data for an experiment comparing speed-accuracy tradeoffs when establishing reference in real-time. We vary the information value and saliency of the center fixation and measure the effects on accuracy and RT.
 
-```{r setup2} 
+```{r libraries} 
 rm(list = ls())
+library(langcog); library(lme4); library(directlabels)
+library(lazyeval); library(yarrr); library(forcats); library(arm)
 library(dplyr); library(readr); library(magrittr)
 library(ggplot2); library(tidyr); library(knitr)
-library(langcog); library(lme4); library(directlabels)
-library(lazyeval); library(yarrr)
+# plotting styles
 theme_set(theme_bw())
 ```
 
 ```{r read data}
-d <- read_csv("../data/3_final_merged_data/speed_acc_processed_adult_tidy_data.csv")
+d <- read_csv("../data/3_final_merged_data/speed_acc_adult_timecourse_tidy.csv")
+d.fs <- read_csv("../data/3_final_merged_data/speed_acc_adult_fstshift_tidy.csv")
 ```
 
 ## Visualize looking behavior 
 
-Filter to get the anlaysis window (one second before the noun onset). Start is when the center fixation appeared. End is the end of the trial. We also only select one of the response types since these data are in long format and effectively the looking time data appear three times.
+Filter to get the anlaysis window (one second before the noun onset). Start is when the center fixation appeared. End is the end of the trial. 
 
 ```{r}
-d.filt <- d %>% filter(t.stim > 0, t.stim <= 5, response_type == "noun.onset") 
+d.filt <- d %>% filter(t.stim > 0, t.stim <= 5) 
 ```
 
 First, we generate curves that represent center, target, and distractor looking over time
@@ -136,36 +138,24 @@ Participants look less at the center fixation when it's a static bullseye, more 
 First, we analyze RT and accuracy of first shifts that are computed from noun onset.
 
 ```{r}
-d.fs <- d %>% 
-  select(subid, tr.num, response_type, rt, shift_type, shift_accuracy, condition) %>% 
-  unique()
-```
-
-Create a barplot of the different shift types for the different critical onsets.
-
-```{r, fig.width=8}
 d.fs %>% 
-  group_by(shift_type, response_type) %>% 
-  count() %>%
-  mutate(prop = n / nrow(d.fs)) %>% 
-  filter(shift_type != "no_shift") %>% 
-  ggplot(aes(x=response_type, y = prop)) +
-  geom_bar(stat = "identity") +
-  facet_wrap(~shift_type)
+  filter(shift_type %in% c("C_T", "C_D")) %>% 
+  group_by(shift_type, response_onset_type) %>% 
+  count() %>% 
+  kable()
 ```
 
 Regardless of when you start the clock, only ~5% of shifts are incorrect, This makes sense since this is an easy task for adults. 
 
 ```{r summarize RT for correct and incorrect shifts}
 ss.d.rt <- d.fs %>% 
-  filter(shift_type %in% c("C_T", "C_D"), response_type %in% c("noun.onset", "sentence.onset")) %>% 
-  select(subid, tr.num, condition, shift_accuracy, rt, response_type) %>% 
+  filter(shift_type %in% c("C_T", "C_D"), 
+         response_onset_type %in% c("noun", "sentence")) %>% 
+  select(subid, tr.num, condition, shift_accuracy, rt, response_onset_type) %>% 
   unique()
-```
 
-```{r}
 ms.rt <- ss.d.rt %>% 
-  group_by(condition, shift_accuracy, response_type) %>% 
+  group_by(condition, shift_accuracy, response_onset_type) %>% 
   summarise(med = median(rt))
 ```
 
@@ -175,7 +165,7 @@ Distribution of RTs for correct vs. incorrect shifts from noun onset and from se
 ggplot(aes(x = rt, fill = shift_accuracy), data = ss.d.rt) +
   #geom_density(alpha = 0.7, adjust = 1.5) + 
   geom_histogram(alpha = 0.7, position = "identity") +
-  facet_grid(condition~response_type) +
+  facet_grid(condition~response_onset_type) +
   geom_vline(aes(xintercept = med, color = shift_accuracy), size = 1, lty = "dashed", 
              data = ms.rt) +
   guides(color = F) + 
@@ -196,17 +186,18 @@ First we aggregate median RT for each participant.
 
 ```{r}
 ss.rt <- ss.d.rt %>% 
-  filter(response_type == "noun.onset") %>% 
-  group_by(condition, subid) %>% 
-  summarise(med = median(rt))
+  filter(response_onset_type == "noun") %>% 
+  group_by(condition, subid, shift_accuracy) %>% 
+  summarise(med_rt = median(rt))
 ```
 
 Then we make a boxplot.
 
 ```{r}
-pirateplot(med ~ condition, 
-           pal = "google", ylim = c(0,1),
-           data = ss.rt)
+ggplot(aes(x = condition, y = med_rt, fill = shift_accuracy), data = ss.rt) +
+  geom_boxplot(width = 0.7) +
+  geom_point(alpha = 0.6, position = position_jitterdodge(jitter.width = 0.2, dodge.width = 0.5)) +
+  scale_fill_manual(values = c("darkorange", "dodgerblue")) 
 ```
 
 
@@ -238,17 +229,17 @@ ewma_function <- function(df, rt_column = "RT", lambda = .01, cs = .5, sigma = .
 
 First we munge the data to feed into the EWMA function.
 
-```{r}
+```{r ewma munge}
 d.fs.ewma <- d.fs %>% 
-  select(subid, tr.num, shift_accuracy, rt, response_type, condition) %>% 
-  filter(is.na(rt) == F, response_type == "noun.onset") %>% 
+  select(subid, tr.num, shift_accuracy, rt, response_onset_type, condition) %>% 
+  filter(is.na(rt) == F, response_onset_type == "noun") %>% 
   mutate(correct = ifelse(shift_accuracy == "correct", 1, 0), 
          RT = rt)
 ```
 
 Fit the EWMA model and plot results.
 
-```{r, fig.height=8}
+```{r ewma model}
 ewma.results <- d.fs.ewma %>% 
   group_by(condition) %>% 
   do(ewma_function(., rt_column = "RT", L = 2.5, lambda = .05)) %>% 
@@ -256,6 +247,7 @@ ewma.results <- d.fs.ewma %>%
          cs = round(as.numeric(cs), 2),
          ucl = round(as.numeric(ucl), 2),
          guess = ifelse(cs < ucl, "guess", "response"),
+         guess_num = ifelse(guess == "response", 1, 0),
          ucl_bound = abs(ucl-cs))
 
 cutoffs <- ewma.results %>% 
@@ -265,38 +257,121 @@ cutoffs <- ewma.results %>%
   group_by(condition) %>% 
   summarise(cutoff = median(cutoff))
 
-
-ggplot(data = ewma.results) +
-  geom_line(aes(x = rt, y = cs, color = "cs", group = 1)) +
-  geom_line(aes(x = rt, y = ucl, color = "UCL")) +
-  geom_vline(aes(xintercept = cutoff), linetype = 2, data = cutoffs) +
-  ylab("Moving Average") + xlab("Reaction Time") +
-  facet_grid(condition~.) 
 ```
 
-What do we see? The bullseye condition crosses the threshold after 1 second. The face, text, and text-audio all cross the threshold earlier in the window. Text-no-audio crosses earliest given these parameters of the EWMA model. Finally, in the text-no-audio condition, there are no early RTs to model. 
+```{r ewma plot, fig.height=8}
+ggplot(data = ewma.results) +
+  geom_line(aes(x = rt, y = cs, color = "Moving Average", group = 1), size = 1) +
+  geom_line(aes(x = rt, y = ucl, color = "Threshold Limit"), size = 0.5) +
+  geom_vline(aes(xintercept = cutoff), linetype = 2, data = cutoffs) +
+  geom_hline(yintercept = 0.5, linetype = "solid") +
+  ylab("Moving Average") + xlab("Reaction Time") +
+  facet_grid(condition~.) +
+  scale_color_manual(values = c("darkorange", "dodgerblue")) 
+```
 
-How should we add this information to the model?
+What do we see here? The bullseye condition crosses the threshold after 1 second. The face, text, and text-audio all cross the threshold earlier in the window. Text-no-audio crosses earliest given these parameters of the EWMA model. Finally, in the text-no-audio condition there aren't any early RTs to model. How should we add this information to the analysis?
 
+What we can do is compute the proportion of shifts that were categorized as a "fast guess" compared to a "valid response" for each participant for each condition.
+
+```{r}
+ss.guessing.prop <- ewma.results %>% 
+  group_by(subid, condition, guess) %>% 
+  summarise(count = n()) %>% 
+  mutate(prop.guessing = round(count / sum(count), 2))
+```
+
+Boxplot of proportion guessing by condition.
+
+```{r}
+ggplot(aes(x = fct_rev(condition), y = prop.guessing), 
+       data = filter(ss.guessing.prop, guess == "guess")) +
+  geom_boxplot(fill = "dodgerblue", width = 0.7) +
+  geom_jitter(width= 0.2, alpha = 0.7) + 
+  labs(
+    x = "Condition",
+    y = "Prop. Guessing"
+  ) +
+  coord_flip()
+```
+
+This looks like what we saw in the EWMA control charts: bullseye is mostly guesses, whereas face, text, and text-no-audio are mostly valid resposnes. However, this analysis still does not caputre one effect in the EWMA chart, which is the amount of *time* spent in a guessing phase vs. a valid response phase.
+
+To get at this effect, we compute the difference in time from first guessing response to first valid response for each participant for each condition. 
+
+```{r}
+compute_guessing_window <- function(sub_df) {
+  # compute guessing window
+  crit.window.responses <- sub_df %>%
+    ungroup() %>% 
+    select(guess, RT) %>% 
+    group_by(guess) %>% 
+    summarise(min_rt = min(RT)) %>% 
+    arrange(min_rt) 
+  # if "resposne" not in the vector then ss was guessing on all shifts in that condition 
+  if (!("response" %in% crit.window.responses$guess)) {
+    # just use the diff between earliest and latest shifts
+    sub_df$time_guessing <- max(sub_df$RT) - min(sub_df$RT) 
+  } else {
+    # here we use the diff between the earliest shift and the earliest "valid" (non-guess) shift
+    sub_df$time_guessing <- max(crit.window.responses$min_rt) - min(crit.window.responses$min_rt)  
+  }
+  return(sub_df)
+}
+```
+
+```{r}
+ss.guessing.window <- ewma.results %>% 
+  group_by(subid, condition) %>% 
+  do(compute_guessing_window(.)) %>% 
+  select(subid, time_guessing, condition) %>%
+  mutate(time_guessing = as.numeric(time_guessing)) %>% 
+  unique()
+```
+
+Boxplot of time guessing across the different conditions.
+
+```{r}
+ggplot(aes(x = fct_rev(condition), y = time_guessing), data = ss.guessing.window) +
+  geom_boxplot(fill = "dodgerblue", width = 0.7) +
+  geom_jitter(width= 0.2, alpha = 0.7) +
+  labs(
+    x = "Condition",
+    y = "Guesing Window (sec)"
+  ) +
+  coord_flip()
+```
 
 ## Stats for EWMA parameters
 
-Help! 
+Model the effect of condition on the the trial-level guessing vs. non-guessing responses. Note that the outcome measure -- guessing behavior -- is determined by the EWMA control process model described above. 
 
-```{r}
-ss.ewma <- ewma.results %>% 
-  filter(guess == "response") %>% 
-  group_by(condition, subid) %>% 
-  summarise_(cutoff = interp(~ min(x), x = as.name("rt")))
+In this model, we include a fixed effect of condition and a random effect of participant. We also test the following contrasts of interest: 
 
-ms.ewma <- ss.ewma %>% 
-  group_by(condition) %>% 
-  multi_boot_standard(column = "cutoff", empirical_function = "mean")
+* Bullseye vs. Face/Text/Text-no-audio
+* Text vs. No-text
+* Text-audio vs. Text-no-audio
+* Bullseye vs. Face
+
+```{r glmer guessing behavior}
+# contrast coding to test comparisons of interest
+# todo: fix contrast coding so model is not rank deficient
+ewma.results$condition_fact <- as.factor(ewma.results$condition)
+contrasts(ewma.results$condition_fact) <- cbind("noaudio_vs_audio" = c(1, 1, 1, -3), 
+                                      "notext_vs_text" = c(1, 1, -1, -1),
+                                      "textaudio_vs_textnoaudio" = c(0, 0, 1, -1),
+                                      "bullseye_vs_face" = c(1, -1, 0, 0))
+
+m1 <- glmer(guess_num ~ condition_fact + (1|subid) + (condition|subid), 
+            data = ewma.results,
+            nAGQ = 0,
+            family = binomial)
 ```
 
-```{r}
-pirateplot(cutoff ~ condition, data = ss.ewma)
+```{r anova guessing window}
+summary(aov(time_guessing ~ condition, data = ss.guessing.window))
 ```
+
 
 ## Fit Diffusion models
 
