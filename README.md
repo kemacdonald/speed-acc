@@ -1,2 +1,1 @@
-Repository for data, analysis, and model code for a project comparing speed-accuracy tradeoffs when 
-establishing reference during real-time language processing. 
+Repository for data, analysis, and model code for a project comparing the information gathering process during a speeded language processing task using the visual world paradigm. 
