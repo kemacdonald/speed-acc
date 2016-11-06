@@ -1,15 +1,15 @@
 #### This script takes in raw .xml files that have trial level information 
 #### and returns an order sheet with the target images, ROIs, and trial tag
 
+## Load libraries
+source("R/helper_functions/libraries.R")
 
-## Setup
-library(XML); library(stringr); library(tidyverse); 
-library(magrittr)
-read.path <- "trial_info_xml/"
+## Define global variables
+read.path <- "data/trial_info/trial_info_xml/"
 stim.names <- c("shoe", "book", "cookie", "ball", "juice", "banana")
 center.fixations <- c("text", "text-no-audio", "face")
 
-# these are the ROIs extracted from the .xml stimulus properties files
+# these ROI values were defined in the .xml stimulus properties files
 right_image_roi <- "7685761024768" 
 left_image_roi <- "0576256768"
 center_image_rois <- c("3330691269", "3070717230", "3330688269")
@@ -18,10 +18,10 @@ center_image_rois <- c("3330691269", "3070717230", "3330688269")
 files <- dir(read.path,pattern="*.xml")
 
 ## Read in stimulus log .xml to get stimulus id tag and source name
-stim.log <- xmlParse(file = "stimulus-log.xml") %>% 
+stim.log <- xmlParse(file = "data/trial_info/stimulus-log.xml") %>% 
   xmlToList()
 
-##### Loop through stimulus log list to get name and id tag for each trial
+## Loop through stimulus log list to get name and id tag for each trial
 stimulus.file.index <- 4
 stimulus.name.index <- 2
 trial_info_df <- data.frame()
@@ -85,7 +85,7 @@ for (file in files) {
 trial_info_df %<>% left_join(., trial.level.df, by = "stimulus")
 
 ###### Read in timing information for each stimlus item and add to final trial info df
-trial.timing.df <- read_csv("speed-acc-trial-timing-info.csv")
+trial.timing.df <- read_csv("data/trial_info/speed-acc-trial-timing-info.csv")
 trial_info_df %<>% left_join(., trial.timing.df, by = "target_image") %>% 
   unique()
 

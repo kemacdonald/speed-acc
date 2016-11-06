@@ -1,5 +1,5 @@
 ---
-title: "Speed-Accuracy Project Data Processing"
+title: "Speed-acc kids data processing"
 author: "Kyle MacDonald"
 date: "October 1, 2015"
 output: html_document
@@ -7,59 +7,10 @@ output: html_document
 
 ## Script to munge eye movement data
 
-```{r}
+```{r libraries}
 rm(list=ls())
-source("libraries_v_3.6.R")
-library(langcog)
-library(tidyr)
-library(dplyr)
-library(stringr)
-library(magrittr)
-```
-
-```{r score trial type}
-## Function for categorizing trials as correct or incorrect in 2-AFC gaze task
-## Takes in a row (trial), a start window, and an end window
-## Returns whether that trial was a correct or incorrect shift
-score_trial_type <- function(trial, start, end) { 
-    start_col <- which(names(trial)==start)
-    end_col <- which(names(trial)==end)
-    trial_type <- "no_shift"
-    rt <- NA
-    response <- trial[which(names(trial)=="Response")]
-    first_look_signer <- FALSE
-    
-    if (response == "D") {
-        for (col in start_col:end_col) {
-            prev_val <- trial[col-1]
-            curr_val <- trial[col]
-            next_val <- trial[col+1]
-            if(first_look_signer) {
-                if(curr_val == "." & prev_val == "0.5") {rt <- names(trial[col])} # store RT
-                
-                if(curr_val == "." & next_val %in% c("0", "1", "0.5", ".5")) {
-                    if(next_val == "1") {
-                        trial_type <- "C_T"
-                    } else if(next_val == "0.5" | next_val == ".5") {
-                        trial_type <- "C_C"
-                    } else {
-                        trial_type <- "C_D"    
-                    }
-                    break
-                }
-            } else {
-                ## check if current value is look to signer
-                ## if it is then we should start checking for trial_type
-                if(curr_val %in% c("0.5", ".5")) {
-                    first_look_signer <- TRUE
-                }
-            }
-        }
-    } else {
-        trial_type <- "off_center"
-    }
-    return(c(trial_type, rt))
-}
+source("R/helper_functions/libraries_v_3.6.R")
+source("R/helper_functions/libraries_and_functions.R")
 ```
 
 ### Read in icharts for ASL kids/adults and Trio Series
@@ -76,15 +27,15 @@ Note the use of the colClasses function to set all variables to be read as chara
 
 ```{r load data}
 ## ASL
-sol_demo <- read.csv("../data/demographics/sol_demo_all.csv", stringsAsFactors = F,
+sol_demo <- read.csv("data/demographics/sol_demo_all.csv", stringsAsFactors = F,
                      colClasses=c(rep("character", 
-                                      length(scan("../data/demographics/sol_demo_all.csv",sep=',', 
-                                                  what="character" , nlines=1 )))))
+                                      length(scan("data/demographics/sol_demo_all.csv", 
+                                                  sep=',', what="character" , nlines=1 )))))
 
-sol_df <- read.csv("../data/2_cleaned_data/sol-ichart-cleaned.csv", stringsAsFactors = F,
-                   colClasses=c(rep("character", 
-                                    length(scan("../data/2_cleaned_data/sol-ichart-cleaned.csv",sep=',', 
-                                                what="character" , nlines=1 )))))
+sol_df <- read.csv("data/2_cleaned_data/sol-ichart-cleaned.csv", stringsAsFactors = F,
+                   colClasses=c(rep("character",
+                                    length(scan("data/2_cleaned_data/sol-ichart-cleaned.csv", 
+                                                sep=',', what="character" , nlines=1 )))))
 
 sol_n <- sol_df %>% 
     select(Sub.Num) %>% 
@@ -92,15 +43,15 @@ sol_n <- sol_df %>%
     summarise(ASL = n())
 
 ## Trio Face
-trio_face <- read.csv("../data/2_cleaned_data/TrioFace26n24_cleaned.csv", stringsAsFactors = F, 
+trio_face <- read.csv("data/2_cleaned_data/TrioFace26n24_cleaned.csv", stringsAsFactors = F, 
                       colClasses=c(rep("character",
-                                       length(scan("../data/2_cleaned_data/TrioFace26n24_cleaned.csv",sep=',', 
-                                                   what="character" , nlines=1 )))))
+                                    length(scan("data/2_cleaned_data/TrioFace26n24_cleaned.csv",
+                                                sep=',', what="character" , nlines=1 )))))
 
-trio_ps <- read.csv("../data/demographics/trio_prescreening_info.csv", sep = ",", 
+trio_ps <- read.csv("data/trial_info/trio_prescreening_info.csv", sep = ",", 
                     stringsAsFactors = F,
                     colClasses=c(rep("character", 
-                                     length(scan("../data/demographics/trio_prescreening_info.csv",
+                                     length(scan("data/trial_info/trio_prescreening_info.csv",
                                                  sep=',', what="character" , nlines=1 )))))
 
 trio_n <- trio_face %>% 
@@ -109,9 +60,9 @@ trio_n <- trio_face %>%
     summarise(Face = n())
 
 ## Trio 26
-trio_26 <- read.csv("../data/2_cleaned_data/Trio_26_n18_cleaned.csv", stringsAsFactors = F,
+trio_26 <- read.csv("data/2_cleaned_data/Trio_26_n18_cleaned.csv", stringsAsFactors = F,
                          colClasses=c(rep("character",
-                                         length(scan("../data/2_cleaned_data/Trio_26_n18_cleaned.csv",
+                                         length(scan("data/2_cleaned_data/Trio_26_n18_cleaned.csv",
                                                      sep=',', what="character" , nlines=1 )))))
 
 trio_26_n <- trio_26 %>% 
@@ -120,10 +71,10 @@ trio_26_n <- trio_26 %>%
     summarise(Trio_26 = n())
 
 ## Trio 36
-trio_36 <- read.csv("../data/2_cleaned_data/Trio36m_n22_cleaned.csv", 
+trio_36 <- read.csv("data/2_cleaned_data/Trio36m_n22_cleaned.csv", 
                          stringsAsFactors = F,
                          colClasses=c(rep("character",
-                                    length(scan("../data/2_cleaned_data/Trio36m_n22_cleaned.csv",
+                                    length(scan("data/2_cleaned_data/Trio36m_n22_cleaned.csv",
                                                 sep=',', what="character" , nlines=1 )))))
 
 trio_36_n <- trio_36 %>% 
@@ -132,10 +83,10 @@ trio_36_n <- trio_36 %>%
     summarise(Trio_36 = n())
 
 ## Trio Adults
-trio_bull_adult <- read.csv("../data/2_cleaned_data/TrioBullAdult_icharts_n7_cleaned.csv", 
+trio_bull_adult <- read.csv("data/2_cleaned_data/TrioBullAdult_icharts_n7_cleaned.csv", 
                             stringsAsFactors = F,
-                            colClasses=c(rep("character",
-                                             length(scan("../data/2_cleaned_data/TrioBullAdult_icharts_n7_cleaned.csv",sep=',', 
+                            colClasses=c(rep("character", length(scan("data/2_cleaned_data/TrioBullAdult_icharts_n7_cleaned.csv",
+                                                                      sep=',', 
                                                          what="character" , nlines=1 )))))
 trio_bull_adult_n <- trio_bull_adult %>% 
     select(Sub.Num) %>% 
@@ -143,11 +94,11 @@ trio_bull_adult_n <- trio_bull_adult %>%
     summarise(Bull_Adult = n())
 
 ## Trio Bull
-trio_bull_26 <- read.csv("../data/2_cleaned_data/TrioBullAA26n18_cleaned.csv",
+trio_bull_26 <- read.csv("data/2_cleaned_data/TrioBullAA26n18_cleaned.csv",
                          stringsAsFactors = F,
                          colClasses=c(rep("character",
-                                             length(scan("../data/2_cleaned_data/TrioBullAA26n18_cleaned.csv",sep=',', 
-                                                         what="character" , nlines=1 )))))
+                                          length(scan("data/2_cleaned_data/TrioBullAA26n18_cleaned.csv",
+                                                      sep=',', what="character" , nlines=1 )))))
 
 trio_bull_26_n <- trio_bull_26 %>% 
     select(Sub.Num) %>% 
@@ -156,8 +107,11 @@ trio_bull_26_n <- trio_bull_26 %>%
 ```
 
 ```{r}
-df_n <- data.frame(ASL = sol_n$ASL, Face = trio_n$Face, Trio_26 = trio_26_n$Trio_26, 
-                   Trio_36 = trio_36_n$Trio_36, Bull_Adult = trio_bull_adult_n$Bull_Adult, Bull_26 = trio_bull_26_n$Bull_26) %>% 
+df_n <- data.frame(ASL = sol_n$ASL, Face = trio_n$Face, 
+                   Trio_26 = trio_26_n$Trio_26, 
+                   Trio_36 = trio_36_n$Trio_36, 
+                   Bull_Adult = trio_bull_adult_n$Bull_Adult, 
+                   Bull_26 = trio_bull_26_n$Bull_26) %>% 
     mutate(Total_n = ASL + Face + Trio_26 + Trio_36 + Bull_Adult + Bull_26)
            
 knitr::kable(df_n)
@@ -291,7 +245,7 @@ iChart %>%
     select(Sub.Num, age_code, experiment, language_modality) %>% 
     group_by(language_modality, age_code, experiment) %>% 
     unique() %>% 
-    summarise(n())
+    summarise(count = n())
 ```
 
 ### Get number of ss
@@ -303,7 +257,7 @@ iChart %>%
     select(Sub.Num, age_code, language_modality) %>% 
     group_by(language_modality, age_code) %>% 
     unique() %>% 
-    summarise(n())
+    summarise(count = n())
 ```
 
 ### Remove ss for too few trials
@@ -401,7 +355,7 @@ Datawiz does not tell us which shifts land on a target vs. a disctractor. So we 
 
 ```{r}
 # apply fun to each row in our dataset to flag trial type
-trial_types <- apply(iChart, 1, score_trial_type, start = "0", end = "3000") %>% 
+trial_types <- apply(iChart, 1, score_trial_type_lwl, start = "0", end = "3000") %>% 
     t() %>% 
     as.data.frame(stringsAsFactors=F) %>% 
     rename(trial_type = V1, RT = V2)
@@ -437,7 +391,7 @@ iChart %>%
     select(Sub.Num, age_code, language_modality) %>% 
     group_by(language_modality, age_code) %>% 
     unique() %>% 
-    summarise(n())
+    count()
 ```
 
 ### Save final/processed tidy data frame
