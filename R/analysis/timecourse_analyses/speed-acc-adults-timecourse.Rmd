@@ -1,0 +1,126 @@
+---
+title: "Speed-acc-adult timecourse"
+author: "Kyle MacDonald"
+date: "11/4/2016"
+output: html_document
+---
+
+This script plots and analyzes the timecrouse eye-tracking data for an experiment comparing speed-accuracy tradeoffs when establishing reference in real-time. We vary the information value and saliency of the center fixation and measure the effects on accuracy and RT.
+
+## Setup
+
+Load libraries and read in tidy data.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=F, warning=F, cache=F, message=F, sanitize = T)
+source("../../helper_functions/libraries_and_functions.R")
+```
+
+Read data. 
+
+```{r read data}
+d <- read_csv("../../../data/3_final_merged_data/speed_acc_adult_timecourse_tidy.csv")
+```
+
+## Visualize looking behavior 
+
+Filter to get the anlaysis window (one second before the noun onset). Start is when the center fixation appeared. End is the end of the trial. 
+
+```{r}
+d.filt <- d %>% filter(t.stim > 0, t.stim <= 5) 
+```
+
+First, we generate curves that represent center, target, and distractor looking over time
+
+Summarize data for each ROI for each participant and each time slice.
+
+```{r}
+# get number of trials looking at each gaze target for each time slice
+ss.d <- d.filt %>% 
+  group_by(subid, t.stim, condition, audio) %>% 
+  summarise(count = ifelse(n() == 0, 0, n())) %>% 
+  ungroup() %>% 
+  mutate(subid = as.character(subid))
+
+# get proportion looking by dividing the freq looking at each target by the total looking 
+# derived in step 1 of this chunk
+ss.d <- as.data.frame(xtabs(~ subid + audio + t.stim + target_looking + condition, 
+                            data = d.filt),
+                      stringsAsFactors = F) %>% 
+  mutate(t.stim = as.numeric(t.stim)) %>% 
+  left_join(x = ss.d, y = ., by = c("subid", "t.stim", "condition", "audio")) %>% 
+  mutate(proportion_looking = Freq / count)
+```
+
+Get means and CIs for proportion looking at each time slice across particpants
+
+```{r}
+ms.means.timeslice <- ss.d %>% 
+  group_by(t.stim, condition, audio, target_looking) %>% 
+  summarise(mean = mean(proportion_looking, na.rm = T))
+```
+
+Now make the Tanenhaus style curves for each condition 
+
+```{r, fig.width=10}
+ggplot(aes(x = as.numeric(t.stim), y = mean, 
+           color = condition), data = ms.means.timeslice) + 
+  ylim(0,1) +
+  xlim(-0.5,5) +
+  geom_line() +
+  facet_grid(target_looking~.) +
+  xlab("Time in sec from onset of trial") +
+  geom_vline(xintercept = mean(d$noun_onset_sec_1), linetype = "dashed") +
+  geom_vline(xintercept = mean(d$sentence_onset_sec), linetype = "dashed") +
+  ylab("Proportion looking") +
+  guides(color = F, shape = F, linetype = F) +
+  geom_dl(aes(label = condition), method = "first.bumpup") +
+  annotate("text", label = "Sentence Onset", x = mean(d$sentence_onset_sec)-0.3, 
+           y = 0.4, size = 4, colour = "dodgerblue") +
+  annotate("text", label = "Noun Onset", x = mean(d$noun_onset_sec_1)-0.3, 
+           y = 0.4, size =4 , colour = "dodgerblue")
+```
+
+## Standard "window" accuracy analyses
+
+### Boxplot of proportion looking to each ROI as a function of condition.
+
+First we need to filter to get the analysis window
+
+```{r}
+d.analysis <- d.filt %>% filter(t.rel.sentence >= 0)  
+```
+
+Then we get the proportion looking to each location for each trial for each participant.
+
+```{r}
+# get number of trials looking at each gaze target for each time slice
+ss.d.tr <- d.analysis %>% 
+  group_by(subid, tr.num, condition, audio) %>% 
+  summarise(count = ifelse(n() == 0, 0, n())) %>% 
+  ungroup() %>% 
+  mutate(subid = as.character(subid))
+
+# get proportion looking by dividing the freq looking at each target by the total looking 
+# derived in step 1 of this chunk
+ss.d.tr <- as.data.frame(xtabs(~ subid + audio + tr.num + target_looking + condition, 
+                            data = d.analysis),
+                      stringsAsFactors = F) %>% 
+  mutate(tr.num = as.numeric(tr.num)) %>% 
+  left_join(x = ss.d.tr, y = ., by = c("subid", "tr.num", "condition", "audio")) %>%
+  mutate(proportion_looking = Freq / count) %>% 
+  group_by(subid, condition, target_looking) %>% 
+  summarise(m_prop_looking = mean(proportion_looking, na.rm = T))
+```
+
+Now we can plot the trial level summarized looking data. Here we use a boxplot to show both raw and summaries of the data. 
+
+```{r, fig.width=8}
+ggplot(aes(x= target_looking, y = m_prop_looking, fill = condition), 
+       data = ss.d.tr) +
+  geom_boxplot() +
+  geom_point(alpha = 0.6, position = position_jitterdodge(jitter.width = 0.1,
+                                                          dodge.width = 0.75))
+```
+
+Participants look less at the center fixation when it's a static bullseye, more when it's a face or text with audio, and the most when it is just text. Note that both target and distracter looking are higher for bullseye condition because they are more likely to be looking at either picture during the time before noun onset. This tells me that window accuracy is not the best metric here (at least over the entire trial window).
