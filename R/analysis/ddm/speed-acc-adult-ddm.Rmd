@@ -1,0 +1,26 @@
+---
+title: "Speed-acc-adult Drift Diffusion Analysis (DDM)"
+author: "Kyle MacDonald"
+date: "11/4/2016"
+output: html_document
+---
+
+## Setup
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=F, warning=F, cache=F, message=F, sanitize = T)
+source("../../helper_functions/libraries_and_functions.R")
+```
+
+Read data.
+
+```{r read data}
+
+```
+
+
+## Fit Diffusion models
+
+## Stats for DDM parameters
+
+Repeated measures ANOVA. Liner mixed effects model doesn't add much value here since we are doing inference over the parameter estimates for each participant (i.e., we only have 3 data points from each person).

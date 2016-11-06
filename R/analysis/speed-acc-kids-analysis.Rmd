@@ -242,8 +242,8 @@ ggplot(aes(x = RT, fill = Response.Type),
              data = filter(med_all, age_code == "child")) +
   guides(color = F) + 
   ylab("Density") +
-  scale_fill_manual(values = c("orangered", "green3")) +
-  scale_color_manual(values = c("orangered", "green4")) +
+  scale_fill_manual(values = c("darkorange", "dodgerblue")) +
+  scale_fill_manual(values = c("darkorange", "dodgerblue")) +
   theme(text = element_text(size=18),
         legend.position = "top",
         panel.margin = unit(2, "lines")) +

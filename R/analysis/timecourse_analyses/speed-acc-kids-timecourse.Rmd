@@ -5,31 +5,20 @@ date: "July, 12 2016"
 output: html_document
 ---
 
-```{r chunk_options, echo = F}
-rm(list=ls()) # code to clear workspace
-knitr::opts_chunk$set(warning=F, message=F, sanitize = T, 
-                      fig.height=5, fig.width=8, echo=T, cache = T)
-```
-
-```{r libraries}
-library(langcog); library(magrittr); library(RWiener)
-library(stringr); library(GGally); 
-library(lme4); library(lsr); library(plyr)
-library(gridExtra); library(dplyr); library(tidyr)
-library(ggplot2)
-theme_set(theme_bw()) # set the ggplot theme that we think is pretty
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=F, warning=F, cache=F, message=F, sanitize = T)
+source("../../helper_functions/libraries_and_functions.R")
 ```
 
 ## Load data
 
 ```{r load and clean up data}
-d <- read.csv("../../data/3_final_merged_data/speed-acc-cleaned-iChart.csv", 
+d <- read.csv("../../../data/3_final_merged_data/speed-acc-cleaned-iChart.csv", 
               stringsAsFactors = F)
 
-d %<>% mutate(stimuli = ifelse(stimuli == "V1" | stimuli == "V2", "ASL", 
+d %<>% mutate(stimuli = ifelse(stimuli %in% c("V1", "V2"), "ASL", 
                                ifelse(stimuli == "Trio", "Object", 
-                                      ifelse(stimuli == "Bull", "Bullseye",
-                                             stimuli))),
+                                      ifelse(stimuli == "Bull", "Bullseye",stimuli))),
               stimuli = factor(stimuli, levels = c("ASL", "Face", "Object", "Bullseye")))
 
 colnames(d) <- gsub(pattern = "X", replacement = "", x = colnames(d))
@@ -84,7 +73,7 @@ ms_mean_iChart <- ms_iChart %>%
 
 Now we make Tanenhaus style plot.
 
-```{r tanenhaus-plot}
+```{r tanenhaus-plot, fig.width=8}
 breaks <- seq(0,3000, by=500)
 y_breaks <- seq(0.25,1.0, by = 0.25)
 points <- seq(0,3000, by = 200)
@@ -101,7 +90,7 @@ ggplot(aes(x = as.numeric(Time.ms), y = mean,
   scale_color_brewer(palette = "Set1", type = "qual") +
   xlab("Time in ms from onset of noun") +
   ylab("Proportion looking") +
-  guides(color = F, shape = F, linetype = F) +
+  guides(shape = F, linetype = F) +
   theme_bw() +
   theme(axis.title.x = element_text(colour="grey40",size=22,
                                     angle=0,hjust=0.5,vjust=0,face="plain"),
@@ -138,7 +127,7 @@ ms_mean_iChart <- ms_iChart %>%
   filter(is.na(stimuli) == F)
 ```
 
-```{r tanenhaus-plot 2}
+```{r tanenhaus-plot 2, fig.width=8}
 breaks <- seq(0,3000, by=500)
 y_breaks <- seq(0.25,1.0, by = 0.25)
 points <- seq(0,3000, by = 200)
@@ -158,7 +147,7 @@ ggplot(aes(x = as.numeric(Time.ms), y = mean,
   scale_color_brewer(palette = "Set1", type = "qual") +
   xlab("Time in ms from onset of noun") +
   ylab("Proportion looking") +
-  guides(color = F, shape = F, linetype = F) +
+  guides(shape = F, linetype = F) +
   theme_bw() +
   facet_wrap(~stimuli, ncol = 2) +
   theme(axis.title.x = element_text(colour="grey40",size=18,
@@ -176,4 +165,4 @@ ggplot(aes(x = as.numeric(Time.ms), y = mean,
 
 ## Timecourse plot split by trial type (C-T vs. C-D)
 
-Goal: plot different curves for correct and incorrect shifting trials.
+TODO: plot different curves for correct and incorrect shifting trials.

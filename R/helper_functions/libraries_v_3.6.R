@@ -60,11 +60,6 @@ if(!("lme4" %in% temp)){
 	install.packages("lme4", repos = "http://cran.r-project.org")
 	}
 
-# load libraries
-library(reshape)
-library(ggplot2)
-library(grid)
-library(lme4)
 
 msToFrames <- function(value) { return(value*3/100) }
 framesToMs <- function(value) { return(value*100/3) }
