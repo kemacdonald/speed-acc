@@ -15,12 +15,88 @@ source("../../helper_functions/libraries_and_functions.R")
 Read data.
 
 ```{r read data}
-
+d <- read_csv("../../../data/3_final_merged_data/speed_acc_adult_ewma_results.csv")
 ```
 
+## Plot RT histograms of guesses and valid responses.
 
-## Fit Diffusion models
+```{r rt_dist_histogram, fig.height=8}
+ggplot(aes(x = rt, fill = shift_accuracy), data = d) +
+  geom_histogram(alpha = 0.7, position = "identity") +
+  guides(color = F) + 
+  ylab("Density") +
+  xlab("RT (sec)") +
+  facet_grid(condition~guess) +
+  scale_fill_manual(values = c("darkorange", "dodgerblue")) +
+  scale_color_manual(values = c("darkorange", "dodgerblue")) +
+  theme(text = element_text(size=18),
+        legend.position = "top",
+        panel.margin = unit(2, "lines"))
+```
+
+Make a table of number of "good" shifts for each condition. 
+
+```{r rt_table}
+d %>% 
+  filter(guess == "response") %>% 
+  group_by(subid, condition) %>% 
+  count() %>% 
+  kable()
+```
+
+## Drift Diffusion Analysis
+
+Workflow taken from Nordmeyer et al. (2016). The goal is to estimate parameters separately for each participant and then we aggregate across participants to get means & confidence intervals on the parameters.
+
+The parameters of the drift drift diffusion model are: 
+
+* $\alpha$ = boundary separation: speed-accuracy tradeoff (higher values mean higher accuracy)
+* $\beta$ = initial bias
+* $\delta$ = drift rate: speed of information processing (close to zero means ambiguous information)
+* $\tau$ = nondecision time: motor response time
+
+```{r setup_df}
+# get the data we care about and format for Rwiener functions
+# columns need to be named "q" for RT and "resp" for response
+d.ddm <- d %>% 
+  filter(RT >= 0.1, guess == "response") %>% 
+  select(subid, condition, RT, correct) %>% 
+  mutate(resp = ifelse(correct == "0", "lower", "upper")) %>% 
+  rename(q = RT) 
+```
+
+Fit DDM for each participant and each condition.
+
+```{r estimate_ddm_params}
+sub.pars.df <- d.ddm %>% 
+  group_by(subid, condition) %>% 
+  do(fit_ddm(., condition_col = "condition", subid_col = "subid", bysub = T)) 
+```
+
+Munge params to remove values +/- 2sd from the mean.
+
+```{r munge_params}
+sub.pars.df %<>% 
+  group_by(condition, param) %>% 
+  filter(convergence == 0, fit.vals > 0) %>% 
+  do(remove_extreme_vals(., sd_cut_val = 2, value_column = "fit.vals"))
+```
+
+Boxplot for parameter values by condition:
+
+```{r boxplot_params, fig.width=9}
+ggplot(aes(x = condition, y = fit.vals, fill = condition), data = sub.pars.df) +
+  geom_boxplot() +
+  guides(fill = F) +
+  geom_point(alpha = 0.7, position = position_jitterdodge(jitter.width = 0.1)) + 
+  labs(x= "Condition", y = "Mean Param Value") +
+  theme(text = element_text(size = 16)) +
+  facet_grid(.~param, scales = "free") +
+  geom_hline(yintercept = 0)
+```
 
 ## Stats for DDM parameters
 
-Repeated measures ANOVA. Liner mixed effects model doesn't add much value here since we are doing inference over the parameter estimates for each participant (i.e., we only have 3 data points from each person).
+Repeated measures ANOVA. Linear mixed effects model doesn't add much value here since we are doing inference over the parameter estimates for each participant (i.e., we only have 3 data points from each person).
+
+This analysis is exploratory since we do not have predictions about what these parameter estimates will look like after filtering out the fast guesses that we flagged using the EWMA model. 
