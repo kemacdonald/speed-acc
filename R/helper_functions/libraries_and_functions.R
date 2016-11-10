@@ -177,3 +177,59 @@ compute_guessing_window <- function(sub_df) {
   }
   return(sub_df)
 }
+
+
+## Fit DDM function 
+## Takes in a data frame that has been split by participant and condition
+## Returns a data frame of DDM parameter values for that participant/condition
+## Note that if the participant does not have any valid RTs, then it returns NAs for DDM vals
+fit_ddm <- function(df, condition_col, subid_col, bysub = T) {
+  # get the condition and subid values
+  cond <- unique(df[[condition_col]])
+  sub <- unique(df[[subid_col]])
+  param_names <- c("separation", "non.decision", "bias", "drift")
+  df %<>% 
+    select(q, resp) %>% 
+    as.data.frame()
+  # fit ddm if there are valid responses to fit
+  if (nrow(df) > 0) {
+    # fit ddm for each participant 
+    fit.vals <- optim(c(1, .1, .1, 1), wiener_deviance, control = list(maxit = 500),
+                      dat=df, method="Nelder-Mead")
+    pars <- cbind(data.frame(fit.vals = fit.vals$par), param = param_names, convergence = fit.vals$convergence) 
+  } else {
+    pars <- cbind(data.frame(fit.vals = c(NA, NA, NA, NA)), param = param_names, convergence = NA)
+  }
+  
+  # add info to the sub_df and return
+  if (bysub == T) {
+    pars %<>% 
+      mutate(subid = sub, condition = cond,
+             fit.vals = round(fit.vals, 3))
+  } else {
+    pars %<>% 
+      mutate(condition = cond, 
+             fit.vals = round(fit.vals, 3))
+  }
+  
+  return(pars)
+}
+
+## Remove outlier values
+## takes in a data frame for an experimental condition, a stdev cutpoint, and a column name to compute over
+## returns that data frame with extreme values +/- stdev cutpoint from the mean for that condition
+remove_extreme_vals <- function(df, sd_cut_val = 3, value_column) {
+  m.val <- mean(df[[value_column]])
+  sd.val <- sd(df[[value_column]])
+  # compute cut points
+  cut_point_upper <- round(m.val + (sd_cut_val * sd.val), 3)
+  cut_point_lower <- round(m.val - (sd_cut_val * sd.val), 3)
+  # filter and return df
+  df %<>% 
+    mutate(cut_point_upper = cut_point_upper,
+           cut_point_lower = cut_point_lower) %>% 
+    filter(fit.vals <= cut_point_upper,
+           fit.vals >= cut_point_lower)
+  
+  return(df)
+}
