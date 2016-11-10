@@ -136,7 +136,6 @@ write_csv(ss.ewma.results, "../../../data/3_final_merged_data/speed_acc_adult_ew
 ```
 
 
-
 ```{r ewma plot, fig.height=8}
 ggplot(data = ss.ewma.results, aes(x = rt, y = param_value, color = ewma_param)) +
   geom_line(size = 1) +
