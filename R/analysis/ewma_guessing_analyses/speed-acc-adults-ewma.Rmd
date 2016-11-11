@@ -29,10 +29,13 @@ d.fs %>%
   filter(shift_type %in% c("C_T", "C_D")) %>% 
   group_by(shift_type, response_onset_type) %>% 
   count() %>% 
+  group_by(response_onset_type) %>% 
+  mutate(total_shifts = sum(n), 
+         prop = round(n / total_shifts, 2)) %>% 
   kable()
 ```
 
-Regardless of when you start the clock, only ~5% of shifts are incorrect, This makes sense since this is an easy task for adults. 
+Regardless of when you start the clock, only ~10% of shifts are incorrect, This makes sense since this is an easy task for adults. 
 
 ```{r summarize RT for correct and incorrect shifts}
 ss.d.rt <- d.fs %>% 
@@ -83,10 +86,10 @@ Then we make a boxplot.
 ```{r}
 ggplot(aes(x = condition, y = med_rt, fill = shift_accuracy), data = ss.rt) +
   geom_boxplot(width = 0.7) +
-  geom_point(alpha = 0.6, position = position_jitterdodge(jitter.width = 0.2, dodge.width = 0.5)) +
+  geom_point(alpha = 0.6, position = position_jitterdodge(jitter.width = 0.2, 
+                                                          dodge.width = 0.5)) +
   scale_fill_manual(values = c("darkorange", "dodgerblue")) 
 ```
-
 
 ## EWMA filter to model guessing behavior 
 
@@ -107,7 +110,7 @@ TODO: Simulate this model across different values of *L* and $\lambda$. *L* cont
 ```{r ewma model}
 ss.ewma.results <- d.fs.ewma %>% 
   group_by(condition) %>% 
-  do(ewma_function(., rt_column = "RT", L = 2, lambda = .05)) %>% 
+  do(ewma_function(., rt_column = "RT", L = 2.5, lambda = .01)) %>% 
   mutate(rt = round(as.numeric(rt), 2),
          cs = round(as.numeric(cs), 2),
          ucl = round(as.numeric(ucl), 2),
@@ -135,6 +138,7 @@ Write EWMA results to .csv so we can use this information in the Drift Diffusion
 write_csv(ss.ewma.results, "../../../data/3_final_merged_data/speed_acc_adult_ewma_results.csv")
 ```
 
+Now make a pretty EWMA plot ("control chart"). 
 
 ```{r ewma plot, fig.height=8}
 ggplot(data = ss.ewma.results, aes(x = rt, y = param_value, color = ewma_param)) +
@@ -215,7 +219,7 @@ m1 <- glmer(guess_num ~ condition_fact + (1 + condition |subid),
             data = ss.ewma.results,
             nAGQ = 0,
             family = binomial)
-summary(m1)
+summary(m1)$coef %>% kable()
 ```
 
 #### ANOVA for time spent guessing

@@ -21,6 +21,7 @@ theme_set(theme_bw())
 ## Categorizes trials as correct or incorrect in 2-AFC gaze task
 ## Takes in a row (trial), a start window, and an end window
 ## Returns whether that trial was a correct or incorrect shift
+
 score_trial_type_lwl <- function(trial, start, end) { 
   start_col <- which(names(trial)==start)
   end_col <- which(names(trial)==end)
@@ -66,9 +67,9 @@ score_trial_type_lwl <- function(trial, start, end) {
 ## Returns the df with trial numbers added
 add.tr.nums.fun <- function (df, n_trials) {
   
-  df %<>% select(subid, source_name, t) %>% 
+  df %<>% select(subid, stimulus, t) %>% 
     arrange(t) %>% 
-    select(subid, source_name) %>% 
+    select(subid, stimulus) %>% 
     unique() %>% 
     mutate(tr.num = 1:n_trials)
   
@@ -78,6 +79,7 @@ add.tr.nums.fun <- function (df, n_trials) {
 ## Score trial for SMI eye tracking data
 ## Takes in a data frame for each trial and 
 ## Returns (1) an RT and (2) whether the shift was correct vs. incorrect
+
 score_trial_et <- function(trial_df, crit_onset_type = "noun") {
   # filter trial to keep just that onset type
   trial_df %<>% filter(response_onset_type == crit_onset_type)
@@ -135,6 +137,7 @@ score_trial_et <- function(trial_df, crit_onset_type = "noun") {
 ## EWMA function
 ## Takes in a data frame
 ## Returns the EWMA statistic and upper threshold for each RT in the data frame
+
 ewma_function <- function(df, rt_column = "RT", lambda = .01, cs = .5, sigma = .5, L = 1.5) {
   df <- arrange_(df, rt_column)
   results <- data.frame(rt = numeric(), cs = numeric(), ucl = numeric(), 
@@ -178,12 +181,12 @@ compute_guessing_window <- function(sub_df) {
   return(sub_df)
 }
 
-
 ## Fit DDM function 
 ## Takes in a data frame that has been split by participant and condition
 ## Returns a data frame of DDM parameter values for that participant/condition
 ## Note that if the participant does not have any valid RTs, then it returns NAs for DDM vals
-fit_ddm <- function(df, condition_col, subid_col, bysub = T) {
+
+fit_ddm <- function(df, condition_col, subid_col, bysub = T, niter = 500) {
   # get the condition and subid values
   cond <- unique(df[[condition_col]])
   sub <- unique(df[[subid_col]])
@@ -194,7 +197,7 @@ fit_ddm <- function(df, condition_col, subid_col, bysub = T) {
   # fit ddm if there are valid responses to fit
   if (nrow(df) > 0) {
     # fit ddm for each participant 
-    fit.vals <- optim(c(1, .1, .1, 1), wiener_deviance, control = list(maxit = 500),
+    fit.vals <- optim(c(1, .1, .1, 1), wiener_deviance, control = list(maxit = niter),
                       dat=df, method="Nelder-Mead")
     pars <- cbind(data.frame(fit.vals = fit.vals$par), param = param_names, convergence = fit.vals$convergence) 
   } else {
@@ -218,7 +221,8 @@ fit_ddm <- function(df, condition_col, subid_col, bysub = T) {
 ## Remove outlier values
 ## takes in a data frame for an experimental condition, a stdev cutpoint, and a column name to compute over
 ## returns that data frame with extreme values +/- stdev cutpoint from the mean for that condition
-remove_extreme_vals <- function(df, sd_cut_val = 3, value_column) {
+
+remove_extreme_vals <- function(df, sd_cut_val = 2, value_column) {
   m.val <- mean(df[[value_column]])
   sd.val <- sd(df[[value_column]])
   # compute cut points
