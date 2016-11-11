@@ -34,12 +34,12 @@ ggplot(aes(x = rt, fill = shift_accuracy), data = d) +
         panel.margin = unit(2, "lines"))
 ```
 
-Make a table of number of "good" shifts for each condition. 
+Make a table of number of "good" correct/incorrect shifts for each condition. 
 
 ```{r rt_table}
 d %>% 
   filter(guess == "response") %>% 
-  group_by(subid, condition) %>% 
+  group_by(condition, shift_accuracy) %>% 
   count() %>% 
   kable()
 ```
@@ -70,28 +70,30 @@ Fit DDM for each participant and each condition.
 ```{r estimate_ddm_params}
 sub.pars.df <- d.ddm %>% 
   group_by(subid, condition) %>% 
-  do(fit_ddm(., condition_col = "condition", subid_col = "subid", bysub = T)) 
+  do(fit_ddm(., condition_col = "condition", subid_col = "subid", 
+             bysub = T, niter = 1000)) 
 ```
 
 Munge params to remove values +/- 2sd from the mean.
 
 ```{r munge_params}
-sub.pars.df %<>% 
+sub.pars.df.filt <- sub.pars.df %>% 
   group_by(condition, param) %>% 
-  filter(convergence == 0, fit.vals > 0) %>% 
+  filter(convergence == 0) %>% # 0 means the model converged
   do(remove_extreme_vals(., sd_cut_val = 2, value_column = "fit.vals"))
 ```
 
 Boxplot for parameter values by condition:
 
 ```{r boxplot_params, fig.width=9}
-ggplot(aes(x = condition, y = fit.vals, fill = condition), data = sub.pars.df) +
+ggplot(aes(x = condition, y = fit.vals, fill = condition), 
+       data = sub.pars.df.filt) +
   geom_boxplot() +
   guides(fill = F) +
   geom_point(alpha = 0.7, position = position_jitterdodge(jitter.width = 0.1)) + 
   labs(x= "Condition", y = "Mean Param Value") +
   theme(text = element_text(size = 16)) +
-  facet_grid(.~param, scales = "free") +
+  facet_wrap(~param, scales = "free", ncol = 2) +
   geom_hline(yintercept = 0)
 ```
 
