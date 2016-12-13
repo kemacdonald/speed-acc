@@ -72,7 +72,7 @@ Here we label Areas of Interest to be Left Picture, Right Picture, and the Cente
 Plot the distribution of looking across x-y coordinates. This is a useful check that participants were looking where we thought they should be, and it helps us find the AOIs for data analysis. 
 
 ```{r, eval = F}
-d.rois <- sample_n(d, size = 0.25*nrow(d)) # get a sample so we don't plot all 200k plus rows
+d.rois <- sample_n(d, size = 0.10*nrow(d)) # get a sample so we don't plot all 200k plus rows
 
 ggplot(aes(x = x, y = y), data = d.rois) +
   geom_density2d() +
@@ -90,16 +90,10 @@ n_trials_in_block <- 24
 n_trials_exp <- n_blocks * n_trials_in_block
 tr.num <- 1:n_trials_exp
 
-d %>% 
-  group_by(subid) %>% 
-  select(stimulus) %>% 
-  unique() %>% 
-  count()
-
 # apply the add trials function to each subid's data frame using the do() operator 
 d %<>% 
   group_by(subid) %>% 
-  do(add.tr.nums.fun(., n_trials = n_trials_exp)) %>% 
+  do(add.tr.nums.fun(.)) %>% 
   left_join(x = d, y = ., by = c("subid", "stimulus"))
 ```
 
@@ -132,7 +126,7 @@ Hmm, participants are "away" on 11% of the trials. What's going on here? Plot "a
 ```{r plot aways}
 d.aways <- d %>% 
   filter(gaze_target == "away") %>% 
-  sample_n(., size = 0.25 * nrow(.))
+  sample_n(., size = 0.15 * nrow(.))
 
 ggplot(aes(x = x, y = y), data = d.aways) +
   geom_density2d() +
@@ -213,9 +207,6 @@ d <- d.orig %>%
   select(subid, tr.num, response, response_onset_type) %>% 
   left_join(d.orig, ., by = c("subid", "tr.num")) %>% 
   bind_rows(d, .)
-
-# check if we end up with the expected number of rows
-nrow(d) == n_row_final
 ```
 
 Next, we need to compute RT for each trial. Here I've created a somewhat unwieldy score trial function. 

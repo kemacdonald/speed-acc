@@ -65,7 +65,12 @@ score_trial_type_lwl <- function(trial, start, end) {
 ## Add trial numbers 
 ## Takes a participant's data frame and number of trials for each participant
 ## Returns the df with trial numbers added
-add.tr.nums.fun <- function (df, n_trials) {
+add.tr.nums.fun <- function (df) {
+  
+  n_trials <- df %>% 
+    select(subid, stimulus) %>% 
+    unique() %>% 
+    nrow()
   
   df %<>% select(subid, stimulus, t) %>% 
     arrange(t) %>% 

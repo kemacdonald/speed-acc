@@ -12,7 +12,7 @@ This script plots and analyzes the timecrouse eye-tracking data for an experimen
 Load libraries and read in tidy data.
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo=F, warning=F, cache=F, message=F, sanitize = T)
+knitr::opts_chunk$set(echo=F, warning=F, cache=F, message=F, sanitize = T, results = 'asis')
 source("../../helper_functions/libraries_and_functions.R")
 ```
 
@@ -37,18 +37,20 @@ Summarize data for each ROI for each participant and each time slice.
 ```{r}
 # get number of trials looking at each gaze target for each time slice
 ss.d <- d.filt %>% 
-  group_by(subid, t.stim, condition, audio) %>% 
-  summarise(count = ifelse(n() == 0, 0, n())) %>% 
+  group_by(subid, t.stim, condition) %>% 
+  summarise(count = n()) %>% 
   ungroup() %>% 
+  complete(nesting(subid, t.stim), condition,
+           fill = list(count = 0)) %>% 
   mutate(subid = as.character(subid))
 
 # get proportion looking by dividing the freq looking at each target by the total looking 
 # derived in step 1 of this chunk
-ss.d <- as.data.frame(xtabs(~ subid + audio + t.stim + target_looking + condition, 
+ss.d <- as.data.frame(xtabs(~ subid + t.stim + target_looking + condition, 
                             data = d.filt),
                       stringsAsFactors = F) %>% 
   mutate(t.stim = as.numeric(t.stim)) %>% 
-  left_join(x = ss.d, y = ., by = c("subid", "t.stim", "condition", "audio")) %>% 
+  left_join(x = ss.d, y = ., by = c("subid", "t.stim", "condition")) %>% 
   mutate(proportion_looking = Freq / count)
 ```
 
@@ -56,7 +58,7 @@ Get means and CIs for proportion looking at each time slice across particpants
 
 ```{r}
 ms.means.timeslice <- ss.d %>% 
-  group_by(t.stim, condition, audio, target_looking) %>% 
+  group_by(t.stim, condition, target_looking) %>% 
   summarise(mean = mean(proportion_looking, na.rm = T))
 ```
 
@@ -67,7 +69,7 @@ ggplot(aes(x = as.numeric(t.stim), y = mean,
            color = condition), data = ms.means.timeslice) + 
   ylim(0,1) +
   xlim(-0.5,5) +
-  geom_line() +
+  geom_line(size=1) +
   facet_grid(target_looking~.) +
   xlab("Time in sec from onset of trial") +
   geom_vline(xintercept = mean(d$noun_onset_sec_1), linetype = "dashed") +
@@ -78,7 +80,8 @@ ggplot(aes(x = as.numeric(t.stim), y = mean,
   annotate("text", label = "Sentence Onset", x = mean(d$sentence_onset_sec)-0.3, 
            y = 0.4, size = 4, colour = "dodgerblue") +
   annotate("text", label = "Noun Onset", x = mean(d$noun_onset_sec_1)-0.3, 
-           y = 0.4, size =4 , colour = "dodgerblue")
+           y = 0.4, size =4 , colour = "dodgerblue") +
+  theme(text = element_text(size = 16))
 ```
 
 ## Standard "window" accuracy analyses
@@ -96,18 +99,18 @@ Then we get the proportion looking to each location for each trial for each part
 ```{r}
 # get number of trials looking at each gaze target for each time slice
 ss.d.tr <- d.analysis %>% 
-  group_by(subid, tr.num, condition, audio) %>% 
-  summarise(count = ifelse(n() == 0, 0, n())) %>% 
+  group_by(subid, tr.num, condition) %>% 
+  summarise(count = n()) %>% 
   ungroup() %>% 
   mutate(subid = as.character(subid))
 
 # get proportion looking by dividing the freq looking at each target by the total looking 
 # derived in step 1 of this chunk
-ss.d.tr <- as.data.frame(xtabs(~ subid + audio + tr.num + target_looking + condition, 
+ss.d.tr <- as.data.frame(xtabs(~ subid + tr.num + target_looking + condition, 
                             data = d.analysis),
                       stringsAsFactors = F) %>% 
   mutate(tr.num = as.numeric(tr.num)) %>% 
-  left_join(x = ss.d.tr, y = ., by = c("subid", "tr.num", "condition", "audio")) %>%
+  left_join(x = ss.d.tr, y = ., by = c("subid", "tr.num", "condition")) %>%
   mutate(proportion_looking = Freq / count) %>% 
   group_by(subid, condition, target_looking) %>% 
   summarise(m_prop_looking = mean(proportion_looking, na.rm = T))
@@ -118,9 +121,115 @@ Now we can plot the trial level summarized looking data. Here we use a boxplot t
 ```{r, fig.width=8}
 ggplot(aes(x= target_looking, y = m_prop_looking, fill = condition), 
        data = ss.d.tr) +
-  geom_boxplot() +
-  geom_point(alpha = 0.6, position = position_jitterdodge(jitter.width = 0.1,
-                                                          dodge.width = 0.75))
+  geom_boxplot(alpha = 0.8) +
+  geom_point(alpha = 0.6, 
+             position = position_jitterdodge(jitter.width = 0.1,
+                                             dodge.width = 0.75)) +
+  labs(x = "Gaze Location",
+       y = "Prop. Looking") +
+  theme(text = element_text(size = 16))
 ```
 
 Participants look less at the center fixation when it's a static bullseye, more when it's a face or text with audio, and the most when it is just text. Note that both target and distracter looking are higher for bullseye condition because they are more likely to be looking at either picture during the time before noun onset. This tells me that window accuracy is not the best metric here (at least over the entire trial window).
+
+### Analyze looking behavior prior to central fixation onset 
+
+```{r}
+d.order.analysis <- d.filt %>% 
+  filter(t.rel.center.fixation <= 0) %>%
+  group_by(subid, tr.num, condition, audio, target_looking) %>%
+  summarise(count = n()) %>% 
+  ungroup() %>% 
+  complete(nesting(subid, tr.num, condition, audio), target_looking, 
+           fill = list(count=0)) %>% 
+  group_by(subid, tr.num) %>%
+  mutate(prop_looking = count / sum(count))
+```
+
+```{r}
+d.order.analysis %>% 
+  filter(target_looking == "center") %>% 
+  ggplot(aes(x = prop_looking, fill = condition)) + 
+  geom_density(alpha = 0.5) 
+```
+
+### Does looking to center prior to fixation onset change over time in the task?
+
+```{r}
+d.order.analysis %>% 
+  ungroup() %>% 
+  filter(target_looking == "center") %>% 
+  mutate(tr.num = as.numeric(tr.num), 
+         tr.binned = cut(tr.num, breaks = 6)) %>% 
+  group_by(tr.binned) %>% 
+  summarise(m = mean(prop_looking),
+            ci = (qnorm(0.975)*sd(prop_looking)) / sqrt(length(prop_looking))) %>% 
+  ggplot(aes(x = tr.binned, y = m)) + 
+  geom_pointrange(aes(ymin = m - ci, ymax = m + ci)) +
+  geom_line(group = 1, size = 1) +
+  ylim(0.4, 1) +
+  geom_hline(yintercept = 0.5, linetype = "dashed")  +
+  labs(x = "Binned Trial Number", 
+       y = "Prop. Looks to Center",
+       title = "Anticipatory looking to center") +
+  theme(text = element_text(size = 16))
+```
+
+Looks like there is a an increase in looking away from the two target images to the center area as the task unfolds. I think this is an anticipation effect -- Participants know that the information source is going to appear in the same spot, so they fixate there.
+
+But this analysis ignores the different conditions. This is what we look at next:
+
+```{r}
+create_tr_num_fun <- function(data_frame) {
+  
+  rows_df <- data_frame %>% 
+    select(subid, condition, tr.num) %>% 
+    unique() %>% 
+    nrow()
+  
+  data_frame %<>% 
+    select(subid, condition, tr.num) %>% 
+    unique() %>% 
+    mutate(tr_cond = seq(1, rows_df),
+           block = ifelse(tr.num <= 24, 1, 
+                          ifelse(tr.num > 24 & tr.num <= 48, 2, 
+                                 ifelse(tr.num > 48 & tr.num <= 72, 3, 4)))) %>% 
+    left_join(data_frame, ., by = c("subid", "tr.num", "condition"))
+  
+  data_frame
+}
+```
+
+Add the trial number within condition to our data frame.
+
+```{r}
+d.order.analysis %<>% 
+  group_by(condition, subid) %>% 
+  do(create_tr_num_fun(data_frame = .))
+```
+
+Now summarise and plot.
+
+```{r}
+d.order.analysis %>% 
+  ungroup() %>% 
+  filter(target_looking == "center") %>% 
+    mutate(tr_cond = as.numeric(tr_cond), 
+         tr.binned = cut(tr_cond, breaks = 4)) %>% 
+  group_by(tr.binned, condition) %>% 
+  summarise(m = mean(prop_looking),
+            ci = (qnorm(0.975)*sd(prop_looking)) / sqrt(length(prop_looking))) %>% 
+  ggplot(aes(x = tr.binned, y = m, color = condition, group = condition)) + 
+  geom_pointrange(aes(ymin = m - ci, ymax = m + ci), 
+                  position = position_jitter(width = 0.1)) +
+  geom_line(size = 1) +
+  ylim(0.4, 1) +
+  scale_x_discrete(expand = c(0,1.2)) +
+  guides(color=F) +
+  geom_dl(aes(label = condition), method = list("first.bumpup", hjust = 1.1, cex = 1.2)) +
+  geom_hline(yintercept = 0.5, linetype = "dashed")  +
+  labs(x = "Binned Trial Number", 
+       y = "Prop. Looks to Center",
+       title = "Change in anticipatory looking to center") +
+  theme(text = element_text(size = 16))
+```

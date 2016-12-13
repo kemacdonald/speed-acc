@@ -42,7 +42,7 @@ Convert to long format
 ss_iChart_long <- ss_iChart %>% 
   gather(key = Time.ms, value = value, `0`:`3000`) %>% 
   filter(value %in% c("0", "0.5", "1")) %>% 
-  mutate(value_cat = factor(value, labels = c("Distractor", "Signer", "Target")),
+  mutate(value_cat = factor(value, labels = c("Distractor", "Center", "Target")),
          Time.ms_numeric = as.numeric(Time.ms)) 
 ```    
 
@@ -160,7 +160,8 @@ ggplot(aes(x = as.numeric(Time.ms), y = mean,
                                    angle=0,hjust=0.5,vjust=0,face="plain"),
         plot.margin = unit(c(0.5,2,1,1), "cm"),
         strip.text.x = element_text(size = 16),
-        panel.margin = unit(1, "lines"))
+        panel.margin = unit(1, "lines"),
+        legend.position = "top")
 ```
 
 ## Timecourse plot split by trial type (C-T vs. C-D)

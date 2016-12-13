@@ -86,10 +86,36 @@ Then we make a boxplot.
 ```{r}
 ggplot(aes(x = condition, y = med_rt, fill = shift_accuracy), data = ss.rt) +
   geom_boxplot(width = 0.7) +
-  geom_point(alpha = 0.6, position = position_jitterdodge(jitter.width = 0.2, 
+  geom_point(alpha = 0.6, position = position_jitterdodge(jitter.width = 0.3, 
                                                           dodge.width = 0.5)) +
-  scale_fill_manual(values = c("darkorange", "dodgerblue")) 
+  scale_fill_manual(values = c("darkorange", "dodgerblue")) +
+  labs(x = "Condition", 
+       y = "Median RT (sec)") +
+  theme(text = element_text(size = 16),
+        legend.position = "top")
 ```
+
+First we aggregate mean Accuracy for each participant.
+
+```{r}
+ss.acc <- ss.d.rt %>% 
+  filter(response_onset_type == "sentence") %>% 
+  mutate(correct_num = ifelse(shift_accuracy == "correct", 1, 0)) %>% 
+  group_by(condition, subid) %>% 
+  summarise(mean_acc = mean(correct_num))
+```
+
+Then we make a boxplot.
+
+```{r}
+ggplot(aes(x = condition, y = mean_acc), data = ss.acc) +
+  geom_boxplot(width = 0.7) +
+  geom_jitter(alpha = 0.7, width = 0.2) +
+  labs(x = "Condition", 
+       y = "Mean Accuracy") +
+  theme(text = element_text(size = 16))
+```
+
 
 ## EWMA filter to model guessing behavior 
 
@@ -110,7 +136,7 @@ TODO: Simulate this model across different values of *L* and $\lambda$. *L* cont
 ```{r ewma model}
 ss.ewma.results <- d.fs.ewma %>% 
   group_by(condition) %>% 
-  do(ewma_function(., rt_column = "RT", L = 2.5, lambda = .01)) %>% 
+  do(ewma_function(., rt_column = "RT", L = 2, lambda = .01)) %>% 
   mutate(rt = round(as.numeric(rt), 2),
          cs = round(as.numeric(cs), 2),
          ucl = round(as.numeric(ucl), 2),
@@ -147,9 +173,11 @@ ggplot(data = ss.ewma.results, aes(x = rt, y = param_value, color = ewma_param))
   geom_hline(yintercept = 0.5, linetype = "solid") +
   labs(x = "RT (sec)", y = "EWMA statistic") +
   guides(color=F) + 
+  xlim(0, 1) +
   facet_grid(condition~.) +
   scale_color_manual(values = c("darkorange", "dodgerblue")) +
-  geom_dl(aes(label = ewma_param), method = "last.bumpup")
+  geom_dl(aes(label = ewma_param), method = "last.bumpup") +
+  theme(text = element_text(size = 15))
 ```
 
 What do we see? The bullseye condition crosses the threshold after 1 second. The face, text, and text-audio all cross the threshold earlier in the window. Text-no-audio crosses earliest given these parameters of the EWMA model. Finally, in the text-no-audio condition there aren't any early RTs to model. How should we add this information to the analysis?
@@ -168,9 +196,10 @@ Boxplot of proportion guessing by condition.
 ```{r}
 ggplot(aes(x = fct_rev(condition), y = prop.guessing), 
        data = filter(ss.guessing.prop, guess == "guess")) +
-  geom_boxplot(fill = "dodgerblue", width = 0.7) +
+  geom_boxplot(fill = "dodgerblue", width = 0.7, alpha = 0.7) +
   geom_jitter(width= 0.2, alpha = 0.7) + 
-  labs(x = "Condition",y = "Prop. Guessing") 
+  labs(x = "Condition",y = "Prop. Guess") +
+  theme(text = element_text(size = 15))
 ```
 
 This looks like what we saw in the EWMA control charts: bullseye is mostly guesses, whereas face, text, and text-no-audio are mostly valid responses. However, this analysis still does not caputre one effect in the EWMA chart, which is the amount of *time* each participant spends in a guessing phase vs. a valid response phase for each condition.
@@ -190,10 +219,11 @@ Boxplot of time guessing across the different conditions.
 
 ```{r}
 ggplot(aes(x = fct_rev(condition), y = time_guessing), data = ss.guessing.window) +
-  geom_boxplot(fill = "dodgerblue", width = 0.7) +
+  geom_boxplot(fill = "dodgerblue", width = 0.7, alpha = 0.7) +
   geom_jitter(width= 0.2, alpha = 0.7) +
-  labs(x = "Condition", y = "RT Guessing Window (sec)") +
-  coord_flip()
+  labs(x = "Condition", y = "Avg. Time Guessing (sec)") +
+  coord_flip() +
+  theme(text = element_text(size = 15))
 ```
 
 ## Stats for EWMA parameters
@@ -219,6 +249,7 @@ m1 <- glmer(guess_num ~ condition_fact + (1 + condition |subid),
             data = ss.ewma.results,
             nAGQ = 0,
             family = binomial)
+
 summary(m1)$coef %>% kable()
 ```
 

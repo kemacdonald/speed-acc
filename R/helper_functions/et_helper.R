@@ -11,7 +11,7 @@ to.n <- function (x) {
   as.numeric(as.character(x))
 }
 
-read.smi.idf <- function (file.name, suffix.len=4) {
+read.smi.idf <- function (file.name, suffix.len = 4) {
   
   ## read the header from the file to paste back into the new file
   tmp.header <- scan(file.name, what = character(), sep="\n", 
@@ -34,13 +34,13 @@ read.smi.idf <- function (file.name, suffix.len=4) {
 
   ## DATA CLEANING 
   # read in data and get rid of header rows
-  all.d <- read_tsv(file.name, skip = header.rows)
+  all.d <- read_tsv(file.name, skip = header.rows, 
+                    col_types = cols(Time = "c"))
   
   ## split data into messages and data
   ## First get data:
   
-  d <- all.d %>% 
-    filter(all.d$Type=="SMP")
+  d <- all.d %>% filter(all.d$Type=="SMP")
   
   d$rx <- to.n(d$"R POR X [px]")
   d$ly <- to.n(d$"L POR Y [px]")
@@ -68,10 +68,14 @@ read.smi.idf <- function (file.name, suffix.len=4) {
                          set <- msgs$stimulus[msgs$t < x]
                          set[length(set)]
                        })
+  
   d$stimulus <- as.character(d$stimulus)
   
   ## drop the times before the first video
-  d %<>% filter(stimulus != "character(0)")
+  d %<>% filter(stimulus != "character(0)") 
+  
+  ## convert Time to numeric
+  d %<>% dplyr::mutate(t = to.n(t)) 
   
   ## add subid
   d$subid <- subid

@@ -38,7 +38,7 @@ theme_set(theme_bw()) # set the ggplot theme that we think is pretty
 Eye movement data
 
 ```{r}
-df <- read.csv("../data/3_final_merged_data/speed-acc-ss-df.csv", 
+df <- read.csv("../../data/3_final_merged_data/speed-acc-ss-df.csv", 
                check.names=F, stringsAsFactors=F) 
 
 df %<>% 
@@ -532,6 +532,26 @@ ggplot(aes(x = Condition, y = mean, fill = language_modality),
   guides(fill = F) +
   theme(text = element_text(size = 16)) 
 ```
+
+Boxplot for parameter values
+
+```{r}
+sub.pars$Condition <- factor(sub.pars$Condition, 
+                                levels = c("ASL", "Face", "Object", "Bullseye"))
+
+sub.pars$language_modality <- ifelse(sub.pars$Condition == "ASL", "ASL", "English")
+
+ggplot(aes(x = Condition, y = Value, fill = language_modality), 
+       data = filter(sub.pars, Param %in% c("Drift", "Separation", "Non.Decision"))) +
+  geom_boxplot(alpha = 0.7) + 
+  geom_jitter(alpha = 0.7, width = 0.1) + 
+  facet_wrap(~Param, ncol = 3, scales = "free") +
+  scale_fill_solarized() + 
+  ylab("Mean Param Value") +
+  guides(fill = F) +
+  theme(text = element_text(size = 16)) 
+```
+
 
 ## model parameter values
 
@@ -1060,9 +1080,12 @@ ewma <- function(data){
   }
   
   ggplot(ewma_results, aes(rt)) +
-    geom_line(aes(y = cs, color = "cs")) +
-    geom_line(aes(y = ucl, color = "UCL")) +
-    geom_vline(aes(xintercept = cutoff), linetype = 2)
+    geom_line(aes(y = cs, color = "cs"), size = 1) +
+    geom_line(aes(y = ucl, color = "UCL"), size = 1) +
+    geom_vline(aes(xintercept = cutoff), linetype = 2) + 
+    labs(x = "RT (sec)", y = "EWMA statistic") +
+    geom_hline(yintercept = 0.5) +
+    xlim(0,2000)
   
   return(cutoff) # comment out to show graph instead
 }
