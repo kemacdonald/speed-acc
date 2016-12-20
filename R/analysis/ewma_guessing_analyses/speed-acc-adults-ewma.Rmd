@@ -17,8 +17,33 @@ source("../../helper_functions/libraries_and_functions.R")
 ```
 
 ```{r read data}
-d.fs <- read_csv("../../../data/3_final_merged_data/speed_acc_adult_fstshift_tidy.csv")
+read.path <- "../../../data/3_final_merged_data/"
+d.fs <- read_csv(paste0(read.path, "speed_acc_adult_fstshift_tidy.csv"))
+d.asl <- read_csv(paste0(read.path, "speed-acc-ss-df.csv"))
 ```
+
+```{r clean datasets to merge}
+d.asl %<>% 
+  filter(language_modality == "ASL" & age_code == "adult") %>% 
+  mutate(subid = as.character(Sub.Num),
+         tr.num = Tr.Num, 
+         rt = RT_sec,
+         shift_type = trial_type,
+         condition = language_modality, 
+         hearing_status = hearing_status_participant,
+         response_onset_type = "noun") %>% 
+  select(subid, tr.num, rt, shift_type, hearing_status, condition, response_onset_type)
+
+d.fs %<>%
+  mutate(hearing_status = "hearing") %>% 
+  select(subid, tr.num, rt, shift_type, hearing_status, condition, response_onset_type)
+```
+
+```{r merge asl and english data}
+d.fs %<>% bind_rows(., d.asl) %>% 
+  mutate(shift_accuracy = ifelse(shift_type == "C_T", "correct", "incorrect"))
+```
+
 
 ### RT analysis
 
@@ -65,7 +90,7 @@ ggplot(aes(x = rt, fill = shift_accuracy), data = ss.d.rt) +
   scale_color_manual(values = c("darkorange", "dodgerblue")) +
   theme(text = element_text(size=18),
         legend.position = "top",
-        panel.margin = unit(2, "lines"))
+        panel.spacing = unit(2, "lines"))
 ```
 
 What should we do with shifts that happen before noun onset? My thought is to feed them into the EWMA, but not into the summary analyses and the DDM fits.
@@ -78,28 +103,37 @@ First we aggregate median RT for each participant.
 ss.rt <- ss.d.rt %>% 
   filter(response_onset_type == "noun") %>% 
   group_by(condition, subid, shift_accuracy) %>% 
-  summarise(med_rt = median(rt))
+  summarise(m_rt = mean(rt))
 ```
 
 Then we make a boxplot.
 
 ```{r}
-ggplot(aes(x = condition, y = med_rt, fill = shift_accuracy), data = ss.rt) +
-  geom_boxplot(width = 0.7) +
-  geom_point(alpha = 0.6, position = position_jitterdodge(jitter.width = 0.3, 
-                                                          dodge.width = 0.5)) +
+ggplot(aes(x = condition, y = m_rt, fill = shift_accuracy), data = ss.rt) +
+  geom_boxplot(width = 0.4) +
   scale_fill_manual(values = c("darkorange", "dodgerblue")) +
   labs(x = "Condition", 
-       y = "Median RT (sec)") +
+       y = "Mean RT (sec)") +
   theme(text = element_text(size = 16),
-        legend.position = "top")
+        legend.position = "top") 
 ```
+
+```{r}
+rt.m1 <- d.fs %>% 
+  filter(response_onset_type == "noun") %>% 
+  lmer(log(rt) ~ condition + (1|subid), data = .)
+
+summary(rt.m1)
+```
+
+
+### Accuracy
 
 First we aggregate mean Accuracy for each participant.
 
 ```{r}
 ss.acc <- ss.d.rt %>% 
-  filter(response_onset_type == "sentence") %>% 
+  filter(response_onset_type == "noun") %>% 
   mutate(correct_num = ifelse(shift_accuracy == "correct", 1, 0)) %>% 
   group_by(condition, subid) %>% 
   summarise(mean_acc = mean(correct_num))
@@ -109,11 +143,29 @@ Then we make a boxplot.
 
 ```{r}
 ggplot(aes(x = condition, y = mean_acc), data = ss.acc) +
-  geom_boxplot(width = 0.7) +
-  geom_jitter(alpha = 0.7, width = 0.2) +
+  geom_boxplot(width = 0.3, fill = "dodgerblue", alpha = 0.7) +
   labs(x = "Condition", 
        y = "Mean Accuracy") +
   theme(text = element_text(size = 16))
+```
+
+```{r}
+ggplot(aes(x = condition, y = mean_acc), data = ss.acc) +
+  geom_violin(fill = "dodgerblue", alpha = 0.5) +
+  labs(x = "Condition", 
+       y = "Mean Accuracy") +
+  geom_hline(yintercept = 0.5, linetype = "dashed") +
+  theme(text = element_text(size = 16))
+```
+
+```{r}
+acc.glmer <- ss.d.rt %>% 
+  filter(response_onset_type == "noun") %>% 
+  mutate(correct_num = ifelse(shift_accuracy == "correct", 1, 0)) %>% 
+  glmer(correct_num ~ condition + (1|subid), data = ., 
+        family = "binomial", 
+        nAGQ = 0)
+  
 ```
 
 
@@ -136,7 +188,7 @@ TODO: Simulate this model across different values of *L* and $\lambda$. *L* cont
 ```{r ewma model}
 ss.ewma.results <- d.fs.ewma %>% 
   group_by(condition) %>% 
-  do(ewma_function(., rt_column = "RT", L = 2, lambda = .01)) %>% 
+  do(ewma_function(., rt_column = "RT", L = 3, lambda = .01)) %>% 
   mutate(rt = round(as.numeric(rt), 2),
          cs = round(as.numeric(cs), 2),
          ucl = round(as.numeric(ucl), 2),
@@ -196,8 +248,7 @@ Boxplot of proportion guessing by condition.
 ```{r}
 ggplot(aes(x = fct_rev(condition), y = prop.guessing), 
        data = filter(ss.guessing.prop, guess == "guess")) +
-  geom_boxplot(fill = "dodgerblue", width = 0.7, alpha = 0.7) +
-  geom_jitter(width= 0.2, alpha = 0.7) + 
+  geom_boxplot(fill = "dodgerblue", width = 0.3, alpha = 0.7) +
   labs(x = "Condition",y = "Prop. Guess") +
   theme(text = element_text(size = 15))
 ```
@@ -219,8 +270,7 @@ Boxplot of time guessing across the different conditions.
 
 ```{r}
 ggplot(aes(x = fct_rev(condition), y = time_guessing), data = ss.guessing.window) +
-  geom_boxplot(fill = "dodgerblue", width = 0.7, alpha = 0.7) +
-  geom_jitter(width= 0.2, alpha = 0.7) +
+  geom_boxplot(fill = "dodgerblue", width = 0.3, alpha = 0.7) +
   labs(x = "Condition", y = "Avg. Time Guessing (sec)") +
   coord_flip() +
   theme(text = element_text(size = 15))
