@@ -84,6 +84,9 @@ read.smi.idf <- function (file.name, suffix.len = 4) {
   ## add subid
   d$subid <- subid
   
+  ## add subid
+  d$subid <- subid
+  
   return(d)
 }
 

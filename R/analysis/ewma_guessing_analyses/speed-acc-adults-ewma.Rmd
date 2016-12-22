@@ -155,7 +155,6 @@ acc.glmer <- ss.d.rt %>%
   glmer(correct_num ~ condition + (1|subid), data = ., 
         family = "binomial", 
         nAGQ = 0)
-  
 ```
 
 ## EWMA filter to model guessing behavior 
@@ -288,8 +287,6 @@ m1 <- glmer(guess_num ~ condition_fact + (1 + condition |subid),
             data = ss.ewma.results,
             nAGQ = 0,
             family = binomial)
-
-summary(m1)$coef %>% kable()
 ```
 
 #### ANOVA for time spent guessing
