@@ -97,12 +97,8 @@ ggplot(aes(x = stimuli, y = mean_correct, fill = language_modality),
   ylab("Mean Accuracy") +
   scale_fill_solarized() +
   guides(fill = F) +
-<<<<<<< HEAD
   ggtitle("Accuracy") +
   theme(text = element_text(size = 16))
-=======
-  ggtitle("Accuracy")
->>>>>>> b14a47db7bcc49f07e5f61496118a7578884dc3f
 ```
 
 We see that the ASL group was the most accurate, followed by Face, and then Object and Bullseye. Inf fact, it looks like the first shift behavior of the Object and Bullseye conditions were random.
@@ -124,27 +120,17 @@ RT boxplot
 ss_prop$stimuli <- factor(ss_prop$stimuli, 
                           levels = c("Bullseye", "Object", "Face", "ASL"))
 
-<<<<<<< HEAD
 ggplot(aes(x = stimuli, y = mean_rt / 1000, fill = language_modality), 
-=======
-ggplot(aes(x = stimuli, y = mean_rt, fill = language_modality), 
->>>>>>> b14a47db7bcc49f07e5f61496118a7578884dc3f
        data = filter(ss_prop, age_code == "child", correct == 1)) + 
   geom_boxplot(outlier.colour = "red") +
   geom_jitter(width = 0.4, alpha = 0.35) +
   scale_fill_solarized() +
   guides(fill = F) + 
   xlab(NULL) +
-<<<<<<< HEAD
   ylab("Median RT (sec)") +
   coord_flip() +
   ggtitle("Reaction Time") +
   theme(text = element_text(size = 16))
-=======
-  ylab("Median RT") +
-  coord_flip() +
-  ggtitle("Reaction Time")
->>>>>>> b14a47db7bcc49f07e5f61496118a7578884dc3f
 ```
 
 Now we can make the same boxplot, but split the RTs by correct and incorrect shifts to look for evidence of speed-accuracy tradeoffs in the decision process.
@@ -152,7 +138,6 @@ Now we can make the same boxplot, but split the RTs by correct and incorrect shi
 Boxplot of RTs for correct/incorrect tirals
 
 ```{r}
-<<<<<<< HEAD
 ggplot(aes(x = stimuli, y = mean_rt / 1000, fill = as.factor(correct)), 
        data = filter(ss_prop, age_code == "child")) + 
   geom_boxplot(outlier.colour = "darkgreen") +
@@ -160,15 +145,6 @@ ggplot(aes(x = stimuli, y = mean_rt / 1000, fill = as.factor(correct)),
   scale_fill_solarized() +
   labs(x = NULL, y = "Median RT (sec)", title = "Reaction Time", fill = "Correct") +
   theme(text = element_text(size = 16))
-=======
-ggplot(aes(x = stimuli, y = mean_rt, fill = as.factor(correct)), 
-       data = filter(ss_prop, age_code == "child")) + 
-  geom_boxplot(outlier.colour = "darkgreen") +
-  geom_point(pch = 21, position = position_jitterdodge(), alpha = 0.75) +
-  scale_fill_solarized() +
-  labs(x = NULL, y = "Median RT (msec)", title = "Reaction Time", fill = "Correct") +
-  coord_flip() 
->>>>>>> b14a47db7bcc49f07e5f61496118a7578884dc3f
 ```
 
 We see evidence of speed accuracy tradeoffs in the ASL, Face, and Bull conditions -- that is, incorrect responses tend to be faster than correct responses --  but not in the Object condition.
