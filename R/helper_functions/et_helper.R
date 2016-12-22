@@ -11,6 +11,7 @@ to.n <- function (x) {
   as.numeric(as.character(x))
 }
 
+
 read.smi.idf <- function (file.name, suffix.len = 4) {
   
   ## read the header from the file to paste back into the new file
@@ -76,6 +77,9 @@ read.smi.idf <- function (file.name, suffix.len = 4) {
   
   ## convert Time to numeric
   d %<>% dplyr::mutate(t = to.n(t)) 
+  
+  ## add subid
+  d$subid <- subid
   
   ## add subid
   d$subid <- subid
