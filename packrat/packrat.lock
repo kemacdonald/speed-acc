@@ -384,6 +384,12 @@ Version: 1.1.2
 Hash: ceef88c244d792a874bdacf72b6a30da
 Requires: R6, prettyunits
 
+Package: pryr
+Source: CRAN
+Version: 0.1.2
+Hash: 40e1af5e03be5828776a8349672c7921
+Requires: Rcpp, stringr
+
 Package: psych
 Source: CRAN
 Version: 1.6.9

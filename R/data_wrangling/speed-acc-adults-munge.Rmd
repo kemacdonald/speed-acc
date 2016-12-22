@@ -209,7 +209,7 @@ d <- d.orig %>%
   bind_rows(d, .)
 ```
 
-Next, we need to compute RT for each trial. Here I've created a somewhat unwieldy score trial function. 
+Next, we need to compute RT for each trial, using my own score trial function. 
 
 The function takes in a data frame for each trial and computes (1) an RT and (2) whether the shift was correct vs. incorrect. You can tell the function what onset value from which you want to compute RT. The different onset values are:
 
@@ -245,7 +245,9 @@ Before writing to .csv, we split the data into the timecourse information and fi
 
 ```{r}
 # timecourse
-d.timecourse <- filter(d, response_onset_type == "noun")
+d.timecourse <- filter(d, response_onset_type == "noun") %>% 
+  select(subid, t.stim, condition, tr.num, noun_onset_sec_1, noun_offset_msec_1, audio,
+         gaze_target:shift_accuracy)
 
 # first shift
 d.fs <- d %>% 
