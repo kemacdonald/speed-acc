@@ -44,7 +44,6 @@ d.fs %<>% bind_rows(., d.asl) %>%
   mutate(shift_accuracy = ifelse(shift_type == "C_T", "correct", "incorrect"))
 ```
 
-
 ### RT analysis
 
 First, we analyze RT and accuracy of first shifts that are computed from noun onset.
@@ -118,15 +117,6 @@ ggplot(aes(x = condition, y = m_rt, fill = shift_accuracy), data = ss.rt) +
         legend.position = "top") 
 ```
 
-```{r}
-rt.m1 <- d.fs %>% 
-  filter(response_onset_type == "noun") %>% 
-  lmer(log(rt) ~ condition + (1|subid), data = .)
-
-summary(rt.m1)
-```
-
-
 ### Accuracy
 
 First we aggregate mean Accuracy for each participant.
@@ -167,7 +157,6 @@ acc.glmer <- ss.d.rt %>%
         nAGQ = 0)
   
 ```
-
 
 ## EWMA filter to model guessing behavior 
 
