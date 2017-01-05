@@ -18,7 +18,7 @@ There are 4 different types of center fixations in this dataset:
 rm(list=ls()) # code to clear workspace
 
 knitr::opts_chunk$set(warning=F, message=F, sanitize = T, 
-                      fig.height=5, fig.width=8, echo=T, cache = T)
+                      fig.height=5, fig.width=8, echo=T, cache = F)
 
 # to reproduce simulations
 set.seed(0) 
@@ -150,7 +150,7 @@ All groups were worse than the ASL kids.
 
 TODO: Model with effect coding to test specific contrasts.
 
-### RT analysis
+## RT analysis
 
 Get medians and CIs for correct/inccorect shifts for each stimuli set and language modality 
 

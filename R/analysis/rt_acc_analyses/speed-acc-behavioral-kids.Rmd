@@ -1,0 +1,214 @@
+---
+title: "Speed-acc Behavioral analyses"
+author: "Kyle MacDonald"
+date: "1/4/2017"
+output: html_document
+---
+
+## Set up
+
+There are 4 different types of center fixations in this dataset:
+
+1. ASL (27 kids: 18-54m, median age = 27 months): human signing
+2. Face (22 kids: 26m): human face talking
+3. Trio (18 kids at 26m and 22 kids at 36m): static images of real world objects, e.g., cats
+4. Bull (22 kids at 26m): different static "bullseyes"
+
+```{r chunk_options, echo = F}
+rm(list=ls()) # code to clear workspace
+
+knitr::opts_chunk$set(warning=F, message=F, sanitize = T, 
+                      fig.height=5, fig.width=8, echo=T, cache = F)
+
+library(effsize); library(knitr)
+library(langcog); library(lme4); 
+library(magrittr); library(tidyverse);
+theme_set(theme_bw()) 
+```
+
+Load data
+
+```{r}
+df <- read.csv("../../../data/3_final_merged_data/speed-acc-ss-df.csv", 
+               check.names=F, stringsAsFactors=F) 
+
+df %<>% 
+  mutate(stimuli = ifelse(stimuli == "V1" | stimuli == "V2", "ASL", 
+                          ifelse(stimuli == "Trio", "Object", 
+                                 ifelse(stimuli == "Bull", "Bullseye",
+                                        stimuli))),
+         stimuli = factor(stimuli, levels = c("ASL", "Face", "Object", "Bullseye")))
+```
+
+## Descriptives
+
+How many participants in each stimuli set and language modality? `Age_code_m` is a hacky way to track the different age groups that saw the Trio stimuli.
+
+```{r}
+df %>% 
+  select(Sub.Num, language_modality, age_code, stimuli) %>% 
+  unique() %>% 
+  group_by(language_modality, age_code, stimuli) %>% 
+  dplyr::summarise(count = n()) %>% 
+  knitr::kable()
+```
+
+What are the age distributions across language modalities?
+
+```{r}
+df %>% 
+  filter(age_code == "child") %>% 
+  select(Sub.Num, language_modality, age_code, stimuli, age_years) %>% 
+  unique() %>%
+  ggplot(aes(age_years, fill = stimuli)) +
+  geom_histogram() +
+  scale_fill_solarized() +
+  facet_grid(.~language_modality)
+```
+
+ASL group has wide range of ages; whereas the spoken language kids are tightly clustered around 2 and 3 years of age.
+
+## Accuracy analysis
+
+First we need to get proportion correct for each participant in each age group and language modality.
+
+```{r}
+ss_prop <- df %>% 
+  group_by(Sub.Num, age_code, Months, language_modality, 
+           stimuli, hearing_status_participant) %>% 
+  filter(trial_type != "no_shift") %>% 
+  summarise(mean_correct = mean(correct))
+
+ss_prop <- df %>% 
+  group_by(Sub.Num, age_code, Months, language_modality, stimuli, correct, 
+           hearing_status_participant) %>%
+  filter(trial_type != "no_shift") %>% 
+  summarise(mean_rt = median(RT)) %>% 
+  left_join(ss_prop)
+```
+
+Plot.
+
+```{r boxplot}
+ggplot(aes(x = stimuli, y = mean_correct, fill = language_modality), 
+       data = filter(ss_prop, age_code == "child", correct == 1)) +
+  geom_boxplot(outlier.colour = "red", width = 0.3) +
+  geom_jitter(width = 0.1, alpha = 0.35) +
+  geom_hline(yintercept = 0.5, lty = "dashed") +
+  ylim(0,1) +
+  xlab(NULL) +
+  ylab("Mean Accuracy") +
+  scale_fill_solarized() +
+  theme(text = element_text(size=16)) +
+  guides(fill = F) +
+  ggtitle("First shift accuracy")
+```
+
+When we plot the average proprotion of correct shifting, we see that the ASL group was the most accurate, followed by Face, and then Trio and Bull.
+
+Model the accuracy difference between ASL and Face:
+
+```{r}
+m1 <- glmer(correct ~ stimuli + (1|Sub.Num), 
+            data = filter(df, age_code == "child", stimuli %in% c("ASL", "Face")),
+            family = "binomial")
+
+m1 %>% 
+  broom::tidy() %>% 
+  filter(group == "fixed") %>%
+  select(-group) %>% 
+  knitr::kable(digits = 3)
+```
+
+Compute effect size for the accuracy difference between ASL and Face:
+
+$$ d = \frac{\bar{x}_1 - \bar{x}_2}{s} $$
+
+s is defined as the pooled standard deviation:
+
+$$ s = \sqrt{\frac{s^2_1 + s^2_2}{n_1 + n_2 - 2}} $$
+
+and variance for one of the groups is defined as:
+
+$$ s^2 = \frac{1}{n-1}\sum{(x_{1,i} - \bar{x}_1)^2}$$
+
+```{r}
+d_effsize <-  df %>% 
+  filter(stimuli %in% c("ASL", "Face"), age_code == "child", 
+         trial_type != "no_shift") %>% 
+  group_by(stimuli, Sub.Num) %>% 
+  summarise(ss_m = mean(correct))
+
+cohen.d(filter(d_effsize, stimuli == "ASL")$ss_m, 
+         filter(d_effsize, stimuli == "Face")$ss_m)
+```
+
+## RT analysis
+
+Get medians and CIs for correct/inccorect shifts for each stimuli set and language modality 
+
+```{r}
+ms_rt <- ss_prop %>%
+  filter(age_code == "child") %>% 
+  group_by(language_modality, age_code, stimuli, correct) %>% 
+  multi_boot_standard(column = "mean_rt", na.rm = T, empirical_function = "median")
+```
+
+RT boxplot
+
+```{r rt boxplot}
+ss_prop$stimuli <- factor(ss_prop$stimuli, 
+                          levels = c("Bullseye", "Object", "Face", "ASL"))
+
+ggplot(aes(x = stimuli, y = mean_rt, fill = language_modality), 
+       data = filter(ss_prop, age_code == "child", correct == 1)) + 
+  geom_boxplot(outlier.colour = "red") +
+  geom_jitter(width = 0.2, alpha = 0.35) +
+  scale_fill_solarized() +
+  guides(fill = F) + 
+  theme(text = element_text(size=16)) +
+  xlab(NULL) +
+  ylab("Median RT") +
+  coord_flip() +
+  ggtitle("Reaction Time")
+```
+
+Plot RTs for correct/incorrect tirals
+
+```{r}
+ss_prop$stimuli <- factor(ss_prop$stimuli, 
+                          levels = c("Bullseye", "Object", "Face", "ASL"))
+
+ggplot(aes(x = stimuli, y = (mean_rt / 1000), fill = as.factor(correct)), 
+       data = filter(ss_prop, age_code == "child")) + 
+  geom_boxplot(outlier.colour = "red") +
+  scale_fill_solarized() +
+  guides(fill = F) + 
+  theme(text = element_text(size=16)) +
+  xlab(NULL) +
+  ylab("Median RT") +
+  coord_flip() +
+  ggtitle("Reaction Time")
+```
+
+We see some evidence of speed accuracy tradeoffs in the ASL, Face, and Bull conditions, but not in the Trio condition. Why do medians look so much better than means? 
+
+Compute effect size for RT difference on correct shifts.
+
+```{r}
+m_rt <- lmer(RT_sec ~ stimuli + (1|Sub.Num), 
+            data = filter(df, age_code == "child", 
+                          stimuli %in% c("ASL", "Face"),
+                          correct == 1))
+```
+
+```{r}
+rt_effsize <-  df %>% 
+  filter(stimuli %in% c("ASL", "Face"), age_code == "child", 
+         trial_type != "no_shift", correct == 1) %>% 
+  group_by(stimuli, Sub.Num) %>% 
+  summarise(ss_m = median(RT_sec))
+
+cohen.d(filter(rt_effsize, stimuli == "ASL")$ss_m,
+        filter(rt_effsize, stimuli == "Face")$ss_m)
+```
