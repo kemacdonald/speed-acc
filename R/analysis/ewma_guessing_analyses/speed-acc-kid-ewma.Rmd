@@ -130,7 +130,7 @@ ggplot(aes(x = stimuli, y = mean_rt / 1000, fill = language_modality),
   ylab("Median RT (sec)") +
   coord_flip() +
   ggtitle("Reaction Time") +
-  theme(text = element_text(size = 16))
+  theme(text = element_text(size = 12))
 ```
 
 Now we can make the same boxplot, but split the RTs by correct and incorrect shifts to look for evidence of speed-accuracy tradeoffs in the decision process.
@@ -144,7 +144,7 @@ ggplot(aes(x = stimuli, y = mean_rt / 1000, fill = as.factor(correct)),
   geom_point(pch = 21, position = position_jitterdodge(), alpha = 0.6) +
   scale_fill_solarized() +
   labs(x = NULL, y = "Median RT (sec)", title = "Reaction Time", fill = "Correct") +
-  theme(text = element_text(size = 16))
+  theme(text = element_text(size = 12))
 ```
 
 We see evidence of speed accuracy tradeoffs in the ASL, Face, and Bull conditions -- that is, incorrect responses tend to be faster than correct responses --  but not in the Object condition.
@@ -178,7 +178,7 @@ ggplot(aes(x = RT, fill = Response.Type),
   ylab("Density") +
   scale_fill_manual(values = c("darkorange", "dodgerblue")) +
   scale_color_manual(values = c("darkorange", "dodgerblue")) +
-  theme(text = element_text(size=18),
+  theme(text = element_text(size=11),
         legend.position = "top",
         panel.margin = unit(2, "lines")) +
   scale_y_continuous(breaks = c(0, .001)) +
@@ -188,5 +188,10 @@ ggplot(aes(x = RT, fill = Response.Type),
 ## EWMA model of guessing behavior
 
 Write EWMA results to .csv file for use with the Drift Diffusion analysis. 
+
+```{r}
+
+```
+
 
 ## Stats over EWMA parameters
