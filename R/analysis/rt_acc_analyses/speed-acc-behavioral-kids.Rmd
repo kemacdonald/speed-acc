@@ -20,10 +20,7 @@ rm(list=ls()) # code to clear workspace
 knitr::opts_chunk$set(warning=F, message=F, sanitize = T, 
                       fig.height=5, fig.width=8, echo=T, cache = F)
 
-library(effsize); library(knitr)
-library(langcog); library(lme4); 
-library(magrittr); library(tidyverse);
-theme_set(theme_bw()) 
+source("../../helper_functions/libraries_and_functions.R")
 ```
 
 Load data

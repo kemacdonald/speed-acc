@@ -227,7 +227,8 @@ iChart <- speed_acc_df_final
 Recode all 2s as 0.5s (center-looking). Prior versions of datawiz coded center looking as 2s. 
 
 ```{r}
-iChart_recode <- as.data.frame(apply(select(iChart, X0:X3000), 2, function(x) ifelse(x == "2", "0.5", x)),
+iChart_recode <- as.data.frame(apply(select(iChart, X0:X3000), 2,
+                                     function(x) ifelse(x == "2", "0.5", x)),
                         stringsAsFactors = F)
 
 iChart <- iChart %>% 

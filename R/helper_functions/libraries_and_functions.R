@@ -10,6 +10,7 @@ library(stringr); library(arm)
 library(directlabels); library(lazyeval); 
 library(forcats); library(RWiener)
 library(GGally); library(lsr)
+library(effsize); 
 
 # load tidyvrse last, so no functions get masked
 library(tidyverse)

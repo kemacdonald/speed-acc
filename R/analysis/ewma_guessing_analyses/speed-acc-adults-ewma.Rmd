@@ -12,8 +12,10 @@ This script analyzes first shift accuracy and RT using an EWMA guesssing model. 
 Load libraries and read in tidy data.
 
 ```{r setup, include=FALSE}
+rm(list=ls())
 knitr::opts_chunk$set(echo=F, warning=F, cache=F, message=F, sanitize = T)
 source("../../helper_functions/libraries_and_functions.R")
+library(tidyverse); library(lme4)
 ```
 
 ```{r read data}
@@ -117,6 +119,11 @@ ggplot(aes(x = condition, y = m_rt, fill = shift_accuracy), data = ss.rt) +
         legend.position = "top") 
 ```
 
+```{r}
+effsize::cohen.d(filter(ss.rt, condition == "ASL")$m_rt,
+        filter(ss.rt, condition == "face")$m_rt)
+```
+
 ### Accuracy
 
 First we aggregate mean Accuracy for each participant.
@@ -136,15 +143,6 @@ ggplot(aes(x = condition, y = mean_acc), data = ss.acc) +
   geom_boxplot(width = 0.3, fill = "dodgerblue", alpha = 0.7) +
   labs(x = "Condition", 
        y = "Mean Accuracy") +
-  theme(text = element_text(size = 16))
-```
-
-```{r}
-ggplot(aes(x = condition, y = mean_acc), data = ss.acc) +
-  geom_violin(fill = "dodgerblue", alpha = 0.5) +
-  labs(x = "Condition", 
-       y = "Mean Accuracy") +
-  geom_hline(yintercept = 0.5, linetype = "dashed") +
   theme(text = element_text(size = 16))
 ```
 
@@ -195,7 +193,7 @@ ss.cutoffs <- ss.ewma.results %>%
 # Aggregate cutoffs for each condition.
 ms.cutoffs <- ss.cutoffs %>% 
   group_by(condition) %>% 
-  summarise(cutoff = median(cutoff))
+  multi_boot_standard(column = "cutoff", empirical_function = "mean")
 ```
 
 Write EWMA results to .csv so we can use this information in the Drift Diffusion analysis. 
@@ -207,18 +205,26 @@ write_csv(ss.ewma.results, "../../../data/3_final_merged_data/speed_acc_adult_ew
 Now make a pretty EWMA plot ("control chart"). 
 
 ```{r ewma plot, fig.height=8}
-ggplot(data = ss.ewma.results, aes(x = rt, y = param_value, color = ewma_param)) +
+ss.ewma.results %>% 
+  filter(condition != "ASL") %>% 
+  ggplot(data = ., aes(x = rt, y = param_value, color = ewma_param)) +
+  geom_segment(aes(x = ci_lower, y = 0.8, xend = ci_upper, yend = 0.8), 
+               color = "black", size = 100, alpha = 0.2,
+               data = filter(ms.cutoffs, condition != "ASL")) +
   geom_line(size = 1) +
-  geom_vline(aes(xintercept = cutoff), linetype = 2, data = ms.cutoffs) +
+  geom_vline(aes(xintercept = mean), linetype = 2, 
+             data = filter(ms.cutoffs, condition != "ASL")) +
   geom_hline(yintercept = 0.5, linetype = "solid") +
   labs(x = "RT (sec)", y = "EWMA statistic") +
   guides(color=F) + 
   xlim(0, 1) +
   facet_grid(condition~.) +
   scale_color_manual(values = c("darkorange", "dodgerblue")) +
-  geom_dl(aes(label = ewma_param), method = "last.bumpup") +
-  theme(text = element_text(size = 15))
+  #geom_dl(aes(label = ewma_param), method = "last.bumpup") +
+  theme_bw() +
+  theme(text = element_text(size = 14)) 
 ```
+
 
 What do we see? The bullseye condition crosses the threshold after 1 second. The face, text, and text-audio all cross the threshold earlier in the window. Text-no-audio crosses earliest given these parameters of the EWMA model. Finally, in the text-no-audio condition there aren't any early RTs to model. How should we add this information to the analysis?
 
