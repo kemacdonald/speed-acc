@@ -10,13 +10,16 @@ library(stringr); library(arm)
 library(directlabels); library(lazyeval); 
 library(forcats); library(RWiener)
 library(GGally); library(lsr)
-library(effsize); 
+library(effsize); library(cowplot)
 
 # load tidyvrse last, so no functions get masked
 library(tidyverse)
 
 # set ggplot theme
-theme_set(theme_bw())
+theme_set(
+  theme_bw() +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+)
 
 ## Score trial function
 ## Categorizes trials as correct or incorrect in 2-AFC gaze task
