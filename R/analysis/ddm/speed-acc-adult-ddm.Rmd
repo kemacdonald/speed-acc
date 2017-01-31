@@ -60,7 +60,7 @@ The parameters of the drift drift diffusion model are:
 # get the data we care about and format for Rwiener functions
 # columns need to be named "q" for RT and "resp" for response
 d.ddm <- d %>% 
-  filter(RT >= 0.1, RT <= 1.5, guess == "response") %>% 
+  filter(RT >= 0.1, RT <= 1, guess == "response") %>% 
   select(subid, condition, RT, correct) %>% 
   mutate(resp = ifelse(correct == "0", "lower", "upper")) %>% 
   rename(q = RT) 
