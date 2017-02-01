@@ -41,24 +41,27 @@ df_e1 %<>%
 
 # Introduction 
 
-Language comprehension involves quickly integrating the linguistic signal with information about the surrounding visual world. But in some contexts, the visual world can also provide information that is directly related to the linguistic signal. For example, imagine that a speaker asks you to "Pass the salt" but there is noise in the surrounding context, making it difficult to understand the request. Here, comprehension can be facilitated by (a) fixating on the nonlinguistic visual world (i.e., encoding the objects that are present in the scene) or (b) fixating on source of the language: the speaker (i.e., reading lips or perhaps the direction of gaze). However, this situation creates a tradeoff where the listener must decide what kind of information to gather and at what time. How do we decide when to fixate on the language source and when to gather information about the nonlinguistic visual world?   
+The study of eye movements during language comprehension has provided insights into the interaction between conceptual representations of the world and the incoming linguistic signal. For example, research shows that adults and children will rapidly shift visual attention upon hearing the name of an object in the visual scene, with a high proportion of these shifts occurring prior to the offset of the target word [@allopenna1998tracking; @tanenhaus1995integration]. Moreover, researchers have found that conceptual representations activated by fixations to the visual world can modulate subsequent eye movements during language processing [@altmann2007real]. 
+
+The majority of this work has used eye movements as a measure of the output of the underlying language comprehension process, often using linguistic stimuli that comes from a disembodied voice. But in some contexts, the visual world can also be a source of information that is directly related to interpreting linguistic signal. For example, imagine that a speaker asks you to "Pass the salt" but there is noise in the surrounding context, making it difficult to understand the request. Here, comprehension can be facilitated by (a) fixating on the nonlinguistic visual world (i.e., encoding the objects that are present in the scene) or (b) fixating on the speaker (i.e., reading lips or perhaps the direction of gaze). 
+
+But, this situation creates a tradeoff where the listener must decide what kind of information to gather and at what time. How do we decide when to fixate on the language source and when to gather information about the nonlinguistic visual world? We propose that people modulate their eye movements during language comprehension in response to tradeoffs in the value of gathering different kinds of information. We test this adaptive tradefoff account using two case studies that manipulate the value of different fixation locations in the visual world for language understanding: a) a comparison of processing a visual-manual vs. a spoken language in children (E1), and b) a comparison of processing printed text vs. spoken language in adults (E2). Our key prediction is that competition for visual attention will make eye movements away from the language source less valuable than fixating the source of the linguistic signal, leading people to generate fewer exploratory, nonlanguage-driven shifts.
 
 <!---
+ Using ideas from the field of natural vision where eye movements are modeled as a way to reduce uncertainty about the world and to maximize the expected reward of future actions [@hayhoe2005eye]
+ 
+ We propose that people modulate their eye movement behavior in response to changes in the value of gathering different kinds of information. We test this information-seeking account using two case studies that manipulate the value of different fixation locations in the visual world for language understanding: a) a comparison of processing a visual-manual vs. a spoken language in children (Experiment 1), and b) a comparison of processing printed text vs. spoken language in adults (Experiment 2).
+
 For example, imagine there is only one red object amongst many others, and you hear someone say, "Pass me the red _____!" If you have successfully encoded the visual world, then the adjective "red" allows you to constrain the speaker's intended meaning and respond rapidly and accurately. 
--->
-
-We propose that people modulate their eye movement behavior in response to changes in the value of gathering different kinds of information. We test this information-seeking account using two case studies that manipulate the value of different fixation locations in the visual world for language understanding: a) a comparison of processing a visual-manual vs. a spoken language in children (Experiment 1), and b) a comparison of processing printed text vs. spoken language in adults (Experiment 2).
-
-The study of eye movements during language comprehension has provided insight into the interaction between conceptual representations of the world and the incoming linguistic signal. For example, research shows that adults and children will rapidly shift visual attention upon hearing the name of an object in the visual scene, with a high proportion of these shifts occurring prior to the offset of the target word [@allopenna1998tracking; @tanenhaus1995integration]. Moreover, researchers have found that conceptual representations activated by fixations to the visual world can modulate subsequent eye movements during language processing [@altmann2007real]. The majority of this work has leveraged eye movements as the output of the underlying language comprehension process, using linguistic stimuli that comes from a disembodied voice. But this work has focused less on contexts where the visual world also provides an opportunity to gather information about the linguistic signal by fixating on the language source. 
 
 In contrast, researchers in the fields of natural vision have modeled fixations to the visual world as a tool for information gathering [@hayhoe2005eye]. In this approach, eye movements reflect a goal to gather information to reduce uncertainty and to maximize the expected reward of future actions. For example, @hayhoe2005eye review evidence that people do not fixate on the most salient aspects of a visual scene, but instead focus on aspects that are most helpful for the current task such as choosing to fixate on an upcoming obstacle when walking.
 
-In the current work, we leverage aspects of this information-seeking framework to account for a wider variety of fixation patterns during language comprehension. We characterize eye movements as a tradeoff between gathering information about the nonlinguistic visual world and monitoring the incoming linguistic signal. We assume that the goal is to maximize the chance of making a correct future response (in the context of our task, resolving reference rapidly and accurately by looking at the object that is being talked about). To test the predictions of our account, we present two case studies where information about the linguistic signal can be gathered via fixations to the language source: processing American Sign Language (ASL) and processing displays of printed text. Our key prediction is that competition for visual attention will make eye movements away from the language source less valuable than fixating the source of the linguistic signal, leading people to generate fewer exploratory, nonlanguage-driven shifts.
+of visis information-seeking framework to account for a wider variety of fixation patterns during language comprehension. We characterize eye movements as a tradeoff between gathering information about the nonlinguistic visual world and monitoring the incoming linguistic signal.
 
-```{r e1_stimuli, fig.env = "figure", fig.pos = "t", fig.width=3.3, fig.height=2, fig.align='center', fig.cap = "Stimuli for Experiments 1 and 2. Panel A shows the layout of the three potential fixation locations across all the tasks: the center stimulus, the target picture, and the distracter picture. Panel B shows the five different center stimulus items from Experiments 1 and 2: a person signing (ASL), a person speaking (Face), a static image of a familiar object (Object), a static geometric shape (Bullseye), and printed text (Text)."}
-
-grid::grid.raster(png::readPNG("figs/stimuli.png"))
-```
+ To test the predictions of our account, we present two case studies where information about the linguistic signal can be gathered via fixations to the language source: processing American Sign Language (ASL) and processing displays of printed text. 
+ 
+ We assume that the goal is to maximize the chance of making a correct future response (in the context of our task, resolving reference rapidly and accurately by looking at the object that is being talked about).
+-->
 
 ```{r e1 get prop correct}
 upper_bound_RT <- 2000
@@ -81,11 +84,16 @@ ss_prop <- df_e1 %>%
 
 # Experiment 1
 
-E1 provides an initial test of our information-seeking account. We directly compared eye movements of children learning ASL to children learning a spoken language using parallel, 3-alternative forced choice real-time language comprehension tasks. The spoken language data are a reanalysis of three unpublished data sets, and the ASL data are reported in MacDonald et al. (under review). We predicted that, compared to spoken language processing, processing ASL would increase the value of fixating on the language source and decrease the value of generating exploratory, nonlanguage-driven shifts. 
+E1 provides an initial test of our adaptive tradeoffs account. We directly compared eye movements of children learning ASL to children learning a spoken language using parallel, 3-alternative forced choice real-time language comprehension tasks where children processed familiar sentences while we measured their fixation. The spoken language data are a reanalysis of three unpublished data sets, and the ASL data are reported in MacDonald et al. (under review). We predicted that, compared to spoken language processing, processing ASL would increase the value of fixating on the language source and decrease the value of generating exploratory, nonlanguage-driven shifts. 
 
-To test this prediction, we present standard behavioral analyses of Accuracy and RT. We also present two exploratory model-based analyses: An exponentially weighted moving average (EWMA) method [@vandekerckhove2007fitting] that categorizes gaze shifts as either language-driven or random guessing. Then, for the shifts flagged as language-driven by the EWMA model, we fit drift-diffusion models (DDMs) [@ratcliff2015individual] to quantify differences in the dynamics of speed and accuracy of eye movements.
+To test this prediction, we present standard behavioral analyses of Accuracy and RT. We also present two exploratory model-based analyses: An exponentially weighted moving average (EWMA) method [@vandekerckhove2007fitting] that categorizes gaze shifts as either language-driven or random guessing. Then, for the shifts flagged as language-driven by the EWMA model, we fit drift-diffusion models (DDMs) [@ratcliff2015individual] to quantify differences in the dynamics of speed and accuracy of language-driven eye movements.
 
 Since our results are complex, we preview them here: when the center stimulus was an Object or a Bullseye, kids' first shifts away from the center stimulus were fast and at chance, and models suggested they never stopped guessing even when the language was informative. In contrast, for the Face condition and even more so for the signers, kids fixated on the speaker to gather information and generated more accurate first shifts. In other words, their eye movements reflected a tradeoff between the value of gathering information from the speaker and exploring the nonlinguistic visual world.
+
+```{r e1_stimuli, fig.env = "figure", fig.pos = "t", fig.width=3.3, fig.height=2, fig.align='center', fig.cap = "Stimuli for E1 and E2. Panel A shows the layout of the fixation locations for all tasks: the center stimulus, the target, and the distracter. Panel B shows the five center stimulus items: a static geometric shape (Bullseye), a static image of a familiar object (Object), a person signing (ASL), a person speaking (Face), and printed text (Text)."}
+
+grid::grid.raster(png::readPNG("figs/stimuli.png"))
+```
 
 ## Method
 
@@ -150,22 +158,17 @@ Participants viewed the Face, Object, and Bullseye tasks on a large projector sc
 *Coding.* Participants’ gaze patterns were videotaped and later coded frame-by-frame at 33-ms resolution by trained coders blind to target side.  On each trial, coders indicated whether the eyes were fixated on the central signer, one of the images, shifting between pictures, or away (off), yielding a high-resolution record of eye movements aligned with target noun onset. Prior to coding, all trials were pre-screened to exclude those few trials on which the participant was inattentive or there was external interference.
 -->
 
-Children sat on their caregiver’s lap and viewed the task on a screen while their gaze was recorded using a digital camcorder. On each trial, pictures of two familiar objects appeared and between the two pictures was a central stimulus (ASL, Face, Object, or Bullseye). Participants saw approximately 32 test trials with several filler trials interspersed to maintain children’s interest.
-
-*Trial structure.* On each trial, children saw two images of familiar objects on the screen for two seconds before the center stimulus appeared. Then they processed the target sentence -- which consisted of a carrier phrase, a target noun, and a question -- followed by two seconds without language to allow for a response.
+Children sat on their caregiver’s lap and viewed the task on a screen while their gaze was recorded using a digital camcorder. On each trial, children saw two images of familiar objects on the screen for two seconds before the center stimulus appeared (see Fig 1). Then they processed the target sentence -- which consisted of a carrier phrase, a target noun, and a question -- followed by two seconds without language to allow for a response. Participants saw approximately 32 test trials with several filler trials interspersed to maintain interest.
 
 *Coding.* Participants’ gaze patterns were coded (33-ms resolution) as being fixated on either the center stimulus, one of the images, shifting between pictures, or away. 
-
-### Behavioral measures
-
-*Reaction time.* Reaction time (RT) corresponds to the latency to shift from the central stimulus to either the target or the distracter pictures measured from target-noun onset. We chose to exclude RTs longer than two seconds since these shifts are unlikely to be generated in response to the incoming language stimulus (see Ratcliff, 1993). 
-
-*First shift accuracy.* Accuracy was the mean proportion of first shifts that landed on the target picture out of the total number of shifts that landed on either the target or the distracter picture over a two-second window from target noun onset. 
-
 <!--
+ We excluded RTs longer than two seconds since these shifts are unlikely to be generated in response to the incoming language stimulus (see Ratcliff, 1993). 
+
 This measure reflects the accuracy of language-driven saccades to the visual world. Mean first shift accuracy scores were computed for each participant for both correct and incorrect shifts. Trials where the participants did not generate a shift were not included in the computation.
 -->
-```{r e1_acc_rt_plot, fig.env = "figure", fig.pos = "t", fig.width=3, fig.height=3, fig.align='center', fig.cap = "First shift accuracy and Reaction times (RT) from E1. Panel A shows a boxplot representing the distribution of RTs for correct (orange) and incorrect (blue) shifts for each center stimulus type. Panel B shows the distribution of mean first shift accuracy scores for each center stimulus type. The solid lines represent median values, the boundaries of the box show the upper and lower quartiles, and the whiskers show the full range of the data excluding outliers."}
+```{r e1_acc_rt_plot, fig.env = "figure", fig.pos = "t", fig.width=3, fig.height=3, fig.align='center', fig.cap = "First shift accuracy and RTs from E1. Panel A shows a boxplot representing the distribution of RTs for correct (orange) and incorrect (blue) shifts for each center stimulus type. Panel B shows the distribution of mean first shift accuracy scores for each center stimulus type. The solid lines represent median values, the boundaries of the box show the upper and lower quartiles, and the whiskers show the full range of the data excluding outliers."}
+library(scales)
+
 ss_prop$stimuli <- factor(ss_prop$stimuli, 
                           levels = c("Bullseye", "Object", "Face", "ASL"))
 
@@ -178,7 +181,7 @@ acc_plot <- ggplot(aes(x = stimuli, y = mean_correct),
   geom_hline(yintercept = 0.5, lty = "dashed") +
   ylim(0,1) +
   xlab(NULL) +
-  ylab("Mean Acc") +
+  ylab("Accuracy") +
   scale_fill_solarized() +
   theme(text = element_text(size=10)) +
   guides(fill = F) 
@@ -191,18 +194,19 @@ rt_plot <- ggplot(aes(x = stimuli, y = mean_rt / 1000,
   #geom_jitter(width = 0.2, alpha = 0.35) +
   scale_fill_manual(values = c("darkorange", "dodgerblue")) +
   theme(text = element_text(size=10)) +
-  labs(x =NULL, y = "Mean RT (sec)", fill = "") +
+  labs(x =NULL, y = "RT (sec)", fill = "") +
   theme(legend.justification=c(0,1), legend.position=c(0,1),
-        legend.direction="horizontal")
+        legend.direction="horizontal", 
+        legend.background = element_rect(fill=alpha('white', 0.4)))
 
 plot_grid(rt_plot, acc_plot, labels = c("A", "B"), nrow = 2, align = "v")
 ```
 
-```{r e1_control_chart, fig.env = "figure", fig.pos = "t", fig.width=3., fig.height=3.3, fig.align='center', fig.cap = "Output for the EWMA guessing model for all center stimulus types in E1. The black curve represents the evolution of the control statistic (CS) as a function of reaction time. The grey curve represents the upper control limit (UCL). The vertical dashed line is the median cutoff value (point when the control process shifts out of a guessing state) across all participants. The grey shaded area represents the 95\\% confidence interval around the estimate of the median cutoff point. And the shaded red area represents the proprotion of responses that were flagged as guesses by the EWMA model."}
+```{r e1_control_chart, fig.env = "figure", fig.pos = "t", fig.width=3., fig.height=3, fig.align='center', fig.cap = "Output for the EWMA guessing model in E1. The black curve represents the evolution of the control statistic (CS) as a function of reaction time. The grey curve represents the upper control limit (UCL). The vertical dashed line is the median cutoff value (point when the control process shifts out of a guessing state). The grey shaded area represents the 95\\% confidence interval around the estimate of the median cutoff point. And the shaded areas represents the proprotion of responses that were flagged as guesses (red) and language-driven (green)."}
 grid::grid.raster(png::readPNG("figs/e1_control_chart.png"))
 ```
 
-```{r hddm_plot, fig.env = "figure", fig.pos = "t", fig.width=3.3, fig.height=4, fig.align='center', fig.cap = "Posterior distributions over the boundary and drift rate parameters in the heirarchical drift diffusion model for Experiment 1 (Panel A) and 2 (Panel B)."}
+```{r hddm_plot, fig.env = "figure", fig.pos = "t", fig.width=3.3, fig.height=3, fig.align='center', fig.cap = "Posterior distributions for the boundary and drift rate parameters for kids in E1 (Panel A) and adults in E2 (Panel B)."}
 grid::grid.raster(png::readPNG("figs/hddm_plot_final.png"))
 ```
 
@@ -222,11 +226,11 @@ Finally, we use Drift-diffusion models (DDMs) [@ratcliff2015individual] to quant
 We chose to implement a hierarchical Bayesian version of the DDM using the HDDM Python package [@wiecki2013hddm] because we were dealing with relatively few trials from child participants and recent simulation studies have shown that the HDDM approach was better than other DDM fitting methods when the number of observations was small [@ratcliff2015individual].  
 -->
 
-First, we present behavioral analyses of Accuracy and RT. We log transformed all RTs and used the `lme4` R package [@bates2013lme4] to fit mixed-effects regression models that included a by-subject random intercept for each participant. All data and analysis code can be found in the online repository for this project: https://github.com/kemacdonald/speed-acc.  
+First, we present behavioral analyses of First shift accuracy and Reaction Time (RT). RT corresponds to the latency to shift away from the central stimulus to either picture measured from target-noun onset. Accuracy was the mean proportion of first shifts that landed on the target picture out of the total number of shifts. We log transformed all RTs and used the `lme4` R package [@bates2013lme4] to fit mixed-effects regression models that included a by-subject random intercept for each participant. All analysis code can be found in the online repository for this project: https://github.com/kemacdonald/speed-acc.  
 
 Next, we present two exploratory model-based analyses to quantify differences in eye movements across the four samples. First, we use an EWMA method to model changes in accuracy as a function of increases in RT. For each RT, the model generates two values: a "control statistic" (CS, which captures the running average of first shift accuracy) and an "upper control limit" (UCL, which captures the pre-defined limit of when accuracy is categorized as above chance level). Here, the CS is an expectation of random shifting to either the target or the distracter image, or a Bernoulli process with probability of success 0.5. As the RTs get longer, we assume that participants have gathered more information and should become more accurate, or a Bernoulli process with probability success > 0.5. Using this model, we can quantify and compare: a) the cutoff point when the CS exceeds the UCL, indicating that participants started to generate language-driven shifts and b) the proportion of shifts that the model categorizes as language-driven vs. nonlanguage-driven.
 
-Finally, we took the language-driven shifts from the EWMA and fit a hierarchical Bayesian drift-diffusion model (HDDM) to quantify differences in the speed and accuracy of language-driven eye movements. We chose to implement a hierarchical Bayesian version of the DDM using the HDDM Python package [@wiecki2013hddm] since we had relatively few trials from child participants and recent simulation studies have shown that the HDDM approach was better than other DDM fitting methods for small data sets [@ratcliff2015individual].]. The model assumes that people accumulate noisy evidence in favor of one alternative with a response generated when the evidence crosses a pre-defined decision threshold. Here we focus on two parameters of interest that map onto meaningful psychological variables: **boundary separation**, which indexes the amount of evidence gathered before generating a response (higher values suggest a prioritization of accuracy over speed) and **drift rate**, which indexes the amount of evidence that is accumulated per unit time (higher values suggest more efficient processing). 
+Finally, we took the language-driven shifts from the EWMA and fit a hierarchical Bayesian drift-diffusion model (HDDM) to quantify differences in the speed and accuracy of language-driven eye movements. We chose to implement a hierarchical Bayesian version of the DDM using the HDDM Python package [@wiecki2013hddm] since we had relatively few trials from child participants and recent simulation studies have shown that the HDDM approach was better than other DDM fitting methods for small data sets [@ratcliff2015individual].]. The model assumes that people accumulate noisy evidence in favor of one alternative with a response generated when the evidence crosses a pre-defined decision threshold. Here we focus on two parameters of interest that map onto meaningful psychological variables: *boundary separation*, which indexes the amount of evidence gathered before generating a response (higher values suggest a prioritization of accuracy over speed) and *drift rate*, which indexes the amount of evidence that is accumulated per unit time (higher values suggest more efficient processing). 
 
 ### Behavioral analyses
 
@@ -261,7 +265,7 @@ m.rt.e1.coefs <- m.rt.e1 %>%
          estimate = round(estimate, 2))
 ```
 
-*RT.* Visual inspection of the Figure 2 panel A suggests that there was a speed accuracy tradeoff in the ASL, Face, and Bullseye conditions, with incorrect RTs tended to be faster than correct RTs. To quantify differences across the groups, we fit a linear mixed-effects regression predicting first shift RT as a function of center stimulus type, controlling for age, and including user-defined contrasts to test specific comparisons of interest: \texttt{Log(RT) $\sim$ center stimulus type + age +  (1 | subject)}. We found that (a) ASL learners generated slower RTs compared to all of the spoken English samples ($\beta$ = `r m.rt.e1.coefs$estimate[2]`, $p$ `r m.rt.e1.coefs$p.val.clean[2]`), (b) ASL learners' shifts were slower compared directly to participants in the Face task ($\beta$ = `r m.rt.e1.coefs$estimate[4]`, $p$ `r m.rt.e1.coefs$p.val.clean[4]`), and (c) participants in the Face task shifted slower compared to participants in the Object and Bullseye tasks ($\beta$ = `r m.rt.e1.coefs$estimate[3]`, $p$ `r m.rt.e1.coefs$p.val.clean[3]`).
+*RT.* Visual inspection of the Fig 2, panel A suggests that there was a speed accuracy tradeoff in the ASL, Face, and Bullseye conditions, with incorrect RTs tending to be faster than correct RTs. To quantify differences across the groups, we fit a linear mixed-effects regression predicting first shift RT as a function of center stimulus type, controlling for age, and including user-defined contrasts to test specific comparisons of interest: \texttt{Log(RT) $\sim$ center stimulus type + age +  (1 | subject)}. We found that (a) ASL learners generated slower RTs compared to all of the spoken English samples ($\beta$ = `r m.rt.e1.coefs$estimate[2]`, $p$ `r m.rt.e1.coefs$p.val.clean[2]`), (b) ASL learners' shifts were slower compared directly to participants in the Face task ($\beta$ = `r m.rt.e1.coefs$estimate[4]`, $p$ `r m.rt.e1.coefs$p.val.clean[4]`), and (c) participants in the Face task shifted slower compared to participants in the Object and Bullseye tasks ($\beta$ = `r m.rt.e1.coefs$estimate[3]`, $p$ `r m.rt.e1.coefs$p.val.clean[3]`).
 
 ```{r fit e1 acc glmer}
 # model
@@ -330,8 +334,7 @@ ms.cutoffs.e1 <- ss.cutoffs.e1 %>%
 ```
 
 ```{r e1 write emwa output, eval = F}
-write_csv(ss.ewma.results.e1, 
-          path = "../../data/3_final_merged_data/speed_acc_kids_ewma_results.csv")
+write_csv(ss.ewma.results.e1, path = "../../data/3_final_merged_data/speed_acc_kids_ewma_results.csv")
 ```
 
 ```{r e1 build data frame for ribbon in control chart}
@@ -344,6 +347,15 @@ e1_ribbon <- ms.ewma.e1 %>%
                                ifelse(condition == "Object", max_rt_object_cond, 
                                       max_rt_bullseye_cond))) %>% 
   filter(rt <= rt_cut_point) %>% 
+  spread(key = ewma_param, value = mean_param)
+
+
+e1_ribbon_green <- ms.ewma.e1 %>% 
+  left_join(., ms.cutoffs.e1, by = "condition") %>% 
+  mutate(rt_cut_point = ifelse(condition %in% c("ASL", "Face"), median_param,
+                               ifelse(condition == "Object", max_rt_object_cond, 
+                                      max_rt_bullseye_cond))) %>% 
+  filter(rt >= rt_cut_point) %>% 
   spread(key = ewma_param, value = mean_param)
 ```
 
@@ -358,6 +370,9 @@ ms.cutoffs.e1$condition <- factor(ms.cutoffs.e1$condition,
 e1_ribbon$condition <- factor(e1_ribbon$condition,
                           levels = c("ASL", "Face", "Object", "Bullseye"))
 
+e1_ribbon_green$condition <- factor(e1_ribbon_green$condition,
+                          levels = c("ASL", "Face", "Object", "Bullseye"))
+
 # make plot
 e1_control_chart <- ms.ewma.e1 %>% 
   filter(rt <= 1.5) %>% 
@@ -367,7 +382,10 @@ e1_control_chart <- ms.ewma.e1 %>%
                data = filter(ms.cutoffs.e1, condition != "Bullseye")) +
   geom_ribbon(aes(ymin = cs, ymax = ucl, x = rt), fill = "red", alpha = 0.3, 
               data = filter(e1_ribbon, rt <= 1.5), inherit.aes = F)  +
+  geom_ribbon(aes(ymin = cs, ymax = ucl, x = rt), fill = "green", alpha = 0.3, 
+              data = filter(e1_ribbon_green, rt <= 1.5), inherit.aes = F)+
   geom_line(size = 1) +
+  scale_y_continuous(breaks = c(0.4, 0.6, 0.8)) +
   geom_vline(aes(xintercept = median_param), linetype = 2, 
              data = filter(ms.cutoffs.e1, condition %in% c("ASL", "Face"))) +
   geom_hline(yintercept = 0.5, linetype = "solid") +
@@ -379,7 +397,7 @@ e1_control_chart <- ms.ewma.e1 %>%
   geom_dl(aes(label = ewma_param), method = "last.bumpup") +
   theme(text = element_text(size = 10))
 
-ggsave(e1_control_chart, filename = "figs/e1_control_chart.png", width=3.5, height=4)
+ggsave(e1_control_chart, filename = "figs/e1_control_chart.png", width=3, height=3)
 ```
 
 ```{r e1 fit ewma lmer}
@@ -410,12 +428,12 @@ e1.ewma.m2.coefs <- e1.ewma.m2 %>%
          p.value = ifelse(p.value < .001, "< .001", round(p.value, 3)))
 ```
 
-*EWMA.* Figure 3 shows changes in the control statistic (CS) and the upper control limit (UCL) as a function of participants' RTs. Each CS starts at chance performance and below the UCL. In the ASL and Face tasks, the CS value begins to increase with RTs around 0.7 seconds after noun onset and eventually crosses the UCL, indicating that responses > 0.7 sec were on average above chance levels. In contrast, the CS in the Object and Bullseye tasks never crossed the UCL, indicating that children's shifts were equally likely to land on the target or the distracter, regardless of when they were initiated. This result suggests that first shifts in the Bullseye/Object tasks were not language-driven and may instead reflect a different process such as gathering more information about the referents in the visual world.
+*EWMA.* Figure 3 shows changes in the control statistic (CS) and the upper control limit (UCL) as a function of participants' RTs. Each CS starts at chance performance and below the UCL. In the ASL and Face tasks, the CS value begins to increase with RTs around 0.7 seconds after noun onset and eventually crosses the UCL, indicating that responses > 0.7 sec were on average above chance levels. In contrast, the CS in the Object and Bullseye tasks never crossed the UCL, indicating that children's shifts were equally likely to land on the target or the distracter, regardless of when they were initiated. This result suggests that first shifts in the Bullseye/Object tasks were not language-driven and may instead have reflected a different process such as gathering more information about the referents in the visual world.
 
-Next, we compared the EWMA output for participants in the ASL and Face tasks. We found that ASL learners generated fewer shifts when the CS was below the UCL ($\beta$ = `r e1.ewma.m2.coefs$estimate[2]`, $p$ `r e1.ewma.m2.coefs$p.value[2]`), indicating that a larger proportion of their initial shifts away were language-driven (see the differences in the red shaded area in Figure 3). We did not find evidence for a difference in the timing of when the CS crossed the UCL ($\beta$ = `r e1.ewma.m1.coefs$estimate[2]`, $p$ = `r e1.ewma.m1.coefs$p.value[2]`), indicating that both groups began to generate language-driven shifts about the same time after noun onset.
+Next, we compared the EWMA output for participants in the ASL and Face tasks. We found that ASL learners generated fewer shifts when the CS was below the UCL ($\beta$ = `r e1.ewma.m2.coefs$estimate[2]`, $p$ `r e1.ewma.m2.coefs$p.value[2]`), indicating that a larger proportion of their initial shifts away were language-driven (see the differences in the red shaded area in Fig 3). We did not find evidence for a difference in the timing of when the CS crossed the UCL ($\beta$ = `r e1.ewma.m1.coefs$estimate[2]`, $p$ = `r e1.ewma.m1.coefs$p.value[2]`), indicating that both groups began to generate language-driven shifts about the same time after noun onset.
 
 
-```{r read hddm functino}
+```{r read hddm function}
 read_hddm_file <- function(file_name, path) {
   raw_file <- read_csv(paste0(path, file_name), col_names = F)
 
@@ -475,17 +493,17 @@ e1.hddm.plot <- e1.hddm.df %>%
   scale_color_manual(values = c("darkorange", "dodgerblue")) +
   facet_grid(.~param_name, scales = "free") +
   labs(x = "Parameter value", y = "Density", color = "") +
-  theme(text = element_text(size=11),
-        #legend.position=c(0.8,0.8),
-        legend.position = "top",
-        legend.direction="horizontal") 
+  theme(text = element_text(size=10),
+        legend.position=c(0.8,0.8),
+        legend.direction="horizontal",
+        legend.background = element_rect(fill=alpha('white', 0.4)))
 
 #ggsave(e1.hddm.plot, file = "figs/e1_hddm_plot.png", width=3.2, height=2.2)
 ```
 
-*HDDM.* Using the output of the EWMA, we compared the timing and accuracy of language-driven shifts for participants in the ASL and Face tasks. ^[We did interpret the DDM fits for the Bullseye/Face tasks since there was suggestion of any non-guessing signal.] We found that ASL learners had a higher estimate for the boundary separation parameter compared to the Face participants (ASL boundary = `r ms.hddm$Mean[1]`, HDI = [`r ms.hddm$HDI_lower[1]`, `r ms.hddm$HDI_upper[1]`]; Face boundary = `r ms.hddm$Mean[2]`, HDI = [`r ms.hddm$HDI_lower[2]`, `r ms.hddm$HDI_upper[2]`]), with no overlap in the credible values (see Figure 4). This suggests that ASL learners accumulated more evidence about the linguistic signal before generating an eye movement. We found high overlap for estimates of the drift rate parameter, indicating that both groups processed the linguistic information with similar efficiency (ASL drift = `r ms.hddm$Mean[3]`, HDI = [`r ms.hddm$HDI_lower[3]`, `r ms.hddm$HDI_upper[3]`]; Face drift = `r ms.hddm$Mean[4]`, HDI = [`r ms.hddm$HDI_lower[4]`, `r ms.hddm$HDI_upper[4]`]).
+*HDDM.* Using the output of the EWMA, we compared the timing and accuracy of language-driven shifts for participants in the ASL and Face tasks. ^[We report the mean and the 95% highest density interval (HDI) of the posterior distributions for each parameter. The HDI represents the range of credible values given the model specification and the data. We chose not to interpret the DDM fits for the Bullseye/Face tasks since there was no suggestion of any non-guessing signal.] We found that ASL learners had a higher estimate for the boundary separation parameter compared to the Face participants (ASL boundary = `r ms.hddm$Mean[1]`, HDI = [`r ms.hddm$HDI_lower[1]`, `r ms.hddm$HDI_upper[1]`]; Face boundary = `r ms.hddm$Mean[2]`, HDI = [`r ms.hddm$HDI_lower[2]`, `r ms.hddm$HDI_upper[2]`]), with no overlap in the credible values (see Fig 4). This suggests that ASL learners accumulated more evidence about the linguistic signal before generating an eye movement. We found high overlap for estimates of the drift rate parameter, indicating that both groups processed the linguistic information with similar efficiency (ASL drift = `r ms.hddm$Mean[3]`, HDI = [`r ms.hddm$HDI_lower[3]`, `r ms.hddm$HDI_upper[3]`]; Face drift = `r ms.hddm$Mean[4]`, HDI = [`r ms.hddm$HDI_lower[4]`, `r ms.hddm$HDI_upper[4]`]).
 
-Taken together, the behavioral analyses and the EWMA/HDDM results provide converging support that ASL learners were sensitive to the value of eye movements, producing fewer nonlanguage-driven shifts and prioritizing accuracy over speed, but accumulating information at roughly the same rate. This behavior seems reasonable since the potential for missing subsequent linguistic information is high if ASL users shifted prior to gathering sufficient information. It is important to point out that these were exploratory findings and that there were several, potentially important differences between the stimuli, apparatus, and populations. Thus, we set out to perform a well-controlled, confirmatory test of our account in E2.   
+Taken together, the behavioral analyses and the EWMA/HDDM results provide converging support that ASL learners were sensitive to the value of eye movements, producing fewer nonlanguage-driven shifts and prioritizing accuracy over speed, but accumulating information at roughly the same rate. This behavior seems reasonable since the potential for missing subsequent linguistic information is high if ASL users shifted prior to gathering sufficient information. It is important to point out that these were exploratory findings and that there were several, potentially important differences between the stimuli, apparatus, and populations. In E2, we set out to perform a well-controlled, confirmatory test of our adatpive tradeoffs account.   
 
 # Experiment 2
 
@@ -550,32 +568,32 @@ e2_rt_plot <- ss.rt %>%
   guides(fill = F) +
   scale_fill_manual(values = c("darkorange", "dodgerblue")) +
   labs(x = "Condition", 
-       y = "Mean RT (sec)") + 
+       y = "RT (sec)") + 
   theme(text = element_text(size = 10)) 
 ```
 
 ```{r e2_acc_plot}
 e2_acc_plot <- ss.acc %>% 
-  filter(condition != "ASL") %>% 
+  filter(condition != "ASL") %>%
   ggplot(aes(x = condition, y = mean_acc), data = .) +
   geom_boxplot(width = 0.3, fill = "darkgrey", alpha = 0.7) +
   geom_hline(yintercept = 0.5, linetype = "dashed") +
   labs(x = "Condition", 
-       y = "Mean Accuracy") +
+       y = "Accuracy") +
   theme(text = element_text(size = 10)) 
 ```
 
-```{r e2_plot_print, fig.env = "figure", fig.pos = "t",fig.width=3, fig.height=3.7, fig.align='center', fig.cap = "Behavioral results from E2 for all center stimulus types. Panel A shows reaction times, and Panel B shows accuracy. All plotting conventions are the same as in Figure 2."}
+```{r e2_plot_print, fig.env = "figure", fig.pos = "t",fig.width=3, fig.height=3, fig.align='center', fig.cap = "Behavioral results from E2. All plotting conventions are the same as in Figure 2."}
 plot_grid(e2_rt_plot, e2_acc_plot, labels = c("A", "B"), nrow = 2, align = "v")
 ```
 
-```{r e2_control_chart, fig.env = "figure", fig.pos = "t",fig.width=3, fig.height=3.3, fig.align='center', fig.cap = "EWMA model output from E2. All plotting conventions are the same as Figure 3."}
+```{r e2_control_chart, fig.env = "figure", fig.pos = "t",fig.width=3, fig.height=3, fig.align='center', fig.cap = "EWMA model output for E2. All plotting conventions are the same as Figure 3."}
 grid::grid.raster(png::readPNG("figs/e2_control_chart.png"))
 ```
 
-In E2, we attempt to replicate a key finding from E1: that increasing the competition between fixating the language source and the nonlinguistic visual world reduces nonlanguage-driven eye movements. Moreover, we set out to conduct a confirmatory test of our hypothesis that also controlled for the population differences present in E1. We tested a sample of English-speaking adults using a within-participants manipulation of the center stimulus type. We used the Face and Bullseye stimulus sets from E1 and added two new conditions: Text, where the verbal language information was accompanied by a word-by-word display of printed text (see Figure 1)), and Text-no-audio, where the spoken language stimulus was removed. We chose text processing since, like sign language comprehension, the linguistic information is gathered via fixations to the visual world.
+In E2, we attempt to replicate a key finding from E1: that increasing the competition between fixating the language source and the nonlinguistic visual world reduces nonlanguage-driven eye movements. Moreover, we conducted a confirmatory test of our hypothesis that also controlled for the population differences present in E1. We tested a sample of English-speaking adults using a within-participants manipulation of the center stimulus type. We used the Face and Bullseye stimulus sets from E1 and added two new conditions: Text, where the verbal language information was accompanied by a word-by-word display of printed text (see Fig 1), and Text-no-audio, where the spoken language stimulus was removed. We chose text processing since, like sign language comprehension, the linguistic information is gathered via fixations to the visual world.
 
-Our key behavioral prediction is that participants in the Text conditions should produce a higher proportion of language-driven shifts as indexed by the EWMA model output. We also predicted to find no differences in the DDM parameter fits since the manipulation modulates participants' strategic allocation of visual attention and not the accuracy/efficiency of information processing.
+Our key behavioral prediction is that participants in the Text conditions should produce a higher proportion of language-driven shifts as indexed by the EWMA model output. We did not have strong predictions for the DDM parameter fits since the goal of the Text manipulation was to modulate participants' strategic allocation of visual attention and not the accuracy/efficiency of information processing.
 
 ## Method
 
@@ -602,7 +620,7 @@ d.fs %<>%
   mutate(condition_fact = as.factor(condition))
 
 # define contrast weights for comparisons of interest
-textnoaudio_others <- c(1/3 , 1/3, 1/3,  -1) # ASL vs. No-ASL
+textnoaudio_others <- c(1/3 , 1/3, 1/3,  -1) # Text-no-audio vs. all other conditions
 face_textnoaudio <- c( 0,   -1,  0, 1 ) # Face vs. text-no-audio
 text_textnoaudio <- c( 0,   0,   -1,   1 ) # text vs text-no-audio
 
@@ -615,12 +633,14 @@ mat <- mat[ , -1]
 ```
 
 ```{r e2 fit rt lmer}
+
 # model
 m.rt.e2 <- d.fs %>% 
   filter(shift_accuracy == "correct", response_onset_type == "noun") %>% 
-  lmer(log(rt) ~ condition_fact +  (condition_fact|subid),
-       contrasts=list(condition_fact = mat),
+  lmer(log(rt) ~ condition + (condition|subid),
        data = .)
+
+anova_m1.rt.e2 <- anova(m.rt.e2)
 
 # extract coefficients and compute p.vals using normal approximation
 m.rt.e2.coefs <- m.rt.e2 %>% 
@@ -632,19 +652,20 @@ m.rt.e2.coefs <- m.rt.e2 %>%
          estimate = round(estimate, 2))
 ```
 
-*RT.* Visual inspection of Figure 5 panel A suggests that there was a speed-accuracy tradeoff for all conditions: incorrect RTs tended to be faster than correct RTs. We fit a linear mixed-effects regression with the same specification as in E1, but we added by-subject intercepts and slopes for each center stimulus type to account for our within-subjects manipulation. We did not find evidence that RTs were different across conditions (all $p$ > .05).  
+*RT.* Visual inspection of Figure 5, panel A suggests that there was a speed-accuracy tradeoff for all conditions: incorrect RTs tended to be faster than correct RTs. We fit a linear mixed-effects regression with the same specification as in E1, but we added by-subject intercepts and slopes for each center stimulus type to account for our within-subjects manipulation. We did not find evidence that RTs were different across conditions (all $p$ > .05).  
 
 ```{r e2 fit glmer}
 # model
 m.acc.e2 <- d.fs %>% 
   filter(response_onset_type == "noun") %>% 
-  mutate(correct = ifelse(shift_accuracy == "correct", 1, 0)) %>% 
-  glmer(correct ~ condition_fact +  (1|subid),
-        contrasts=list(condition_fact = mat),
-       nAGQ = 10,
+  mutate(correct = ifelse(shift_accuracy == "correct", 1, 0)) %>%
+  glmer(correct ~ condition +  (condition|subid),
+        #contrasts=list(condition_fact = mat),
+       nAGQ = 0,
        family = binomial,
-       control = glmerControl(optimizer = "bobyqa"),
        data = .)
+
+anova_m1.acc.e2 <- anova(m.acc.e2)
 
 m.acc.e2.coefs <- m.acc.e2 %>% 
   broom::tidy() %>% 
@@ -655,7 +676,7 @@ m.acc.e2.coefs <- m.acc.e2 %>%
          estimate = round(estimate, 2))
 ```
 
-*Accuracy.* Next, we modeled accuracy using a mixed-effects logistic regression with the same specifications (see Panel B of Figure 5). We found that participants tended to be less accurate in the Text conditions compared to conditions without text ($\beta$ = `r m.acc.e2.coefs$estimate[2]`, $p$ `r m.acc.e2.coefs$p.val.clean[2]`). We did not any other statisically significant differences.
+*Accuracy.* Next, we modeled accuracy using a mixed-effects logistic regression with the same specifications (see Panel B of Fig 5). In contrast to E1, we found that adults' first shifts were highly accurate, and, in contrast to the children in E1, their responses were above chance level even in the Bullseye condition. We also found that participants tended to be less accurate in the Text conditions compared to conditions without text ($\beta$ = `r m.acc.e2.coefs$estimate[2]`, $p$ `r m.acc.e2.coefs$p.val.clean[2]`). We did not any other statisically significant differences. 
 
 ### Model-based analyses
 
@@ -708,6 +729,12 @@ e2_ribbon <- ms.ewma.e2 %>%
   mutate(rt_cut_point = median_param) %>% 
   filter(rt <= rt_cut_point) %>% 
   spread(key = ewma_param, value = mean_param)
+
+e2_ribbon_green <- ms.ewma.e2 %>% 
+  left_join(., ms.cutoffs.e2, by = "condition") %>% 
+  mutate(rt_cut_point = median_param) %>% 
+  filter(rt >= rt_cut_point) %>% 
+  spread(key = ewma_param, value = mean_param)
 ```
 
 ```{r e2_ewma_plot"}
@@ -719,6 +746,8 @@ e2_control_chart <- ms.ewma.e2 %>%
                data = filter(ms.cutoffs.e2, condition != "ASL")) +
   geom_ribbon(aes(ymin = cs, ymax = ucl, x = rt), fill = "red", alpha = 0.3, 
               data = filter(e2_ribbon, condition != "ASL"), inherit.aes = F)  +
+  geom_ribbon(aes(ymin = cs, ymax = ucl, x = rt), fill = "green", alpha = 0.3, 
+              data = filter(e2_ribbon_green, condition != "ASL", rt <= 0.9), inherit.aes = F) +
   geom_line(size = 1) +
   geom_vline(aes(xintercept = median_param), linetype = 2, 
              data = filter(ms.cutoffs.e2, condition != "ASL")) +
@@ -733,15 +762,24 @@ e2_control_chart <- ms.ewma.e2 %>%
 ```
 
 ```{r e2 save control chart, eval = F}
-ggsave(plot = e2_control_chart, filename = "figs/e2_control_chart.png", width=3, height=3.8)
+ggsave(plot = e2_control_chart, filename = "figs/e2_control_chart.png", width=3, height=3.5)
 ```
 
 ```{r e2 fit ewma lmer}
 e2.ewma.m1 <- ss.cutoffs.e2 %>% 
   filter(condition != "ASL") %>% 
   mutate(condition_fact = as.factor(condition)) %>% 
-  lm(cutoff ~ condition_fact, data = ., 
-     contrasts=list(condition_fact = mat))
+  lm(cutoff ~ condition_fact, data = .)
+
+# use lsmeans to test pairwise comparisons
+lsm_e2_means <- summary(lsmeans::lsmeans(e2.ewma.m1, 
+                               pairwise~condition_fact, 
+                               adjust="bon"))$lsmeans %>% 
+  mutate(mean = round(lsmean, 2))
+
+lsm_e2_tests <- summary(lsmeans::lsmeans(e2.ewma.m1, 
+                               pairwise~condition_fact, 
+                               adjust="bon"))$contrasts
 
 e2.ewma.m1.coefs <- e2.ewma.m1 %>% 
   broom::tidy() %>% 
@@ -760,6 +798,11 @@ e2.ewma.m2 <-  ss.ewma.results.e2 %>%
         control = glmerControl(optimizer = "bobyqa"),
         data = .)
 
+lsm_e2_glmer <- summary(lsmeans::lsmeans(e2.ewma.m2, 
+                               pairwise~condition_fact, 
+                               adjust="bon"))$lsmeans %>% 
+  mutate(mean = round(lsmean, 2))
+
 e2.ewma.m2.coefs <- e2.ewma.m2 %>% 
   broom::tidy() %>% 
   filter(group == "fixed") %>% 
@@ -767,7 +810,7 @@ e2.ewma.m2.coefs <- e2.ewma.m2 %>%
          p.value = ifelse(p.value < .001, "< .001", round(p.value, 3)))
 ```
 
-*EWMA.* For all four conditions, the CS crossed the UCL (see panel C of Figure 5), suggesting that adults' shifts were language-driven. Interestingly, we found a graded effect of condition on the RT when the CS crossed the UCL such that the Text-no-audio condition occurred earliest (see the vertical dashed lines in Figure 5), followed by the Text and Face conditions that were not different from one another, and finally the Bullseye condition (TODO stats). We also found the same graded difference in the proportion of shifts that occurred while the CS was below the UCL, indicating a higher proportion of first shifts were language-driven in the Text conditions, with the highest proportion in the Text-no-audio condition (TODO stats). These results provide strong evidence for our key prediction: that increasing the value of fixating the language source reduces gaze shifts to the nonlinguistic visual world.
+*EWMA.* For all four conditions, the CS crossed the UCL (see panel C of Fig 5), suggesting that adults' shifts were language-driven. Interestingly, we found a graded effect of condition (see the shift in the vertical dashed lines in Fig 5) on the point when the CS crossed the UCL such that the Text-no-audio condition occurred earliest ($M_{text-no-audio}$ = `r lsm_e2_means$mean[4]`), followed by the Text and Face conditions that were not different from one another ($M_{text}$ = `r lsm_e2_means$mean[3]`, $M_{face}$ = `r lsm_e2_means$mean[2]`; $p$ > .05), and finally the Bullseye condition ($M_{bullseye}$ = `r lsm_e2_means$mean[1]`). We also found the same graded difference in the proportion of shifts that occurred while the CS was below the UCL (see the red vs. green shaded area in Fig 5), indicating a higher proportion of first shifts were language-driven in the Text conditions, with the highest proportion in the Text-no-audio condition when tested against the three other conditions ($M_{text-no-audio}$ = `r lsm_e2_glmer$mean[4]`, $\beta$ = `r e2.ewma.m2.coefs$estimate[4]`, $p$ `r e2.ewma.m2.coefs$p.value[4]`). These results provide strong evidence for our key prediction: that increasing the value of fixating the language source reduces gaze shifts to the nonlinguistic visual world.
 
 ```{r e2 read and munge hddm params}
 hddm_files <- list.files("../analysis/ddm/hddm_output/adults/")
@@ -788,9 +831,9 @@ e2.hddm.df %<>%
 ```
 
 ```{r e2 do ddm hypothesis test}
-boundary_asl <- e1.hddm.df %>% filter(param_name == "boundary", stimuli == "asl")
-boundary_face <- e1.hddm.df %>% filter(param_name == "boundary", stimuli == "face")
-p_hddm_boundary <- mean(boundary_face$param_value > boundary_asl$param_value)
+boundary_face <- e2.hddm.df %>% filter(param_name == "boundary", condition == "face")
+boundary_bull <- e2.hddm.df %>% filter(param_name == "boundary", condition == "bull")
+p_hddm_boundary.e2 <- mean(boundary_face$param_value < boundary_bull$param_value)
 
 # drift
 drift_asl <- e1.hddm.df %>% filter(param_name == "drift", stimuli == "asl")
@@ -814,33 +857,33 @@ e2.hddm.plot <- e2.hddm.df %>%
   langcog::scale_color_solarized() +
   facet_grid(.~param_name, scales = "free") +
   labs(x = "Parameter value", y = "Density", color = "") +
-  theme(text = element_text(size=11),
-        #legend.position=c(0.8,0.8),
-        legend.position = "top",
-        legend.direction="horizontal") 
+  guides(color=guide_legend(nrow=2,byrow=TRUE)) +
+  theme(text = element_text(size=10),
+        legend.position=c(0.75,0.75),
+        legend.direction="horizontal",
+        legend.background = element_rect(fill=alpha('white', 0.4)))
 ```
 
-```{r, eval = F}
+```{r e2 save ddm plot, eval = F}
 hddm_plot_final <- plot_grid(e1.hddm.plot, e2.hddm.plot, labels = c("A", "B"), nrow = 2)
-ggsave(hddm_plot_final, file = "figs/hddm_plot_final.png", width=3.2, height=5)
+ggsave(hddm_plot_final, file = "figs/hddm_plot_final.png", width=4, height=4)
 ```
 
+*HDDM.* Using the output of the EWMA, we fit the same HDDM as in E1. There was high overlap of the posterior distributions for the drift rate parameters (see Fig 4, panel B), suggesting that participants gathered the linguistic information with similar efficiency. We also found high overlap in the distribution of credible boundary separation estimates for the Bullseye, Text, and Text-no-audio conditions. Interestingly, we found some evidence for a higher boundary separation in the Face condition compared to the other three center stimulus types (Face boundary = `r ms.hddm.e2$Mean[2]`, HDI = [`r ms.hddm.e2$HDI_lower[2]`, `r ms.hddm.e2$HDI_upper[2]`]; Bullseye boundary = `r ms.hddm.e2$Mean[1]`, HDI = [`r ms.hddm.e2$HDI_lower[1]`, `r ms.hddm.e2$HDI_upper[1]`]; Text boundary = `r ms.hddm.e2$Mean[3]`, HDI = [`r ms.hddm.e2$HDI_lower[3]`, `r ms.hddm.e2$HDI_upper[3]`]; Text-no-audio boundary = `r ms.hddm.e2$Mean[4]`, HDI = [`r ms.hddm.e2$HDI_lower[4]`, `r ms.hddm.e2$HDI_upper[4]`]), suggesting that adults higher accuracy in this condition was driven by accumulating more information before generating a response. 
 
-*HDDM.* Using the output of the EWMA, we fit the same hierarchical DDM as in E1 to test if there were differences in the timing and accuracy of responses generated by the incoming linguistic signal. There was a high overlap of the posterior distributions for boundary separation and drift rate (STATS TODO), suggesting that participants gathered similar amounts of information before generating a response and processed the information with similar efficiency.
-
-Together, these results suggest that participants were sensitive to the tradeoff between gathering visual information about the language source versus the nonlinguistic visual world. When processing text, adults generated fewer nonlanguage-driven shifts (EWMA results) but did not change the amount of information gathered or the efficiency of processing the linguistic signal itself (HDDM results). Interestingly, we even found a graded difference between the Text and Text-no-audio conditions, with the lowest proportion of nonlanguage-driven shifts occurring in the Text-no-audio condition. This behavior makes sense if hearing adults could rely on the auditory channel to gather the linguistic information, then they do not have to allocate as many visual fixations to the text display.
+Together, these results suggest that adults were sensitive to the tradeoff between gathering different kinds of information. When processing text, people generated fewer nonlanguage-driven shifts (EWMA results) but their efficiency processing the linguistic signal itself did not change (HDDM results). Interestingly, we even found a graded difference in the EWMA results between the Text and Text-no-audio conditions, with the lowest proportion of early nonlanguage-driven shifts occurring while processing text without the verbal stimuli. This behavior makes sense if the adults could rely on the auditory channel to gather the linguistic information, then the value of fixating the text display decreases. In contrast to the children in E1, adults were highly accurate in the Bullseye condition perhaps because they construed the Bullseye as a center fixation that they *should* fixate, or perhaps they had better encoded the location/identity of the two referents prior to the start of the target sentence.
 
 # General Discussion
 
-During real world language comprehension, eye movements to the source of language can provide additional information about the linguistic signal. But this creates a tradeoff between fixating on a source of linguistic information and fixating on the nonlinguistic visual world. In the current work, we propose that eye movements during language processing reflect a sensitivity to the value of gathering different kinds of information. We found that young ASL-learners generated slower but more accurate shifts away from a language source and produced a smaller proportion of nonlanguage-driven shifts. We found the same pattern of behavior within a sample of English-speaking adults processing displays of printed text compared to spoken language. These results suggest that as the value of fixating on a location to gather information about language increases, eye movements to gather information about the visual world become less useful and occur less often. 
+Language comprehension can be facilitated by gathering information via fixations to the relevant features of the nonlingustic visual world or to the source of the language (i.e., the speaker). But how do people decide where to look? We propose that eye movements during language processing reflect a sensitivity to the tradeoffs of gathering different kinds of information. We found that young ASL-learners generated slower but more accurate shifts away from a language source and produced a smaller proportion of nonlanguage-driven shifts. We found the same pattern of behavior within a sample of English-speaking adults processing displays of printed text compared to spoken language. These results suggest that as the value of fixating on a location to gather information about language increases, eye movements to gather information about the *rest* of the visual world become less useful and occur less often. 
 
 Our work here attempts to synthesize results from different populations and stimuli in a single framework, but it has several limitations that we hope will pave the way for future work. First, we have not performed a confirmatory test of the DDM findings (ASL-learners prioritize accuracy over speed) from E1. So this finding, while interesting, is preliminary. Second, we do not know what might be driving the population differences in E1. It could be that ASL-learners massive experience dealing with competition for visual attention leads to changes in the deployment of eye movements during language comprehension. Or, it could be that the in-the-moment constraints of processing a visual language cause different fixation behavior. Finally, we used a very simple visual world, with only three places to look, and very simple linguistic stimuli, especially for the adults in E2. Thus it remains an open question how these results might scale up to more complex language information and visual environments.
 
-A strength of this work is the attempt to integrate top-down, goal-based models of vision with work on language-driven eye movements. While we chose to start with two particular case studies -- ASL and text processing -- we think the account is more general and that there are many real world situations where people must negotiate the tradeoff between gathering more information about language or about the world: e.g., processing spoken language in noisy environments or at a distance; or early in language learning when children are acquiring new words and often rely on nonlinguistic cues to reference such as pointing or eye gaze. Overall, we hope this work contributes to a broader account of eye movements during language comprehension that can explain fixation behaviors across a wider variety of populations, processing contexts, and during different stages of language learning.
+This work attempts to integrate top-down, goal-based models of vision [@hayhoe2005eye] with work on language-driven eye movements [@allopenna1998tracking]. While we chose to start with two particular case studies -- ASL and text processing -- we think the account is more general and that there are many real world situations where people must negotiate the tradeoff between gathering more information about language or about the world: e.g., processing spoken language in noisy environments or at a distance; or early in language learning when children are acquiring new words and often rely on nonlinguistic cues to reference such as pointing or eye gaze. Overall, we hope this work contributes to a broader account of eye movements during language comprehension that can explain fixation behaviors across a wider variety of populations, processing contexts, and during different stages of language learning.
 
 # Acknowledgements
 
-We are grateful to the families who participated in this research and to the California School for the Deaf in Fremont for their help with participant recruitment. This work was supported by a National Science Foundation Graduate Research Fellowship to KM and an NIDCD grant to Anne Fernald and David Corina (DC012505).
+We are grateful to the families who participated in this research. This work was supported by a National Science Foundation Graduate Research Fellowship to KM and an NIDCD grant to Anne Fernald and David Corina (DC012505).
 
 # References 
 
@@ -851,7 +894,6 @@ We are grateful to the families who participated in this research and to the Cal
 
 ---
 nocite: | 
-  @salverda2011goal
   @macdonald2017realtime
 ...
 
