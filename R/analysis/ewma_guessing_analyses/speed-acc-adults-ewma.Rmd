@@ -78,20 +78,18 @@ ms.rt <- ss.d.rt %>%
 Distribution of RTs for correct vs. incorrect shifts from noun onset and from sentence onset
 
 ```{r, fig.width = 8, fig.height = 8}
-ggplot(aes(x = rt, fill = shift_accuracy), data = ss.d.rt) +
+ss.d.rt %>% 
+  mutate(resp_type_fac = factor(response_onset_type, levels = c("sentence", "noun"))) %>% 
+  filter(response_onset_type == "noun") %>% 
+  ggplot(aes(x = rt, fill = shift_accuracy), data = .) +
   #geom_density(alpha = 0.7, adjust = 1.5) + 
-  geom_histogram(alpha = 0.7, position = "identity") +
-  facet_grid(condition~response_onset_type) +
-  geom_vline(aes(xintercept = med, color = shift_accuracy), size = 1, lty = "dashed", 
-             data = ms.rt) +
+  geom_histogram(position = "identity", color = "black") +
+  facet_grid(condition~resp_type_fac) +
   guides(color = F) + 
   ylab("Density") +
   xlab("RT (sec)") +
-  scale_fill_manual(values = c("darkorange", "dodgerblue")) +
-  scale_color_manual(values = c("darkorange", "dodgerblue")) +
-  theme(text = element_text(size=18),
-        legend.position = "top",
-        panel.spacing = unit(2, "lines"))
+  scale_fill_manual(values = c( "darkorange", "dodgerblue")) +
+  labs(fill = "Shift accuracy")
 ```
 
 What should we do with shifts that happen before noun onset? My thought is to feed them into the EWMA, but not into the summary analyses and the DDM fits.

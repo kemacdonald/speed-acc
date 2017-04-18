@@ -122,8 +122,7 @@ e1_tab <- df_e1 %>%
   left_join(., filter(e1_n, age_code == "child")) %>% 
   select(-age_code)
   
-e1_tab <- xtable::xtable(e1_tab, 
-                         caption = "Age distributions of children in Experiment 1.")
+e1_tab <- xtable::xtable(e1_tab, caption = "Age distributions of children in Experiment 1.")
 
 print(e1_tab, type="latex", comment = F, table.placement = "b",
       floating.environment = "table", include.rownames=FALSE)
@@ -758,7 +757,8 @@ e2_control_chart <- ms.ewma.e2 %>%
   geom_ribbon(aes(ymin = cs, ymax = ucl, x = rt), fill = "red", alpha = 0.3, 
               data = filter(e2_ribbon, condition != "ASL"), inherit.aes = F)  +
   geom_ribbon(aes(ymin = cs, ymax = ucl, x = rt), fill = "green", alpha = 0.3, 
-              data = filter(e2_ribbon_green, condition != "ASL", rt <= 0.9), inherit.aes = F) +
+              data = filter(e2_ribbon_green, condition != "ASL", rt <= 0.9), 
+              inherit.aes = F) +
   geom_line(size = 1) +
   geom_vline(aes(xintercept = median_param), linetype = 2, 
              data = filter(ms.cutoffs.e2, condition != "ASL")) +
