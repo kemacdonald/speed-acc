@@ -9,8 +9,8 @@ output: html_document
 
 ```{r libraries}
 rm(list=ls())
-source("R/helper_functions/libraries_v_3.6.R")
-source("R/helper_functions/libraries_and_functions.R")
+source("../helper_functions/libraries_v_3.6.R")
+source("../helper_functions/libraries_and_functions.R")
 ```
 
 ### Read in icharts for ASL kids/adults and Trio Series
@@ -26,84 +26,43 @@ We start with 5 iCharts.
 Note the use of the colClasses function to set all variables to be read as characters.
 
 ```{r load data}
+path_demo <- "../../data/demographics/"
+path_data <- "../../data/2_cleaned_data/"
+
+read_csv_fun <- function(path, file_name) {
+  df <- read_csv(paste0(path, file_name)) %>% 
+    mutate_all(.funs = as.character)
+}
+```
+
+Read in data and get the number of participants for each study.
+
+```{r}
 ## ASL
-sol_demo <- read.csv("data/demographics/sol_demo_all.csv", stringsAsFactors = F,
-                     colClasses=c(rep("character", 
-                                      length(scan("data/demographics/sol_demo_all.csv", 
-                                                  sep=',', what="character" , nlines=1 )))))
-
-sol_df <- read.csv("data/2_cleaned_data/sol-ichart-cleaned.csv", stringsAsFactors = F,
-                   colClasses=c(rep("character",
-                                    length(scan("data/2_cleaned_data/sol-ichart-cleaned.csv", 
-                                                sep=',', what="character" , nlines=1 )))))
-
-sol_n <- sol_df %>% 
-    select(Sub.Num) %>% 
-    unique() %>% 
-    summarise(ASL = n())
+sol_demo <- read_csv_fun(path = path_demo, file_name = "sol_demo_all.csv")
+sol_df <- read_csv_fun(path_data, "sol-ichart-cleaned.csv") 
+sol_n <- sol_df %>% select(Sub.Num) %>% unique() %>% summarise(ASL = n())
 
 ## Trio Face
-trio_face <- read.csv("data/2_cleaned_data/TrioFace26n24_cleaned.csv", stringsAsFactors = F, 
-                      colClasses=c(rep("character",
-                                    length(scan("data/2_cleaned_data/TrioFace26n24_cleaned.csv",
-                                                sep=',', what="character" , nlines=1 )))))
-
-trio_ps <- read.csv("data/trial_info/trio_prescreening_info.csv", sep = ",", 
-                    stringsAsFactors = F,
-                    colClasses=c(rep("character", 
-                                     length(scan("data/trial_info/trio_prescreening_info.csv",
-                                                 sep=',', what="character" , nlines=1 )))))
-
-trio_n <- trio_face %>% 
-    select(Sub.Num) %>% 
-    unique() %>% 
-    summarise(Face = n())
+trio_face <- read_csv_fun(path = path_data, file_name = "TrioFace26n24_cleaned.csv") 
+trio_ps <- read_csv_fun(path = "../../data/trial_info/", file_name = "trio_prescreening_info.csv") 
+trio_n <- trio_face %>% select(Sub.Num) %>% unique() %>% summarise(Face = n())
 
 ## Trio 26
-trio_26 <- read.csv("data/2_cleaned_data/Trio_26_n18_cleaned.csv", stringsAsFactors = F,
-                         colClasses=c(rep("character",
-                                         length(scan("data/2_cleaned_data/Trio_26_n18_cleaned.csv",
-                                                     sep=',', what="character" , nlines=1 )))))
-
-trio_26_n <- trio_26 %>% 
-    select(Sub.Num) %>% 
-    unique() %>% 
-    summarise(Trio_26 = n())
+trio_26 <- read_csv_fun(path = path_data, file_name = "Trio_26_n18_cleaned.csv")
+trio_26_n <- trio_26 %>% select(Sub.Num) %>% unique() %>% summarise(Trio_26 = n())
 
 ## Trio 36
-trio_36 <- read.csv("data/2_cleaned_data/Trio36m_n22_cleaned.csv", 
-                         stringsAsFactors = F,
-                         colClasses=c(rep("character",
-                                    length(scan("data/2_cleaned_data/Trio36m_n22_cleaned.csv",
-                                                sep=',', what="character" , nlines=1 )))))
-
-trio_36_n <- trio_36 %>% 
-    select(Sub.Num) %>% 
-    unique() %>% 
-    summarise(Trio_36 = n())
+trio_36 <- read_csv_fun(path = path_data, file_name =  "Trio36m_n22_cleaned.csv")
+trio_36_n <- trio_36 %>% select(Sub.Num) %>% unique() %>% summarise(Trio_36 = n()) 
 
 ## Trio Adults
-trio_bull_adult <- read.csv("data/2_cleaned_data/TrioBullAdult_icharts_n7_cleaned.csv", 
-                            stringsAsFactors = F,
-                            colClasses=c(rep("character", length(scan("data/2_cleaned_data/TrioBullAdult_icharts_n7_cleaned.csv",
-                                                                      sep=',', 
-                                                         what="character" , nlines=1 )))))
-trio_bull_adult_n <- trio_bull_adult %>% 
-    select(Sub.Num) %>% 
-    unique() %>% 
-    summarise(Bull_Adult = n())
+trio_bull_adult <- read_csv_fun(path = path_data, file_name = "TrioBullAdult_icharts_n7_cleaned.csv")
+trio_bull_adult_n <- trio_bull_adult %>% select(Sub.Num) %>% unique() %>% summarise(Bull_Adult = n())
 
 ## Trio Bull
-trio_bull_26 <- read.csv("data/2_cleaned_data/TrioBullAA26n18_cleaned.csv",
-                         stringsAsFactors = F,
-                         colClasses=c(rep("character",
-                                          length(scan("data/2_cleaned_data/TrioBullAA26n18_cleaned.csv",
-                                                      sep=',', what="character" , nlines=1 )))))
-
-trio_bull_26_n <- trio_bull_26 %>% 
-    select(Sub.Num) %>% 
-    unique() %>% 
-    summarise(Bull_26 = n())
+trio_bull_26 <- read_csv_fun(path = path_data, file_name = "TrioBullAA26n18_cleaned.csv")
+trio_bull_26_n <- trio_bull_26 %>% select(Sub.Num) %>% unique() %>% summarise(Bull_26 = n())
 ```
 
 ```{r}
@@ -112,8 +71,8 @@ df_n <- data.frame(ASL = sol_n$ASL, Face = trio_n$Face,
                    Trio_36 = trio_36_n$Trio_36, 
                    Bull_Adult = trio_bull_adult_n$Bull_Adult, 
                    Bull_26 = trio_bull_26_n$Bull_26) %>% 
-    mutate(Total_n = ASL + Face + Trio_26 + Trio_36 + Bull_Adult + Bull_26)
-           
+  mutate(Total_n = ASL + Face + Trio_26 + Trio_36 + Bull_Adult + Bull_26)
+
 knitr::kable(df_n)
 ```
 
@@ -121,9 +80,9 @@ Add Trio Face prescreening info to iChart.
 
 ```{r}
 trio_ps %<>%
-    select(Sub.Num, PSO.Reason, Tr.Num) %>% 
-    mutate(Sub.Num = as.character(Sub.Num),
-           Tr.Num = as.character(Tr.Num))
+  select(Sub.Num, PSO.Reason, Tr.Num) %>% 
+  mutate(Sub.Num = as.character(Sub.Num),
+         Tr.Num = as.character(Tr.Num))
 
 trio_face <- left_join(x = trio_face, y = trio_ps, by = c("Sub.Num", "Tr.Num"))
 ```
@@ -131,30 +90,31 @@ trio_face <- left_join(x = trio_face, y = trio_ps, by = c("Sub.Num", "Tr.Num"))
 ### Add variables to track language, center stimuli, and age bin within kids
 
 ```{r}
-sol_df %<>% mutate(language_modality = "ASL", experiment = "ASl") 
+sol_df %<>% mutate(language_modality = "ASL", experiment = "ASL") 
 
 ## add adults ages to demo sheet
 sol_demo <- sol_df %>% 
-    filter(as.numeric(Months) > 100) %>% 
-    select(Sub.Num, Months) %>% 
-    unique() %>% 
-    left_join(sol_demo, ., by = "Sub.Num")
+  filter(as.numeric(Months) > 100) %>% 
+  select(Sub.Num, Months) %>% 
+  unique() %>% 
+  left_join(sol_demo, ., by = "Sub.Num")
 
 sol_demo %<>% mutate(Months = ifelse(is.na(Months), age_peek_months, Months))
 
 include <- sol_demo %>%
-    select(Sub.Num, include,
-           reason_excluded, stimuli,
-           age_code, signs_produced, 
-           hearing_status_participant,
-           Months) 
+  select(Sub.Num, include,
+         reason_excluded, stimuli,
+         age_code, signs_produced, 
+         hearing_status_participant,
+         Months) 
 
 sol_df  <- left_join(sol_df, include, by = c("Sub.Num", "stimuli", "Months")) %>% 
-    mutate(age_code = ifelse(as.numeric(Months) > 60, "adult", "child"))
+  mutate(age_code = ifelse(as.numeric(Months) > 60, "adult", "child"))
 
 sol_df %<>% filter(include == "yes")
 ```
 
+Add some other relevant variables.
 
 ```{r}
 trio_face %<>% mutate(language_modality = "English", stimuli = "Face", 
@@ -183,35 +143,47 @@ trio_bull_26 %<>% mutate(language_modality = "English", stimuli = "Bull",
 3000ms is the shortest window out of all 5 datasets (trio_face). So we have to match this window.
 
 ```{r}
-sol_df_final <- sol_df %>% 
-    select(Sub.Num, Months, Tr.Num, stimuli, Months, experiment, age_code,
-           hearing_status_participant, Prescreen.Notes, language_modality, X0:X3000) 
+select_vars_fun <- function(data_frame) {
+  data_frame %<>%
+    select(Sub.Num, Months, Tr.Num, stimuli, Months, experiment, age_code, Target.Image,
+         hearing_status_participant, Prescreen.Notes, language_modality, `0`:`3000`) 
+}
+```
 
-trio_face_final <- trio_face %>% 
-    select(Sub.Num, Months, Tr.Num, stimuli, Months, experiment, age_code,
-           hearing_status_participant, Prescreen.Notes, language_modality, X0:X3000) 
-
-trio_26_final <- trio_26 %>%
-    select(Sub.Num, Months, Tr.Num, stimuli, Months, experiment, age_code,
-           hearing_status_participant, Prescreen.Notes, language_modality, X0:X3000) 
-
-trio_36_final <- trio_36 %>%
-    select(Sub.Num, Months, Tr.Num, stimuli, Months, experiment, age_code,
-           hearing_status_participant, Prescreen.Notes, language_modality, X0:X3000) 
-
-trio_bull_adult_final <- trio_bull_adult %>%
-    select(Sub.Num, Months, Tr.Num, stimuli, Months, experiment, age_code,
-           hearing_status_participant, Prescreen.Notes, language_modality, X0:X3000) 
-
-trio_bull_26_final <- trio_bull_26 %>% 
-    select(Sub.Num, Months, Tr.Num, stimuli, Months, experiment, age_code,
-           hearing_status_participant, Prescreen.Notes, language_modality, X0:X3000) 
+```{r}
+sol_df_final <- select_vars_fun(sol_df) 
+trio_face_final <- select_vars_fun(trio_face)
+trio_26_final <- select_vars_fun(trio_26)
+trio_36_final <- select_vars_fun(trio_36)
+trio_bull_adult_final <- select_vars_fun(trio_bull_adult)
+trio_bull_26_final <- select_vars_fun(trio_bull_26)
 ```
 
 ### Bind data frames together
 
 ```{r}
-speed_acc_df_final <- bind_rows(sol_df_final, trio_face_final, trio_26_final, trio_36_final, trio_bull_adult_final, trio_bull_26_final)
+speed_acc_df_final <- bind_rows(sol_df_final, trio_face_final, trio_26_final, trio_36_final, 
+                                trio_bull_adult_final, trio_bull_26_final)
+```
+
+### Clean up target image variable
+
+Make a clean target signs variable for filtering later on.
+
+```{r}
+targets <- c("juice", "cookie", "cup", "ball", "shoe", "kitty",
+             "doll", "teddy", "book", "birdy", "car", "sock", "banana")
+
+make_clean_target <- function (target_image, targets) {
+  target_img_clean <- targets[str_detect(target_image, targets)]
+  return(target_img_clean)
+}
+```
+
+```{r}
+speed_acc_df_final$clean_target_img <- unlist(sapply(speed_acc_df_final$Target.Image, 
+                                                     function (x) make_clean_target(x, targets)))
+speed_acc_df_final %<>% select(-Target.Image)
 ```
 
 ## Munge and process eye movement data
@@ -227,13 +199,14 @@ iChart <- speed_acc_df_final
 Recode all 2s as 0.5s (center-looking). Prior versions of datawiz coded center looking as 2s. 
 
 ```{r}
-iChart_recode <- as.data.frame(apply(select(iChart, X0:X3000), 2,
-                                     function(x) ifelse(x == "2", "0.5", x)),
-                        stringsAsFactors = F)
+em_data <- iChart %>% 
+  select(`0`:`3000`) %>% 
+  mutate_all(funs(ifelse(. == "2", "0.5", .)))
 
-iChart <- iChart %>% 
-    select(Sub.Num:language_modality) %>% 
-    bind_cols(iChart_recode)
+
+iChart %<>% 
+  select(Sub.Num:language_modality, clean_target_img) %>% 
+  bind_cols(., em_data)
 ```
 
 ## Filter dataset
@@ -243,10 +216,10 @@ Filter out participants that should not go into analyses based on exclusionary c
 ```{r}
 # check how many ss we have before starting to filter
 iChart %>% 
-    select(Sub.Num, age_code, experiment, language_modality) %>% 
-    group_by(language_modality, age_code, experiment) %>% 
-    unique() %>% 
-    summarise(count = n())
+  select(Sub.Num, age_code, experiment, language_modality) %>% 
+  group_by(language_modality, age_code, experiment) %>% 
+  unique() %>% 
+  summarise(count = n())
 ```
 
 ### Get number of ss
@@ -255,36 +228,44 @@ For each age and language (English, ASL)
 
 ```{r}
 iChart %>% 
-    select(Sub.Num, age_code, language_modality) %>% 
-    group_by(language_modality, age_code) %>% 
-    unique() %>% 
-    summarise(count = n())
+  select(Sub.Num, age_code, language_modality) %>% 
+  group_by(language_modality, age_code) %>% 
+  unique() %>% 
+  summarise(count = n())
 ```
 
 ### Remove ss for too few trials
 
 ```{r}
-ss_prescreened <- iChart %>% 
-    filter(Prescreen.Notes != "") %>% 
-    group_by(Sub.Num) %>% 
-    select(Sub.Num, Prescreen.Notes) %>% 
-    summarise(num_prescreened = n())
-
 total_trials <- 32
-trials_cut_point <- total_trials * .25
+trials_cut_point <- total_trials * .20
+```
+
+
+```{r}
+ss_prescreened <- iChart %>% 
+  select(Sub.Num, Tr.Num, Prescreen.Notes) %>% 
+  unique() %>% 
+  filter(Prescreen.Notes != "") %>% 
+  group_by(Sub.Num) %>% 
+  select(Sub.Num, Prescreen.Notes) %>% 
+  summarise(num_prescreened = n())
+
 
 ss_trials_df <- iChart %>% 
-    group_by(Sub.Num) %>% 
-    summarise(Trials = n()) 
+  select(Sub.Num, Tr.Num) %>% 
+  unique() %>% 
+  group_by(Sub.Num) %>% 
+  summarise(Trials = n()) 
 
 ss_trials_df <- left_join(ss_trials_df, ss_prescreened) %>% 
-    mutate(num_prescreened = ifelse(is.na(num_prescreened), 0, num_prescreened),
-        n_good_trials = Trials - num_prescreened)
+  mutate(num_prescreened = ifelse(is.na(num_prescreened), 0, num_prescreened),
+         n_good_trials = Trials - num_prescreened)
 
 trials_filter <- ss_trials_df %>% 
-    mutate(exclude_few_trials = ifelse(n_good_trials <= trials_cut_point, 
-                                       "exclude", "include")) %>% 
-    select(Sub.Num, exclude_few_trials)
+  mutate(exclude_few_trials = ifelse(n_good_trials <= trials_cut_point, 
+                                     "exclude", "include")) %>% 
+  select(Sub.Num, exclude_few_trials)
 
 # get the number of participants removed by filter
 trials_filter %>% group_by(exclude_few_trials) %>% dplyr::summarise(n())
@@ -298,10 +279,10 @@ iChart <- filter(iChart, exclude_few_trials == "include")
 
 ```{r}
 iChart %>% 
-    select(Sub.Num, age_code, language_modality) %>% 
-    group_by(language_modality, age_code) %>% 
-    unique() %>% 
-    summarise(n())
+  select(Sub.Num, age_code, language_modality) %>% 
+  group_by(language_modality, age_code) %>% 
+  unique() %>% 
+  summarise(n())
 ```
 
 ### Remove prescreened out trials
@@ -325,7 +306,7 @@ includeOffCenter == TRUE -> include trials child was looking at center, target, 
 
 ```{r}
 colnames(iChart) <- sapply(colnames(iChart), function (x) {
-    str_replace(x, "X", "")  
+  str_replace(x, "X", "")  
 })
 ```
 
@@ -334,9 +315,9 @@ iChart %>% group_by(`0`) %>% summarise(n())
 
 # Where were ss looking at F0?
 iChart <- iChart %>% 
-    mutate(Response = ifelse(`0` == "0.5" | `0` == ".5", "D", 
-                             ifelse(`0` == "0", "A",
-                                    ifelse(`0` == "1", "A", "A"))))
+  mutate(Response = ifelse(`0` == "0.5" | `0` == ".5", "D", 
+                           ifelse(`0` == "0", "A",
+                                  ifelse(`0` == "1", "A", "A"))))
 
 iChart %>% group_by("0", Response) %>% dplyr::summarise(Trials = n())
 
@@ -355,12 +336,11 @@ Datawiz does not tell us which shifts land on a target vs. a disctractor. So we 
 * off_center
 
 ```{r}
-# apply fun to each row in our dataset to flag trial type
+# apply function to each row in our dataset to flag trial type
 trial_types <- apply(iChart, 1, score_trial_type_lwl, start = "0", end = "3000") %>% 
-    t() %>% 
-    as.data.frame(stringsAsFactors=F) %>% 
-    rename(trial_type = V1, RT = V2)
-    
+  t() %>% 
+  as.data.frame(stringsAsFactors=F) %>% 
+  rename(trial_type = V1, RT = V2)
 
 # merge trial type information with iChart
 iChart <- cbind(iChart, trial_types)
@@ -378,29 +358,29 @@ First we need to get C_T proportions for each participant
 iChart$Response <- as.vector(iChart$Response)
 
 ss <- iChart %>%
-    filter(trial_type %in% c("C_T", "C_D", "C_C", "no_shift")) %>% 
-    select(Sub.Num:language_modality, trial_type, age_code, RT) %>% 
-    mutate(age_years = as.numeric(Months) / 12,
-           RT_sec = as.numeric(RT) / 1000,
-           correct = ifelse(trial_type == "C_T", 1, 0))
+  filter(trial_type %in% c("C_T", "C_D", "C_C", "no_shift")) %>% 
+  select(Sub.Num:language_modality, trial_type, age_code, RT, clean_target_img) %>% 
+  mutate(age_years = as.numeric(Months) / 12,
+         RT_sec = as.numeric(RT) / 1000,
+         correct = ifelse(trial_type == "C_T", 1, 0))
 ```
 
 Get final n for each age group and language
 
 ```{r}
 iChart %>% 
-    select(Sub.Num, age_code, language_modality) %>% 
-    group_by(language_modality, age_code) %>% 
-    unique() %>% 
-    count()
+  select(Sub.Num, age_code, language_modality) %>% 
+  group_by(language_modality, age_code) %>% 
+  unique() %>% 
+  count()
 ```
 
 ### Save final/processed tidy data frame
 
 ```{r}
-write.csv(iChart, file = "3_final_merged_data/speed-acc-cleaned-iChart.csv", 
+write.csv(iChart, file = "../../data/3_final_merged_data/speed-acc-cleaned-iChart.csv", 
           row.names = F, na = "NA")
 
-write.csv(ss, file = "3_final_merged_data/speed-acc-ss-df.csv", 
+write.csv(ss, file = "../../data/3_final_merged_data/speed-acc-ss-df.csv", 
           row.names = F, na = "NA")
 ```

@@ -39,7 +39,13 @@ score_trial_type_lwl <- function(trial, start, end) {
       prev_val <- trial[col-1]
       curr_val <- trial[col]
       next_val <- trial[col+1]
+      
+      if(is.na(curr_val)) { # break if we hit an NA
+        break
+        } 
+      
       if(first_look_signer) {
+        
         if(curr_val == "." & prev_val == "0.5") {rt <- names(trial[col])} # store RT
         
         if(curr_val == "." & next_val %in% c("0", "1", "0.5", ".5")) {
