@@ -16,7 +16,7 @@ Load data and join with trial information (timing, left/right/center images, tar
 
 ```{r load data}
 #### read in processed data
-d <- read_csv("../../data/3_final_merged_data/speed_acc_processed_adult_data.csv")
+d <- read_csv("../../data/2_cleaned_data/speed_acc_processed_adult_data.csv")
 
 #### strip .avi and .jpg from stimulus
 d$stimulus <- gsub(pattern = ".jpg", "", x = d$stimulus)
@@ -134,7 +134,7 @@ ggplot(aes(x = x, y = y), data = d.aways) +
   ylim(0, 1250)
 ```
 
-There's a pretty heavy concentration of looking to the top left of the screen. We think that this is a "catch-all" for any looks the ET could not measure. So we just filter these out for our analyses. 
+There's a pretty heavy concentration of looking to the top left of the screen. This is a "catch-all" for any looks the ET could not measure. So we just filter these out for our analyses. 
 
 ### Score each trial: RT and Accuracy of first shift
 
@@ -247,12 +247,13 @@ Before writing to .csv, we split the data into the timecourse information and fi
 # timecourse
 d.timecourse <- filter(d, response_onset_type == "noun") %>% 
   select(subid, t.stim, condition, tr.num, noun_onset_sec_1, noun_offset_msec_1, audio,
-         gaze_target:shift_accuracy)
+         gaze_target:shift_accuracy, target_image)
+
 d.timecourse <- filter(d, response_onset_type == "noun")
 
 # first shift
 d.fs <- d %>% 
-  select(subid, tr.num, condition, dot:reason_excluded, response:shift_accuracy) %>% 
+  select(subid, tr.num, condition, target_image, dot:reason_excluded, response:shift_accuracy) %>% 
   unique()
 ```
 

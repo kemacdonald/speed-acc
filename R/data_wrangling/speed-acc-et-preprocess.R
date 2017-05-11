@@ -11,7 +11,7 @@ library(dplyr); library(readr); library(magrittr)
 library(stringr); source("../helper_functions/et_helper.R")
 
 raw.data.path <- "../../data/1_raw_data/trio-adult/"
-processed.data.path <- "../../data/3_final_merged_data/"
+processed.data.path <- "../../data/2_cleaned_data/"
 
 ## LOOP TO READ IN FILES
 all.data <- data.frame()

@@ -11,13 +11,14 @@ library(directlabels); library(lazyeval);
 library(forcats); library(RWiener)
 library(GGally); library(lsr)
 library(effsize); library(cowplot)
+library(scales)
 
 # load tidyvrse last, so no functions get masked
 library(tidyverse)
 
 # set ggplot theme
 theme_set(
-  theme_bw() +
+  theme_classic() +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
 )
 
@@ -237,18 +238,23 @@ fit_ddm <- function(df, condition_col, subid_col, bysub = T, niter = 500) {
 ## takes in a data frame for an experimental condition, a stdev cutpoint, and a column name to compute over
 ## returns that data frame with extreme values +/- stdev cutpoint from the mean for that condition
 
-remove_extreme_vals <- function(df, sd_cut_val = 2, value_column) {
-  m.val <- mean(df[[value_column]])
-  sd.val <- sd(df[[value_column]])
+remove_extreme_vals <- function(data_frame, sd_cut_val = 2, value_column) {
+  m.val <- mean(data_frame[[value_column]])
+  sd.val <- sd(data_frame[[value_column]])
   # compute cut points
   cut_point_upper <- round(m.val + (sd_cut_val * sd.val), 3)
   cut_point_lower <- round(m.val - (sd_cut_val * sd.val), 3)
+  
+  # standard eval stuff
+  filter_criteria_upper <- interp(~y <= x, .values=list(y = as.name(value_column), x = cut_point_upper))
+  filter_criteria_lower <- interp(~y >= x, .values=list(y = as.name(value_column), x = cut_point_lower))
+  
   # filter and return df
-  df %<>% 
+  data_frame %<>% 
     mutate(cut_point_upper = cut_point_upper,
            cut_point_lower = cut_point_lower) %>% 
-    filter(fit.vals <= cut_point_upper,
-           fit.vals >= cut_point_lower)
+    filter_(filter_criteria_upper, 
+            filter_criteria_lower)
   
-  return(df)
+  return(data_frame)
 }
