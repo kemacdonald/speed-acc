@@ -1,7 +1,6 @@
 ---
 title: "Speed-Accuracy Timecourse Plots"
 author: "Kyle MacDonald"
-date: "July, 12 2016"
 output: html_document
 ---
 

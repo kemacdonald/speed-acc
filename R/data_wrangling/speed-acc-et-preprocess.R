@@ -7,7 +7,7 @@
 
 ## PRELIMINARIES
 rm(list = ls())
-library(dplyr); library(readr); library(magrittr)
+library(dplyr); library(readr); library(magrittr); library(feather); library(pryr)
 library(stringr); source("../helper_functions/et_helper.R")
 
 raw.data.path <- "../../data/1_raw_data/trio-adult/"
@@ -29,6 +29,7 @@ for (file.name in files) {
   all.data <- bind_rows(all.data, d)
 }
 
-## WRITE DATA OUT TO CSV FOR EASY ACCESS
-write_csv(all.data, paste0(processed.data.path, "speed_acc_processed_adult_data.csv")) 
+## WRITE DATA OUT TO ZIPPED CSV FOR EASY ACCESS AND SMALL FILE SIZE
+write_csv(all.data, path=paste0(processed.data.path, "speed_acc_processed_adult_data.csv.gz"))
+
 

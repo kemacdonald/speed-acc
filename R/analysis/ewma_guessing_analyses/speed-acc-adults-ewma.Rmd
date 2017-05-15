@@ -1,7 +1,6 @@
 ---
 title: "Speed-acc-adult EWMA analysis"
 author: "Kyle MacDonald"
-date: "10/20/2016"
 output: html_document
 ---
 
@@ -20,7 +19,7 @@ library(tidyverse); library(lme4)
 
 ```{r read data}
 read.path <- "../../../data/3_final_merged_data/"
-d.fs <- read_csv(paste0(read.path, "speed_acc_adult_fstshift_tidy.csv"))
+d.fs <- read_csv(paste0(read.path, "speed_acc_adult_fstshift_tidy.csv.gz"))
 d.asl <- read_csv(paste0(read.path, "speed-acc-ss-df.csv"))
 ```
 

@@ -1,7 +1,6 @@
 ---
 title: "Speed-Acc Adults Data Munging"
 author: "Kyle MacDonald & Aviva Blonder"
-date: "August 4, 2016"
 output: html_document
 ---
 
@@ -16,7 +15,7 @@ Load data and join with trial information (timing, left/right/center images, tar
 
 ```{r load data}
 #### read in processed data
-d <- read_csv("../../data/2_cleaned_data/speed_acc_processed_adult_data.csv")
+d <- read_csv("../../data/2_cleaned_data/speed_acc_processed_adult_data.csv.gz")
 
 #### strip .avi and .jpg from stimulus
 d$stimulus <- gsub(pattern = ".jpg", "", x = d$stimulus)
@@ -35,6 +34,8 @@ d %<>% left_join(subinfo_df, by = "subid")
 ```
 
 ### Filter out unusable participants 
+
+We use our lab criterion of having a proprtion of AWAY looks +3 standard deviations away from the mean.
 
 ```{r filter out participants with bad data}
 ##calculate percentage of non-looks - that is, looking away from the screen entirely.
@@ -211,7 +212,7 @@ d <- d.orig %>%
 
 Next, we need to compute RT for each trial, using my own score trial function. 
 
-The function takes in a data frame for each trial and computes (1) an RT and (2) whether the shift was correct vs. incorrect. You can tell the function what onset value from which you want to compute RT. The different onset values are:
+The function takes in a data frame for each trial and computes an RT and whether the shift was correct or incorrect. You can tell the function the kind of onset value from which you want to compute RT. The different onset values are:
 
 * noun 
 * center_fixation
@@ -257,10 +258,10 @@ d.fs <- d %>%
   unique()
 ```
 
-Write to csv: 
+Write to zipped csv: 
 
 ```{r}
 write.path <- "../../data/3_final_merged_data/"
-write_csv(d.timecourse, path = paste0(write.path, "speed_acc_adult_timecourse_tidy.csv"))
-write_csv(d.fs, path = paste0(write.path, "speed_acc_adult_fstshift_tidy.csv"))
+write_csv(d.timecourse, path = paste0(write.path, "speed_acc_adult_timecourse_tidy.csv.gz"))
+write_csv(d.fs, path = paste0(write.path, "speed_acc_adult_fstshift_tidy.csv.gz"))
 ```
