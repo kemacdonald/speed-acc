@@ -1,7 +1,6 @@
 ---
 title: "Speed-acc-kids EWMA"
 author: "Kyle MacDonald"
-date: "11/4/2016"
 output: html_document
 ---
 

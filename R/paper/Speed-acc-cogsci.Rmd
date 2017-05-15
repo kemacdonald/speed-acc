@@ -11,10 +11,20 @@ author-information: >
         $^1$ Department of Psychology Stanford University, $^2$ Department of Psychology Oberlin College}
 
 abstract: 
-  "Language comprehension in grounded contexts involves integrating visual and linguistic information through decisions about visual fixation. But when the visual signal also contains information about the language source -- as in the case of written text or sign language -- how do we decide where to look? Here, we hypothesize that eye movements during language comprehension represent an adaptive response. Using two case studies, we show that, compared to English-learners, young signers delayed their gaze shifts away from a language source, were more accurate with these shifts, and produced a smaller proportion of nonlanguage-driven shifts (E1). Next, we present a well-controlled, confirmatory experiment, showing that English-speaking adults produced fewer nonlanguage-driven shifts when processing printed text compared to spoken language (E2). Together, these data suggest that people adapt to the value of seeking different information in order to increase the chance of rapid and accurate language understanding."
+  "Language comprehension in grounded contexts involves integrating visual and linguistic information
+  through decisions about visual fixation. But when the visual signal also contains information about
+  the language source -- as in the case of written text or sign language -- how do we decide where to
+  look? Here, we hypothesize that eye movements during language comprehension represent an adaptive
+  response. Using two case studies, we show that, compared to English-learners, young signers delayed
+  their gaze shifts away from a language source, were more accurate with these shifts, and produced a
+  smaller proportion of nonlanguage-driven shifts (E1). Next, we present a well-controlled,
+  confirmatory experiment, showing that English-speaking adults produced fewer nonlanguage-driven
+  shifts when processing printed text compared to spoken language (E2). Together, these data suggest
+  that people adapt to the value of seeking different information in order to increase the chance of
+  rapid and accurate language understanding."
 
 keywords:
-  "eye movements; language processing; information-seeking; American Sign Language"
+    "eye movements; language processing; information-seeking; American Sign Language"
 
 output: cogsci2016::cogsci_paper
 ---
