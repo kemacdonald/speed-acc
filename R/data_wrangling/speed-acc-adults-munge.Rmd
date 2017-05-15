@@ -248,8 +248,12 @@ Before writing to .csv, we split the data into the timecourse information and fi
 # timecourse
 d.timecourse <- filter(d, response_onset_type == "noun") %>% 
   select(subid, t.stim, condition, tr.num, noun_onset_sec_1, noun_offset_msec_1, audio,
+<<<<<<< HEAD
          gaze_target:shift_accuracy, target_image)
 
+=======
+         gaze_target:shift_accuracy)
+>>>>>>> 55a1c791671f0d34fb56b55be744844ae0d1460e
 d.timecourse <- filter(d, response_onset_type == "noun")
 
 # first shift

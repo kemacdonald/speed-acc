@@ -11,11 +11,11 @@ author-information: >
         $^1$ Department of Psychology Stanford University, $^2$ Department of Psychology Oberlin College}
 
 abstract: 
-    "Language comprehension in grounded contexts involves integrating visual and linguistic information through decisions about visual fixation. But when the visual signal also contains information about the language source -- as in the case of written text or sign language -- how do we decide where to look? Here, we hypothesize that eye movements during language comprehension represent an adaptive response. Using two case studies, we show that, compared to English-learners, young signers delayed their gaze shifts away from a language source, were more accurate with these shifts, and produced a smaller proportion of nonlanguage-driven shifts (E1). Next, we present a well-controlled, confirmatory experiment, showing that English-speaking adults produced fewer nonlanguage-driven shifts when processing printed text compared to spoken language (E2). Together, these data suggest that people adapt to the value of seeking different information in order to increase the chance of rapid and accurate language understanding."
-    
+  "Language comprehension in grounded contexts involves integrating visual and linguistic information through decisions about visual fixation. But when the visual signal also contains information about the language source -- as in the case of written text or sign language -- how do we decide where to look? Here, we hypothesize that eye movements during language comprehension represent an adaptive response. Using two case studies, we show that, compared to English-learners, young signers delayed their gaze shifts away from a language source, were more accurate with these shifts, and produced a smaller proportion of nonlanguage-driven shifts (E1). Next, we present a well-controlled, confirmatory experiment, showing that English-speaking adults produced fewer nonlanguage-driven shifts when processing printed text compared to spoken language (E2). Together, these data suggest that people adapt to the value of seeking different information in order to increase the chance of rapid and accurate language understanding."
+
 keywords:
-    "eye movements; language processing; information-seeking; American Sign Language"
-    
+  "eye movements; language processing; information-seeking; American Sign Language"
+
 output: cogsci2016::cogsci_paper
 ---
 
@@ -29,7 +29,7 @@ source("../helper_functions/libraries_and_functions.R")
 
 ```{r read e1 data}
 df_e1 <- read.csv("../../data/3_final_merged_data/speed-acc-ss-df.csv", 
-               check.names=F, stringsAsFactors=F) 
+                  check.names=F, stringsAsFactors=F) 
 
 df_e1 %<>% 
   mutate(stimuli = ifelse(stimuli == "V1" | stimuli == "V2", "ASL", 
@@ -53,9 +53,9 @@ The majority of this work has used eye movements as a measure of the output of t
 But, this situation creates a tradeoff where the listener must decide what kind of information to gather and at what time. How do we decide where to look? We propose that people modulate their eye movements during language comprehension in response to tradeoffs in the value of gathering different kinds of information. We test this adaptive tradeoff account using two case studies that manipulate the value of different fixation locations for language understanding: a) a comparison of processing sign vs. spoken language in children (E1), and b) a comparison of processing printed text vs. spoken language in adults (E2). Our key prediction is that competition for visual attention will make gaze shifts away from the language source less valuable than fixating the source of the linguistic signal, leading people to generate fewer exploratory, nonlanguage-driven eye movements.
 
 <!---
- Using ideas from the field of natural vision where eye movements are modeled as a way to reduce uncertainty about the world and to maximize the expected reward of future actions [@hayhoe2005eye]
- 
- We propose that people modulate their eye movement behavior in response to changes in the value of gathering different kinds of information. We test this information-seeking account using two case studies that manipulate the value of different fixation locations in the visual world for language understanding: a) a comparison of processing a visual-manual vs. a spoken language in children (Experiment 1), and b) a comparison of processing printed text vs. spoken language in adults (Experiment 2).
+Using ideas from the field of natural vision where eye movements are modeled as a way to reduce uncertainty about the world and to maximize the expected reward of future actions [@hayhoe2005eye]
+
+We propose that people modulate their eye movement behavior in response to changes in the value of gathering different kinds of information. We test this information-seeking account using two case studies that manipulate the value of different fixation locations in the visual world for language understanding: a) a comparison of processing a visual-manual vs. a spoken language in children (Experiment 1), and b) a comparison of processing printed text vs. spoken language in adults (Experiment 2).
 
 For example, imagine there is only one red object amongst many others, and you hear someone say, "Pass me the red _____!" If you have successfully encoded the visual world, then the adjective "red" allows you to constrain the speaker's intended meaning and respond rapidly and accurately. 
 
@@ -63,9 +63,9 @@ In contrast, researchers in the fields of natural vision have modeled fixations 
 
 of information-seeking framework to account for a wider variety of fixation patterns during language comprehension. We characterize eye movements as a tradeoff between gathering information about the nonlinguistic visual world and monitoring the incoming linguistic signal.
 
- To test the predictions of our account, we present two case studies where information about the linguistic signal can be gathered via fixations to the language source: processing American Sign Language (ASL) and processing displays of printed text. 
- 
- We assume that the goal is to maximize the chance of making a correct future response (in the context of our task, resolving reference rapidly and accurately by looking at the object that is being talked about).
+To test the predictions of our account, we present two case studies where information about the linguistic signal can be gathered via fixations to the language source: processing American Sign Language (ASL) and processing displays of printed text. 
+
+We assume that the goal is to maximize the chance of making a correct future response (in the context of our task, resolving reference rapidly and accurately by looking at the object that is being talked about).
 -->
 
 ```{r e1 get prop correct}
@@ -128,8 +128,9 @@ e1_tab <- df_e1 %>%
             Max_Age = max(Months)) %>% 
   left_join(., filter(e1_n, age_code == "child")) %>% 
   select(-age_code)
-  
+
 e1_tab <- xtable::xtable(e1_tab, caption = "Age distributions of children in Experiment 1. All ages are reported in months.")
+
 
 print(e1_tab, type="latex", comment = F, table.placement = "b",
       floating.environment = "table", include.rownames=FALSE)
@@ -208,7 +209,7 @@ Children sat on their caregiver’s lap and viewed the task on a screen while th
 *Coding.* Participants’ gaze patterns were coded (33-ms resolution) as being fixated on either the center stimulus, one of the images, shifting between pictures, or away. To assess inter-coder reliability, 25% of the videos were re-coded.  Agreement was scored at the level of individual frames of video and averaged 98% on these reliability assessments. 
 
 <!--
- We excluded RTs longer than two seconds since these shifts are unlikely to be generated in response to the incoming language stimulus (see Ratcliff, 1993). 
+We excluded RTs longer than two seconds since these shifts are unlikely to be generated in response to the incoming language stimulus (see Ratcliff, 1993). 
 
 This measure reflects the accuracy of language-driven saccades to the visual world. Mean first shift accuracy scores were computed for each participant for both correct and incorrect shifts. Trials where the participants did not generate a shift were not included in the computation.
 -->
@@ -243,7 +244,7 @@ ss_prop$stimuli <- factor(ss_prop$stimuli,
 ss_prop %<>% mutate(correct_char = ifelse(correct == 1, "correct", "incorrect"))
 
 acc_plot <- ggplot(aes(x = stimuli, y = mean_correct), 
-       data = filter(ss_prop, age_code == "child", correct == 1)) +
+                   data = filter(ss_prop, age_code == "child", correct == 1)) +
   geom_boxplot(outlier.colour = "darkgrey", width = 0.3, fill = "darkgrey") +
   #geom_jitter(width = 0.05, alpha = 0.4, size = 2) +
   geom_hline(yintercept = 0.5, lty = "dashed") +
@@ -311,11 +312,11 @@ m.rt.e1.coefs <- m.rt.e1 %>%
 m.acc.e1 <- df_e1 %>% 
   filter(age_code == "child") %>% 
   glmer(correct ~ stimuli + Months +  (1|Sub.Num) + (1|clean_target_img),
-       contrasts=list(stimuli = mat),
-       nAGQ = 1,
-       family = binomial,
-       control = glmerControl(optimizer = "bobyqa"),
-       data = .)
+        contrasts=list(stimuli = mat),
+        nAGQ = 1,
+        family = binomial,
+        control = glmerControl(optimizer = "bobyqa"),
+        data = .)
 
 # extract coefficients and compute p.vals using normal approximation
 m.acc.e1.coefs <- m.acc.e1 %>% 
@@ -365,6 +366,7 @@ ss.cutoffs.e1 <- ss.ewma.results.e1 %>%
 
 # Aggregate cutoffs for each condition.
 n <- 30
+
 ms.cutoffs.e1 <- ss.cutoffs.e1 %>% 
   group_by(condition) %>% 
   summarise(median_param = median(cutoff),
@@ -401,21 +403,21 @@ e1_ribbon_green <- ms.ewma.e1 %>%
 ```{r e1 make control chart}
 # reorder factor levels for plot
 ms.ewma.e1$condition <- factor(ms.ewma.e1$condition,
-                          levels = c("ASL", "Face", "Object", "Bullseye")) 
+                               levels = c("ASL", "Face", "Object", "Bullseye")) 
 
 ms.cutoffs.e1$condition <- factor(ms.cutoffs.e1$condition,
-                          levels = c("ASL", "Face", "Object", "Bullseye"))
+                                  levels = c("ASL", "Face", "Object", "Bullseye"))
 
 e1_ribbon$condition <- factor(e1_ribbon$condition,
-                          levels = c("ASL", "Face", "Object", "Bullseye"))
+                              levels = c("ASL", "Face", "Object", "Bullseye"))
 
 e1_ribbon_green$condition <- factor(e1_ribbon_green$condition,
-                          levels = c("ASL", "Face", "Object", "Bullseye"))
+                                    levels = c("ASL", "Face", "Object", "Bullseye"))
 
 sign_len_plot_info <- ms_sign_len %>% bind_rows(ms_word_len) 
-  
+
 sign_len_plot_info$condition <- factor(sign_len_plot_info$condition,
-                          levels = c("ASL", "Face", "Object", "Bullseye"))
+                                       levels = c("ASL", "Face", "Object", "Bullseye"))
 
 # make plot
 e1_control_chart <- ms.ewma.e1 %>% 
@@ -432,8 +434,6 @@ e1_control_chart <- ms.ewma.e1 %>%
   scale_y_continuous(breaks = c(0.4, 0.6, 0.8)) +
   geom_vline(aes(xintercept = median_param), linetype = 2, 
              data = filter(ms.cutoffs.e1, condition %in% c("ASL", "Face"))) +
-  #geom_vline(aes(xintercept = m), linetype = 1, color = "darkblue", size = 0.7,
-   #          data = sign_len_plot_info) +
   geom_hline(yintercept = 0.5, linetype = "solid") +
   labs(x = "RT (sec)", y = "EWMA statistic") +
   guides(color=F) + 
@@ -463,10 +463,10 @@ e1.ewma.m1.coefs <- e1.ewma.m1 %>%
 e1.ewma.m2 <-  ss.ewma.results.e1 %>% 
   filter(age_code == "child", stimuli %in% c("ASL", "Face")) %>% 
   glmer(guess_num ~ stimuli + Months + (1|Sub.Num),
-       nAGQ = 1,
-       family = binomial,
-       control = glmerControl(optimizer = "bobyqa"),
-       data = .)
+        nAGQ = 1,
+        family = binomial,
+        control = glmerControl(optimizer = "bobyqa"),
+        data = .)
 
 
 e1.ewma.m2.coefs <- e1.ewma.m2 %>% 
@@ -483,7 +483,7 @@ Next, we compared the EWMA output for participants in the ASL and Face tasks. We
 ```{r read hddm function}
 read_hddm_file <- function(file_name, path) {
   raw_file <- read_csv(paste0(path, file_name), col_names = F)
-
+  
   raw_file %<>% 
     gather() %>% 
     select(-key)
@@ -731,9 +731,9 @@ m.acc.e2 <- d.fs %>%
   mutate(correct = ifelse(shift_accuracy == "correct", 1, 0)) %>%
   glmer(correct ~ condition +  (condition|subid),
         #contrasts=list(condition_fact = mat),
-       nAGQ = 0,
-       family = binomial,
-       data = .)
+        nAGQ = 0,
+        family = binomial,
+        data = .)
 
 anova_m1.acc.e2 <- anova(m.acc.e2)
 
@@ -845,13 +845,13 @@ e2.ewma.m1 <- ss.cutoffs.e2 %>%
 
 # use lsmeans to test pairwise comparisons
 lsm_e2_means <- summary(lsmeans::lsmeans(e2.ewma.m1, 
-                               pairwise~condition_fact, 
-                               adjust="bon"))$lsmeans %>% 
+                                         pairwise~condition_fact, 
+                                         adjust="bon"))$lsmeans %>% 
   mutate(mean = round(lsmean, 2))
 
 lsm_e2_tests <- summary(lsmeans::lsmeans(e2.ewma.m1, 
-                               pairwise~condition_fact, 
-                               adjust="bon"))$contrasts
+                                         pairwise~condition_fact, 
+                                         adjust="bon"))$contrasts
 
 e2.ewma.m1.coefs <- e2.ewma.m1 %>% 
   broom::tidy() %>% 
@@ -871,8 +871,8 @@ e2.ewma.m2 <-  ss.ewma.results.e2 %>%
         data = .)
 
 lsm_e2_glmer <- summary(lsmeans::lsmeans(e2.ewma.m2, 
-                               pairwise~condition_fact, 
-                               adjust="bon"))$lsmeans %>% 
+                                         pairwise~condition_fact, 
+                                         adjust="bon"))$lsmeans %>% 
   mutate(mean = round(lsmean, 2))
 
 e2.ewma.m2.coefs <- e2.ewma.m2 %>% 
@@ -967,7 +967,7 @@ We are grateful to the families who participated in this research. This work was
 
 ---
 nocite: | 
-  @macdonald2017realtime
+@macdonald2017realtime
 ...
 
 \setlength{\parindent}{-0.1in} 
