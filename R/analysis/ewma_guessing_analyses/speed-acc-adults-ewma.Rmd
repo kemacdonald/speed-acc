@@ -23,6 +23,8 @@ d.fs <- read_csv(paste0(read.path, "speed_acc_adult_fstshift_tidy.csv.gz"))
 d.asl <- read_csv(paste0(read.path, "speed-acc-ss-df.csv"))
 ```
 
+Clean the spoken English and sign language datasets, so we can merge them.
+
 ```{r clean datasets to merge}
 d.asl %<>% 
   filter(language_modality == "ASL" & age_code == "adult") %>% 
@@ -40,6 +42,8 @@ d.fs %<>%
   select(subid, tr.num, rt, shift_type, hearing_status, condition, response_onset_type)
 ```
 
+Merge the datasets.
+
 ```{r merge asl and english data}
 d.fs %<>% bind_rows(., d.asl) %>% 
   mutate(shift_accuracy = ifelse(shift_type == "C_T", "correct", "incorrect"))
@@ -47,7 +51,7 @@ d.fs %<>% bind_rows(., d.asl) %>%
 
 ### RT analysis
 
-First, we analyze RT and accuracy of first shifts that are computed from noun onset.
+First, we analyze RT and accuracy of first shifts computed from noun onset.
 
 ```{r}
 d.fs %>% 
@@ -60,7 +64,7 @@ d.fs %>%
   kable()
 ```
 
-Regardless of when you start the clock, only ~10% of shifts are incorrect, This makes sense since this is an easy task for adults. 
+Regardless of when you start the clock, ~10% of shifts are incorrect. This makes sense since this is an easy task for adults. 
 
 ```{r summarize RT for correct and incorrect shifts}
 ss.d.rt <- d.fs %>% 
@@ -74,7 +78,7 @@ ms.rt <- ss.d.rt %>%
   summarise(med = median(rt))
 ```
 
-Distribution of RTs for correct vs. incorrect shifts from noun onset and from sentence onset
+Plot the distribution of RTs for correct vs. incorrect shifts from noun onset.
 
 ```{r, fig.width = 8, fig.height = 8}
 ss.d.rt %>% 
@@ -91,7 +95,7 @@ ss.d.rt %>%
   labs(fill = "Shift accuracy")
 ```
 
-What should we do with shifts that happen before noun onset? My thought is to feed them into the EWMA, but not into the summary analyses and the DDM fits.
+KM note: I'm not sure how we should handle shifts that happen before noun onset? My thought is to feed them into the EWMA, but not into the summary analyses and the DDM fits.
 
 #### Plot RT by condition
 
@@ -116,6 +120,8 @@ ggplot(aes(x = condition, y = m_rt, fill = shift_accuracy), data = ss.rt) +
         legend.position = "top") 
 ```
 
+Get an estimate of the effect size for the RT difference between ASL and Face conditions.
+
 ```{r}
 effsize::cohen.d(filter(ss.rt, condition == "ASL")$m_rt,
         filter(ss.rt, condition == "face")$m_rt)
@@ -137,19 +143,10 @@ Then we make a boxplot.
 
 ```{r}
 ggplot(aes(x = condition, y = mean_acc), data = ss.acc) +
-  geom_boxplot(width = 0.3, fill = "dodgerblue", alpha = 0.7) +
+  geom_boxplot(width = 0.3, fill = "grey", alpha = 0.7) +
   labs(x = "Condition", 
        y = "Mean Accuracy") +
-  theme(text = element_text(size = 16))
-```
-
-```{r}
-acc.glmer <- ss.d.rt %>% 
-  filter(response_onset_type == "noun") %>% 
-  mutate(correct_num = ifelse(shift_accuracy == "correct", 1, 0)) %>% 
-  glmer(correct_num ~ condition + (1|subid), data = ., 
-        family = "binomial", 
-        nAGQ = 0)
+  theme(text = element_text(size = 12))
 ```
 
 ## EWMA filter to model guessing behavior 
@@ -199,7 +196,7 @@ Write EWMA results to .csv so we can use this information in the Drift Diffusion
 write_csv(ss.ewma.results, "../../../data/3_final_merged_data/speed_acc_adult_ewma_results.csv")
 ```
 
-Now make a pretty EWMA plot ("control chart"). 
+Visualize EWMA results ("control chart"). 
 
 ```{r ewma plot, fig.height=8}
 ss.ewma.results %>% 
@@ -222,7 +219,6 @@ ss.ewma.results %>%
   theme(text = element_text(size = 14)) 
 ```
 
-
 What do we see? The bullseye condition crosses the threshold after 1 second. The face, text, and text-audio all cross the threshold earlier in the window. Text-no-audio crosses earliest given these parameters of the EWMA model. Finally, in the text-no-audio condition there aren't any early RTs to model. How should we add this information to the analysis?
 
 What we can do is compute the proportion of shifts that were categorized as a "fast guess" compared to a "valid response" for each participant for each condition.
@@ -241,10 +237,10 @@ ggplot(aes(x = fct_rev(condition), y = prop.guessing),
        data = filter(ss.guessing.prop, guess == "guess")) +
   geom_boxplot(fill = "dodgerblue", width = 0.3, alpha = 0.7) +
   labs(x = "Condition",y = "Prop. Guess") +
-  theme(text = element_text(size = 15))
+  theme(text = element_text(size = 12))
 ```
 
-This looks like what we saw in the EWMA control charts: bullseye is mostly guesses, whereas face, text, and text-no-audio are mostly valid responses. However, this analysis still does not caputre one effect in the EWMA chart, which is the amount of *time* each participant spends in a guessing phase vs. a valid response phase for each condition.
+This looks like what we saw in the EWMA control charts: bullseye has the higher proportion of guesses, whereas face, text, and text-no-audio are mostly valid responses. However, this analysis still does not caputre one effect in the EWMA chart, which is the amount of *time* each participant spends in a guessing phase vs. a valid response phase for each condition.
 
 To get at this effect, we use a function to compute the difference in time from first guessing response to first valid response for each participant for each condition. 
 
@@ -264,7 +260,7 @@ ggplot(aes(x = fct_rev(condition), y = time_guessing), data = ss.guessing.window
   geom_boxplot(fill = "dodgerblue", width = 0.3, alpha = 0.7) +
   labs(x = "Condition", y = "Avg. Time Guessing (sec)") +
   coord_flip() +
-  theme(text = element_text(size = 15))
+  theme(text = element_text(size = 12))
 ```
 
 ## Stats for EWMA parameters
