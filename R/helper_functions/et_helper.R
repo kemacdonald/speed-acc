@@ -16,9 +16,9 @@ read.smi.idf <- function (file.name, suffix.len = 4) {
   
   ## read the header from the file to paste back into the new file
   tmp.header <- scan(file.name, what = character(), sep="\n", 
-                 nlines = 40, quiet=TRUE)
+                     nlines = 40, quiet=TRUE)
   
-  ## trim the header to just contain header information 
+  ## trim to just contain header information 
   header <- vector()
   for(index in 1:length(tmp.header)) {
     line <- tmp.header[index]
@@ -32,7 +32,7 @@ read.smi.idf <- function (file.name, suffix.len = 4) {
   
   ## get the length of the header so we know how many rows to skip before reading the data
   header.rows <- length(header)
-
+  
   ## DATA CLEANING 
   # read in data and get rid of header rows
   all.d <- read_tsv(file.name, skip = header.rows, 
@@ -43,12 +43,13 @@ read.smi.idf <- function (file.name, suffix.len = 4) {
   
   d <- all.d %>% filter(all.d$Type=="SMP")
   
+  # convert to numeric here
   d$rx <- to.n(d$"R POR X [px]")
   d$ly <- to.n(d$"L POR Y [px]")
   d$ry <- to.n(d$"R POR Y [px]")
-  d$lx <- to.n(d$"L POR X [px]") # convert to number here
+  d$lx <- to.n(d$"L POR X [px]") 
   
-  #clean up d
+  #clean up data frame
   d %<>% 
     select(Time, lx, ly, rx, ry) %>%
     rename(t = Time)
@@ -140,7 +141,7 @@ preprocess.data <- function(d,
   
   ## y flip (so origin is cartesian, not matrix (bottom left, instead of top left)
   d$y <- y.max - d$y
- 
+  
   ## finished
   return (d)
 }
@@ -157,7 +158,7 @@ roi.check <- function (d, rois) {
   for (i in 1:length(rois)) {
     r <- rois[[i]]
     roi[d$x > r[1] & d$x < r[1] + r[3] &
-      d$y > r[2] & d$y < r[2] + r[4]] <- names(rois)[i]
+          d$y > r[2] & d$y < r[2] + r[4]] <- names(rois)[i]
   }
   
   return(roi)
