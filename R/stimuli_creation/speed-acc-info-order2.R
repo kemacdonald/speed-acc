@@ -30,6 +30,6 @@ d <- replicate(n = n_orders, create_one_order(carriers)) %>% as.data.frame()
 colnames(d) <- c('noise1', 'noise2', 'noise3', 'noise4', 'gaze1', 'gaze2', 'gaze3', 'gaze4')
 
 ## save carriers data frame to a file
-write_csv(d, "../../data/trial_info/speed_acc_noise_carrier_order.csv")
+write_csv(d, "../../data/trial_info/speed_acc_noise_carrier_orders.csv")
 
 
