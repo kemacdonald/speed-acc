@@ -100,6 +100,8 @@ score_trial_et <- function(trial_df, crit_onset_type = "noun") {
   # filter trial to keep just that onset type
   trial_df %<>% filter(response_onset_type == crit_onset_type)
   
+  print(paste(trial_df$tr.num[1], trial_df$subid[1]))
+  
   # build variables to index each trial
   response.type.index <- paste0(crit_onset_type, ".onset") 
   t.filter.type <- paste0("t.rel.", crit_onset_type, " > 0")

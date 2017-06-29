@@ -1,9 +1,18 @@
-####### Randomize gaze directions
+### Randomize gaze directions for the speed-acc experiment
+### The goal is to create a vector of gaze directions randomly paired with the 8 target nouns
+
 library(tidyverse)
 
-# make a vector with lenght 32 and equal numbers of 'dl' and 'dr'
-carriers <- replicate(16, 'dl') %>% 
-  c(., replicate(16, 'dr'))
+# define some constants that we will use later
+n_trials_block <- 32
+n_gaze_trials_block <- n_trials_block / 2
+n_blocks_adult <- 4
+n_blocks_kid <- 2
+target_nouns <- c('ball', 'shoe', 'bottle', 'cookie', 'boat', 'juice', 'bunny', 'chicken')
+
+# make a vector with equal numbers of 'dl' and 'dr' paired with each target noun
+gaze <- replicate(n_gaze_trials_block, 'dl') %>% 
+  c(., replicate(n_gaze_trials_block, 'dr'))
 
 # create random order by sampling from carriers vector
 
