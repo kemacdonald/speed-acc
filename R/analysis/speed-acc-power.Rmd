@@ -1,0 +1,101 @@
+---
+title: "Speed-Acc Power Analysis"
+author: "Kyle MacDonald"
+output: html_document
+---
+
+### Set up
+
+```{r chunk_options, echo = F}
+rm(list=ls()) # code to clear workspace
+
+knitr::opts_chunk$set(warning=F, message=F, sanitize = T, 
+                      fig.height=5, fig.width=8, echo=T, cache = F)
+
+source("../../helper_functions/libraries_and_functions.R")
+library(pwr)
+```
+
+### Load data
+
+To get a rough sample size estimate for the speed-acc noise and gaze manipulations I am using the difference in Accuracy and RT between the Object and Face conditions from Experiment 1. 
+
+```{r}
+df <- read.csv("../../../data/3_final_merged_data/speed-acc-ss-df.csv", 
+               check.names=F, stringsAsFactors=F) 
+
+df %<>% 
+  mutate(stimuli = ifelse(stimuli == "V1" | stimuli == "V2", "ASL", 
+                          ifelse(stimuli == "Trio", "Object", 
+                                 ifelse(stimuli == "Bull", "Bullseye",
+                                        stimuli))),
+         stimuli = factor(stimuli, levels = c("ASL", "Face", "Object", "Bullseye")))
+```
+
+
+### Compute effect size for the accuracy and RT difference between Object and Face conditions
+
+$$ d = \frac{\bar{x}_1 - \bar{x}_2}{s} $$
+
+s is defined as the pooled standard deviation:
+
+$$ s = \sqrt{\frac{s^2_1 + s^2_2}{n_1 + n_2 - 2}} $$
+
+and variance for one of the groups is defined as:
+
+$$ s^2 = \frac{1}{n-1}\sum{(x_{1,i} - \bar{x}_1)^2}$$
+
+```{r}
+d_effsize <-  df %>% 
+  filter(stimuli %in% c("Object", "Face"), age_code == "child", 
+         trial_type != "no_shift") %>% 
+  group_by(stimuli, Sub.Num) %>% 
+  summarise(ss_m = mean(correct, na.rm = T))
+
+cohen.d(filter(d_effsize, stimuli == "Object")$ss_m, filter(d_effsize, stimuli == "Face")$ss_m, 
+        hedges.correction = T) 
+```
+
+```{r}
+rt_effsize <-  df %>% 
+  filter(stimuli %in% c("Object", "Face"), age_code == "child", 
+         trial_type != "no_shift", correct == 1) %>% 
+  group_by(stimuli, Sub.Num) %>% 
+  summarise(ss_m = mean(RT_sec))
+
+cohen.d(filter(rt_effsize, stimuli == "Object")$ss_m, filter(rt_effsize, stimuli == "Face")$ss_m,
+        hedges.correction = T)
+```
+
+```{r define constants}
+acc_cohd <- -0.5085439
+rt_cohd <- -1.64498
+sig_level <- .05
+power <- 0.90
+```
+
+
+### Estimate sample size to achieve 90% power
+
+From http://www.statmethods.net/stats/power.html
+
+The following four quantities have an intimate relationship:
+
+* sample size
+* effect size
+* significance level = P(Type I error) = probability of finding an effect that is not there
+* power = 1 - P(Type II error) = probability of finding an effect that is there
+
+Given any three, we can determine the fourth. With those quantities, we can now compute the sample size we would need to have 80% power to detect an effect of that size.
+
+```{r}
+## Accuracy 
+pwr.t.test(d = acc_cohd, sig.level = sig_level, power = power, type = c("paired"))
+```
+
+```{r}
+## Accuracy 
+pwr.t.test(d = rt_cohd, sig.level = sig_level, power = power, type = c("paired"))
+```
+
+So to achieve 90% power to detect the smaller Accuracy effect, we would need to run 43 participants in both the Gaze and Noise experiments.

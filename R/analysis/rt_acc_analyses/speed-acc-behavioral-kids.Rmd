@@ -57,8 +57,8 @@ df %>%
   filter(age_code == "child") %>% 
   select(Sub.Num, language_modality, age_code, stimuli, age_years) %>% 
   unique() %>%
-  ggplot(aes(age_years, fill = stimuli)) +
-  geom_histogram() +
+  ggplot(aes(age_years, color = stimuli)) +
+  geom_freqpoly() +
   scale_fill_solarized() +
   facet_grid(.~language_modality)
 ```
