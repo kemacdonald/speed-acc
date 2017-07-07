@@ -1,7 +1,9 @@
 ---
 title: "Speed-acc-adult EWMA analysis"
 author: "Kyle MacDonald"
-output: html_document
+output: html_notebook
+editor_options: 
+  chunk_output_type: inline
 ---
 
 This script analyzes first shift accuracy and RT using an EWMA guesssing model. In the task, we vary the information value and the saliency of the center fixation and measure the effects on accuracy and RT.
@@ -95,7 +97,7 @@ ss.d.rt %>%
   labs(fill = "Shift accuracy")
 ```
 
-KM note: I'm not sure how we should handle shifts that happen before noun onset? My thought is to feed them into the EWMA, but not into the summary analyses and the DDM fits.
+I'm not sure how we should handle shifts that happen before noun onset? My thought is to feed them into the EWMA, but not into the summary analyses and the DDM fits.
 
 #### Plot RT by condition
 
@@ -192,7 +194,7 @@ ms.cutoffs <- ss.cutoffs %>%
 
 Write EWMA results to .csv so we can use this information in the Drift Diffusion analysis. 
 
-```{r write emwa}
+```{r write emwa, eval = F}
 write_csv(ss.ewma.results, "../../../data/3_final_merged_data/speed_acc_adult_ewma_results.csv")
 ```
 
