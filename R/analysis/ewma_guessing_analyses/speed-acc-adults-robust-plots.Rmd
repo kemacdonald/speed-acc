@@ -20,8 +20,8 @@ library(rogme) # key package for making visualizations
 
 ```{r read data}
 read.path <- "../../../data/3_final_merged_data/"
-d.fs <- read_csv(paste0(read.path, "speed_acc_adult_fstshift_tidy.csv.gz"))
-d.asl <- read_csv(paste0(read.path, "speed-acc-ss-df.csv"))
+d.fs <- read_csv(paste0(read.path, "speed_acc_adult_text_fstshift_tidy.csv.gz"))
+d.asl <- read_csv(paste0(read.path, "speed-acc-participant-level-df.csv"))
 ```
 
 Clean the spoken English and sign language datasets, so we can merge them.

@@ -21,8 +21,8 @@ library(tidyverse); library(lme4)
 
 ```{r read data}
 read.path <- "../../../data/3_final_merged_data/"
-d.fs <- read_csv(paste0(read.path, "speed_acc_adult_fstshift_tidy.csv.gz"))
-d.asl <- read_csv(paste0(read.path, "speed-acc-ss-df.csv"))
+d.fs <- read_csv(paste0(read.path, "speed_acc_adult_text_fstshift_tidy.csv.gz"))
+d.asl <- read_csv(paste0(read.path, "speed-acc-participant-level-df.csv"))
 ```
 
 Clean the spoken English and sign language datasets, so we can merge them.
@@ -204,9 +204,6 @@ Visualize EWMA results ("control chart").
 ss.ewma.results %>% 
   filter(condition != "ASL") %>% 
   ggplot(data = ., aes(x = rt, y = param_value, color = ewma_param)) +
-  geom_segment(aes(x = ci_lower, y = 0.8, xend = ci_upper, yend = 0.8), 
-               color = "black", size = 100, alpha = 0.2,
-               data = filter(ms.cutoffs, condition != "ASL")) +
   geom_line(size = 1) +
   geom_vline(aes(xintercept = mean), linetype = 2, 
              data = filter(ms.cutoffs, condition != "ASL")) +
@@ -216,7 +213,6 @@ ss.ewma.results %>%
   xlim(0, 1) +
   facet_grid(condition~.) +
   scale_color_manual(values = c("darkorange", "dodgerblue")) +
-  #geom_dl(aes(label = ewma_param), method = "last.bumpup") +
   theme_bw() +
   theme(text = element_text(size = 14)) 
 ```
