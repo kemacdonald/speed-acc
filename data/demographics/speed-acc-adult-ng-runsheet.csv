@@ -1,6 +1,6 @@
 subid,dot,gender,age,notes,order,experiment,keep,reason_excluded
 speed_acc_adult_ng_1,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,,no,english not native language
-speed_acc_adult_ng_2,,,,,speed_acc_adult_ng_order4,,,
+speed_acc_adult_ng_2,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,,yes,
 speed_acc_adult_ng_3,,,,,speed_acc_adult_ng_order1,,,
 speed_acc_adult_ng_4,,,,,speed_acc_adult_ng_order2,,,
 speed_acc_adult_ng_5,,,,,speed_acc_adult_ng_order2,,,
