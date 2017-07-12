@@ -27,7 +27,8 @@ n_orders <- 1
 order_results <- sample(orders_in_experiment) %>% as.data.frame()
 colnames(order_results) <- 'order'
 
-## save carriers data frame to a file
+## save orders data frame to a file
 write_csv(order_results, "../../data/trial_info/speed_acc_adult_ng_orders.csv")
+
 
 
