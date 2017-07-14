@@ -1,5 +1,5 @@
 ---
-title: "Speed-Acc Adults Noise/Gaze Wrangle"
+title: "Speed-Acc Child Gaze Wrangle"
 author: "Kyle MacDonald"
 output: html_document
 ---
@@ -15,7 +15,7 @@ Load data and join with trial information (timing, left/right/center images, tar
 
 ```{r load data}
 #### read in processed data
-d <- read_csv("../../data/2_cleaned_data/speed_acc_processed_adult_ng_data.csv.gz")
+d <- read_csv("../../data/2_cleaned_data/speed_acc_processed_child_gaze.csv.gz")
 
 #### strip .avi and .jpg from stimulus
 d$stimulus <- gsub(pattern = ".jpg", "", x = d$stimulus)
@@ -85,7 +85,8 @@ d.rois <- sample_n(d, size = 0.10*nrow(d)) # get a sample so we don't plot all 2
 
 ggplot(aes(x = x, y = y), data = d) +
   geom_density2d() +
-  facet_wrap(~subid)
+  facet_wrap(~subid) +
+  theme_bw()
 ```
 
 ### Add trial numbers
