@@ -5,7 +5,7 @@
 source("../helper_functions/libraries_and_functions.R")
 
 ## Define global variables
-read.path <- "../../data/trial_info/trial_info_xml/"
+read.path <- "../../data/0b_trial_information/speed_acc_adult_text_xml/"
 stim.names <- c("shoe", "book", "cookie", "ball", "juice", "banana")
 center.fixations <- c("text", "text-no-audio", "face")
 
@@ -13,10 +13,10 @@ center.fixations <- c("text", "text-no-audio", "face")
 files <- dir(read.path,pattern="*.xml")
 
 ## Read in stimulus log .xml to get stimulus id tag and source name
-stim.log.order1 <- xmlParse(file = "../../data/trial_info/stim_names_order1.xml") %>% 
+stim.log.order1 <- xmlParse(file = paste0(read.path, "stim_names_order1.xml")) %>% 
   xmlToList() 
 
-stim.log.order2 <- xmlParse(file = "../../data/trial_info/stim_names_order2.xml") %>% 
+stim.log.order2 <- xmlParse(file = paste0(read.path, "stim_names_order2.xml")) %>% 
   xmlToList()
 
 stim.log <- c(stim.log.order1, stim.log.order2)
@@ -89,7 +89,7 @@ for (file in files) {
 trial_info_df %<>% left_join(., trial.level.df, by = "stimulus")
 
 ###### Read in timing information for each stimlus item and add to final trial info df
-trial.timing.df <- read_csv("../../data/trial_info/speed-acc-adult-trial-timing-info.csv")
+trial.timing.df <- read_csv("../../data/0b_trial_information/speed-acc-adult-trial-timing-info.csv")
 trial_info_df %<>% left_join(., trial.timing.df, by = "target_image") %>% 
   unique()
 
@@ -98,4 +98,4 @@ trial_info_df %<>% mutate(audio = ifelse(str_detect(condition, pattern = "-no-au
                                          "no-audio", "audio"))
 
 ##### Write to .csv
-write_csv(trial_info_df, path = "../../data/trial_info/speed-acc-adult1-trial-info-final.csv")
+write_csv(trial_info_df, path = "../../data/0b_trial_information/speed-acc-adult-text-trial-info-final.csv")

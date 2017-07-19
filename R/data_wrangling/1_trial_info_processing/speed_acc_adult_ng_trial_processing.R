@@ -2,10 +2,10 @@
 #### and returns an order sheet with the target images, ROIs, and trial tag
 
 ######## Load libraries
-source("../helper_functions/libraries_and_functions.R")
+source("../../helper_functions/libraries_and_functions.R")
 
 ######## Define global variables
-read.path <- "../../data/trial_info/speed_acc_adult2_xml/"
+read.path <- "../../../data/0b_trial_information/speed_acc_adult_ng_xml/"
 stim.names <- c('ball', 'shoe', 'bottle', 'cookie', 'boat', 'juice', 'bunny', 'chicken')
 center.fixations <- c("face")
 
@@ -16,7 +16,7 @@ files <- dir(read.path,pattern="*1920x1080.xml")
 ########Read in stimulus log .xml to get stimulus id tag and source name
 
 log_files <- dir(read.path, pattern = "speed_acc*")
-log_file_path <- "../../data/trial_info/speed_acc_adult2_xml/"
+log_file_path <- "../../../data/0b_trial_information/speed_acc_adult_ng_xml/"
 stim.log <- list()
 
 for(file in log_files) {
@@ -31,7 +31,7 @@ trial_info_df <- data.frame()
 for (index in 1:length(stim.log)) {
   # grab condition name
   condition <- stim.log[[index]]$Task
-  if(is.null(condition)) {condition <- "NA"}
+  if(is.null(condition)) {condition <- NA}
   # grab trial name
   stimulus <- stim.log[[index]]$TrialName
   # bind together in dataframe
@@ -42,7 +42,7 @@ for (index in 1:length(stim.log)) {
 
 # a little clean up
 trial_info_df$stimulus <- gsub(trial_info_df$stimulus, pattern = ".avi", replacement = "") 
-trial_info_df %<>% filter(condition != "NA") %>% unique()
+#trial_info_df %<>% filter(condition != "NA") %>% unique()
 
 ####### loop through trial-level .xml files and extract relevant information using ROIs
 
@@ -101,7 +101,7 @@ trial_info_df %<>% left_join(., trial.level.df, by = "stimulus")
 ####### Read in timing information for each stimulus item and add to final trial info df
 library(googlesheets)
 
-trial_timing_gs <- gs_title("speed_acc_info_measurements")
+trial_timing_gs <- gs_title("speed_acc_child_adult_ng_info_measurements")
 trial_timing_grace <- trial_timing_gs %>% gs_read(ws = "grace")
 trial_timing_olivia <- trial_timing_gs %>% gs_read(ws = "olivia")
 
@@ -109,6 +109,9 @@ trial.timing.df <- bind_rows(trial_timing_grace, trial_timing_olivia)
 
 # joing with trial info
 trial_info_df %<>% left_join(., trial.timing.df, by = "stimulus_name") 
+
+# remove NA trials
+trial_info_df %<>% filter(is.na(condition) == F)
 
 ####### Create variables to track gaze and noise information
 trial_info_df %<>% 
@@ -118,4 +121,4 @@ trial_info_df %<>%
          gaze_condition = ifelse(gaze_condition == "sa", "no_gaze", gaze_condition))  
 
 ####### Write to .csv
-write_csv(trial_info_df, path = "../../data/trial_info/speed-acc-adult2-trial-info.csv")
+write_csv(trial_info_df, path = "../../../data/0b_trial_information/speed-acc-adult-ng-trial-info.csv")

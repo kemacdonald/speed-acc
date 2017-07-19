@@ -26,7 +26,7 @@ gaze,no_noise,56b0fe81cc551df2203aa818fd642784_1920x1080,bottle,cookie,cookie,fa
 gaze,no_noise,1e6a69fa54b3a8587550569a2e824ed7_1920x1080,chicken,bunny,bunny,face,ol_dr_bunny_nonoise_look,yes,bunny,familiar,high,ol,down_right,no_noise,look,3,27,5,8,6,3,6,19,6,19,6,25,8,27,0,10,27
 gaze,no_noise,2839e4c13bc16f6a44cda6f6b084d543_1920x1080,bunny,chicken,bunny,face,ol_dl_bunny_nonoise_look,yes,bunny,familiar,high,ol,down_left,no_noise,look,3,27,5,8,6,3,6,19,6,19,6,25,8,27,0,10,27
 gaze,no_noise,719dd037480e82c6e6a677fa555b85ad_1920x1080,bunny,chicken,chicken,face,ol_dr_chicken_nonoise_hey,yes,chicken,familiar,high,ol,down_right,no_noise,hey,3,28,5,8,6,11,6,29,6,29,7,0,9,4,0,11,4
-gaze,no_noise,6cd500d1fdeb41577127f6e563a510f7_1920x1080,juice,boat,boat,face,ol_dr_boat_nonoise_look,yes,boat,familiar,high,ol,down_right,no_noise,look,3,17,5,1,5,25,6,12,6,12,6,18,8,9,0,10,9
+gaze,no_noise,6cd500d1fdeb41577127f6e563a510f7_1920x1080,juice,boat,boat,face,ol_dr_boat_nonoise_look,yes,boat,familiar,high,ol,down_right,no_noise,look,3,13,4,27,5,21,6,8,6,8,6,14,8,5,0,10,5
 gaze,no_noise,e0abb1ea708d3621aa23740bf8b55158_1920x1080,shoe,ball,shoe,face,ol_dl_shoe_nonoise_look,yes,shoe,familiar,high,ol,down_left,no_noise,look,3,14,5,0,5,19,6,12,6,12,6,13,8,15,0,10,15
 gaze,no_noise,9942ec6d98d32ea670fbc2ba8b98b8be_1920x1080,ball,shoe,ball,face,ol_dl_ball_nonoise_look,yes,ball,familiar,high,ol,down_left,no_noise,look,3,18,5,3,5,26,6,14,6,14,6,19,8,13,0,10,13
 gaze,no_noise,52de5149b072f6511f21aca69c8c13b2_1920x1080,shoe,ball,ball,face,ol_dr_ball_nonoise_hey,yes,ball,familiar,high,ol,down_right,no_noise,hey,3,5,4,15,5,17,6,5,6,5,6,16,8,12,0,10,12
@@ -77,7 +77,7 @@ gaze,no_noise,4fc4676f7adb7683f71e998ab540aaf6_1920x1080,bottle,cookie,bottle,fa
 gaze,no_noise,30aff702c68cc329913c1cb20c98638c_1920x1080,bunny,chicken,chicken,face,ol_dr_chicken_nonoise_look,yes,chicken,familiar,high,ol,down_right,no_noise,look,3,11,5,3,5,26,6,17,6,17,6,23,8,21,0,10,21
 gaze,no_noise,fd716fe5c93f1bc4d0a833af912b4cad_1920x1080,ball,shoe,ball,face,ol_dl_ball_nonoise_hey,yes,ball,familiar,high,ol,down_left,no_noise,hey,3,5,4,15,5,17,6,5,6,5,6,16,8,12,0,10,12
 gaze,no_noise,9c887b86d1462a9d2be1e81fce5a9a31_1920x1080,ball,shoe,shoe,face,ol_dr_shoe_nonoise_look,yes,shoe,familiar,high,ol,down_right,no_noise,look,3,14,5,0,5,19,6,12,6,12,6,13,8,15,0,10,15
-gaze,no_noise,5a4055d98c5d21253d7c46ac175e53a5_1920x1080,cookie,bottle,bottle,face,ol_dr_bottle_nonoise_look,yes,bottle,familiar,high,ol,down_right,no_noise,look,3,8,4,22,5,14,6,2,6,2,6,7,8,6,0,10,6
+gaze,no_noise,5a4055d98c5d21253d7c46ac175e53a5_1920x1080,cookie,bottle,bottle,face,ol_dr_bottle_nonoise_look,yes,bottle,familiar,high,ol,down_right,no_noise,look,3,4,4,18,5,10,5,28,5,28,6,3,8,2,0,10,2
 gaze,no_noise,6dcb77aa343ef6e8d280d1fcb85b4b0f_1920x1080,shoe,ball,shoe,face,ol_dl_shoe_nonoise_look,yes,shoe,familiar,high,ol,down_left,no_noise,look,3,14,5,0,5,19,6,12,6,12,6,13,8,15,0,10,15
 no_gaze,no_noise,e960c9eedf8375f86e6fb760188149cd_1920x1080,ball,shoe,ball,face,gr_sa_ball_nonoise_hey,yes,ball,familiar,high,gr,straight_ahead,no_noise,hey,3,8,4,20,5,24,6,8,6,8,NA,NA,NA,NA,0,8,8
 no_gaze,no_noise,9786cdd660ec433ab2b857908c8a95d9_1920x1080,chicken,bunny,chicken,face,gr_sa_chicken_nonoise_look,yes,chicken,familiar,high,gr,straight_ahead,no_noise,look,3,12,4,25,5,16,6,0,6,0,NA,NA,NA,NA,0,8,0
@@ -152,7 +152,7 @@ gaze,noise,9ac057c0f959dcb77130b31047363a28_1920x1080,bunny,chicken,chicken,face
 gaze,noise,033a58af47d6ec6d5f9f0447753fbc5a_1920x1080,ball,shoe,shoe,face,ol_dr_shoe_noise_look,yes,shoe,familiar,high,ol,down_right,noise,look,3,14,5,0,5,19,6,12,6,12,6,13,8,15,0,10,15
 gaze,noise,2865e7da83dde0feca796488473a7a70_1920x1080,bottle,cookie,cookie,face,ol_dr_cookie_noise_look,yes,cookie,familiar,high,ol,down_right,noise,look,3,0,4,19,5,9,5,25,5,25,6,4,7,29,0,9,29
 gaze,noise,2a6e10ca205d7a0050b736155902664d_1920x1080,juice,boat,juice,face,ol_dl_juice_noise_hey,yes,juice,familiar,high,ol,down_left,noise,hey,3,18,4,27,5,29,6,21,6,21,6,29,8,22,0,10,22
-gaze,noise,7abc99d266dd8d64e14d8ea8fafcc5cc_1920x1080,cookie,bottle,bottle,face,ol_dr_bottle_noise_look,yes,bottle,familiar,high,ol,down_right,noise,look,3,8,4,22,5,14,6,2,6,2,6,7,8,6,0,10,6
+gaze,noise,7abc99d266dd8d64e14d8ea8fafcc5cc_1920x1080,cookie,bottle,bottle,face,ol_dr_bottle_noise_look,yes,bottle,familiar,high,ol,down_right,noise,look,3,5,4,19,5,11,5,29,5,29,6,4,8,3,0,10,3
 gaze,noise,846587a8831bce94560dadde13e7774c_1920x1080,boat,juice,boat,face,ol_dl_boat_noise_look,yes,boat,familiar,high,ol,down_left,noise,look,3,17,5,1,5,25,6,12,6,12,6,18,8,9,0,10,9
 gaze,noise,763a8528886843ba6ca63127d1d5e235_1920x1080,chicken,bunny,bunny,face,ol_dr_bunny_noise_hey,yes,bunny,familiar,high,ol,down_right,noise,hey,3,17,5,2,6,5,6,19,6,19,6,25,8,20,0,10,20
 gaze,noise,3c66cba168ce1d34d10d0a50519f4c92_1920x1080,bottle,cookie,bottle,face,ol_dl_bottle_noise_look,yes,bottle,familiar,high,ol,down_left,noise,look,3,8,4,22,5,14,6,2,6,2,6,7,8,6,0,10,6
@@ -160,13 +160,13 @@ gaze,noise,f8d5ea15d0d3241f09db5b29af924223_1920x1080,juice,boat,boat,face,ol_dr
 gaze,noise,275c2ce5dfd9078f47fd2470673e3b05_1920x1080,shoe,ball,ball,face,ol_dr_ball_noise_look,yes,ball,familiar,high,ol,down_right,noise,look,3,18,5,3,5,26,6,14,6,14,6,19,8,13,0,10,13
 gaze,noise,baf18ea2c8d57252367dd3880f931ba7_1920x1080,ball,shoe,ball,face,ol_dl_ball_noise_hey,yes,ball,familiar,high,ol,down_left,noise,hey,3,5,4,15,5,17,6,5,6,5,6,16,8,12,0,10,12
 no_gaze,no_noise,a5e8f41450e1321622ee22c84cbdcd5a_1920x1080,cookie,bottle,cookie,face,ol_sa_cookie_nonoise_look,yes,cookie,familiar,high,ol,straight_ahead,no_noise,look,3,1,4,15,5,5,5,20,5,20,NA,NA,NA,NA,0,7,20
-no_gaze,no_noise,86859438f1b85ed5c128b4ffec62edd3_1920x1080,shoe,ball,shoe,face,ol_sa_shoe_nonoise_look,yes,shoe,familiar,high,ol,straight_ahead,no_noise,look,2,29,4,13,5,3,5,21,5,21,NA,NA,NA,NA,0,7,21
+no_gaze,no_noise,86859438f1b85ed5c128b4ffec62edd3_1920x1080,shoe,ball,shoe,face,ol_sa_shoe_nonoise_look,yes,shoe,familiar,high,ol,straight_ahead,no_noise,look,2,29,4,13,5,3,5,24,5,24,NA,NA,NA,NA,0,7,24
 no_gaze,no_noise,46cd483aa429670837aabf393bdc5676_1920x1080,bunny,chicken,bunny,face,ol_sa_bunny_nonoise_hey,yes,bunny,familiar,high,ol,straight_ahead,no_noise,hey,3,18,5,2,6,6,6,19,6,19,NA,NA,NA,NA,0,8,19
 no_gaze,no_noise,f21ba7b421fb6331f6823dc3544fe3d4_1920x1080,boat,juice,juice,face,ol_sa_juice_nonoise_hey,yes,juice,familiar,high,ol,straight_ahead,no_noise,hey,2,19,3,29,4,28,5,12,5,12,NA,NA,NA,NA,0,7,12
 no_gaze,no_noise,22c746fb120229315339f764c7fb7d82_1920x1080,bunny,chicken,chicken,face,ol_sa_chicken_nonoise_look,yes,chicken,familiar,high,ol,straight_ahead,no_noise,look,3,9,4,23,5,15,6,4,6,4,NA,NA,NA,NA,0,8,4
 no_gaze,no_noise,ff5f27177593d7c80204b545e2c0976e_1920x1080,bottle,cookie,bottle,face,ol_sa_bottle_nonoise_hey,yes,bottle,familiar,high,ol,straight_ahead,no_noise,hey,3,22,5,2,6,6,6,20,6,20,NA,NA,NA,NA,0,8,20
 no_gaze,no_noise,d3d7896be0ea2931af74ce4aae878f6e_1920x1080,shoe,ball,ball,face,ol_sa_ball_nonoise_look,yes,ball,familiar,high,ol,straight_ahead,no_noise,look,3,19,5,2,5,25,6,11,6,11,NA,NA,NA,NA,0,8,11
-no_gaze,no_noise,58d7456cc2e45174b7ac9b3e4e0406dd_1920x1080,ball,shoe,shoe,face,ol_sa_shoe_nonoise_look,yes,shoe,familiar,high,ol,straight_ahead,no_noise,look,2,29,4,13,5,3,5,21,5,21,NA,NA,NA,NA,0,7,21
+no_gaze,no_noise,58d7456cc2e45174b7ac9b3e4e0406dd_1920x1080,ball,shoe,shoe,face,ol_sa_shoe_nonoise_look,yes,shoe,familiar,high,ol,straight_ahead,no_noise,look,2,29,4,13,5,3,5,24,5,24,NA,NA,NA,NA,0,7,24
 no_gaze,no_noise,ffc8b6f79429d7e9349c49a75c1b0c55_1920x1080,juice,boat,boat,face,ol_sa_boat_nonoise_look,yes,boat,familiar,high,ol,straight_ahead,no_noise,look,3,15,5,0,5,22,6,9,6,9,NA,NA,NA,NA,0,8,9
 no_gaze,no_noise,44ff0768d7e303a50ad1419e3592169a_1920x1080,cookie,bottle,bottle,face,ol_sa_bottle_nonoise_hey,yes,bottle,familiar,high,ol,straight_ahead,no_noise,hey,3,22,5,2,6,6,6,20,6,20,NA,NA,NA,NA,0,8,20
 no_gaze,no_noise,b70ad582071d6d7d4fffb072ca95bb7e_1920x1080,bottle,cookie,cookie,face,ol_sa_cookie_nonoise_look,yes,cookie,familiar,high,ol,straight_ahead,no_noise,look,3,1,4,15,5,5,5,20,5,20,NA,NA,NA,NA,0,7,20
@@ -202,7 +202,7 @@ gaze,noise,fcf5d741eb99f26c126295993950fb21_1920x1080,cookie,bottle,cookie,face,
 gaze,noise,134b63f8cbf1ed57cc9c93973c0e4fab_1920x1080,juice,boat,juice,face,ol_dl_juice_noise_hey,yes,juice,familiar,high,ol,down_left,noise,hey,3,18,4,27,5,29,6,21,6,21,6,29,8,22,0,10,22
 gaze,noise,67e0553f1939ecc81689e839d60a2dc6_1920x1080,shoe,ball,ball,face,ol_dr_ball_noise_hey,yes,ball,familiar,high,ol,down_right,noise,hey,3,5,4,15,5,17,6,5,6,5,6,16,8,12,0,10,12
 gaze,noise,1269411e7c8a2f1c8ee1ef8ac969275c_1920x1080,bunny,chicken,chicken,face,ol_dr_chicken_noise_hey,yes,chicken,familiar,high,ol,down_right,noise,hey,3,28,5,8,6,11,6,29,6,29,7,0,9,4,0,11,4
-gaze,noise,f54c64b913024f2f07d4639d3553ee45_1920x1080,cookie,bottle,bottle,face,ol_dr_bottle_noise_look,yes,bottle,familiar,high,ol,down_right,noise,look,3,8,4,22,5,14,6,2,6,2,6,7,8,6,0,10,6
+gaze,noise,f54c64b913024f2f07d4639d3553ee45_1920x1080,cookie,bottle,bottle,face,ol_dr_bottle_noise_look,yes,bottle,familiar,high,ol,down_right,noise,look,3,5,4,19,5,11,5,29,5,29,6,4,8,3,0,10,3
 gaze,noise,39ee0ee3fe6a792625525cc0d3dba57f_1920x1080,ball,shoe,shoe,face,ol_dr_shoe_noise_look,yes,shoe,familiar,high,ol,down_right,noise,look,3,14,5,0,5,19,6,12,6,12,6,13,8,15,0,10,15
 gaze,noise,f1710aededee04aeb04b3321a30d037b_1920x1080,boat,juice,juice,face,ol_dr_juice_noise_look,yes,juice,familiar,high,ol,down_right,noise,look,3,17,4,28,5,22,6,14,6,14,6,13,8,11,0,10,11
 gaze,noise,3e3e7bd21bd48dccfbfaa6c58514d0a7_1920x1080,shoe,ball,shoe,face,ol_dl_shoe_noise_look,yes,shoe,familiar,high,ol,down_left,noise,look,3,14,5,0,5,19,6,12,6,12,6,13,8,15,0,10,15
@@ -243,7 +243,7 @@ no_gaze,no_noise,b3edbd83e9f536754f985a7c917b6e61_1920x1080,boat,juice,juice,fac
 no_gaze,no_noise,eda824b75814ccbdaba61595c599e86b_1920x1080,chicken,bunny,bunny,face,ol_sa_bunny_nonoise_look,yes,bunny,familiar,high,ol,straight_ahead,no_noise,look,3,10,4,22,5,12,5,26,5,26,NA,NA,NA,NA,0,7,26
 no_gaze,no_noise,29fcec83a0ae787b75edec307cb37feb_1920x1080,bottle,cookie,cookie,face,ol_sa_cookie_nonoise_hey,yes,cookie,familiar,high,ol,straight_ahead,no_noise,hey,3,16,4,28,5,29,6,13,6,13,NA,NA,NA,NA,0,8,14
 no_gaze,no_noise,ffee792fe30a8db229b59f674455e4a8_1920x1080,boat,juice,boat,face,ol_sa_boat_nonoise_look,yes,boat,familiar,high,ol,straight_ahead,no_noise,look,3,15,5,0,5,22,6,9,6,9,NA,NA,NA,NA,0,8,9
-no_gaze,no_noise,537e64f9eca71870fd352afef4cef132_1920x1080,chicken,bunny,chicken,face,ol_sa_chicken_nonoise_hey,yes,chicken,familiar,high,ol,straight_ahead,no_noise,hey,4,4,5,21,6,21,7,8,7,8,NA,NA,NA,NA,0,9,8
+no_gaze,no_noise,537e64f9eca71870fd352afef4cef132_1920x1080,chicken,bunny,chicken,face,ol_sa_chicken_nonoise_hey,yes,chicken,familiar,high,ol,straight_ahead,no_noise,hey,3,17,5,3,6,3,6,22,6,22,NA,NA,NA,NA,0,8,22
 no_gaze,no_noise,5647dbce1c10a322d1ab8713d3bd6f82_1920x1080,bunny,chicken,chicken,face,ol_sa_chicken_nonoise_look,yes,chicken,familiar,high,ol,straight_ahead,no_noise,look,3,9,4,23,5,15,6,4,6,4,NA,NA,NA,NA,0,8,4
 no_gaze,no_noise,bacddec97f862ac69d29085377d80893_1920x1080,bunny,chicken,bunny,face,ol_sa_bunny_nonoise_look,yes,bunny,familiar,high,ol,straight_ahead,no_noise,look,3,10,4,22,5,12,5,26,5,26,NA,NA,NA,NA,0,7,26
 no_gaze,no_noise,4af4b6a00b5cce90c333eecbd6f1c1a4_1920x1080,ball,shoe,ball,face,ol_sa_ball_nonoise_look,yes,ball,familiar,high,ol,straight_ahead,no_noise,look,3,19,5,2,5,25,6,11,6,11,NA,NA,NA,NA,0,8,11

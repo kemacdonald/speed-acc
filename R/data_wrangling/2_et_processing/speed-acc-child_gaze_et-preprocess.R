@@ -9,11 +9,11 @@
 
 ## PRELIMINARIES
 rm(list = ls())
-library(dplyr); library(readr); library(magrittr); library(feather); library(pryr)
-library(stringr); library(ggplot2)
+library(tidyverse); library(readr); 
+library(magrittr); library(pryr); library(stringr); 
 source("../helper_functions/et_helper.R")
 
-raw.data.path <- "../../data/1_raw_data/trio-gaze/"
+raw.data.path <- "../../data/1_raw_data/speed-acc-child-gaze/"
 processed.data.path <- "../../data/2_cleaned_data/"
 
 ## LOOP TO READ IN FILES
@@ -35,6 +35,8 @@ for (file.name in files) {
 # plot to check that fixation locations look reasonable
 all.data %>% 
   mutate(subid = str_trim(subid)) %>% 
+  group_by(subid) %>% 
+  sample_frac(size = 0.2) %>% 
   ggplot(aes(x = x, y = y), data = .) +
   geom_density2d() +
   xlim(0, 1980) +

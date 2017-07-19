@@ -38,7 +38,7 @@ source("../helper_functions/libraries_and_functions.R")
 ```
 
 ```{r read e1 data}
-df_e1 <- read.csv("../../data/3_final_merged_data/speed-acc-ss-df.csv", 
+df_e1 <- read.csv("../../data/3_final_merged_data/speed-acc-participant-level-df.csv", 
                   check.names=F, stringsAsFactors=F) 
 
 df_e1 %<>% 
@@ -50,8 +50,8 @@ df_e1 %<>%
 ```
 
 ```{r e1 read stimuli information}
-d.words.length <- read_csv("../../data/trial_info/speed-acc-adult-trial-timing-info.csv")
-d.signs.length <- read_csv("../../data/trial_info/target_sign_lengths_all.csv")
+d.words.length <- read_csv("../../data/0b_trial_information/speed-acc-adult-trial-timing-info.csv")
+d.signs.length <- read_csv("../../data/0b_trial_information/sol_target_sign_lengths_all.csv")
 ```
 
 # Introduction 
