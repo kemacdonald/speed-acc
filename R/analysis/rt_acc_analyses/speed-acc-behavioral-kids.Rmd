@@ -26,7 +26,7 @@ source("../../helper_functions/libraries_and_functions.R")
 Load data
 
 ```{r}
-df <- read.csv("../../../data/3_final_merged_data/speed-acc-ss-df.csv", 
+df <- read.csv("../../../data/3_final_merged_data/speed-acc-participant-level-df.csv", 
                check.names=F, stringsAsFactors=F) 
 
 df %<>% 
