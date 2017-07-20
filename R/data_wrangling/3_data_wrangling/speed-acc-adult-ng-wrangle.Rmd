@@ -37,10 +37,12 @@ d %<>% left_join(subinfo_df, by = "subid")
 Filter out calibration trial and any keypress events, and outro.
 
 ```{r}
-bad_stimuli <- c("UE-keypress VolumeUp", "UE-keypress VolumeDown", "cc3bd7c5c8d457694031c7630357751f", 
-                 "85e91b277ab3c43334caff8617a99a27_1920x1080")
+trials_to_remove <- c("UE-keypress VolumeUp", "UE-keypress VolumeDown", "cc3bd7c5c8d457694031c7630357751f", 
+                 "85e91b277ab3c43334caff8617a99a27_1920x1080", "4337eacb25c57e93db4b9168b10de6c4_1920x1080",
+                 "73043104237bf1c8335572c8bf9254a3_1920x1080", "5e4f06a7769042d0b320ba9269ce65f2_1920x1080",
+                 "85e91b277ab3c43334caff8617a99a27_1920x1080", "9b9688edf70346b1c9c0e8af36e383cd_1920x1080")
 
-d %<>% filter(!(stimulus %in% bad_stimuli))
+d %<>% filter(!(stimulus %in% trials_to_remove))
 ```
 
 ### Filter out unusable participants 
@@ -93,10 +95,16 @@ ggplot(aes(x = x, y = y), data = d) +
 
 ### Add trial numbers
 
-We have 4 blocks of 24 trials, so `r 4 * 16` total trials. To add the trial numbers we first get each unique trial name and the time it started. Then we sort by the time each trial started, and bind the trial numbers. Finally, we join the trial number information with the rest of the eye movement data.
+We have 4 blocks of 16 trials, so `r 4 * 16` total trials. To add the trial numbers we first get each unique trial name and the time it started. Then we sort by the time each trial started, and bind the trial numbers. Finally, we join the trial number information with the rest of the eye movement data.
+
+```{r}
+d %<>% filter(is.na(stimulus_name) == F) 
+```
+
 
 ```{r add trial numbers}
 # apply the add trials function to each subid's data frame using the do() operator 
+# note that we are joining the trial numbers data frame with the full data frame in the last line of this pipe
 d %<>% 
   group_by(subid) %>% 
   do(add.tr.nums.fun(.)) %>% 
@@ -107,13 +115,13 @@ Check that we have the right number of trials for each participant: 64 trials
 
 ```{r}
 d %>% 
-  filter(is.na(stimulus_name) == F) %>% 
   select(subid, tr.num) %>% 
   unique() %>% 
   group_by(subid) %>% 
   count()
 ```
 
+Great, we now have 64 trials for each participant.
 
 ### Flag left/right/center looking based on ROIs
 
@@ -132,13 +140,12 @@ Make a table of proportion looking to each area of interest: Left, Right, Center
 ```{r}
 d %>% 
   filter(is.na(gaze_target) == F) %>% 
-  group_by(gaze_target, subid) %>% 
+  group_by(gaze_target) %>% 
   summarise(count_looks = n()) %>% 
   mutate(total_looks = sum(count_looks),
          prop_looks = round(count_looks / total_looks, 2)) %>% 
   kable()
 ```
-
 
 ### Score each trial: RT and Accuracy of first shift
 
@@ -214,15 +221,15 @@ d <- d.orig %>%
   bind_rows(d, .)
 ```
 
-Next, we need to compute RT for each trial, using my own score trial function. 
+Next, we need to compute RT for each trial, using a custom *score trial* function. 
 
-The function takes in a data frame for each trial and computes an RT and whether the shift was correct or incorrect. You can tell the function the kind of onset value from which you want to compute RT. The different onset values are:
+The function takes in a data frame for each trial and computes an RT and whether the shift was correct or incorrect. You can tell the function the type of onset value from which you want to compute RT. The different onset values are:
+  
+  * center_fixation (speaker appears)
+  * sentence (sentence begins)
+  * noun (target noun begins)
 
-* noun 
-* center_fixation
-* sentence
-
-Now we apply the score trial function to each trial for each participant in the tidy data frame using the do() functionality in dplyr. Note that we are using the .$ index to use a variable from the piped data frame as an argument to the score trial function.
+We apply the score trial function to each trial for each participant in the tidy data frame using the do() operator in dplyr. Note that we are using the .$ index to use a variable from the piped data frame as an argument to the score trial function.
 
 ```{r}
 d %<>% 
@@ -242,7 +249,7 @@ d %>%
   kable()
 ```
 
-Now we have an RT, a shift type, and a correct/incorrect value for each trial based on three different critical onset points in the trial (i.e., center fixation, sentence, and noun onset)
+Now we have an RT, a shift type, and a correct/incorrect value for each trial based on three different critical onset points in the trial (i.e., center fixation, sentence onset, and noun onset)
 
 ### Write tidy data to .csv file
 

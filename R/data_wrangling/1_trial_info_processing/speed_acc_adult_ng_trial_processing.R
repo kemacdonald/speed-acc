@@ -25,25 +25,6 @@ for(file in log_files) {
   stim.log <- c(stim.log, tmp_result)
 }
 
-############# Loop through stimulus log list to get name and id tag for each trial
-trial_info_df <- data.frame()
-
-for (index in 1:length(stim.log)) {
-  # grab condition name
-  condition <- stim.log[[index]]$Task
-  if(is.null(condition)) {condition <- NA}
-  # grab trial name
-  stimulus <- stim.log[[index]]$TrialName
-  # bind together in dataframe
-  tmp.df <- data.frame(condition = condition, stimulus = stimulus, 
-                       row.names = NULL, stringsAsFactors = F)
-  trial_info_df %<>% bind_rows(., tmp.df)
-}
-
-# a little clean up
-trial_info_df$stimulus <- gsub(trial_info_df$stimulus, pattern = ".avi", replacement = "") 
-#trial_info_df %<>% filter(condition != "NA") %>% unique()
-
 ####### loop through trial-level .xml files and extract relevant information using ROIs
 
 # these ROI values were defined in the .xml stimulus properties files
@@ -96,7 +77,7 @@ for (file in files) {
 }
 
 ####### Join together the two relevant trial level data frames
-trial_info_df %<>% left_join(., trial.level.df, by = "stimulus")
+trial_info_df <- trial.level.df
 
 ####### Read in timing information for each stimulus item and add to final trial info df
 library(googlesheets)
@@ -110,15 +91,11 @@ trial.timing.df <- bind_rows(trial_timing_grace, trial_timing_olivia)
 # joing with trial info
 trial_info_df %<>% left_join(., trial.timing.df, by = "stimulus_name") 
 
-# remove NA trials
-trial_info_df %<>% filter(is.na(condition) == F)
-
 ####### Create variables to track gaze and noise information
 trial_info_df %<>% 
-  mutate(condition = gsub(condition, replacement = "nonoise", pattern = "no_noise")) %>% 
-  separate(col = condition, sep = "_", into = c('gaze_condition', 'noise_condition')) %>% 
-  mutate(noise_condition = gsub(noise_condition, pattern = "nonoise", replacement = "no_noise"),
-         gaze_condition = ifelse(gaze_condition == "sa", "no_gaze", gaze_condition))  
+  rename(noise_condition = noise) %>% 
+  mutate(gaze_condition = ifelse(gaze == "straight_ahead", "no_gaze", "gaze"),
+         condition_long = paste(noise_condition, gaze_condition, sep = "_"))  
 
 ####### Write to .csv
 write_csv(trial_info_df, path = "../../../data/0b_trial_information/speed-acc-adult-ng-trial-info.csv")

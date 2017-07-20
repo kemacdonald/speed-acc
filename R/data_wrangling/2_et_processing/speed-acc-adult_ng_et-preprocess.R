@@ -32,13 +32,6 @@ for (file.name in files) {
   all.data <- bind_rows(all.data, d)
 }
 
-all.data %>% 
-  mutate(subid = str_trim(subid)) %>% 
-  ggplot(aes(x = x, y = y), data = .) +
-  geom_density2d() +
-  xlim(0, 1980) +
-  ylim(0, 1080) +
-  facet_wrap(~subid)
 
 ## WRITE DATA OUT TO ZIPPED CSV FOR EASY ACCESS AND SMALL FILE SIZE
 write_csv(all.data, path=paste0(processed.data.path, "speed_acc_processed_adult_ng_data.csv.gz"))

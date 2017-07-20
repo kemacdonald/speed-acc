@@ -63,7 +63,8 @@ fill_vals <- c("grey90", "darkviolet")
 
 p <- d.fs %>% 
   filter(response_onset_type == "noun",
-         is.na(rt) == F) %>% 
+         is.na(rt) == F,
+         condition != "ASL") %>% 
   ggplot(aes(x = forcats::fct_rev(condition), y = rt, color = shift_accuracy, fill = shift_accuracy)) +
   ggbeeswarm::geom_quasirandom(shape = 21) + 
   scale_color_manual(values = acc_colors) +
