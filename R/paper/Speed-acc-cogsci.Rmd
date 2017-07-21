@@ -361,7 +361,7 @@ ss.ewma.results.e1 <- d.ewma.e1 %>%
          ucl_bound = abs(ucl-cs)) %>% 
   gather(key = ewma_param, value = param_value, cs:ucl) 
 
-## aggreate ewma results to get average curve
+## aggregate ewma results to get average curve
 ms.ewma.e1 <- ss.ewma.results.e1 %>% 
   group_by(ewma_param, Sub.Num, condition, rt) %>% 
   summarise(mean_param_ss = mean(param_value)) %>% 
