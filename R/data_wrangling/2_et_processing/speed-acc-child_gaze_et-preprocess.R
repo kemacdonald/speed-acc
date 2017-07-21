@@ -11,10 +11,10 @@
 rm(list = ls())
 library(tidyverse); library(readr); 
 library(magrittr); library(pryr); library(stringr); 
-source("../helper_functions/et_helper.R")
+source("../../helper_functions/et_helper.R")
 
-raw.data.path <- "../../data/1_raw_data/speed-acc-child-gaze/"
-processed.data.path <- "../../data/2_cleaned_data/"
+raw.data.path <- "../../../data/1_raw_data/speed-acc-child-gaze/"
+processed.data.path <- "../../../data/2_cleaned_data/"
 
 ## LOOP TO READ IN FILES
 all.data <- data.frame()
@@ -36,14 +36,13 @@ for (file.name in files) {
 all.data %>% 
   mutate(subid = str_trim(subid)) %>% 
   group_by(subid) %>% 
-  sample_frac(size = 0.2) %>% 
+  sample_frac(size = 0.05) %>% 
   ggplot(aes(x = x, y = y), data = .) +
   geom_density2d() +
   xlim(0, 1980) +
   ylim(0, 1080) +
-  facet_wrap(~subid)
+  facet_wrap(~subid) +
+  theme_bw()
 
 ## WRITE DATA OUT TO ZIPPED CSV FOR EASY ACCESS AND SMALL FILE SIZE
 write_csv(all.data, path=paste0(processed.data.path, "speed_acc_processed_child_gaze.csv.gz"))
-
-
