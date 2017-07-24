@@ -1,0 +1,124 @@
+---
+title: "Speed-Acc Child Gaze Analysis"
+author: "Kyle MacDonald"
+output: html_document
+---
+
+## Set up 
+
+Here are some helpful links for understanding the workflow for analyzing data in R Markdown (what you're doing in this document!):
+
+ * [Scripts](http://r4ds.had.co.nz/workflow-scripts.html)
+ * An R Markdown [guide](https://docs.google.com/document/d/1ajv1VJqEheVws93tnzH-K7145vBKtwD3Az5pg3faRdw/edit?usp=sharing) that I wrote for the lab
+ 
+```{r chunk_options, echo = F}
+# code to clear workspace
+rm(list=ls()) 
+
+# set some global options
+knitr::opts_chunk$set(warning=F, message=F, sanitize = T, 
+                      fig.height=5, fig.width=8, echo=T, cache = F)
+
+# read in personal library of helper functions
+source("../../helper_functions/libraries_and_functions.R")
+```
+
+## Load data
+
+Section 11.2 from [this](http://r4ds.had.co.nz/data-import.html) chapter on data importing is great.
+
+```{r}
+
+```
+
+## Check the data
+
+The goal of this section is to make sure the data match our expectations, or in other words, we are "testing" our data. Usually this involves comparing a known value to the number actually in the data set. For example, I know how I ran 20 participants, do I have 20 unique participant IDs?
+
+[This](http://r4ds.had.co.nz/transform.html) chapter from the book **R for Data Science** is a good reference for writing code to manipulate data to do data "sanity" checks.
+
+How many participants in the dataset?  
+
+```{r}
+
+```
+
+How many trials do we have for each participant?
+
+```{r}
+
+```
+
+How many trials in each condition? 
+
+```{r}
+```
+
+## Explore data via visualization
+
+[This](http://r4ds.had.co.nz/data-visualisation.html) is a great book chapter on data visualization using the ggplot2 R package
+
+### Visualize data distributions
+
+My goal when I visualize the distribution of a variable is usually to check if there any data points that look like outliers (really different from the other values in the sample). There are more precise, quantitative ways to define outlier, but the visualization helps us spot them quickly. If some observations look really different, I then try to reason about why that might be the case: data entry error? equipment measurement error? 
+
+What does the distribution of age in the sample look like? 
+
+```{r}
+
+```
+
+What about Reaction Times (RT)?
+
+```{r}
+
+```
+
+What about Accuracy? 
+
+```{r}
+
+```
+
+### Visualize Accuracy
+
+When thinking about 
+
+What is the overall accuracy of first shifts?
+
+```{r}
+
+```
+
+What about the accuracy for each condition?
+
+```{r}
+
+```
+
+
+### Visualize Reaction Time
+
+What is the overall RT for kids in the experiment? 
+
+```{r}
+
+```
+
+What about RTs for correct vs. incorrect shifts?
+
+```{r}
+
+```
+
+What about RTs separated by condition? 
+
+```{r}
+
+```
+
+## Statistical models
+
+We can talk more about this aspect of the anlaysis once you made some progress on data viz. 
+
+

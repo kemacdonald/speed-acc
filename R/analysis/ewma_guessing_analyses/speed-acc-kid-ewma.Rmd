@@ -25,7 +25,7 @@ source("../../helper_functions/libraries_and_functions.R")
 Read data and create a clean condition variable.
 
 ```{r read data}
-df <- read_csv("../../../data/3_final_merged_data/speed-acc-ss-df.csv") 
+df <- read_csv("../../../data/3_final_merged_data/speed-acc-participant-level-df.csv") 
 
 df %<>% 
   mutate(stimuli = ifelse(stimuli %in% c("V1", "V2"), "ASL", 
@@ -33,6 +33,12 @@ df %<>%
                                  ifelse(stimuli == "Bull", "Bullseye",
                                         stimuli))),
          stimuli = factor(stimuli, levels = c("ASL", "Face", "Object", "Bullseye")))
+```
+
+Read in EWMA model estimates. This model was fit in the .Rmd file for the cogsci paper. I should move it here (TODO)
+
+```{r}
+d.ewma <- read_csv("../../../data/3_final_merged_data/speed_acc_kids_ewma_results.csv")
 ```
 
 ## Descriptives
@@ -179,13 +185,28 @@ ggplot(aes(x = RT / 1000, fill = Response.Type),
         legend.position = "right")
 ```
 
+
+
 ## EWMA model of guessing behavior
 
-Write EWMA results to .csv file for use with the Drift Diffusion analysis. 
+## Plot EWMA model output
 
 ```{r}
-
+ss.responding.prop <- d.ewma %>% 
+  group_by(Sub.Num, condition, guess) %>% 
+  summarise(count = n()) %>% 
+  mutate(prop.responding = round(count / sum(count), 2))
 ```
 
+Plot
 
-## Stats over EWMA parameters
+```{r}
+ss.responding.prop %>% 
+  filter(condition %in% c("ASL", "Face"), guess == "response") %>% 
+  ggplot(aes(x = fct_rev(condition), y = prop.responding)) +
+  geom_boxplot(fill = "dodgerblue", width = 0.3, alpha = 0.9) +
+  labs(x = "Condition",y = "Prop. Shifts Language Driven") +
+  theme(text = element_text(size = 12))
+```
+
+## Write EWMA results to .csv file 
