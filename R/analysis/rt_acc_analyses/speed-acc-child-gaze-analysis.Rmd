@@ -28,7 +28,9 @@ source("../../helper_functions/libraries_and_functions.R")
 Section 11.2 from [this](http://r4ds.had.co.nz/data-import.html) chapter on data importing is great.
 
 ```{r}
-
+getwd()
+setwd( "/Users/TamiAlade/Desktop/Research/speed-acc/data/2_cleaned_data")
+read_csv("simulated_data_2afc.csv")
 ```
 
 ## Check the data
@@ -40,18 +42,33 @@ The goal of this section is to make sure the data match our expectations, or in 
 How many participants in the dataset?  
 
 ```{r}
+by_id <- group_by(simulated_data_2afc, id)
+summary_by_id <- summarise(.data = by_id)
+count(summary_by_id)
 
 ```
 
 How many trials do we have for each participant?
 
 ```{r}
-
+by_trial <- group_by(simulated_data_2afc,id, trial_num)
+summary_by_trial <- summarise(.data = by_trial)
+count(summary_by_trial)
 ```
 
 How many trials in each condition? 
 
 ```{r}
+by_condition <- group_by(simulated_data_2afc, condition,id, trial_num)
+summary_by_condition <-summarise(.data = by_condition)
+count(summary_by_condition)
+guessing <- filter(summary_by_condition, condition == "guessing")
+count(guessing)
+knowledge <- filter(summary_by_condition, condition == "knowledge")
+count(knowledge)
+```
+```{r}
+
 ```
 
 ## Explore data via visualization
@@ -65,7 +82,7 @@ My goal when I visualize the distribution of a variable is usually to check if t
 What does the distribution of age in the sample look like? 
 
 ```{r}
-
+ggplot(mapping = aes(x = summary_by_condition,y = summary_by_id))
 ```
 
 What about Reaction Times (RT)?
@@ -77,7 +94,7 @@ What about Reaction Times (RT)?
 What about Accuracy? 
 
 ```{r}
-
+ggplot(cars)
 ```
 
 ### Visualize Accuracy
@@ -87,6 +104,7 @@ When thinking about
 What is the overall accuracy of first shifts?
 
 ```{r}
+
 
 ```
 
