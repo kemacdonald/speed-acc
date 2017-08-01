@@ -50,7 +50,7 @@ df_e1 %<>%
 ```
 
 ```{r e1 read stimuli information}
-d.words.length <- read_csv("../../data/0b_trial_information/speed-acc-adult-trial-timing-info.csv")
+d.words.length <- read_csv("../../data/0b_trial_information/speed-acc-adult-text-trial-info-final.csv")
 d.signs.length <- read_csv("../../data/0b_trial_information/sol_target_sign_lengths_all.csv")
 ```
 
@@ -216,7 +216,7 @@ Participants viewed the Face, Object, and Bullseye tasks on a large projector sc
 
 Children sat on their caregiver’s lap and viewed the task on a screen while their gaze was recorded using a digital camcorder. On each trial, children saw two images of familiar objects on the screen for two seconds before the center stimulus appeared (see Fig 1). Then they processed the target sentence -- which consisted of a carrier phrase, a target noun, and a question -- followed by two seconds without language to allow for a response. Participants saw 32 test trials with several filler trials interspersed to maintain interest.
 
-*Coding.* Participants’ gaze patterns were coded (33-ms resolution) as being fixated on either the center stimulus, one of the images, shifting between pictures, or away. To assess inter-coder reliability, 25% of the videos were re-coded.  Agreement was scored at the level of individual frames of video and averaged 98% on these reliability assessments. 
+*Coding.* Participants’ gaze patterns were coded (33-ms resolution) as being fixated on either the center stimulus, one of the images, shifting between pictures, or away. To assess inter-coder reliability, 25% of the videos were re-coded. Agreement was scored at the level of individual frames of video and averaged 98% on these reliability assessments. 
 
 <!--
 We excluded RTs longer than two seconds since these shifts are unlikely to be generated in response to the incoming language stimulus (see Ratcliff, 1993). 
@@ -231,7 +231,7 @@ This measure reflects the accuracy of language-driven saccades to the visual wor
 <!--
 First, we present behavioral analyses of accuracy and RT. Since RTs are not normally distributed, we log transformed all RTs for our statistical analyses. To quantify differences between groups, we used the `lme4` R package [@bates2013lme4] to fit mixed-effects regression models that included a by-subject random intercept to account for repeated measures from each participant. All data and analysis code can be found in the online repository for this project: https://github.com/kemacdonald/speed-acc.  
 
-Next, we present two model-based analyses that quantify different patterns of eye movements across the four language comprehension tasks. First, we use an Exponentially weighted moving average (EWMA) method [@vandekerckhove2007fitting] to model the proportion of nonlanguage-driven shifts away from the center stimulus to the visual world. The goal of  the EWMA is to identify whether a process has deviated from a pre-defined "control state" by taking into account the prior behavior of the process, weighing recent observations more heavily The model generates two values: a "control statistic" (CS) and an "upper control limit" (UCL) for each point in the RT distribution. Once the CS becomes larger than the UCL, the process is determined to have exited the control state. ^[$c_s = \lambda x_s + (1-\lambda)c_{s-1}$ where the $\lambda$ parameter determines the number of prior RTs that are included in the moving average computation. $UCL_s = c_0 + L\sigma_0\sqrt{\frac{\lambda}{2-\lambda}[1-(1-\lambda)^{2s}]}$ where $L$ controls the width of the control limits with higher values leading to a more conservative test. We chose values used in prior work using the EWMA with speeded decision tasks [@vandekerckhove2007fitting]]
+Next, we present two model-based analyses that quantify different patterns of eye movements across the four language comprehension tasks. First, we use an Exponentially weighted moving average (EWMA) method [@vandekerckhove2007fitting] to model the proportion of nonlanguage-driven shifts away from the center stimulus to the visual world. The goal of  the EWMA is to identify whether a process has deviated from a pre-defined "control state" by taking into account the prior behavior of the process, weighing recent observations more heavily. The model generates two values: a "control statistic" (CS) and an "upper control limit" (UCL) for each point in the RT distribution. Once the CS becomes larger than the UCL, the process is determined to have exited the control state. ^[$c_s = \lambda x_s + (1-\lambda)c_{s-1}$ where the $\lambda$ parameter determines the number of prior RTs that are included in the moving average computation. $UCL_s = c_0 + L\sigma_0\sqrt{\frac{\lambda}{2-\lambda}[1-(1-\lambda)^{2s}]}$ where $L$ controls the width of the control limits with higher values leading to a more conservative test. We chose values used in prior work using the EWMA with speeded decision tasks [@vandekerckhove2007fitting]]
 
 Here, we adapt the EWMA approach to model changes in the process that generate eye movements away from the center stimulus to the visual world. We define the control state as an expectation of nonlanguage-driven shifts and model this as a Bernoulli process with probability of success 0.5. As the sentence unfolds, we assume that participants gather more of the linguistic information prior to shifting and the underlying process should bias towards more accurate shifts or a Bernoulli process with probability success > 0.5. With this model, we can compare across our groups: a) the cutoff point when the CS exceeded the UCL indicating that participants started to generate language-driven shifts and b) the proportion of shifts that the model categorizes as language-driven vs. exploratory.
 
@@ -576,8 +576,8 @@ grid::grid.raster(png::readPNG("figs/hddm_plot_final.png"))
 
 ```{r e2 read data}
 read.path <- "../../data/3_final_merged_data/"
-d.fs <- read_csv(paste0(read.path, "speed_acc_adult_fstshift_tidy.csv"))
-d.asl <- read_csv(paste0(read.path, "speed-acc-ss-df.csv"))
+d.fs <- read_csv(paste0(read.path, "speed_acc_adult_text_fstshift_tidy.csv.gz"))
+d.asl <- read_csv(paste0(read.path, "speed-acc-participant-level-df.csv"))
 ```
 
 ```{r e2 clean datasets to merge}

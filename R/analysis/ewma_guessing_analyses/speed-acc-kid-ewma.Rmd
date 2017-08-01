@@ -185,8 +185,6 @@ ggplot(aes(x = RT / 1000, fill = Response.Type),
         legend.position = "right")
 ```
 
-
-
 ## EWMA model of guessing behavior
 
 ## Plot EWMA model output

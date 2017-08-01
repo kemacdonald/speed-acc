@@ -28,9 +28,13 @@ source("../../helper_functions/libraries_and_functions.R")
 Section 11.2 from [this](http://r4ds.had.co.nz/data-import.html) chapter on data importing is great.
 
 ```{r}
+<<<<<<< HEAD
 getwd()
 setwd( "/Users/TamiAlade/Desktop/Research/speed-acc/data/2_cleaned_data")
 read_csv("simulated_data_2afc.csv")
+=======
+d <- read_csv("../../../data/3_final_merged_data/first_shifts/speed_acc_child_gaze_fstshift_tidy.csv.gz")
+>>>>>>> 0356ac79dfee75898ac796e2a85330d7eb6219fa
 ```
 
 ## Check the data

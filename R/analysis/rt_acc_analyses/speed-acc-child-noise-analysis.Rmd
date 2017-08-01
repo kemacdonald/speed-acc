@@ -52,6 +52,7 @@ How many trials do we have for each participant?
 How many trials in each condition? 
 
 ```{r}
+
 ```
 
 ## Explore data via visualization

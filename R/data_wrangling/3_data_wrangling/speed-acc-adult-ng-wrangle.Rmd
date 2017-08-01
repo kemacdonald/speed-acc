@@ -85,7 +85,7 @@ Here we label Areas of Interest to be Left Picture, Right Picture, and the Cente
 Plot the distribution of looking across x-y coordinates. This is a useful check that participants were looking where we thought they should be, and it helps us find the AOIs for data analysis. 
 
 ```{r, eval = F}
-d.rois <- sample_n(d, size = 0.10*nrow(d)) # get a sample so we don't plot all 200k plus rows
+d.rois <- sample_n(d, size = 0.05*nrow(d)) # get a sample so we don't plot all 200k plus rows
 
 ggplot(aes(x = x, y = y), data = d) +
   geom_density2d() +
@@ -263,6 +263,7 @@ d.timecourse <- filter(d, response_onset_type == "noun") %>%
 
 # first shift
 d.fs <- d %>% 
+  filter(response_onset_type == "noun") %>% # km remember to remove this after HUMBIO is finished
   select(subid, tr.num, gaze_condition, noise_condition, target_image, 
          dot:reason_excluded, response:shift_accuracy) %>% 
   unique()

@@ -6,7 +6,7 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo=T, warning=F, cache=F, message=F, sanitize = T)
-source("../helper_functions/libraries_and_functions.R")
+source("../../helper_functions/libraries_and_functions.R")
 ```
 
 This script munges eye-tracking data for an experiment comparing speed-accuracy tradeoffs when establishing reference in real-time. We vary the information value and saliency of the center fixation and measure the effects on accuracy and RT.
@@ -15,7 +15,7 @@ Load data and join with trial information (timing, left/right/center images, tar
 
 ```{r load data}
 #### read in processed data
-d <- read_csv("../../data/2_cleaned_data/speed_acc_processed_child_gaze.csv.gz")
+d <- read_csv("../../../data/2_cleaned_data/speed_acc_processed_child_gaze.csv.gz")
 
 #### strip .avi and .jpg from stimulus
 d$stimulus <- gsub(pattern = ".jpg", "", x = d$stimulus)
@@ -23,13 +23,24 @@ d$stimulus <- gsub(pattern = ".avi", "", x = d$stimulus)
 
 ### remove validation trial
 d %<>% filter(stimulus != "Validation")
+```
 
-#### join trial info
-trialinfo_d <- read_csv("../../data/trial_info/speed-acc-adult2-trial-info.csv")
+Join trial info
+
+```{r}
+trialinfo_d <- read_csv("../../../data/0b_trial_information/speed-acc-child-gaze-trial-info.csv")
 d %<>% left_join(., trialinfo_d, by = "stimulus")
+```
 
-#### join subject info
-subinfo_df <- read_csv("../../data/demographics/speed-acc-adult-runsheet.csv")
+Join subject info
+
+```{r}
+subinfo_df <- readxl::read_xlsx("../../../data/0a_demographics/speed_acc_child_gaze_Runsheet_Bing.xlsx")
+
+# clean up subid to join
+subinfo_df %<>% mutate(subid = str_to_lower(subid),
+                       subid = str_replace_all(subid, pattern = "_", "-"))
+
 d %<>% left_join(subinfo_df, by = "subid")
 ```
 
@@ -37,7 +48,11 @@ Filter out calibration trial and any keypress events, and outro.
 
 ```{r}
 bad_stimuli <- c("UE-keypress VolumeUp", "UE-keypress VolumeDown", "cc3bd7c5c8d457694031c7630357751f", 
-                 "85e91b277ab3c43334caff8617a99a27_1920x1080")
+                 "85e91b277ab3c43334caff8617a99a27_1920x1080", "a14e8d2f42de904c74b227f460058f80_1920x1080",
+                 "c7280d7cf8d2071e0a099f77fef07087", "cb574a221f2b82f8cd9ab49f3da75b49_1920x1080",
+                 "ee996bde25388f5c35c6bd48740a00d6_1920x1080", "2cfc78e6145270a07971626e1be0caf5_1920x1080",
+                 "6cc2283d5439516a7f183c460278aed5_1920x1080", "074d7edcd6e1aaa51346a9225dc5e669_1920x1080")
+
 d %<>% filter(!(stimulus %in% bad_stimuli))
 ```
 
@@ -67,7 +82,7 @@ d$keep <- ifelse(d$percent_bad_looks > (3*sd_ss + mean_ss), 'exclude', 'include'
 Now we make a table of participant information.
 
 ```{r}
-d %>% select(subid, gender, dot, notes) %>% 
+d %>% select(subid, gender, run_date, comments) %>% 
   unique() %>% 
   kable()
 ```
@@ -81,7 +96,7 @@ Here we label Areas of Interest to be Left Picture, Right Picture, and the Cente
 Plot the distribution of looking across x-y coordinates. This is a useful check that participants were looking where we thought they should be, and it helps us find the AOIs for data analysis. 
 
 ```{r, eval = F}
-d.rois <- sample_n(d, size = 0.10*nrow(d)) # get a sample so we don't plot all 200k plus rows
+d.rois <- sample_n(d, size = 0.05*nrow(d)) # get a sample so we don't plot all 200k plus rows
 
 ggplot(aes(x = x, y = y), data = d) +
   geom_density2d() +
@@ -89,9 +104,16 @@ ggplot(aes(x = x, y = y), data = d) +
   theme_bw()
 ```
 
+### Remove filler trials
+
+```{r}
+d %<>% filter(!(is.na(target_image)))
+```
+
+
 ### Add trial numbers
 
-We have 4 blocks of 24 trials, so `r 4 * 16` total trials. To add the trial numbers we first get each unique trial name and the time it started. Then we sort by the time each trial started, and bind the trial numbers. Finally, we join the trial number information with the rest of the eye movement data.
+We have 2 blocks of 16 trials, so `r 2 * 16` total trials. To add the trial numbers we first get each unique trial name and the time it started. Then we sort by the time each trial started, and bind the trial numbers. Finally, we join the trial number information with the rest of the eye movement data.
 
 ```{r add trial numbers}
 # apply the add trials function to each subid's data frame using the do() operator 
@@ -101,7 +123,7 @@ d %<>%
   left_join(x = d, y = ., by = c("subid", "stimulus"))
 ```
 
-Check that we have the right number of trials for each participant: 64 trials
+Check that we have the right number of trials for each participant: 32 trials
 
 ```{r}
 d %>% 
@@ -111,6 +133,7 @@ d %>%
   count()
 ```
 
+not sure what's going on with participant #17?
 
 ### Flag left/right/center looking based on ROIs
 
@@ -134,17 +157,6 @@ d %>%
   mutate(total_looks = sum(count_looks),
          prop_looks = round(count_looks / total_looks, 2)) %>% 
   kable()
-```
-
-Hmm, participants are "away" on 11% of the trials. What's going on here? Plot "away" looks, so we can visually inspect.
-
-```{r plot aways}
-d.aways <- d %>% 
-  filter(gaze_target == "away") %>% 
-  sample_n(., size = 0.15 * nrow(.))
-
-ggplot(aes(x = x, y = y), data = d.aways) +
-  geom_density2d() 
 ```
 
 There's a pretty heavy concentration of looking to the top left of the screen. This is a "catch-all" for any looks the ET could not measure. So we just filter these out for our analyses. 
@@ -259,18 +271,22 @@ Before writing to .csv, we split the data into the timecourse information and fi
 # timecourse
 d.timecourse <- filter(d, response_onset_type == "noun") %>% 
   select(subid, t.stim, gaze_condition, noise_condition, tr.num, noun_onset_sec,
-         gaze_target:shift_accuracy, target_image)
+         gaze_target:shift_accuracy, target_image, keep)
 
 # first shift
 d.fs <- d %>% 
-  select(subid, tr.num, gaze_condition, noise_condition, target_image, dot:reason_excluded, response:shift_accuracy) %>% 
+  filter(response_onset_type == "noun") %>% # km remember to remove this after HUMBIO is finished
+  select(subid, tr.num, gaze_condition, noise_condition, target_image, run_date:comments, 
+         response:shift_accuracy, keep) %>% 
   unique()
 ```
 
-Write to zipped csv: 
+Write data to zipped csv: 
 
 ```{r}
-write.path <- "../../data/3_final_merged_data/"
-write_csv(d.timecourse, path = paste0(write.path, "speed_acc_adult_gaze_noise_timecourse_tidy.csv.gz"))
-write_csv(d.fs, path = paste0(write.path, "speed_acc_adult_gaze_noise_fstshift_tidy.csv.gz"))
+write.path.time <- "../../../data/3_final_merged_data/timecourse/"
+write_csv(d.timecourse, path = paste0(write.path.time, "speed_acc_child_gaze_timecourse_tidy.csv.gz"))
+
+write.path.fst <- "../../../data/3_final_merged_data/first_shifts/"
+write_csv(d.fs, path = paste0(write.path.fst, "speed_acc_child_gaze_fstshift_tidy.csv.gz"))
 ```
