@@ -275,6 +275,7 @@ d.timecourse <- filter(d, response_onset_type == "noun") %>%
 
 # first shift
 d.fs <- d %>% 
+  filter(response_onset_type == "noun") %>% # km remember to remove this after HUMBIO is finished
   select(subid, tr.num, gaze_condition, noise_condition, target_image, run_date:comments, 
          response:shift_accuracy, keep) %>% 
   unique()
