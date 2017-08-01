@@ -28,7 +28,7 @@ source("../../helper_functions/libraries_and_functions.R")
 Section 11.2 from [this](http://r4ds.had.co.nz/data-import.html) chapter on data importing is great.
 
 ```{r}
-
+d <- read_csv("../../../data/3_final_merged_data/first_shifts/speed_acc_child_gaze_fstshift_tidy.csv.gz")
 ```
 
 ## Check the data

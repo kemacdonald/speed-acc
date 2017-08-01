@@ -32,7 +32,7 @@ for (file.name in files) {
   all.data <- bind_rows(all.data, d)
 }
 
-# plot to check that fixation locations look reasonable
+# plot to check that fixation locations look reasonable across participants
 all.data %>% 
   mutate(subid = str_trim(subid)) %>% 
   group_by(subid) %>% 
