@@ -1,0 +1,474 @@
+subid,tr.num,gaze_condition,noise_condition,target_image,dot,gender,age,notes,order,experiment,keep,reason_excluded,response,response_onset_type,rt,shift_type,shift_accuracy
+speed_acc_adult_ng_1,1,no_gaze,no_noise,shoe,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,target,noun,1.4669999999999996,T_D,incorrect
+speed_acc_adult_ng_1,2,no_gaze,no_noise,chicken,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,distracter,noun,0.7999999999999998,D_T,incorrect
+speed_acc_adult_ng_1,3,no_gaze,no_noise,bunny,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,distracter,noun,0.43299999999999983,D_T,incorrect
+speed_acc_adult_ng_1,4,no_gaze,no_noise,cookie,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,center,noun,1.133,C_T,correct
+speed_acc_adult_ng_1,5,no_gaze,no_noise,cookie,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,target,noun,1.2670000000000003,T_D,incorrect
+speed_acc_adult_ng_1,6,no_gaze,no_noise,bunny,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,distracter,noun,0.633,D_T,incorrect
+speed_acc_adult_ng_1,7,no_gaze,no_noise,boat,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,target,noun,0.46699999999999964,T_D,incorrect
+speed_acc_adult_ng_1,8,no_gaze,no_noise,bottle,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,distracter,noun,0.20000000000000018,D_T,incorrect
+speed_acc_adult_ng_1,9,no_gaze,no_noise,chicken,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,center,noun,0.26700000000000035,C_T,correct
+speed_acc_adult_ng_1,10,no_gaze,no_noise,boat,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,target,noun,1.7999999999999998,T_D,incorrect
+speed_acc_adult_ng_1,11,no_gaze,no_noise,ball,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,target,noun,0.06700000000000017,T_D,incorrect
+speed_acc_adult_ng_1,12,no_gaze,no_noise,juice,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,distracter,noun,1.1669999999999998,D_T,incorrect
+speed_acc_adult_ng_1,13,no_gaze,no_noise,bottle,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,target,noun,NA,no_shift,NA
+speed_acc_adult_ng_1,14,no_gaze,no_noise,juice,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,center,noun,0.5670000000000002,C_D,incorrect
+speed_acc_adult_ng_1,15,no_gaze,no_noise,shoe,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,target,noun,NA,no_shift,NA
+speed_acc_adult_ng_1,16,no_gaze,no_noise,ball,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,distracter,noun,0.6669999999999998,D_T,incorrect
+speed_acc_adult_ng_1,17,gaze,no_noise,shoe,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,target,noun,0.367,T_D,incorrect
+speed_acc_adult_ng_1,18,gaze,no_noise,cookie,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,distracter,noun,1.7329999999999997,D_T,incorrect
+speed_acc_adult_ng_1,19,gaze,no_noise,juice,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,target,noun,0.06700000000000017,T_D,incorrect
+speed_acc_adult_ng_1,20,gaze,no_noise,bottle,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,distracter,noun,1,D_T,incorrect
+speed_acc_adult_ng_1,21,gaze,no_noise,juice,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,center,noun,0.867,C_D,incorrect
+speed_acc_adult_ng_1,22,gaze,no_noise,cookie,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,center,noun,0.09999999999999964,C_D,incorrect
+speed_acc_adult_ng_1,23,gaze,no_noise,bunny,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,center,noun,0.8330000000000002,C_T,correct
+speed_acc_adult_ng_1,24,gaze,no_noise,ball,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,distracter,noun,0.26700000000000035,D_T,incorrect
+speed_acc_adult_ng_1,25,gaze,no_noise,boat,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,distracter,noun,0.367,D_T,incorrect
+speed_acc_adult_ng_1,26,gaze,no_noise,chicken,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,distracter,noun,0.9000000000000004,D_T,incorrect
+speed_acc_adult_ng_1,27,gaze,no_noise,chicken,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,center,noun,2.4000000000000004,C_T,correct
+speed_acc_adult_ng_1,28,gaze,no_noise,ball,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,center,noun,0.5330000000000004,C_D,incorrect
+speed_acc_adult_ng_1,29,gaze,no_noise,boat,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,center,noun,0.133,C_D,incorrect
+speed_acc_adult_ng_1,30,gaze,no_noise,shoe,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,center,noun,0.43299999999999983,C_T,correct
+speed_acc_adult_ng_1,31,gaze,no_noise,bottle,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,distracter,noun,0.40000000000000036,D_T,incorrect
+speed_acc_adult_ng_1,32,gaze,no_noise,bunny,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,distracter,noun,0.5,D_T,incorrect
+speed_acc_adult_ng_1,33,no_gaze,noise,bunny,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,center,noun,0.7000000000000002,C_T,correct
+speed_acc_adult_ng_1,34,no_gaze,noise,juice,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,center,noun,0.7000000000000002,C_D,incorrect
+speed_acc_adult_ng_1,35,no_gaze,noise,ball,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,center,noun,1.2329999999999997,C_T,correct
+speed_acc_adult_ng_1,36,no_gaze,noise,cookie,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,center,noun,0.06700000000000017,C_D,incorrect
+speed_acc_adult_ng_1,37,no_gaze,noise,chicken,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,center,noun,0.7670000000000003,C_T,correct
+speed_acc_adult_ng_1,38,no_gaze,noise,bottle,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,center,noun,0.7329999999999997,C_T,correct
+speed_acc_adult_ng_1,39,no_gaze,noise,bunny,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,center,noun,0.9329999999999998,C_T,correct
+speed_acc_adult_ng_1,40,no_gaze,noise,boat,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,center,noun,1.5670000000000002,C_T,correct
+speed_acc_adult_ng_1,41,no_gaze,noise,chicken,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,center,noun,1.0670000000000002,C_T,correct
+speed_acc_adult_ng_1,42,no_gaze,noise,shoe,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,center,noun,0.633,C_T,correct
+speed_acc_adult_ng_1,43,no_gaze,noise,shoe,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,target,noun,0.133,T_D,incorrect
+speed_acc_adult_ng_1,44,no_gaze,noise,cookie,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,center,noun,1.633,C_T,correct
+speed_acc_adult_ng_1,45,no_gaze,noise,ball,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,center,noun,1.0999999999999996,C_T,correct
+speed_acc_adult_ng_1,46,no_gaze,noise,bottle,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,center,noun,1.0670000000000002,C_T,correct
+speed_acc_adult_ng_1,47,no_gaze,noise,boat,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,center,noun,1.3330000000000002,C_T,correct
+speed_acc_adult_ng_1,48,no_gaze,noise,juice,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,center,noun,0.7999999999999998,C_T,correct
+speed_acc_adult_ng_1,49,gaze,noise,boat,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,distracter,noun,0.367,D_C,incorrect
+speed_acc_adult_ng_1,50,gaze,noise,bunny,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,target,noun,0.5330000000000004,T_D,incorrect
+speed_acc_adult_ng_1,51,gaze,noise,ball,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,center,noun,1.0999999999999996,C_T,correct
+speed_acc_adult_ng_1,52,gaze,noise,bunny,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,center,noun,0.9669999999999996,C_T,correct
+speed_acc_adult_ng_1,53,gaze,noise,chicken,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,center,noun,0.09999999999999964,C_T,correct
+speed_acc_adult_ng_1,54,gaze,noise,juice,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,center,noun,2.4000000000000004,C_T,correct
+speed_acc_adult_ng_1,55,gaze,noise,shoe,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,center,noun,0.26700000000000035,C_T,correct
+speed_acc_adult_ng_1,56,gaze,noise,ball,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,center,noun,1.3330000000000002,C_T,correct
+speed_acc_adult_ng_1,57,gaze,noise,juice,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,distracter,noun,0.9000000000000004,D_T,incorrect
+speed_acc_adult_ng_1,58,gaze,noise,chicken,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,center,noun,1.5670000000000002,C_T,correct
+speed_acc_adult_ng_1,59,gaze,noise,boat,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,center,noun,0.26700000000000035,C_D,incorrect
+speed_acc_adult_ng_1,60,gaze,noise,bottle,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,center,noun,0.43299999999999983,C_D,incorrect
+speed_acc_adult_ng_1,61,gaze,noise,bottle,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,center,noun,1.2329999999999997,C_T,correct
+speed_acc_adult_ng_1,62,gaze,noise,shoe,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,center,noun,1.2000000000000002,C_T,correct
+speed_acc_adult_ng_1,63,gaze,noise,cookie,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,target,noun,0.6669999999999998,T_D,incorrect
+speed_acc_adult_ng_1,64,gaze,noise,cookie,7/5/17,F,18-21,"session went well, but english not native language",speed_acc_adult_ng_order1,NA,include,english not native language,distracter,noun,1.3330000000000002,D_T,incorrect
+speed_acc_adult_ng_2,1,gaze,noise,bunny,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,0.9329999999999998,C_T,correct
+speed_acc_adult_ng_2,2,gaze,noise,juice,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,2.0999999999999996,C_T,correct
+speed_acc_adult_ng_2,3,gaze,noise,bunny,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,0.7000000000000002,C_T,correct
+speed_acc_adult_ng_2,4,gaze,noise,boat,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,1.4329999999999998,C_T,correct
+speed_acc_adult_ng_2,5,gaze,noise,bottle,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,0.9329999999999998,C_T,correct
+speed_acc_adult_ng_2,6,gaze,noise,chicken,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,0.9669999999999996,C_T,correct
+speed_acc_adult_ng_2,7,gaze,noise,cookie,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,0.633,C_T,correct
+speed_acc_adult_ng_2,8,gaze,noise,bottle,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,0.633,C_T,correct
+speed_acc_adult_ng_2,9,gaze,noise,ball,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,0.9000000000000004,C_T,correct
+speed_acc_adult_ng_2,10,gaze,noise,shoe,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,1.1669999999999998,C_T,correct
+speed_acc_adult_ng_2,11,gaze,noise,boat,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,1.1669999999999998,C_T,correct
+speed_acc_adult_ng_2,12,gaze,noise,juice,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,1.4669999999999996,C_T,correct
+speed_acc_adult_ng_2,13,gaze,noise,chicken,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,1.3330000000000002,C_T,correct
+speed_acc_adult_ng_2,14,gaze,noise,shoe,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,1.2670000000000003,C_T,correct
+speed_acc_adult_ng_2,15,gaze,noise,ball,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,1.0330000000000004,C_T,correct
+speed_acc_adult_ng_2,16,gaze,noise,cookie,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,0.9000000000000004,C_T,correct
+speed_acc_adult_ng_2,17,no_gaze,noise,bottle,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,1.133,C_T,correct
+speed_acc_adult_ng_2,18,no_gaze,noise,boat,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,1.1669999999999998,C_T,correct
+speed_acc_adult_ng_2,19,no_gaze,noise,boat,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,0.7999999999999998,C_T,correct
+speed_acc_adult_ng_2,20,no_gaze,noise,cookie,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,1.367,C_T,correct
+speed_acc_adult_ng_2,21,no_gaze,noise,bunny,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,1.0999999999999996,C_T,correct
+speed_acc_adult_ng_2,22,no_gaze,noise,juice,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,1,C_T,correct
+speed_acc_adult_ng_2,23,no_gaze,noise,cookie,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,1.2999999999999998,C_T,correct
+speed_acc_adult_ng_2,24,no_gaze,noise,bottle,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,1,C_T,correct
+speed_acc_adult_ng_2,25,no_gaze,noise,cookie,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,1.2670000000000003,C_T,correct
+speed_acc_adult_ng_2,26,no_gaze,noise,ball,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,1.5,C_T,correct
+speed_acc_adult_ng_2,27,no_gaze,noise,juice,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,0.133,C_D,incorrect
+speed_acc_adult_ng_2,28,no_gaze,noise,shoe,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,1.0670000000000002,C_T,correct
+speed_acc_adult_ng_2,29,no_gaze,noise,ball,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,1.2329999999999997,C_T,correct
+speed_acc_adult_ng_2,30,no_gaze,noise,shoe,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,1.0999999999999996,C_T,correct
+speed_acc_adult_ng_2,31,no_gaze,noise,chicken,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,1.0999999999999996,C_T,correct
+speed_acc_adult_ng_2,32,no_gaze,noise,bunny,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,0.867,C_T,correct
+speed_acc_adult_ng_2,33,gaze,no_noise,ball,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,1.133,C_T,correct
+speed_acc_adult_ng_2,34,gaze,no_noise,bunny,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,0.7670000000000003,C_T,correct
+speed_acc_adult_ng_2,35,gaze,no_noise,ball,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,1.2000000000000002,C_T,correct
+speed_acc_adult_ng_2,36,gaze,no_noise,juice,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,1.0330000000000004,C_T,correct
+speed_acc_adult_ng_2,37,gaze,no_noise,shoe,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,0.46699999999999964,C_T,correct
+speed_acc_adult_ng_2,38,gaze,no_noise,chicken,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,1.4669999999999996,C_T,correct
+speed_acc_adult_ng_2,39,gaze,no_noise,cookie,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,0.9669999999999996,C_T,correct
+speed_acc_adult_ng_2,40,gaze,no_noise,shoe,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,1.0999999999999996,C_T,correct
+speed_acc_adult_ng_2,41,gaze,no_noise,bottle,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,1.133,C_T,correct
+speed_acc_adult_ng_2,42,gaze,no_noise,cookie,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,1.4669999999999996,C_T,correct
+speed_acc_adult_ng_2,43,gaze,no_noise,boat,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,1.5,C_T,correct
+speed_acc_adult_ng_2,44,gaze,no_noise,juice,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,1.367,C_T,correct
+speed_acc_adult_ng_2,45,gaze,no_noise,bunny,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,0.7000000000000002,C_T,correct
+speed_acc_adult_ng_2,46,gaze,no_noise,bottle,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,1.0999999999999996,C_T,correct
+speed_acc_adult_ng_2,47,gaze,no_noise,chicken,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,1.367,C_T,correct
+speed_acc_adult_ng_2,48,gaze,no_noise,boat,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,1.2329999999999997,C_T,correct
+speed_acc_adult_ng_2,49,no_gaze,no_noise,juice,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,1.633,C_T,correct
+speed_acc_adult_ng_2,50,no_gaze,no_noise,shoe,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,0.633,C_T,correct
+speed_acc_adult_ng_2,51,no_gaze,no_noise,juice,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,0.9329999999999998,C_T,correct
+speed_acc_adult_ng_2,52,no_gaze,no_noise,ball,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,1.5330000000000004,C_T,correct
+speed_acc_adult_ng_2,53,no_gaze,no_noise,boat,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,1.4329999999999998,C_T,correct
+speed_acc_adult_ng_2,54,no_gaze,no_noise,cookie,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,1.4329999999999998,C_T,correct
+speed_acc_adult_ng_2,55,no_gaze,no_noise,bottle,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,0.633,C_T,correct
+speed_acc_adult_ng_2,56,no_gaze,no_noise,shoe,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,0.7670000000000003,C_T,correct
+speed_acc_adult_ng_2,57,no_gaze,no_noise,bunny,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,1.1669999999999998,C_T,correct
+speed_acc_adult_ng_2,58,no_gaze,no_noise,chicken,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,1,C_T,correct
+speed_acc_adult_ng_2,59,no_gaze,no_noise,chicken,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,0.9669999999999996,C_T,correct
+speed_acc_adult_ng_2,60,no_gaze,no_noise,bunny,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,1,C_T,correct
+speed_acc_adult_ng_2,61,no_gaze,no_noise,ball,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,1.6669999999999998,C_T,correct
+speed_acc_adult_ng_2,62,no_gaze,no_noise,cookie,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,1.7999999999999998,C_T,correct
+speed_acc_adult_ng_2,63,no_gaze,no_noise,bottle,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,1.1669999999999998,C_T,correct
+speed_acc_adult_ng_2,64,no_gaze,no_noise,boat,7/12/17,F,18-21,session went really well!,speed_acc_adult_ng_order4,NA,include,NA,center,noun,1.5670000000000002,C_T,correct
+speed_acc_adult_ng_3,1,no_gaze,no_noise,cookie,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,center,noun,0.367,C_T,correct
+speed_acc_adult_ng_3,2,no_gaze,no_noise,bottle,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,center,noun,0.8330000000000002,C_T,correct
+speed_acc_adult_ng_3,3,no_gaze,no_noise,shoe,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,target,noun,0.20000000000000018,T_D,incorrect
+speed_acc_adult_ng_3,4,no_gaze,no_noise,juice,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,center,noun,1.2329999999999997,C_T,correct
+speed_acc_adult_ng_3,5,no_gaze,no_noise,boat,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,distracter,noun,0.23299999999999965,D_C,incorrect
+speed_acc_adult_ng_3,6,no_gaze,no_noise,chicken,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,center,noun,0.6669999999999998,C_D,incorrect
+speed_acc_adult_ng_3,7,no_gaze,no_noise,cookie,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,center,noun,1.0670000000000002,C_T,correct
+speed_acc_adult_ng_3,8,no_gaze,no_noise,bunny,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,distracter,noun,0.20000000000000018,D_C,incorrect
+speed_acc_adult_ng_3,9,no_gaze,no_noise,ball,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,distracter,noun,0.133,D_C,incorrect
+speed_acc_adult_ng_3,10,no_gaze,no_noise,juice,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,center,noun,0.3330000000000002,C_D,incorrect
+speed_acc_adult_ng_3,11,no_gaze,no_noise,boat,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,center,noun,0.06700000000000017,C_T,correct
+speed_acc_adult_ng_3,12,no_gaze,no_noise,ball,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,center,noun,0.2999999999999998,C_D,incorrect
+speed_acc_adult_ng_3,13,no_gaze,no_noise,bunny,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,center,noun,0.43299999999999983,C_D,incorrect
+speed_acc_adult_ng_3,14,no_gaze,no_noise,shoe,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,distracter,noun,0.367,D_T,incorrect
+speed_acc_adult_ng_3,15,no_gaze,no_noise,chicken,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,target,noun,1.633,T_C,incorrect
+speed_acc_adult_ng_3,16,no_gaze,no_noise,bottle,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,distracter,noun,2.3,D_T,incorrect
+speed_acc_adult_ng_3,17,gaze,no_noise,bunny,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,distracter,noun,0.26700000000000035,D_T,incorrect
+speed_acc_adult_ng_3,18,gaze,no_noise,bottle,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,distracter,noun,0.633,D_T,incorrect
+speed_acc_adult_ng_3,19,gaze,no_noise,bunny,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,target,noun,1.3330000000000002,T_C,incorrect
+speed_acc_adult_ng_3,20,gaze,no_noise,shoe,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,target,noun,2.5,T_C,incorrect
+speed_acc_adult_ng_3,21,gaze,no_noise,juice,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,center,noun,0.20000000000000018,C_D,incorrect
+speed_acc_adult_ng_3,22,gaze,no_noise,shoe,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,distracter,noun,0.9669999999999996,D_T,incorrect
+speed_acc_adult_ng_3,23,gaze,no_noise,cookie,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,distracter,noun,0.633,D_T,incorrect
+speed_acc_adult_ng_3,24,gaze,no_noise,chicken,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,target,noun,1.367,T_C,incorrect
+speed_acc_adult_ng_3,25,gaze,no_noise,ball,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,target,noun,2.2329999999999997,T_C,incorrect
+speed_acc_adult_ng_3,26,gaze,no_noise,boat,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,target,noun,0.2999999999999998,T_C,incorrect
+speed_acc_adult_ng_3,27,gaze,no_noise,juice,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,target,noun,0.7670000000000003,T_D,incorrect
+speed_acc_adult_ng_3,28,gaze,no_noise,bottle,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,distracter,noun,0.5999999999999996,D_C,incorrect
+speed_acc_adult_ng_3,29,gaze,no_noise,chicken,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,distracter,noun,1.367,D_T,incorrect
+speed_acc_adult_ng_3,30,gaze,no_noise,boat,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,center,noun,0.633,C_D,incorrect
+speed_acc_adult_ng_3,31,gaze,no_noise,cookie,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,distracter,noun,0.20000000000000018,D_C,incorrect
+speed_acc_adult_ng_3,32,gaze,no_noise,ball,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,distracter,noun,0.633,D_T,incorrect
+speed_acc_adult_ng_3,33,no_gaze,noise,cookie,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,distracter,noun,0.26700000000000035,D_C,incorrect
+speed_acc_adult_ng_3,34,no_gaze,noise,ball,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,center,noun,0.5,C_T,correct
+speed_acc_adult_ng_3,35,no_gaze,noise,shoe,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,center,noun,0.633,C_T,correct
+speed_acc_adult_ng_3,36,no_gaze,noise,boat,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,center,noun,0.133,C_T,correct
+speed_acc_adult_ng_3,37,no_gaze,noise,shoe,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,center,noun,0.7670000000000003,C_T,correct
+speed_acc_adult_ng_3,38,no_gaze,noise,bottle,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,center,noun,0.5,C_T,correct
+speed_acc_adult_ng_3,39,no_gaze,noise,cookie,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,center,noun,0.867,C_T,correct
+speed_acc_adult_ng_3,40,no_gaze,noise,juice,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,distracter,noun,0.23299999999999965,D_C,incorrect
+speed_acc_adult_ng_3,41,no_gaze,noise,bunny,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,target,noun,0.7999999999999998,T_D,incorrect
+speed_acc_adult_ng_3,42,no_gaze,noise,ball,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,center,noun,0.3330000000000002,C_T,correct
+speed_acc_adult_ng_3,43,no_gaze,noise,chicken,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,center,noun,0.5670000000000002,C_T,correct
+speed_acc_adult_ng_3,44,no_gaze,noise,bottle,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,distracter,noun,0.5999999999999996,D_T,incorrect
+speed_acc_adult_ng_3,45,no_gaze,noise,juice,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,distracter,noun,0.5999999999999996,D_T,incorrect
+speed_acc_adult_ng_3,46,no_gaze,noise,chicken,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,distracter,noun,0.9329999999999998,D_T,incorrect
+speed_acc_adult_ng_3,47,no_gaze,noise,bunny,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,distracter,noun,0.633,D_T,incorrect
+speed_acc_adult_ng_3,48,no_gaze,noise,boat,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,distracter,noun,0.16699999999999982,D_T,incorrect
+speed_acc_adult_ng_3,49,gaze,noise,shoe,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,distracter,noun,0.5330000000000004,D_T,incorrect
+speed_acc_adult_ng_3,50,gaze,noise,shoe,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,target,noun,0.9000000000000004,T_D,incorrect
+speed_acc_adult_ng_3,51,gaze,noise,juice,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,center,noun,0.7000000000000002,C_D,incorrect
+speed_acc_adult_ng_3,52,gaze,noise,chicken,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,center,noun,0.5670000000000002,C_T,correct
+speed_acc_adult_ng_3,53,gaze,noise,cookie,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,center,noun,0.5670000000000002,C_T,correct
+speed_acc_adult_ng_3,54,gaze,noise,cookie,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,target,noun,0.633,T_D,incorrect
+speed_acc_adult_ng_3,55,gaze,noise,chicken,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,distracter,noun,0.867,D_T,incorrect
+speed_acc_adult_ng_3,56,gaze,noise,bunny,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,center,noun,0.5330000000000004,C_D,incorrect
+speed_acc_adult_ng_3,57,gaze,noise,ball,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,distracter,noun,0.2999999999999998,D_T,incorrect
+speed_acc_adult_ng_3,58,gaze,noise,boat,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,target,noun,1.6669999999999998,T_D,incorrect
+speed_acc_adult_ng_3,59,gaze,noise,juice,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,distracter,noun,0.43299999999999983,D_T,incorrect
+speed_acc_adult_ng_3,60,gaze,noise,bottle,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,center,noun,0.2999999999999998,C_D,incorrect
+speed_acc_adult_ng_3,61,gaze,noise,bunny,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,target,noun,0.2999999999999998,T_D,incorrect
+speed_acc_adult_ng_3,62,gaze,noise,bottle,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,center,noun,5.4,C_D,incorrect
+speed_acc_adult_ng_3,63,gaze,noise,boat,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,center,noun,0.46699999999999964,C_D,incorrect
+speed_acc_adult_ng_3,64,gaze,noise,ball,7/13/17,M,31-35,session went really well!,speed_acc_adult_ng_order1,NA,include,NA,distracter,noun,0.8330000000000002,D_T,incorrect
+speed_acc_adult_ng_4,1,gaze,no_noise,shoe,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.7670000000000003,C_T,correct
+speed_acc_adult_ng_4,2,gaze,no_noise,boat,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,target,noun,0.3330000000000002,T_C,incorrect
+speed_acc_adult_ng_4,3,gaze,no_noise,bunny,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.6669999999999998,C_T,correct
+speed_acc_adult_ng_4,4,gaze,no_noise,shoe,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.2999999999999998,C_T,correct
+speed_acc_adult_ng_4,5,gaze,no_noise,bottle,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.2999999999999998,C_T,correct
+speed_acc_adult_ng_4,6,gaze,no_noise,boat,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.2670000000000003,C_T,correct
+speed_acc_adult_ng_4,7,gaze,no_noise,chicken,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.20000000000000018,C_T,correct
+speed_acc_adult_ng_4,8,gaze,no_noise,juice,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.4669999999999996,C_T,correct
+speed_acc_adult_ng_4,9,gaze,no_noise,ball,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.0330000000000004,C_T,correct
+speed_acc_adult_ng_4,10,gaze,no_noise,ball,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.2999999999999998,C_T,correct
+speed_acc_adult_ng_4,11,gaze,no_noise,chicken,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.1669999999999998,C_T,correct
+speed_acc_adult_ng_4,12,gaze,no_noise,bunny,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,distracter,noun,0.7670000000000003,D_T,incorrect
+speed_acc_adult_ng_4,13,gaze,no_noise,cookie,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,center,noun,1,C_T,correct
+speed_acc_adult_ng_4,14,gaze,no_noise,cookie,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.9669999999999996,C_T,correct
+speed_acc_adult_ng_4,15,gaze,no_noise,bottle,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.7000000000000002,C_T,correct
+speed_acc_adult_ng_4,16,gaze,no_noise,juice,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.2000000000000002,C_T,correct
+speed_acc_adult_ng_4,17,no_gaze,no_noise,bottle,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.9000000000000004,C_D,incorrect
+speed_acc_adult_ng_4,18,no_gaze,no_noise,cookie,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.4329999999999998,C_T,correct
+speed_acc_adult_ng_4,19,no_gaze,no_noise,chicken,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.9000000000000004,C_T,correct
+speed_acc_adult_ng_4,20,no_gaze,no_noise,bottle,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.7000000000000002,C_T,correct
+speed_acc_adult_ng_4,21,no_gaze,no_noise,shoe,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.7329999999999997,C_T,correct
+speed_acc_adult_ng_4,22,no_gaze,no_noise,cookie,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,center,noun,2.367,C_D,incorrect
+speed_acc_adult_ng_4,23,no_gaze,no_noise,shoe,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.6669999999999998,C_T,correct
+speed_acc_adult_ng_4,24,no_gaze,no_noise,ball,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.2000000000000002,C_T,correct
+speed_acc_adult_ng_4,25,no_gaze,no_noise,ball,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.2000000000000002,C_T,correct
+speed_acc_adult_ng_4,26,no_gaze,no_noise,juice,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.633,C_T,correct
+speed_acc_adult_ng_4,27,no_gaze,no_noise,bunny,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.43299999999999983,C_T,correct
+speed_acc_adult_ng_4,28,no_gaze,no_noise,boat,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.2000000000000002,C_T,correct
+speed_acc_adult_ng_4,29,no_gaze,no_noise,juice,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.2670000000000003,C_T,correct
+speed_acc_adult_ng_4,30,no_gaze,no_noise,bunny,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.9000000000000004,C_T,correct
+speed_acc_adult_ng_4,31,no_gaze,no_noise,chicken,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.0999999999999996,C_T,correct
+speed_acc_adult_ng_4,32,no_gaze,no_noise,boat,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.0999999999999996,C_T,correct
+speed_acc_adult_ng_4,33,gaze,noise,bunny,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.7000000000000002,C_T,correct
+speed_acc_adult_ng_4,34,gaze,noise,bunny,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.8330000000000002,C_T,correct
+speed_acc_adult_ng_4,35,gaze,noise,juice,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.5999999999999996,C_T,correct
+speed_acc_adult_ng_4,36,gaze,noise,boat,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.2670000000000003,C_T,correct
+speed_acc_adult_ng_4,37,gaze,noise,boat,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.5670000000000002,C_T,correct
+speed_acc_adult_ng_4,38,gaze,noise,shoe,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.0999999999999996,C_T,correct
+speed_acc_adult_ng_4,39,gaze,noise,ball,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.0670000000000002,C_T,correct
+speed_acc_adult_ng_4,40,gaze,noise,chicken,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.7329999999999997,C_T,correct
+speed_acc_adult_ng_4,41,gaze,noise,cookie,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.6669999999999998,C_T,correct
+speed_acc_adult_ng_4,42,gaze,noise,cookie,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.5,C_T,correct
+speed_acc_adult_ng_4,43,gaze,noise,chicken,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.5330000000000004,C_T,correct
+speed_acc_adult_ng_4,44,gaze,noise,shoe,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.4329999999999998,C_T,correct
+speed_acc_adult_ng_4,45,gaze,noise,bottle,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.0670000000000002,C_T,correct
+speed_acc_adult_ng_4,46,gaze,noise,bottle,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.133,C_T,correct
+speed_acc_adult_ng_4,47,gaze,noise,juice,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.0999999999999996,C_T,correct
+speed_acc_adult_ng_4,48,gaze,noise,ball,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.6669999999999998,C_T,correct
+speed_acc_adult_ng_4,49,no_gaze,noise,chicken,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.133,C_T,correct
+speed_acc_adult_ng_4,50,no_gaze,noise,bunny,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.9329999999999998,C_T,correct
+speed_acc_adult_ng_4,51,no_gaze,noise,juice,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.5670000000000002,C_T,correct
+speed_acc_adult_ng_4,52,no_gaze,noise,bottle,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.7000000000000002,C_T,correct
+speed_acc_adult_ng_4,53,no_gaze,noise,boat,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.2999999999999998,C_T,correct
+speed_acc_adult_ng_4,54,no_gaze,noise,cookie,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.5999999999999996,C_T,correct
+speed_acc_adult_ng_4,55,no_gaze,noise,juice,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.2329999999999997,C_T,correct
+speed_acc_adult_ng_4,56,no_gaze,noise,shoe,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.0999999999999996,C_T,correct
+speed_acc_adult_ng_4,57,no_gaze,noise,ball,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.4000000000000004,C_T,correct
+speed_acc_adult_ng_4,58,no_gaze,noise,boat,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.2000000000000002,C_T,correct
+speed_acc_adult_ng_4,59,no_gaze,noise,bottle,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.7670000000000003,C_T,correct
+speed_acc_adult_ng_4,60,no_gaze,noise,chicken,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.2670000000000003,C_T,correct
+speed_acc_adult_ng_4,61,no_gaze,noise,bunny,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.7999999999999998,C_T,correct
+speed_acc_adult_ng_4,62,no_gaze,noise,shoe,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.0999999999999996,C_T,correct
+speed_acc_adult_ng_4,63,no_gaze,noise,ball,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.5,C_T,correct
+speed_acc_adult_ng_4,64,no_gaze,noise,cookie,7/14/17,F,22-25,"session went well. for some reason, I am unable to see participant's eye movements on experiment center, but RED tracking monitor picks up eyes",speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.8330000000000002,C_D,incorrect
+speed_acc_adult_ng_5,1,gaze,no_noise,chicken,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.5670000000000002,C_T,correct
+speed_acc_adult_ng_5,2,gaze,no_noise,bottle,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.867,C_T,correct
+speed_acc_adult_ng_5,3,gaze,no_noise,juice,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.2999999999999998,C_D,incorrect
+speed_acc_adult_ng_5,4,gaze,no_noise,cookie,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1,C_T,correct
+speed_acc_adult_ng_5,5,gaze,no_noise,boat,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.367,C_T,correct
+speed_acc_adult_ng_5,6,gaze,no_noise,ball,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.5,C_D,incorrect
+speed_acc_adult_ng_5,7,gaze,no_noise,cookie,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.2999999999999998,C_T,correct
+speed_acc_adult_ng_5,8,gaze,no_noise,ball,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.7999999999999998,C_T,correct
+speed_acc_adult_ng_5,9,gaze,no_noise,shoe,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.5670000000000002,C_T,correct
+speed_acc_adult_ng_5,10,gaze,no_noise,chicken,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.3330000000000002,C_T,correct
+speed_acc_adult_ng_5,11,gaze,no_noise,boat,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.1669999999999998,C_T,correct
+speed_acc_adult_ng_5,12,gaze,no_noise,bunny,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.867,C_T,correct
+speed_acc_adult_ng_5,13,gaze,no_noise,juice,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.9000000000000004,C_T,correct
+speed_acc_adult_ng_5,14,gaze,no_noise,bottle,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.2670000000000003,C_D,incorrect
+speed_acc_adult_ng_5,15,gaze,no_noise,bunny,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.46699999999999964,C_T,correct
+speed_acc_adult_ng_5,16,gaze,no_noise,shoe,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.2670000000000003,C_T,correct
+speed_acc_adult_ng_5,17,no_gaze,no_noise,juice,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.633,C_T,correct
+speed_acc_adult_ng_5,18,no_gaze,no_noise,ball,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1,C_T,correct
+speed_acc_adult_ng_5,19,no_gaze,no_noise,shoe,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.5670000000000002,C_T,correct
+speed_acc_adult_ng_5,20,no_gaze,no_noise,ball,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.4669999999999996,C_T,correct
+speed_acc_adult_ng_5,21,no_gaze,no_noise,cookie,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.4000000000000004,C_T,correct
+speed_acc_adult_ng_5,22,no_gaze,no_noise,bottle,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.867,C_T,correct
+speed_acc_adult_ng_5,23,no_gaze,no_noise,bottle,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.7670000000000003,C_T,correct
+speed_acc_adult_ng_5,24,no_gaze,no_noise,boat,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.8330000000000002,C_T,correct
+speed_acc_adult_ng_5,25,no_gaze,no_noise,chicken,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.2329999999999997,C_T,correct
+speed_acc_adult_ng_5,26,no_gaze,no_noise,shoe,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.8330000000000002,C_T,correct
+speed_acc_adult_ng_5,27,no_gaze,no_noise,cookie,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.3330000000000002,C_T,correct
+speed_acc_adult_ng_5,28,no_gaze,no_noise,boat,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.2000000000000002,C_T,correct
+speed_acc_adult_ng_5,29,no_gaze,no_noise,juice,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.4669999999999996,C_T,correct
+speed_acc_adult_ng_5,30,no_gaze,no_noise,chicken,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.3330000000000002,C_T,correct
+speed_acc_adult_ng_5,31,no_gaze,no_noise,bunny,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.7329999999999997,C_T,correct
+speed_acc_adult_ng_5,32,no_gaze,no_noise,bunny,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.7999999999999998,C_D,incorrect
+speed_acc_adult_ng_5,33,gaze,noise,bunny,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.633,C_T,correct
+speed_acc_adult_ng_5,34,gaze,noise,ball,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.2329999999999997,C_T,correct
+speed_acc_adult_ng_5,35,gaze,noise,shoe,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.9669999999999996,C_T,correct
+speed_acc_adult_ng_5,36,gaze,noise,cookie,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.367,C_T,correct
+speed_acc_adult_ng_5,37,gaze,noise,shoe,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.5330000000000004,C_T,correct
+speed_acc_adult_ng_5,38,gaze,noise,bunny,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.7670000000000003,C_D,incorrect
+speed_acc_adult_ng_5,39,gaze,noise,bottle,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.2000000000000002,C_T,correct
+speed_acc_adult_ng_5,40,gaze,noise,chicken,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,2.067,C_T,correct
+speed_acc_adult_ng_5,41,gaze,noise,juice,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.5,C_T,correct
+speed_acc_adult_ng_5,42,gaze,noise,boat,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.5330000000000004,C_T,correct
+speed_acc_adult_ng_5,43,gaze,noise,cookie,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.5670000000000002,C_T,correct
+speed_acc_adult_ng_5,44,gaze,noise,bottle,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.9669999999999996,C_T,correct
+speed_acc_adult_ng_5,45,gaze,noise,ball,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.3330000000000002,C_T,correct
+speed_acc_adult_ng_5,46,gaze,noise,boat,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.2670000000000003,C_T,correct
+speed_acc_adult_ng_5,47,gaze,noise,juice,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.8330000000000002,C_T,correct
+speed_acc_adult_ng_5,48,gaze,noise,chicken,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.367,C_T,correct
+speed_acc_adult_ng_5,49,no_gaze,noise,juice,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.633,C_T,correct
+speed_acc_adult_ng_5,50,no_gaze,noise,bottle,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.7670000000000003,C_T,correct
+speed_acc_adult_ng_5,51,no_gaze,noise,boat,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.9000000000000004,C_T,correct
+speed_acc_adult_ng_5,52,no_gaze,noise,shoe,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.7670000000000003,C_T,correct
+speed_acc_adult_ng_5,53,no_gaze,noise,chicken,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.9329999999999998,C_T,correct
+speed_acc_adult_ng_5,54,no_gaze,noise,juice,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.7329999999999997,C_T,correct
+speed_acc_adult_ng_5,55,no_gaze,noise,cookie,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.5330000000000004,C_T,correct
+speed_acc_adult_ng_5,56,no_gaze,noise,bottle,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.2999999999999998,C_T,correct
+speed_acc_adult_ng_5,57,no_gaze,noise,ball,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.4329999999999998,C_T,correct
+speed_acc_adult_ng_5,58,no_gaze,noise,shoe,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.8330000000000002,C_T,correct
+speed_acc_adult_ng_5,59,no_gaze,noise,bunny,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.9000000000000004,C_T,correct
+speed_acc_adult_ng_5,60,no_gaze,noise,boat,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.0999999999999996,C_T,correct
+speed_acc_adult_ng_5,61,no_gaze,noise,bunny,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.7999999999999998,C_T,correct
+speed_acc_adult_ng_5,62,no_gaze,noise,ball,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.2670000000000003,C_T,correct
+speed_acc_adult_ng_5,63,no_gaze,noise,chicken,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.133,C_T,correct
+speed_acc_adult_ng_5,64,no_gaze,noise,cookie,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.633,C_T,correct
+speed_acc_adult_ng_6,1,gaze,no_noise,shoe,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,2.067,C_T,correct
+speed_acc_adult_ng_6,2,gaze,no_noise,ball,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.7670000000000003,C_T,correct
+speed_acc_adult_ng_6,3,gaze,no_noise,bottle,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.7999999999999998,C_D,incorrect
+speed_acc_adult_ng_6,4,gaze,no_noise,ball,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.7670000000000003,C_T,correct
+speed_acc_adult_ng_6,5,gaze,no_noise,cookie,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.7999999999999998,C_T,correct
+speed_acc_adult_ng_6,6,gaze,no_noise,boat,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.2670000000000003,C_D,incorrect
+speed_acc_adult_ng_6,7,gaze,no_noise,bunny,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.5,C_T,correct
+speed_acc_adult_ng_6,8,gaze,no_noise,juice,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.7329999999999997,C_T,correct
+speed_acc_adult_ng_6,9,gaze,no_noise,chicken,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.5999999999999996,C_T,correct
+speed_acc_adult_ng_6,10,gaze,no_noise,juice,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.3330000000000002,C_T,correct
+speed_acc_adult_ng_6,11,gaze,no_noise,shoe,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.4329999999999998,C_T,correct
+speed_acc_adult_ng_6,12,gaze,no_noise,boat,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.7999999999999998,C_T,correct
+speed_acc_adult_ng_6,13,gaze,no_noise,cookie,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.0330000000000004,C_T,correct
+speed_acc_adult_ng_6,14,gaze,no_noise,bunny,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.7999999999999998,C_D,incorrect
+speed_acc_adult_ng_6,15,gaze,no_noise,bottle,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.9329999999999998,C_D,incorrect
+speed_acc_adult_ng_6,16,gaze,no_noise,chicken,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.7670000000000003,C_T,correct
+speed_acc_adult_ng_6,17,no_gaze,no_noise,juice,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.8330000000000002,C_T,correct
+speed_acc_adult_ng_6,18,no_gaze,no_noise,cookie,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.9329999999999998,C_T,correct
+speed_acc_adult_ng_6,19,no_gaze,no_noise,shoe,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.6669999999999998,C_T,correct
+speed_acc_adult_ng_6,20,no_gaze,no_noise,chicken,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.4669999999999996,C_T,correct
+speed_acc_adult_ng_6,21,no_gaze,no_noise,ball,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.9329999999999998,C_T,correct
+speed_acc_adult_ng_6,22,no_gaze,no_noise,boat,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.9669999999999996,C_T,correct
+speed_acc_adult_ng_6,23,no_gaze,no_noise,juice,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.5,C_T,correct
+speed_acc_adult_ng_6,24,no_gaze,no_noise,bottle,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.0670000000000002,C_T,correct
+speed_acc_adult_ng_6,25,no_gaze,no_noise,ball,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.867,C_T,correct
+speed_acc_adult_ng_6,26,no_gaze,no_noise,boat,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1,C_T,correct
+speed_acc_adult_ng_6,27,no_gaze,no_noise,chicken,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.4000000000000004,C_T,correct
+speed_acc_adult_ng_6,28,no_gaze,no_noise,bottle,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.0330000000000004,C_T,correct
+speed_acc_adult_ng_6,29,no_gaze,no_noise,shoe,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.2000000000000002,C_T,correct
+speed_acc_adult_ng_6,30,no_gaze,no_noise,cookie,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.5330000000000004,C_T,correct
+speed_acc_adult_ng_6,31,no_gaze,no_noise,bunny,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.7999999999999998,C_T,correct
+speed_acc_adult_ng_6,32,no_gaze,no_noise,bunny,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.5670000000000002,C_D,incorrect
+speed_acc_adult_ng_6,33,gaze,noise,shoe,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.133,C_T,correct
+speed_acc_adult_ng_6,34,gaze,noise,chicken,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.9669999999999996,C_T,correct
+speed_acc_adult_ng_6,35,gaze,noise,ball,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.867,C_D,incorrect
+speed_acc_adult_ng_6,36,gaze,noise,boat,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.7329999999999997,C_T,correct
+speed_acc_adult_ng_6,37,gaze,noise,bunny,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.6669999999999998,C_T,correct
+speed_acc_adult_ng_6,38,gaze,noise,cookie,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.633,C_D,incorrect
+speed_acc_adult_ng_6,39,gaze,noise,bottle,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.9669999999999996,C_T,correct
+speed_acc_adult_ng_6,40,gaze,noise,shoe,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.0670000000000002,C_T,correct
+speed_acc_adult_ng_6,41,gaze,noise,juice,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.2000000000000002,C_T,correct
+speed_acc_adult_ng_6,42,gaze,noise,chicken,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.633,C_T,correct
+speed_acc_adult_ng_6,43,gaze,noise,cookie,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.4329999999999998,C_T,correct
+speed_acc_adult_ng_6,44,gaze,noise,boat,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.1669999999999998,C_T,correct
+speed_acc_adult_ng_6,45,gaze,noise,bunny,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.633,C_T,correct
+speed_acc_adult_ng_6,46,gaze,noise,bottle,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.7999999999999998,C_T,correct
+speed_acc_adult_ng_6,47,gaze,noise,juice,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.5670000000000002,C_D,incorrect
+speed_acc_adult_ng_6,48,gaze,noise,ball,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.367,C_T,correct
+speed_acc_adult_ng_6,49,no_gaze,noise,cookie,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.7000000000000002,C_T,correct
+speed_acc_adult_ng_6,50,no_gaze,noise,bottle,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.2999999999999998,C_T,correct
+speed_acc_adult_ng_6,51,no_gaze,noise,juice,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.133,C_T,correct
+speed_acc_adult_ng_6,52,no_gaze,noise,boat,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.5330000000000004,C_T,correct
+speed_acc_adult_ng_6,53,no_gaze,noise,bottle,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.7670000000000003,C_T,correct
+speed_acc_adult_ng_6,54,no_gaze,noise,juice,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.633,C_T,correct
+speed_acc_adult_ng_6,55,no_gaze,noise,shoe,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.0670000000000002,C_T,correct
+speed_acc_adult_ng_6,56,no_gaze,noise,bunny,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.8330000000000002,C_T,correct
+speed_acc_adult_ng_6,57,no_gaze,noise,chicken,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.2670000000000003,C_T,correct
+speed_acc_adult_ng_6,58,no_gaze,noise,cookie,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.9669999999999996,C_T,correct
+speed_acc_adult_ng_6,59,no_gaze,noise,chicken,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.633,C_T,correct
+speed_acc_adult_ng_6,60,no_gaze,noise,boat,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.3330000000000002,C_T,correct
+speed_acc_adult_ng_6,61,no_gaze,noise,bunny,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.7999999999999998,C_T,correct
+speed_acc_adult_ng_6,62,no_gaze,noise,ball,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.5330000000000004,C_T,correct
+speed_acc_adult_ng_6,63,no_gaze,noise,shoe,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.7000000000000002,C_T,correct
+speed_acc_adult_ng_6,64,no_gaze,noise,ball,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.3330000000000002,C_T,correct
+speed_acc_adult_ng_7,1,gaze,no_noise,ball,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.0330000000000004,C_T,correct
+speed_acc_adult_ng_7,2,gaze,no_noise,juice,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.0670000000000002,C_D,incorrect
+speed_acc_adult_ng_7,3,gaze,no_noise,juice,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.133,C_D,incorrect
+speed_acc_adult_ng_7,4,gaze,no_noise,cookie,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.867,C_T,correct
+speed_acc_adult_ng_7,5,gaze,no_noise,bottle,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.3330000000000002,C_T,correct
+speed_acc_adult_ng_7,6,gaze,no_noise,chicken,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.133,C_T,correct
+speed_acc_adult_ng_7,7,gaze,no_noise,bunny,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.9329999999999998,C_T,correct
+speed_acc_adult_ng_7,8,gaze,no_noise,boat,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.2670000000000003,C_T,correct
+speed_acc_adult_ng_7,9,gaze,no_noise,shoe,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.2670000000000003,C_T,correct
+speed_acc_adult_ng_7,10,gaze,no_noise,boat,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.5670000000000002,C_T,correct
+speed_acc_adult_ng_7,11,gaze,no_noise,ball,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.5999999999999996,C_T,correct
+speed_acc_adult_ng_7,12,gaze,no_noise,cookie,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.9000000000000004,C_T,correct
+speed_acc_adult_ng_7,13,gaze,no_noise,bunny,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.6669999999999998,C_T,correct
+speed_acc_adult_ng_7,14,gaze,no_noise,bottle,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.8330000000000002,C_T,correct
+speed_acc_adult_ng_7,15,gaze,no_noise,chicken,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.6669999999999998,C_T,correct
+speed_acc_adult_ng_7,16,gaze,no_noise,shoe,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.4000000000000004,C_T,correct
+speed_acc_adult_ng_7,17,no_gaze,no_noise,bottle,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,NA,no_shift,NA
+speed_acc_adult_ng_7,18,no_gaze,no_noise,ball,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.3330000000000002,C_T,correct
+speed_acc_adult_ng_7,19,no_gaze,no_noise,boat,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.0670000000000002,C_T,correct
+speed_acc_adult_ng_7,20,no_gaze,no_noise,shoe,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.9669999999999996,C_T,correct
+speed_acc_adult_ng_7,21,no_gaze,no_noise,bottle,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.2329999999999997,C_T,correct
+speed_acc_adult_ng_7,22,no_gaze,no_noise,bunny,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.5330000000000004,C_T,correct
+speed_acc_adult_ng_7,23,no_gaze,no_noise,ball,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.7999999999999998,C_T,correct
+speed_acc_adult_ng_7,24,no_gaze,no_noise,shoe,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.4669999999999996,C_D,incorrect
+speed_acc_adult_ng_7,25,no_gaze,no_noise,boat,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.8330000000000002,C_T,correct
+speed_acc_adult_ng_7,26,no_gaze,no_noise,chicken,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.0999999999999996,C_T,correct
+speed_acc_adult_ng_7,27,no_gaze,no_noise,cookie,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.9329999999999998,C_T,correct
+speed_acc_adult_ng_7,28,no_gaze,no_noise,juice,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,2.3,C_T,correct
+speed_acc_adult_ng_7,29,no_gaze,no_noise,cookie,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.3330000000000002,C_T,correct
+speed_acc_adult_ng_7,30,no_gaze,no_noise,juice,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,NA,no_shift,NA
+speed_acc_adult_ng_7,31,no_gaze,no_noise,chicken,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.9669999999999996,C_T,correct
+speed_acc_adult_ng_7,32,no_gaze,no_noise,bunny,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.0330000000000004,C_T,correct
+speed_acc_adult_ng_7,33,gaze,noise,chicken,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.7000000000000002,C_T,correct
+speed_acc_adult_ng_7,34,gaze,noise,shoe,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.7329999999999997,C_T,correct
+speed_acc_adult_ng_7,35,gaze,noise,cookie,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,2.167,C_D,incorrect
+speed_acc_adult_ng_7,36,gaze,noise,bottle,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.2000000000000002,C_D,incorrect
+speed_acc_adult_ng_7,37,gaze,noise,ball,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.7999999999999998,C_T,correct
+speed_acc_adult_ng_7,38,gaze,noise,bunny,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.7329999999999997,C_T,correct
+speed_acc_adult_ng_7,39,gaze,noise,juice,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.2670000000000003,C_T,correct
+speed_acc_adult_ng_7,40,gaze,noise,boat,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.3330000000000002,C_T,correct
+speed_acc_adult_ng_7,41,gaze,noise,bottle,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.9000000000000004,C_T,correct
+speed_acc_adult_ng_7,42,gaze,noise,boat,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.2999999999999998,C_T,correct
+speed_acc_adult_ng_7,43,gaze,noise,ball,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.367,C_T,correct
+speed_acc_adult_ng_7,44,gaze,noise,chicken,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.367,C_T,correct
+speed_acc_adult_ng_7,45,gaze,noise,shoe,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1,C_T,correct
+speed_acc_adult_ng_7,46,gaze,noise,bunny,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.6669999999999998,C_T,correct
+speed_acc_adult_ng_7,47,gaze,noise,cookie,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.7670000000000003,C_T,correct
+speed_acc_adult_ng_7,48,gaze,noise,juice,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.7329999999999997,C_T,correct
+speed_acc_adult_ng_7,49,no_gaze,noise,shoe,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.0670000000000002,C_T,correct
+speed_acc_adult_ng_7,50,no_gaze,noise,bunny,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.6669999999999998,C_T,correct
+speed_acc_adult_ng_7,51,no_gaze,noise,cookie,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.633,C_T,correct
+speed_acc_adult_ng_7,52,no_gaze,noise,juice,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.7000000000000002,C_T,correct
+speed_acc_adult_ng_7,53,no_gaze,noise,juice,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.8330000000000002,C_T,correct
+speed_acc_adult_ng_7,54,no_gaze,noise,bottle,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.43299999999999983,C_T,correct
+speed_acc_adult_ng_7,55,no_gaze,noise,ball,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.4669999999999996,C_T,correct
+speed_acc_adult_ng_7,56,no_gaze,noise,chicken,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.133,C_T,correct
+speed_acc_adult_ng_7,57,no_gaze,noise,shoe,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.7000000000000002,C_T,correct
+speed_acc_adult_ng_7,58,no_gaze,noise,ball,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.0999999999999996,C_T,correct
+speed_acc_adult_ng_7,59,no_gaze,noise,chicken,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.9329999999999998,C_T,correct
+speed_acc_adult_ng_7,60,no_gaze,noise,boat,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.0999999999999996,C_T,correct
+speed_acc_adult_ng_7,61,no_gaze,noise,cookie,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,NA,no_shift,NA
+speed_acc_adult_ng_7,62,no_gaze,noise,boat,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,1.0999999999999996,C_T,correct
+speed_acc_adult_ng_7,63,no_gaze,noise,bottle,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.8330000000000002,C_T,correct
+speed_acc_adult_ng_7,64,no_gaze,noise,bunny,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,NA,include,NA,center,noun,0.7670000000000003,C_T,correct
+speed_acc_adult_ng_9,1,gaze,noise,bottle,NA,NA,NA,NA,speed_acc_adult_ng_order3,NA,include,NA,center,noun,0.8330000000000002,C_T,correct
+speed_acc_adult_ng_9,2,gaze,noise,boat,NA,NA,NA,NA,speed_acc_adult_ng_order3,NA,include,NA,center,noun,1.3330000000000002,C_T,correct
+speed_acc_adult_ng_9,3,gaze,noise,shoe,NA,NA,NA,NA,speed_acc_adult_ng_order3,NA,include,NA,center,noun,1.0670000000000002,C_T,correct
+speed_acc_adult_ng_9,4,gaze,noise,bunny,NA,NA,NA,NA,speed_acc_adult_ng_order3,NA,include,NA,center,noun,0.6669999999999998,C_T,correct
+speed_acc_adult_ng_9,5,gaze,noise,juice,NA,NA,NA,NA,speed_acc_adult_ng_order3,NA,include,NA,center,noun,1.4329999999999998,C_T,correct
+speed_acc_adult_ng_9,6,gaze,noise,bunny,NA,NA,NA,NA,speed_acc_adult_ng_order3,NA,include,NA,center,noun,0.5330000000000004,C_T,correct
+speed_acc_adult_ng_9,7,gaze,noise,cookie,NA,NA,NA,NA,speed_acc_adult_ng_order3,NA,include,NA,center,noun,1.3330000000000002,C_T,correct
+speed_acc_adult_ng_9,8,gaze,noise,ball,NA,NA,NA,NA,speed_acc_adult_ng_order3,NA,include,NA,center,noun,1.0999999999999996,C_T,correct
+speed_acc_adult_ng_9,9,gaze,noise,shoe,NA,NA,NA,NA,speed_acc_adult_ng_order3,NA,include,NA,center,noun,0.9329999999999998,C_T,correct
+speed_acc_adult_ng_9,10,no_gaze,noise,boat,NA,NA,NA,NA,speed_acc_adult_ng_order3,NA,include,NA,center,noun,1.4000000000000004,C_T,correct
+speed_acc_adult_ng_9,11,no_gaze,noise,ball,NA,NA,NA,NA,speed_acc_adult_ng_order3,NA,include,NA,center,noun,1.2999999999999998,C_T,correct
+speed_acc_adult_ng_9,12,no_gaze,noise,chicken,NA,NA,NA,NA,speed_acc_adult_ng_order3,NA,include,NA,center,noun,1,C_T,correct
+speed_acc_adult_ng_9,13,no_gaze,noise,juice,NA,NA,NA,NA,speed_acc_adult_ng_order3,NA,include,NA,center,noun,1.5,C_T,correct
+speed_acc_adult_ng_9,14,no_gaze,noise,bottle,NA,NA,NA,NA,speed_acc_adult_ng_order3,NA,include,NA,center,noun,0.43299999999999983,C_T,correct
+speed_acc_adult_ng_9,15,no_gaze,noise,boat,NA,NA,NA,NA,speed_acc_adult_ng_order3,NA,include,NA,center,noun,1.5330000000000004,C_D,incorrect
+speed_acc_adult_ng_9,16,no_gaze,noise,cookie,NA,NA,NA,NA,speed_acc_adult_ng_order3,NA,include,NA,center,noun,0.7000000000000002,C_T,correct
+speed_acc_adult_ng_9,17,no_gaze,noise,bunny,NA,NA,NA,NA,speed_acc_adult_ng_order3,NA,include,NA,center,noun,0.46699999999999964,C_T,correct
+speed_acc_adult_ng_9,18,no_gaze,noise,shoe,NA,NA,NA,NA,speed_acc_adult_ng_order3,NA,include,NA,center,noun,0.7000000000000002,C_T,correct
+speed_acc_adult_ng_9,19,no_gaze,noise,ball,NA,NA,NA,NA,speed_acc_adult_ng_order3,NA,include,NA,center,noun,1.2670000000000003,C_T,correct
+speed_acc_adult_ng_9,20,no_gaze,noise,bunny,NA,NA,NA,NA,speed_acc_adult_ng_order3,NA,include,NA,center,noun,0.9000000000000004,C_T,correct
+speed_acc_adult_ng_9,21,no_gaze,noise,shoe,NA,NA,NA,NA,speed_acc_adult_ng_order3,NA,include,NA,center,noun,0.7000000000000002,C_T,correct
+speed_acc_adult_ng_9,22,no_gaze,noise,bottle,NA,NA,NA,NA,speed_acc_adult_ng_order3,NA,include,NA,center,noun,0.7329999999999997,C_T,correct
+speed_acc_adult_ng_9,23,no_gaze,noise,chicken,NA,NA,NA,NA,speed_acc_adult_ng_order3,NA,include,NA,center,noun,0.867,C_T,correct
+speed_acc_adult_ng_9,24,no_gaze,noise,juice,NA,NA,NA,NA,speed_acc_adult_ng_order3,NA,include,NA,center,noun,1.0330000000000004,C_T,correct
+speed_acc_adult_ng_9,25,no_gaze,noise,cookie,NA,NA,NA,NA,speed_acc_adult_ng_order3,NA,include,NA,center,noun,1.3330000000000002,C_T,correct

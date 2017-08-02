@@ -7,8 +7,13 @@ speed_acc_adult_ng_5,7/18/17,M,Under 18,session went well,speed_acc_adult_ng_ord
 speed_acc_adult_ng_6,7/20/17,F,under 18,session went well,speed_acc_adult_ng_order2,,yes,
 speed_acc_adult_ng_7,7/24/17,F,under 18,session went well,speed_acc_adult_ng_order2,,yes,
 speed_acc_adult_ng_8,7/31/17,F,under 18,"for some reason the display resolution was changed so the experiment would not run properly. order 3 would not calibrate for some reason as well, but order 2 worked",speed_acc_adult_ng_order2,,yes,
+<<<<<<< HEAD
 speed_acc_adult_ng_9,,,,,speed_acc_adult_ng_order3,,,
 speed_acc_adult_ng_10,8/1/17,F,under 18,session went well,speed_acc_adult_ng_order3,,yes,
+=======
+speed_acc_adult_ng_9,8/1/17,F,under 18,session went well,speed_acc_adult_ng_order3,,yes,
+speed_acc_adult_ng_10,8/2/17,M,under 18,session went well! but he noticed the hair flipping in the direction of the target object,speed_acc_adult_ng_order3,,yes,
+>>>>>>> 15b49b85160584ab0aa4e86f6ffb349e95f340c7
 speed_acc_adult_ng_11,,,,,speed_acc_adult_ng_order1,,,
 speed_acc_adult_ng_12,,,,,speed_acc_adult_ng_order4,,,
 speed_acc_adult_ng_13,,,,,speed_acc_adult_ng_order1,,,

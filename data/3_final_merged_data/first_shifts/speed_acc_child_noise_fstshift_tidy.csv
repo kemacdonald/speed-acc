@@ -1,0 +1,574 @@
+subid,tr.num,gaze_condition,noise_condition,target_image,run_date,birthday,gender,age,age_group,order,comments,response,response_onset_type,rt,shift_type,shift_accuracy,keep
+p01,1,no_gaze,noise,cookie,NA,NA,NA,NA,NA,NA,NA,center,noun,0.23299999999999965,C_D,incorrect,include
+p01,2,no_gaze,noise,shoe,NA,NA,NA,NA,NA,NA,NA,target,noun,0.26700000000000035,T_D,incorrect,include
+p01,3,no_gaze,noise,bunny,NA,NA,NA,NA,NA,NA,NA,center,noun,0.5999999999999996,C_D,incorrect,include
+p01,4,no_gaze,noise,bunny,NA,NA,NA,NA,NA,NA,NA,center,noun,0.40000000000000036,C_T,correct,include
+p01,5,no_gaze,noise,boat,NA,NA,NA,NA,NA,NA,NA,center,noun,1.0670000000000002,C_D,incorrect,include
+p01,6,no_gaze,noise,bottle,NA,NA,NA,NA,NA,NA,NA,center,noun,0.06700000000000017,C_D,incorrect,include
+p01,7,no_gaze,noise,boat,NA,NA,NA,NA,NA,NA,NA,center,noun,0.633,C_T,correct,include
+p01,8,no_gaze,noise,cookie,NA,NA,NA,NA,NA,NA,NA,distracter,noun,0.46699999999999964,D_T,incorrect,include
+p01,9,no_gaze,noise,chicken,NA,NA,NA,NA,NA,NA,NA,center,noun,1,C_T,correct,include
+p01,10,no_gaze,noise,juice,NA,NA,NA,NA,NA,NA,NA,center,noun,1.2670000000000003,C_T,correct,include
+p01,11,no_gaze,noise,chicken,NA,NA,NA,NA,NA,NA,NA,center,noun,0.5670000000000002,C_D,incorrect,include
+p01,12,no_gaze,noise,bottle,NA,NA,NA,NA,NA,NA,NA,center,noun,0.9000000000000004,C_T,correct,include
+p01,13,no_gaze,noise,shoe,NA,NA,NA,NA,NA,NA,NA,center,noun,0.5330000000000004,C_T,correct,include
+p01,14,no_gaze,noise,ball,NA,NA,NA,NA,NA,NA,NA,center,noun,0.8330000000000002,C_T,correct,include
+p01,15,no_gaze,noise,ball,NA,NA,NA,NA,NA,NA,NA,center,noun,1.2000000000000002,C_T,correct,include
+p01,16,no_gaze,noise,juice,NA,NA,NA,NA,NA,NA,NA,target,noun,0.23299999999999965,T_D,incorrect,include
+p01,17,no_gaze,no_noise,juice,NA,NA,NA,NA,NA,NA,NA,center,noun,0.7999999999999998,C_T,correct,include
+p01,18,no_gaze,no_noise,cookie,NA,NA,NA,NA,NA,NA,NA,center,noun,1.9669999999999996,C_T,correct,include
+p01,19,no_gaze,no_noise,shoe,NA,NA,NA,NA,NA,NA,NA,center,noun,0.3330000000000002,C_T,correct,include
+p01,20,no_gaze,no_noise,shoe,NA,NA,NA,NA,NA,NA,NA,center,noun,0.46699999999999964,C_D,incorrect,include
+p01,21,no_gaze,no_noise,bunny,NA,NA,NA,NA,NA,NA,NA,target,noun,0.26700000000000035,T_C,incorrect,include
+p01,22,no_gaze,no_noise,cookie,NA,NA,NA,NA,NA,NA,NA,center,noun,0.8330000000000002,C_D,incorrect,include
+p01,23,no_gaze,no_noise,bottle,NA,NA,NA,NA,NA,NA,NA,center,noun,0.26700000000000035,C_D,incorrect,include
+p01,24,no_gaze,no_noise,bottle,NA,NA,NA,NA,NA,NA,NA,center,noun,1.7670000000000003,C_T,correct,include
+p01,25,no_gaze,no_noise,juice,NA,NA,NA,NA,NA,NA,NA,distracter,noun,1.5330000000000004,D_T,incorrect,include
+p01,26,no_gaze,no_noise,ball,NA,NA,NA,NA,NA,NA,NA,distracter,noun,0.06700000000000017,D_C,incorrect,include
+p01,27,no_gaze,no_noise,chicken,NA,NA,NA,NA,NA,NA,NA,center,noun,0.5999999999999996,C_D,incorrect,include
+speed_acc_child_noise_10,1,no_gaze,noise,bunny,2017-07-20T00:00:00Z,2013-09-05T00:00:00Z,M,NA,NA,order2,went well!,center,noun,1.2999999999999998,C_D,incorrect,include
+speed_acc_child_noise_10,2,no_gaze,noise,boat,2017-07-20T00:00:00Z,2013-09-05T00:00:00Z,M,NA,NA,order2,went well!,center,noun,1.633,C_T,correct,include
+speed_acc_child_noise_10,3,no_gaze,noise,bunny,2017-07-20T00:00:00Z,2013-09-05T00:00:00Z,M,NA,NA,order2,went well!,center,noun,0.06700000000000017,C_T,correct,include
+speed_acc_child_noise_10,4,no_gaze,noise,boat,2017-07-20T00:00:00Z,2013-09-05T00:00:00Z,M,NA,NA,order2,went well!,target,noun,0.16699999999999982,T_C,incorrect,include
+speed_acc_child_noise_10,5,no_gaze,noise,shoe,2017-07-20T00:00:00Z,2013-09-05T00:00:00Z,M,NA,NA,order2,went well!,target,noun,0.3330000000000002,T_C,incorrect,include
+speed_acc_child_noise_10,6,no_gaze,noise,cookie,2017-07-20T00:00:00Z,2013-09-05T00:00:00Z,M,NA,NA,order2,went well!,center,noun,NA,no_shift,NA,include
+speed_acc_child_noise_10,7,no_gaze,noise,juice,2017-07-20T00:00:00Z,2013-09-05T00:00:00Z,M,NA,NA,order2,went well!,target,noun,0.16699999999999982,T_C,incorrect,include
+speed_acc_child_noise_10,8,no_gaze,noise,chicken,2017-07-20T00:00:00Z,2013-09-05T00:00:00Z,M,NA,NA,order2,went well!,distracter,noun,2.0329999999999995,D_C,incorrect,include
+speed_acc_child_noise_10,9,no_gaze,noise,chicken,2017-07-20T00:00:00Z,2013-09-05T00:00:00Z,M,NA,NA,order2,went well!,target,noun,0.7670000000000003,T_C,incorrect,include
+speed_acc_child_noise_10,10,no_gaze,noise,ball,2017-07-20T00:00:00Z,2013-09-05T00:00:00Z,M,NA,NA,order2,went well!,center,noun,2.2670000000000003,C_T,correct,include
+speed_acc_child_noise_10,11,no_gaze,noise,shoe,2017-07-20T00:00:00Z,2013-09-05T00:00:00Z,M,NA,NA,order2,went well!,center,noun,1.2329999999999997,C_T,correct,include
+speed_acc_child_noise_10,12,no_gaze,noise,ball,2017-07-20T00:00:00Z,2013-09-05T00:00:00Z,M,NA,NA,order2,went well!,center,noun,1.4669999999999996,C_T,correct,include
+speed_acc_child_noise_10,13,no_gaze,noise,bottle,2017-07-20T00:00:00Z,2013-09-05T00:00:00Z,M,NA,NA,order2,went well!,distracter,noun,1.0999999999999996,D_C,incorrect,include
+speed_acc_child_noise_10,14,no_gaze,noise,bottle,2017-07-20T00:00:00Z,2013-09-05T00:00:00Z,M,NA,NA,order2,went well!,center,noun,1.5999999999999996,C_T,correct,include
+speed_acc_child_noise_10,15,no_gaze,noise,cookie,2017-07-20T00:00:00Z,2013-09-05T00:00:00Z,M,NA,NA,order2,went well!,target,noun,0.09999999999999964,T_C,incorrect,include
+speed_acc_child_noise_10,16,no_gaze,noise,juice,2017-07-20T00:00:00Z,2013-09-05T00:00:00Z,M,NA,NA,order2,went well!,center,noun,0.9669999999999996,C_T,correct,include
+speed_acc_child_noise_10,17,no_gaze,no_noise,juice,2017-07-20T00:00:00Z,2013-09-05T00:00:00Z,M,NA,NA,order2,went well!,center,noun,1.367,C_D,incorrect,include
+speed_acc_child_noise_10,18,no_gaze,no_noise,cookie,2017-07-20T00:00:00Z,2013-09-05T00:00:00Z,M,NA,NA,order2,went well!,distracter,noun,0.16699999999999982,D_T,incorrect,include
+speed_acc_child_noise_10,19,no_gaze,no_noise,boat,2017-07-20T00:00:00Z,2013-09-05T00:00:00Z,M,NA,NA,order2,went well!,center,noun,0.133,C_T,correct,include
+speed_acc_child_noise_10,20,no_gaze,no_noise,bottle,2017-07-20T00:00:00Z,2013-09-05T00:00:00Z,M,NA,NA,order2,went well!,center,noun,1.0330000000000004,C_D,incorrect,include
+speed_acc_child_noise_10,21,no_gaze,no_noise,bunny,2017-07-20T00:00:00Z,2013-09-05T00:00:00Z,M,NA,NA,order2,went well!,center,noun,0.20000000000000018,C_T,correct,include
+speed_acc_child_noise_10,22,no_gaze,no_noise,chicken,2017-07-20T00:00:00Z,2013-09-05T00:00:00Z,M,NA,NA,order2,went well!,center,noun,2.833,C_D,incorrect,include
+speed_acc_child_noise_10,23,no_gaze,no_noise,shoe,2017-07-20T00:00:00Z,2013-09-05T00:00:00Z,M,NA,NA,order2,went well!,center,noun,2.132999999999999,C_D,incorrect,include
+speed_acc_child_noise_10,24,no_gaze,no_noise,cookie,2017-07-20T00:00:00Z,2013-09-05T00:00:00Z,M,NA,NA,order2,went well!,center,noun,1.4000000000000004,C_T,correct,include
+speed_acc_child_noise_10,25,no_gaze,no_noise,boat,2017-07-20T00:00:00Z,2013-09-05T00:00:00Z,M,NA,NA,order2,went well!,target,noun,2.9669999999999996,T_D,incorrect,include
+speed_acc_child_noise_10,26,no_gaze,no_noise,juice,2017-07-20T00:00:00Z,2013-09-05T00:00:00Z,M,NA,NA,order2,went well!,distracter,noun,NA,no_shift,NA,include
+speed_acc_child_noise_10,27,no_gaze,no_noise,ball,2017-07-20T00:00:00Z,2013-09-05T00:00:00Z,M,NA,NA,order2,went well!,center,noun,2,C_D,incorrect,include
+speed_acc_child_noise_10,28,no_gaze,no_noise,chicken,2017-07-20T00:00:00Z,2013-09-05T00:00:00Z,M,NA,NA,order2,went well!,center,noun,0.7329999999999997,C_D,incorrect,include
+speed_acc_child_noise_10,29,no_gaze,no_noise,bunny,2017-07-20T00:00:00Z,2013-09-05T00:00:00Z,M,NA,NA,order2,went well!,target,noun,1.5999999999999996,T_C,incorrect,include
+speed_acc_child_noise_10,30,no_gaze,no_noise,bottle,2017-07-20T00:00:00Z,2013-09-05T00:00:00Z,M,NA,NA,order2,went well!,distracter,noun,1.4329999999999998,D_C,incorrect,include
+speed_acc_child_noise_10,31,no_gaze,no_noise,ball,2017-07-20T00:00:00Z,2013-09-05T00:00:00Z,M,NA,NA,order2,went well!,center,noun,1.7000000000000002,C_T,correct,include
+speed_acc_child_noise_10,32,no_gaze,no_noise,shoe,2017-07-20T00:00:00Z,2013-09-05T00:00:00Z,M,NA,NA,order2,went well!,center,noun,1.2329999999999997,C_T,correct,include
+speed_acc_child_noise_11,1,no_gaze,no_noise,bunny,2017-07-25T00:00:00Z,2012-12-03T00:00:00Z,F,NA,NA,order1,went well!,target,noun,0.5,T_C,incorrect,include
+speed_acc_child_noise_11,2,no_gaze,no_noise,juice,2017-07-25T00:00:00Z,2012-12-03T00:00:00Z,F,NA,NA,order1,went well!,center,noun,0.09999999999999964,C_D,incorrect,include
+speed_acc_child_noise_11,3,no_gaze,no_noise,shoe,2017-07-25T00:00:00Z,2012-12-03T00:00:00Z,F,NA,NA,order1,went well!,center,noun,0.5330000000000004,C_D,incorrect,include
+speed_acc_child_noise_11,4,no_gaze,no_noise,bottle,2017-07-25T00:00:00Z,2012-12-03T00:00:00Z,F,NA,NA,order1,went well!,center,noun,0.2999999999999998,C_D,incorrect,include
+speed_acc_child_noise_11,5,no_gaze,no_noise,chicken,2017-07-25T00:00:00Z,2012-12-03T00:00:00Z,F,NA,NA,order1,went well!,center,noun,0.26700000000000035,C_T,correct,include
+speed_acc_child_noise_11,6,no_gaze,no_noise,boat,2017-07-25T00:00:00Z,2012-12-03T00:00:00Z,F,NA,NA,order1,went well!,distracter,noun,0.5670000000000002,D_T,incorrect,include
+speed_acc_child_noise_11,7,no_gaze,no_noise,boat,2017-07-25T00:00:00Z,2012-12-03T00:00:00Z,F,NA,NA,order1,went well!,distracter,noun,0.40000000000000036,D_C,incorrect,include
+speed_acc_child_noise_11,8,no_gaze,no_noise,cookie,2017-07-25T00:00:00Z,2012-12-03T00:00:00Z,F,NA,NA,order1,went well!,center,noun,0.23299999999999965,C_T,correct,include
+speed_acc_child_noise_11,9,no_gaze,no_noise,ball,2017-07-25T00:00:00Z,2012-12-03T00:00:00Z,F,NA,NA,order1,went well!,distracter,noun,0.8330000000000002,D_T,incorrect,include
+speed_acc_child_noise_11,10,no_gaze,no_noise,ball,2017-07-25T00:00:00Z,2012-12-03T00:00:00Z,F,NA,NA,order1,went well!,center,noun,0.5999999999999996,C_T,correct,include
+speed_acc_child_noise_11,11,no_gaze,no_noise,juice,2017-07-25T00:00:00Z,2012-12-03T00:00:00Z,F,NA,NA,order1,went well!,center,noun,0.43299999999999983,C_D,incorrect,include
+speed_acc_child_noise_11,12,no_gaze,no_noise,cookie,2017-07-25T00:00:00Z,2012-12-03T00:00:00Z,F,NA,NA,order1,went well!,target,noun,1.5670000000000002,T_C,incorrect,include
+speed_acc_child_noise_11,13,no_gaze,no_noise,bunny,2017-07-25T00:00:00Z,2012-12-03T00:00:00Z,F,NA,NA,order1,went well!,center,noun,0.7000000000000002,C_T,correct,include
+speed_acc_child_noise_11,14,no_gaze,no_noise,shoe,2017-07-25T00:00:00Z,2012-12-03T00:00:00Z,F,NA,NA,order1,went well!,center,noun,0.5670000000000002,C_T,correct,include
+speed_acc_child_noise_11,15,no_gaze,no_noise,chicken,2017-07-25T00:00:00Z,2012-12-03T00:00:00Z,F,NA,NA,order1,went well!,center,noun,0.3330000000000002,C_T,correct,include
+speed_acc_child_noise_11,16,no_gaze,no_noise,bottle,2017-07-25T00:00:00Z,2012-12-03T00:00:00Z,F,NA,NA,order1,went well!,center,noun,0.3330000000000002,C_T,correct,include
+speed_acc_child_noise_11,17,no_gaze,noise,cookie,2017-07-25T00:00:00Z,2012-12-03T00:00:00Z,F,NA,NA,order1,went well!,center,noun,0.9669999999999996,C_T,correct,include
+speed_acc_child_noise_11,18,no_gaze,noise,boat,2017-07-25T00:00:00Z,2012-12-03T00:00:00Z,F,NA,NA,order1,went well!,center,noun,0.7329999999999997,C_D,incorrect,include
+speed_acc_child_noise_11,19,no_gaze,noise,bunny,2017-07-25T00:00:00Z,2012-12-03T00:00:00Z,F,NA,NA,order1,went well!,center,noun,0.9669999999999996,C_T,correct,include
+speed_acc_child_noise_11,20,no_gaze,noise,bottle,2017-07-25T00:00:00Z,2012-12-03T00:00:00Z,F,NA,NA,order1,went well!,center,noun,0.09999999999999964,C_D,incorrect,include
+speed_acc_child_noise_11,21,no_gaze,noise,bottle,2017-07-25T00:00:00Z,2012-12-03T00:00:00Z,F,NA,NA,order1,went well!,center,noun,0.5670000000000002,C_D,incorrect,include
+speed_acc_child_noise_11,22,no_gaze,noise,shoe,2017-07-25T00:00:00Z,2012-12-03T00:00:00Z,F,NA,NA,order1,went well!,center,noun,0.867,C_T,correct,include
+speed_acc_child_noise_11,23,no_gaze,noise,juice,2017-07-25T00:00:00Z,2012-12-03T00:00:00Z,F,NA,NA,order1,went well!,center,noun,0.9669999999999996,C_D,incorrect,include
+speed_acc_child_noise_11,24,no_gaze,noise,juice,2017-07-25T00:00:00Z,2012-12-03T00:00:00Z,F,NA,NA,order1,went well!,center,noun,0.7000000000000002,C_D,incorrect,include
+speed_acc_child_noise_11,25,no_gaze,noise,ball,2017-07-25T00:00:00Z,2012-12-03T00:00:00Z,F,NA,NA,order1,went well!,center,noun,0.7000000000000002,C_D,incorrect,include
+speed_acc_child_noise_11,26,no_gaze,noise,boat,2017-07-25T00:00:00Z,2012-12-03T00:00:00Z,F,NA,NA,order1,went well!,center,noun,1.0670000000000002,C_D,incorrect,include
+speed_acc_child_noise_11,27,no_gaze,noise,chicken,2017-07-25T00:00:00Z,2012-12-03T00:00:00Z,F,NA,NA,order1,went well!,target,noun,0.23299999999999965,T_C,incorrect,include
+speed_acc_child_noise_11,28,no_gaze,noise,cookie,2017-07-25T00:00:00Z,2012-12-03T00:00:00Z,F,NA,NA,order1,went well!,target,noun,0.7329999999999997,T_C,incorrect,include
+speed_acc_child_noise_11,29,no_gaze,noise,bunny,2017-07-25T00:00:00Z,2012-12-03T00:00:00Z,F,NA,NA,order1,went well!,center,noun,0.5330000000000004,C_D,incorrect,include
+speed_acc_child_noise_11,30,no_gaze,noise,shoe,2017-07-25T00:00:00Z,2012-12-03T00:00:00Z,F,NA,NA,order1,went well!,target,noun,0.3330000000000002,T_C,incorrect,include
+speed_acc_child_noise_11,31,no_gaze,noise,ball,2017-07-25T00:00:00Z,2012-12-03T00:00:00Z,F,NA,NA,order1,went well!,distracter,noun,1.5670000000000002,D_T,incorrect,include
+speed_acc_child_noise_11,32,no_gaze,noise,chicken,2017-07-25T00:00:00Z,2012-12-03T00:00:00Z,F,NA,NA,order1,went well!,center,noun,1.2999999999999998,C_D,incorrect,include
+speed_acc_child_noise_12,1,no_gaze,no_noise,ball,2017-07-25T00:00:00Z,2014-02-13T00:00:00Z,F,NA,NA,order1,could not calibrate; tried four times,center,noun,0.26700000000000035,C_D,incorrect,include
+speed_acc_child_noise_12,2,no_gaze,no_noise,boat,2017-07-25T00:00:00Z,2014-02-13T00:00:00Z,F,NA,NA,order1,could not calibrate; tried four times,center,noun,1.0999999999999996,C_D,incorrect,include
+speed_acc_child_noise_12,3,no_gaze,no_noise,shoe,2017-07-25T00:00:00Z,2014-02-13T00:00:00Z,F,NA,NA,order1,could not calibrate; tried four times,center,noun,NA,no_shift,NA,include
+speed_acc_child_noise_12,4,no_gaze,no_noise,bunny,2017-07-25T00:00:00Z,2014-02-13T00:00:00Z,F,NA,NA,order1,could not calibrate; tried four times,center,noun,1.3330000000000002,C_T,correct,include
+speed_acc_child_noise_12,5,no_gaze,no_noise,boat,2017-07-25T00:00:00Z,2014-02-13T00:00:00Z,F,NA,NA,order1,could not calibrate; tried four times,center,noun,NA,no_shift,NA,include
+speed_acc_child_noise_12,6,no_gaze,no_noise,chicken,2017-07-25T00:00:00Z,2014-02-13T00:00:00Z,F,NA,NA,order1,could not calibrate; tried four times,center,noun,1.2670000000000003,C_D,incorrect,include
+speed_acc_child_noise_12,7,no_gaze,no_noise,bottle,2017-07-25T00:00:00Z,2014-02-13T00:00:00Z,F,NA,NA,order1,could not calibrate; tried four times,center,noun,1.0670000000000002,C_D,incorrect,include
+speed_acc_child_noise_12,8,no_gaze,no_noise,juice,2017-07-25T00:00:00Z,2014-02-13T00:00:00Z,F,NA,NA,order1,could not calibrate; tried four times,center,noun,1.5999999999999996,C_T,correct,include
+speed_acc_child_noise_12,9,no_gaze,no_noise,juice,2017-07-25T00:00:00Z,2014-02-13T00:00:00Z,F,NA,NA,order1,could not calibrate; tried four times,center,noun,0.7329999999999997,C_D,incorrect,include
+speed_acc_child_noise_12,10,no_gaze,no_noise,cookie,2017-07-25T00:00:00Z,2014-02-13T00:00:00Z,F,NA,NA,order1,could not calibrate; tried four times,center,noun,0.3330000000000002,C_T,correct,include
+speed_acc_child_noise_12,11,no_gaze,no_noise,bottle,2017-07-25T00:00:00Z,2014-02-13T00:00:00Z,F,NA,NA,order1,could not calibrate; tried four times,center,noun,0.20000000000000018,C_D,incorrect,include
+speed_acc_child_noise_12,12,no_gaze,no_noise,shoe,2017-07-25T00:00:00Z,2014-02-13T00:00:00Z,F,NA,NA,order1,could not calibrate; tried four times,center,noun,0.7670000000000003,C_T,correct,include
+speed_acc_child_noise_12,13,no_gaze,no_noise,bunny,2017-07-25T00:00:00Z,2014-02-13T00:00:00Z,F,NA,NA,order1,could not calibrate; tried four times,center,noun,0.06700000000000017,C_T,correct,include
+speed_acc_child_noise_12,14,no_gaze,no_noise,chicken,2017-07-25T00:00:00Z,2014-02-13T00:00:00Z,F,NA,NA,order1,could not calibrate; tried four times,center,noun,1,C_D,incorrect,include
+speed_acc_child_noise_12,15,no_gaze,no_noise,ball,2017-07-25T00:00:00Z,2014-02-13T00:00:00Z,F,NA,NA,order1,could not calibrate; tried four times,center,noun,1.4329999999999998,C_D,incorrect,include
+speed_acc_child_noise_12,16,no_gaze,no_noise,cookie,2017-07-25T00:00:00Z,2014-02-13T00:00:00Z,F,NA,NA,order1,could not calibrate; tried four times,center,noun,2.433,C_T,correct,include
+speed_acc_child_noise_12,17,no_gaze,noise,bottle,2017-07-25T00:00:00Z,2014-02-13T00:00:00Z,F,NA,NA,order1,could not calibrate; tried four times,center,noun,0.7329999999999997,C_D,incorrect,include
+speed_acc_child_noise_12,18,no_gaze,noise,cookie,2017-07-25T00:00:00Z,2014-02-13T00:00:00Z,F,NA,NA,order1,could not calibrate; tried four times,center,noun,1.5,C_D,incorrect,include
+speed_acc_child_noise_12,19,no_gaze,noise,ball,2017-07-25T00:00:00Z,2014-02-13T00:00:00Z,F,NA,NA,order1,could not calibrate; tried four times,center,noun,0.5,C_T,correct,include
+speed_acc_child_noise_12,20,no_gaze,noise,juice,2017-07-25T00:00:00Z,2014-02-13T00:00:00Z,F,NA,NA,order1,could not calibrate; tried four times,center,noun,2.367,C_T,correct,include
+speed_acc_child_noise_12,21,no_gaze,noise,bottle,2017-07-25T00:00:00Z,2014-02-13T00:00:00Z,F,NA,NA,order1,could not calibrate; tried four times,distracter,noun,0.20000000000000018,D_C,incorrect,include
+speed_acc_child_noise_12,22,no_gaze,noise,boat,2017-07-25T00:00:00Z,2014-02-13T00:00:00Z,F,NA,NA,order1,could not calibrate; tried four times,center,noun,1.5670000000000002,C_T,correct,include
+speed_acc_child_noise_12,23,no_gaze,noise,bunny,2017-07-25T00:00:00Z,2014-02-13T00:00:00Z,F,NA,NA,order1,could not calibrate; tried four times,center,noun,1.4000000000000004,C_T,correct,include
+speed_acc_child_noise_12,24,no_gaze,noise,chicken,2017-07-25T00:00:00Z,2014-02-13T00:00:00Z,F,NA,NA,order1,could not calibrate; tried four times,center,noun,1.2000000000000002,C_D,incorrect,include
+speed_acc_child_noise_12,25,no_gaze,noise,boat,2017-07-25T00:00:00Z,2014-02-13T00:00:00Z,F,NA,NA,order1,could not calibrate; tried four times,center,noun,NA,no_shift,NA,include
+speed_acc_child_noise_12,26,no_gaze,noise,chicken,2017-07-25T00:00:00Z,2014-02-13T00:00:00Z,F,NA,NA,order1,could not calibrate; tried four times,center,noun,NA,no_shift,NA,include
+speed_acc_child_noise_12,27,no_gaze,noise,shoe,2017-07-25T00:00:00Z,2014-02-13T00:00:00Z,F,NA,NA,order1,could not calibrate; tried four times,center,noun,1.9329999999999998,C_T,correct,include
+speed_acc_child_noise_12,28,no_gaze,noise,bunny,2017-07-25T00:00:00Z,2014-02-13T00:00:00Z,F,NA,NA,order1,could not calibrate; tried four times,center,noun,0.16699999999999982,C_D,incorrect,include
+speed_acc_child_noise_12,29,no_gaze,noise,shoe,2017-07-25T00:00:00Z,2014-02-13T00:00:00Z,F,NA,NA,order1,could not calibrate; tried four times,center,noun,1.4329999999999998,C_T,correct,include
+speed_acc_child_noise_12,30,no_gaze,noise,juice,2017-07-25T00:00:00Z,2014-02-13T00:00:00Z,F,NA,NA,order1,could not calibrate; tried four times,center,noun,2.067,C_T,correct,include
+speed_acc_child_noise_12,31,no_gaze,noise,cookie,2017-07-25T00:00:00Z,2014-02-13T00:00:00Z,F,NA,NA,order1,could not calibrate; tried four times,center,noun,NA,no_shift,NA,include
+speed_acc_child_noise_12,32,no_gaze,noise,ball,2017-07-25T00:00:00Z,2014-02-13T00:00:00Z,F,NA,NA,order1,could not calibrate; tried four times,center,noun,0.633,C_D,incorrect,include
+speed_acc_child_noise_13,1,no_gaze,no_noise,boat,2017-07-25T00:00:00Z,2014-01-20T00:00:00Z,F,NA,NA,order3,went well!,center,noun,1.4669999999999996,C_T,correct,include
+speed_acc_child_noise_13,2,no_gaze,no_noise,cookie,2017-07-25T00:00:00Z,2014-01-20T00:00:00Z,F,NA,NA,order3,went well!,center,noun,1.4669999999999996,C_D,incorrect,include
+speed_acc_child_noise_13,3,no_gaze,no_noise,shoe,2017-07-25T00:00:00Z,2014-01-20T00:00:00Z,F,NA,NA,order3,went well!,center,noun,0.20000000000000018,C_D,incorrect,include
+speed_acc_child_noise_13,4,no_gaze,no_noise,cookie,2017-07-25T00:00:00Z,2014-01-20T00:00:00Z,F,NA,NA,order3,went well!,center,noun,0.3330000000000002,C_T,correct,include
+speed_acc_child_noise_13,5,no_gaze,no_noise,juice,2017-07-25T00:00:00Z,2014-01-20T00:00:00Z,F,NA,NA,order3,went well!,center,noun,0.9329999999999998,C_D,incorrect,include
+speed_acc_child_noise_13,6,no_gaze,no_noise,chicken,2017-07-25T00:00:00Z,2014-01-20T00:00:00Z,F,NA,NA,order3,went well!,center,noun,0.7670000000000003,C_D,incorrect,include
+speed_acc_child_noise_13,7,no_gaze,no_noise,bunny,2017-07-25T00:00:00Z,2014-01-20T00:00:00Z,F,NA,NA,order3,went well!,center,noun,0.3330000000000002,C_D,incorrect,include
+speed_acc_child_noise_13,8,no_gaze,no_noise,chicken,2017-07-25T00:00:00Z,2014-01-20T00:00:00Z,F,NA,NA,order3,went well!,center,noun,0.16699999999999982,C_T,correct,include
+speed_acc_child_noise_13,9,no_gaze,no_noise,shoe,2017-07-25T00:00:00Z,2014-01-20T00:00:00Z,F,NA,NA,order3,went well!,center,noun,0.3330000000000002,C_T,correct,include
+speed_acc_child_noise_13,10,no_gaze,no_noise,boat,2017-07-25T00:00:00Z,2014-01-20T00:00:00Z,F,NA,NA,order3,went well!,center,noun,1.0670000000000002,C_D,incorrect,include
+speed_acc_child_noise_13,11,no_gaze,no_noise,juice,2017-07-25T00:00:00Z,2014-01-20T00:00:00Z,F,NA,NA,order3,went well!,target,noun,1.5330000000000004,T_C,incorrect,include
+speed_acc_child_noise_13,12,no_gaze,no_noise,bottle,2017-07-25T00:00:00Z,2014-01-20T00:00:00Z,F,NA,NA,order3,went well!,center,noun,0.3330000000000002,C_T,correct,include
+speed_acc_child_noise_13,13,no_gaze,no_noise,ball,2017-07-25T00:00:00Z,2014-01-20T00:00:00Z,F,NA,NA,order3,went well!,center,noun,0.43299999999999983,C_T,correct,include
+speed_acc_child_noise_13,14,no_gaze,no_noise,ball,2017-07-25T00:00:00Z,2014-01-20T00:00:00Z,F,NA,NA,order3,went well!,center,noun,0.5330000000000004,C_T,correct,include
+speed_acc_child_noise_13,15,no_gaze,no_noise,bunny,2017-07-25T00:00:00Z,2014-01-20T00:00:00Z,F,NA,NA,order3,went well!,center,noun,0.7329999999999997,C_D,incorrect,include
+speed_acc_child_noise_13,16,no_gaze,no_noise,bottle,2017-07-25T00:00:00Z,2014-01-20T00:00:00Z,F,NA,NA,order3,went well!,center,noun,0.7000000000000002,C_D,incorrect,include
+speed_acc_child_noise_13,17,no_gaze,noise,bunny,2017-07-25T00:00:00Z,2014-01-20T00:00:00Z,F,NA,NA,order3,went well!,center,noun,0.6669999999999998,C_D,incorrect,include
+speed_acc_child_noise_13,18,no_gaze,noise,juice,2017-07-25T00:00:00Z,2014-01-20T00:00:00Z,F,NA,NA,order3,went well!,center,noun,1.0330000000000004,C_T,correct,include
+speed_acc_child_noise_13,19,no_gaze,noise,shoe,2017-07-25T00:00:00Z,2014-01-20T00:00:00Z,F,NA,NA,order3,went well!,distracter,noun,0.43299999999999983,D_C,incorrect,include
+speed_acc_child_noise_13,20,no_gaze,noise,juice,2017-07-25T00:00:00Z,2014-01-20T00:00:00Z,F,NA,NA,order3,went well!,center,noun,0.367,C_T,correct,include
+speed_acc_child_noise_13,21,no_gaze,noise,shoe,2017-07-25T00:00:00Z,2014-01-20T00:00:00Z,F,NA,NA,order3,went well!,center,noun,1,C_T,correct,include
+speed_acc_child_noise_13,22,no_gaze,noise,bunny,2017-07-25T00:00:00Z,2014-01-20T00:00:00Z,F,NA,NA,order3,went well!,center,noun,NA,no_shift,NA,include
+speed_acc_child_noise_13,23,no_gaze,noise,cookie,2017-07-25T00:00:00Z,2014-01-20T00:00:00Z,F,NA,NA,order3,went well!,center,noun,0.40000000000000036,C_D,incorrect,include
+speed_acc_child_noise_13,24,no_gaze,noise,chicken,2017-07-25T00:00:00Z,2014-01-20T00:00:00Z,F,NA,NA,order3,went well!,center,noun,0.26700000000000035,C_T,correct,include
+speed_acc_child_noise_13,25,no_gaze,noise,cookie,2017-07-25T00:00:00Z,2014-01-20T00:00:00Z,F,NA,NA,order3,went well!,center,noun,0.7329999999999997,C_D,incorrect,include
+speed_acc_child_noise_13,26,no_gaze,noise,boat,2017-07-25T00:00:00Z,2014-01-20T00:00:00Z,F,NA,NA,order3,went well!,center,noun,1.133,C_T,correct,include
+speed_acc_child_noise_13,27,no_gaze,noise,ball,2017-07-25T00:00:00Z,2014-01-20T00:00:00Z,F,NA,NA,order3,went well!,center,noun,0.7000000000000002,C_D,incorrect,include
+speed_acc_child_noise_13,28,no_gaze,noise,chicken,2017-07-25T00:00:00Z,2014-01-20T00:00:00Z,F,NA,NA,order3,went well!,center,noun,1.367,C_T,correct,include
+speed_acc_child_noise_13,29,no_gaze,noise,ball,2017-07-25T00:00:00Z,2014-01-20T00:00:00Z,F,NA,NA,order3,went well!,center,noun,0.9329999999999998,C_D,incorrect,include
+speed_acc_child_noise_13,30,no_gaze,noise,boat,2017-07-25T00:00:00Z,2014-01-20T00:00:00Z,F,NA,NA,order3,went well!,center,noun,0.9329999999999998,C_T,correct,include
+speed_acc_child_noise_13,31,no_gaze,noise,bottle,2017-07-25T00:00:00Z,2014-01-20T00:00:00Z,F,NA,NA,order3,went well!,distracter,noun,1.3330000000000002,D_T,incorrect,include
+speed_acc_child_noise_13,32,no_gaze,noise,bottle,2017-07-25T00:00:00Z,2014-01-20T00:00:00Z,F,NA,NA,order3,went well!,center,noun,1.7000000000000002,C_T,correct,include
+speed_acc_child_noise_14,1,no_gaze,noise,chicken,2017-07-25T00:00:00Z,2012-06-12T00:00:00Z,F,NA,NA,order4,got very distracted by me; was not picking up her eyes because she was looking at me,center,noun,0.5,C_T,correct,include
+speed_acc_child_noise_14,2,no_gaze,noise,chicken,2017-07-25T00:00:00Z,2012-06-12T00:00:00Z,F,NA,NA,order4,got very distracted by me; was not picking up her eyes because she was looking at me,center,noun,0.16699999999999982,C_D,incorrect,include
+speed_acc_child_noise_14,3,no_gaze,noise,bottle,2017-07-25T00:00:00Z,2012-06-12T00:00:00Z,F,NA,NA,order4,got very distracted by me; was not picking up her eyes because she was looking at me,center,noun,1.367,C_T,correct,include
+speed_acc_child_noise_14,4,no_gaze,noise,cookie,2017-07-25T00:00:00Z,2012-06-12T00:00:00Z,F,NA,NA,order4,got very distracted by me; was not picking up her eyes because she was looking at me,center,noun,1.5,C_T,correct,include
+speed_acc_child_noise_14,5,no_gaze,noise,boat,2017-07-25T00:00:00Z,2012-06-12T00:00:00Z,F,NA,NA,order4,got very distracted by me; was not picking up her eyes because she was looking at me,center,noun,1.3330000000000002,C_T,correct,include
+speed_acc_child_noise_14,6,no_gaze,noise,shoe,2017-07-25T00:00:00Z,2012-06-12T00:00:00Z,F,NA,NA,order4,got very distracted by me; was not picking up her eyes because she was looking at me,target,noun,0.46699999999999964,T_C,incorrect,include
+speed_acc_child_noise_14,7,no_gaze,noise,bunny,2017-07-25T00:00:00Z,2012-06-12T00:00:00Z,F,NA,NA,order4,got very distracted by me; was not picking up her eyes because she was looking at me,center,noun,2,C_D,incorrect,include
+speed_acc_child_noise_14,8,no_gaze,noise,boat,2017-07-25T00:00:00Z,2012-06-12T00:00:00Z,F,NA,NA,order4,got very distracted by me; was not picking up her eyes because she was looking at me,center,noun,1.367,C_T,correct,include
+speed_acc_child_noise_14,9,no_gaze,noise,shoe,2017-07-25T00:00:00Z,2012-06-12T00:00:00Z,F,NA,NA,order4,got very distracted by me; was not picking up her eyes because she was looking at me,center,noun,0.43299999999999983,C_T,correct,include
+speed_acc_child_noise_14,19,no_gaze,no_noise,chicken,2017-07-25T00:00:00Z,2012-06-12T00:00:00Z,F,NA,NA,order4,got very distracted by me; was not picking up her eyes because she was looking at me,center,noun,1.5999999999999996,C_D,incorrect,include
+speed_acc_child_noise_14,20,no_gaze,no_noise,cookie,2017-07-25T00:00:00Z,2012-06-12T00:00:00Z,F,NA,NA,order4,got very distracted by me; was not picking up her eyes because she was looking at me,target,noun,3.5,T_C,incorrect,include
+speed_acc_child_noise_14,21,no_gaze,no_noise,bunny,2017-07-25T00:00:00Z,2012-06-12T00:00:00Z,F,NA,NA,order4,got very distracted by me; was not picking up her eyes because she was looking at me,center,noun,NA,no_shift,NA,include
+speed_acc_child_noise_14,22,no_gaze,no_noise,boat,2017-07-25T00:00:00Z,2012-06-12T00:00:00Z,F,NA,NA,order4,got very distracted by me; was not picking up her eyes because she was looking at me,center,noun,NA,no_shift,NA,include
+speed_acc_child_noise_14,23,no_gaze,no_noise,bottle,2017-07-25T00:00:00Z,2012-06-12T00:00:00Z,F,NA,NA,order4,got very distracted by me; was not picking up her eyes because she was looking at me,center,noun,NA,no_shift,NA,include
+speed_acc_child_noise_14,24,no_gaze,no_noise,shoe,2017-07-25T00:00:00Z,2012-06-12T00:00:00Z,F,NA,NA,order4,got very distracted by me; was not picking up her eyes because she was looking at me,center,noun,1.7999999999999998,C_D,incorrect,include
+speed_acc_child_noise_14,25,no_gaze,no_noise,juice,2017-07-25T00:00:00Z,2012-06-12T00:00:00Z,F,NA,NA,order4,got very distracted by me; was not picking up her eyes because she was looking at me,distracter,noun,NA,no_shift,NA,include
+speed_acc_child_noise_14,26,no_gaze,no_noise,bunny,2017-07-25T00:00:00Z,2012-06-12T00:00:00Z,F,NA,NA,order4,got very distracted by me; was not picking up her eyes because she was looking at me,center,noun,NA,no_shift,NA,include
+speed_acc_child_noise_14,27,no_gaze,no_noise,juice,2017-07-25T00:00:00Z,2012-06-12T00:00:00Z,F,NA,NA,order4,got very distracted by me; was not picking up her eyes because she was looking at me,target,noun,NA,no_shift,NA,include
+speed_acc_child_noise_15,1,no_gaze,noise,shoe,2017-07-25T00:00:00Z,2013-12-08T00:00:00Z,F,NA,NA,order2,went well!,target,noun,0.9329999999999998,T_C,incorrect,include
+speed_acc_child_noise_15,2,no_gaze,noise,bunny,2017-07-25T00:00:00Z,2013-12-08T00:00:00Z,F,NA,NA,order2,went well!,center,noun,1.0999999999999996,C_T,correct,include
+speed_acc_child_noise_15,3,no_gaze,noise,bottle,2017-07-25T00:00:00Z,2013-12-08T00:00:00Z,F,NA,NA,order2,went well!,center,noun,0.5670000000000002,C_D,incorrect,include
+speed_acc_child_noise_15,4,no_gaze,noise,chicken,2017-07-25T00:00:00Z,2013-12-08T00:00:00Z,F,NA,NA,order2,went well!,center,noun,0.8330000000000002,C_T,correct,include
+speed_acc_child_noise_15,5,no_gaze,noise,bunny,2017-07-25T00:00:00Z,2013-12-08T00:00:00Z,F,NA,NA,order2,went well!,center,noun,0.8330000000000002,C_T,correct,include
+speed_acc_child_noise_15,6,no_gaze,noise,cookie,2017-07-25T00:00:00Z,2013-12-08T00:00:00Z,F,NA,NA,order2,went well!,center,noun,0.133,C_T,correct,include
+speed_acc_child_noise_15,7,no_gaze,noise,shoe,2017-07-25T00:00:00Z,2013-12-08T00:00:00Z,F,NA,NA,order2,went well!,center,noun,0.9329999999999998,C_D,incorrect,include
+speed_acc_child_noise_15,8,no_gaze,noise,boat,2017-07-25T00:00:00Z,2013-12-08T00:00:00Z,F,NA,NA,order2,went well!,center,noun,1.7000000000000002,C_D,incorrect,include
+speed_acc_child_noise_15,9,no_gaze,noise,juice,2017-07-25T00:00:00Z,2013-12-08T00:00:00Z,F,NA,NA,order2,went well!,target,noun,1.4669999999999996,T_D,incorrect,include
+speed_acc_child_noise_15,10,no_gaze,noise,cookie,2017-07-25T00:00:00Z,2013-12-08T00:00:00Z,F,NA,NA,order2,went well!,distracter,noun,0.367,D_C,incorrect,include
+speed_acc_child_noise_15,11,no_gaze,noise,ball,2017-07-25T00:00:00Z,2013-12-08T00:00:00Z,F,NA,NA,order2,went well!,center,noun,0.7000000000000002,C_D,incorrect,include
+speed_acc_child_noise_15,12,no_gaze,noise,boat,2017-07-25T00:00:00Z,2013-12-08T00:00:00Z,F,NA,NA,order2,went well!,center,noun,0.8330000000000002,C_T,correct,include
+speed_acc_child_noise_15,13,no_gaze,noise,juice,2017-07-25T00:00:00Z,2013-12-08T00:00:00Z,F,NA,NA,order2,went well!,center,noun,0.867,C_D,incorrect,include
+speed_acc_child_noise_15,14,no_gaze,noise,bottle,2017-07-25T00:00:00Z,2013-12-08T00:00:00Z,F,NA,NA,order2,went well!,center,noun,0.6669999999999998,C_D,incorrect,include
+speed_acc_child_noise_15,15,no_gaze,noise,chicken,2017-07-25T00:00:00Z,2013-12-08T00:00:00Z,F,NA,NA,order2,went well!,target,noun,0.16699999999999982,T_C,incorrect,include
+speed_acc_child_noise_15,16,no_gaze,noise,ball,2017-07-25T00:00:00Z,2013-12-08T00:00:00Z,F,NA,NA,order2,went well!,center,noun,1.2670000000000003,C_D,incorrect,include
+speed_acc_child_noise_15,17,no_gaze,no_noise,shoe,2017-07-25T00:00:00Z,2013-12-08T00:00:00Z,F,NA,NA,order2,went well!,center,noun,0.40000000000000036,C_T,correct,include
+speed_acc_child_noise_15,18,no_gaze,no_noise,bunny,2017-07-25T00:00:00Z,2013-12-08T00:00:00Z,F,NA,NA,order2,went well!,center,noun,0.7999999999999998,C_D,incorrect,include
+speed_acc_child_noise_15,19,no_gaze,no_noise,ball,2017-07-25T00:00:00Z,2013-12-08T00:00:00Z,F,NA,NA,order2,went well!,center,noun,4.199999999999999,C_T,correct,include
+speed_acc_child_noise_15,20,no_gaze,no_noise,bottle,2017-07-25T00:00:00Z,2013-12-08T00:00:00Z,F,NA,NA,order2,went well!,center,noun,1,C_T,correct,include
+speed_acc_child_noise_15,21,no_gaze,no_noise,juice,2017-07-25T00:00:00Z,2013-12-08T00:00:00Z,F,NA,NA,order2,went well!,distracter,noun,2.4669999999999996,D_C,incorrect,include
+speed_acc_child_noise_15,22,no_gaze,no_noise,bunny,2017-07-25T00:00:00Z,2013-12-08T00:00:00Z,F,NA,NA,order2,went well!,target,noun,1.9329999999999998,T_C,incorrect,include
+speed_acc_child_noise_15,23,no_gaze,no_noise,juice,2017-07-25T00:00:00Z,2013-12-08T00:00:00Z,F,NA,NA,order2,went well!,center,noun,0.43299999999999983,C_D,incorrect,include
+speed_acc_child_noise_15,24,no_gaze,no_noise,shoe,2017-07-25T00:00:00Z,2013-12-08T00:00:00Z,F,NA,NA,order2,went well!,center,noun,1.1669999999999998,C_T,correct,include
+speed_acc_child_noise_15,25,no_gaze,no_noise,boat,2017-07-25T00:00:00Z,2013-12-08T00:00:00Z,F,NA,NA,order2,went well!,center,noun,2.167,C_T,correct,include
+speed_acc_child_noise_15,26,no_gaze,no_noise,boat,2017-07-25T00:00:00Z,2013-12-08T00:00:00Z,F,NA,NA,order2,went well!,target,noun,0.46699999999999964,T_C,incorrect,include
+speed_acc_child_noise_15,27,no_gaze,no_noise,cookie,2017-07-25T00:00:00Z,2013-12-08T00:00:00Z,F,NA,NA,order2,went well!,center,noun,1.2329999999999997,C_T,correct,include
+speed_acc_child_noise_15,28,no_gaze,no_noise,chicken,2017-07-25T00:00:00Z,2013-12-08T00:00:00Z,F,NA,NA,order2,went well!,center,noun,0.9329999999999998,C_D,incorrect,include
+speed_acc_child_noise_15,29,no_gaze,no_noise,chicken,2017-07-25T00:00:00Z,2013-12-08T00:00:00Z,F,NA,NA,order2,went well!,distracter,noun,0.367,D_C,incorrect,include
+speed_acc_child_noise_15,30,no_gaze,no_noise,ball,2017-07-25T00:00:00Z,2013-12-08T00:00:00Z,F,NA,NA,order2,went well!,distracter,noun,0.7999999999999998,D_T,incorrect,include
+speed_acc_child_noise_15,31,no_gaze,no_noise,cookie,2017-07-25T00:00:00Z,2013-12-08T00:00:00Z,F,NA,NA,order2,went well!,distracter,noun,0.6669999999999998,D_C,incorrect,include
+speed_acc_child_noise_15,32,no_gaze,no_noise,bottle,2017-07-25T00:00:00Z,2013-12-08T00:00:00Z,F,NA,NA,order2,went well!,distracter,noun,0.133,D_C,incorrect,include
+speed_acc_child_noise_16,1,no_gaze,noise,bottle,2017-07-25T00:00:00Z,2012-05-26T00:00:00Z,F,NA,NA,order4,calibration slightly more than 1! also I said her name. also said the noise bothered her. also played the gaze game with tami already,center,noun,0.2999999999999998,C_T,correct,include
+speed_acc_child_noise_16,2,no_gaze,noise,ball,2017-07-25T00:00:00Z,2012-05-26T00:00:00Z,F,NA,NA,order4,calibration slightly more than 1! also I said her name. also said the noise bothered her. also played the gaze game with tami already,center,noun,0.3330000000000002,C_D,incorrect,include
+speed_acc_child_noise_16,3,no_gaze,noise,cookie,2017-07-25T00:00:00Z,2012-05-26T00:00:00Z,F,NA,NA,order4,calibration slightly more than 1! also I said her name. also said the noise bothered her. also played the gaze game with tami already,center,noun,0.5999999999999996,C_D,incorrect,include
+speed_acc_child_noise_16,4,no_gaze,noise,boat,2017-07-25T00:00:00Z,2012-05-26T00:00:00Z,F,NA,NA,order4,calibration slightly more than 1! also I said her name. also said the noise bothered her. also played the gaze game with tami already,center,noun,1.633,C_D,incorrect,include
+speed_acc_child_noise_16,5,no_gaze,noise,juice,2017-07-25T00:00:00Z,2012-05-26T00:00:00Z,F,NA,NA,order4,calibration slightly more than 1! also I said her name. also said the noise bothered her. also played the gaze game with tami already,center,noun,1.0670000000000002,C_T,correct,include
+speed_acc_child_noise_16,6,no_gaze,noise,chicken,2017-07-25T00:00:00Z,2012-05-26T00:00:00Z,F,NA,NA,order4,calibration slightly more than 1! also I said her name. also said the noise bothered her. also played the gaze game with tami already,center,noun,1.0670000000000002,C_D,incorrect,include
+speed_acc_child_noise_16,7,no_gaze,noise,bunny,2017-07-25T00:00:00Z,2012-05-26T00:00:00Z,F,NA,NA,order4,calibration slightly more than 1! also I said her name. also said the noise bothered her. also played the gaze game with tami already,center,noun,NA,no_shift,NA,include
+speed_acc_child_noise_16,8,no_gaze,noise,ball,2017-07-25T00:00:00Z,2012-05-26T00:00:00Z,F,NA,NA,order4,calibration slightly more than 1! also I said her name. also said the noise bothered her. also played the gaze game with tami already,center,noun,0.7329999999999997,C_T,correct,include
+speed_acc_child_noise_16,9,no_gaze,noise,bunny,2017-07-25T00:00:00Z,2012-05-26T00:00:00Z,F,NA,NA,order4,calibration slightly more than 1! also I said her name. also said the noise bothered her. also played the gaze game with tami already,center,noun,0.7000000000000002,C_T,correct,include
+speed_acc_child_noise_16,11,no_gaze,noise,bottle,2017-07-25T00:00:00Z,2012-05-26T00:00:00Z,F,NA,NA,order4,calibration slightly more than 1! also I said her name. also said the noise bothered her. also played the gaze game with tami already,center,noun,1.867,C_D,incorrect,include
+speed_acc_child_noise_16,12,no_gaze,noise,cookie,2017-07-25T00:00:00Z,2012-05-26T00:00:00Z,F,NA,NA,order4,calibration slightly more than 1! also I said her name. also said the noise bothered her. also played the gaze game with tami already,target,noun,0.16699999999999982,T_C,incorrect,include
+speed_acc_child_noise_16,13,no_gaze,noise,boat,2017-07-25T00:00:00Z,2012-05-26T00:00:00Z,F,NA,NA,order4,calibration slightly more than 1! also I said her name. also said the noise bothered her. also played the gaze game with tami already,distracter,noun,0.7000000000000002,D_T,incorrect,include
+speed_acc_child_noise_16,14,no_gaze,noise,chicken,2017-07-25T00:00:00Z,2012-05-26T00:00:00Z,F,NA,NA,order4,calibration slightly more than 1! also I said her name. also said the noise bothered her. also played the gaze game with tami already,center,noun,1.0670000000000002,C_D,incorrect,include
+speed_acc_child_noise_16,15,no_gaze,noise,shoe,2017-07-25T00:00:00Z,2012-05-26T00:00:00Z,F,NA,NA,order4,calibration slightly more than 1! also I said her name. also said the noise bothered her. also played the gaze game with tami already,center,noun,1.7329999999999997,C_T,correct,include
+speed_acc_child_noise_16,16,no_gaze,noise,juice,2017-07-25T00:00:00Z,2012-05-26T00:00:00Z,F,NA,NA,order4,calibration slightly more than 1! also I said her name. also said the noise bothered her. also played the gaze game with tami already,center,noun,2.133,C_T,correct,include
+speed_acc_child_noise_16,17,no_gaze,no_noise,juice,2017-07-25T00:00:00Z,2012-05-26T00:00:00Z,F,NA,NA,order4,calibration slightly more than 1! also I said her name. also said the noise bothered her. also played the gaze game with tami already,target,noun,0.133,T_C,incorrect,include
+speed_acc_child_noise_16,18,no_gaze,no_noise,boat,2017-07-25T00:00:00Z,2012-05-26T00:00:00Z,F,NA,NA,order4,calibration slightly more than 1! also I said her name. also said the noise bothered her. also played the gaze game with tami already,center,noun,0.06700000000000017,C_D,incorrect,include
+speed_acc_child_noise_16,19,no_gaze,no_noise,bunny,2017-07-25T00:00:00Z,2012-05-26T00:00:00Z,F,NA,NA,order4,calibration slightly more than 1! also I said her name. also said the noise bothered her. also played the gaze game with tami already,center,noun,0.7000000000000002,C_T,correct,include
+speed_acc_child_noise_16,20,no_gaze,no_noise,cookie,2017-07-25T00:00:00Z,2012-05-26T00:00:00Z,F,NA,NA,order4,calibration slightly more than 1! also I said her name. also said the noise bothered her. also played the gaze game with tami already,center,noun,2.2,C_T,correct,include
+speed_acc_child_noise_16,21,no_gaze,no_noise,chicken,2017-07-25T00:00:00Z,2012-05-26T00:00:00Z,F,NA,NA,order4,calibration slightly more than 1! also I said her name. also said the noise bothered her. also played the gaze game with tami already,distracter,noun,0.633,D_T,incorrect,include
+speed_acc_child_noise_16,22,no_gaze,no_noise,shoe,2017-07-25T00:00:00Z,2012-05-26T00:00:00Z,F,NA,NA,order4,calibration slightly more than 1! also I said her name. also said the noise bothered her. also played the gaze game with tami already,distracter,noun,0.26700000000000035,D_C,incorrect,include
+speed_acc_child_noise_16,23,no_gaze,no_noise,shoe,2017-07-25T00:00:00Z,2012-05-26T00:00:00Z,F,NA,NA,order4,calibration slightly more than 1! also I said her name. also said the noise bothered her. also played the gaze game with tami already,center,noun,0.867,C_T,correct,include
+speed_acc_child_noise_16,24,no_gaze,no_noise,boat,2017-07-25T00:00:00Z,2012-05-26T00:00:00Z,F,NA,NA,order4,calibration slightly more than 1! also I said her name. also said the noise bothered her. also played the gaze game with tami already,center,noun,1.0670000000000002,C_D,incorrect,include
+speed_acc_child_noise_16,26,no_gaze,no_noise,chicken,2017-07-25T00:00:00Z,2012-05-26T00:00:00Z,F,NA,NA,order4,calibration slightly more than 1! also I said her name. also said the noise bothered her. also played the gaze game with tami already,target,noun,0.43299999999999983,T_D,incorrect,include
+speed_acc_child_noise_16,27,no_gaze,no_noise,bottle,2017-07-25T00:00:00Z,2012-05-26T00:00:00Z,F,NA,NA,order4,calibration slightly more than 1! also I said her name. also said the noise bothered her. also played the gaze game with tami already,target,noun,0.40000000000000036,T_D,incorrect,include
+speed_acc_child_noise_16,28,no_gaze,no_noise,juice,2017-07-25T00:00:00Z,2012-05-26T00:00:00Z,F,NA,NA,order4,calibration slightly more than 1! also I said her name. also said the noise bothered her. also played the gaze game with tami already,center,noun,1.5670000000000002,C_D,incorrect,include
+speed_acc_child_noise_16,29,no_gaze,no_noise,cookie,2017-07-25T00:00:00Z,2012-05-26T00:00:00Z,F,NA,NA,order4,calibration slightly more than 1! also I said her name. also said the noise bothered her. also played the gaze game with tami already,center,noun,0.133,C_D,incorrect,include
+speed_acc_child_noise_16,30,no_gaze,no_noise,ball,2017-07-25T00:00:00Z,2012-05-26T00:00:00Z,F,NA,NA,order4,calibration slightly more than 1! also I said her name. also said the noise bothered her. also played the gaze game with tami already,target,noun,1.0330000000000004,T_D,incorrect,include
+speed_acc_child_noise_16,31,no_gaze,no_noise,bunny,2017-07-25T00:00:00Z,2012-05-26T00:00:00Z,F,NA,NA,order4,calibration slightly more than 1! also I said her name. also said the noise bothered her. also played the gaze game with tami already,distracter,noun,1.7999999999999998,D_T,incorrect,include
+speed_acc_child_noise_16,32,no_gaze,no_noise,bottle,2017-07-25T00:00:00Z,2012-05-26T00:00:00Z,F,NA,NA,order4,calibration slightly more than 1! also I said her name. also said the noise bothered her. also played the gaze game with tami already,center,noun,NA,no_shift,NA,include
+speed_acc_child_noise_17,1,no_gaze,noise,cookie,2017-07-25T00:00:00Z,2013-10-21T00:00:00Z,F,NA,NA,order2,"turned off the monitor at the beginning of the game, didn't finish",target,noun,1.0670000000000002,T_C,incorrect,include
+speed_acc_child_noise_17,2,no_gaze,noise,ball,2017-07-25T00:00:00Z,2013-10-21T00:00:00Z,F,NA,NA,order2,"turned off the monitor at the beginning of the game, didn't finish",center,noun,2.433,C_T,correct,include
+speed_acc_child_noise_17,3,no_gaze,noise,juice,2017-07-25T00:00:00Z,2013-10-21T00:00:00Z,F,NA,NA,order2,"turned off the monitor at the beginning of the game, didn't finish",center,noun,0.7999999999999998,C_T,correct,include
+speed_acc_child_noise_17,4,no_gaze,noise,chicken,2017-07-25T00:00:00Z,2013-10-21T00:00:00Z,F,NA,NA,order2,"turned off the monitor at the beginning of the game, didn't finish",center,noun,0.3330000000000002,C_T,correct,include
+speed_acc_child_noise_17,5,no_gaze,noise,cookie,2017-07-25T00:00:00Z,2013-10-21T00:00:00Z,F,NA,NA,order2,"turned off the monitor at the beginning of the game, didn't finish",center,noun,0.7670000000000003,C_T,correct,include
+speed_acc_child_noise_17,6,no_gaze,noise,chicken,2017-07-25T00:00:00Z,2013-10-21T00:00:00Z,F,NA,NA,order2,"turned off the monitor at the beginning of the game, didn't finish",center,noun,0.9669999999999996,C_T,correct,include
+speed_acc_child_noise_17,8,no_gaze,noise,bottle,2017-07-25T00:00:00Z,2013-10-21T00:00:00Z,F,NA,NA,order2,"turned off the monitor at the beginning of the game, didn't finish",center,noun,0.5330000000000004,C_T,correct,include
+speed_acc_child_noise_17,9,no_gaze,noise,boat,2017-07-25T00:00:00Z,2013-10-21T00:00:00Z,F,NA,NA,order2,"turned off the monitor at the beginning of the game, didn't finish",center,noun,0.9669999999999996,C_T,correct,include
+speed_acc_child_noise_17,10,no_gaze,noise,juice,2017-07-25T00:00:00Z,2013-10-21T00:00:00Z,F,NA,NA,order2,"turned off the monitor at the beginning of the game, didn't finish",center,noun,0.7999999999999998,C_D,incorrect,include
+speed_acc_child_noise_18,1,no_gaze,no_noise,ball,2017-07-27T00:00:00Z,2013-03-07T00:00:00Z,M,NA,NA,order1,"headphones fell off for a sec, but other than that, it went well",center,noun,0.5,C_D,incorrect,include
+speed_acc_child_noise_18,2,no_gaze,no_noise,juice,2017-07-27T00:00:00Z,2013-03-07T00:00:00Z,M,NA,NA,order1,"headphones fell off for a sec, but other than that, it went well",target,noun,0.20000000000000018,T_C,incorrect,include
+speed_acc_child_noise_18,3,no_gaze,no_noise,cookie,2017-07-27T00:00:00Z,2013-03-07T00:00:00Z,M,NA,NA,order1,"headphones fell off for a sec, but other than that, it went well",target,noun,0.7999999999999998,T_C,incorrect,include
+speed_acc_child_noise_18,4,no_gaze,no_noise,shoe,2017-07-27T00:00:00Z,2013-03-07T00:00:00Z,M,NA,NA,order1,"headphones fell off for a sec, but other than that, it went well",center,noun,0.7000000000000002,C_T,correct,include
+speed_acc_child_noise_18,5,no_gaze,no_noise,bottle,2017-07-27T00:00:00Z,2013-03-07T00:00:00Z,M,NA,NA,order1,"headphones fell off for a sec, but other than that, it went well",target,noun,0.23299999999999965,T_C,incorrect,include
+speed_acc_child_noise_18,6,no_gaze,no_noise,juice,2017-07-27T00:00:00Z,2013-03-07T00:00:00Z,M,NA,NA,order1,"headphones fell off for a sec, but other than that, it went well",center,noun,0.3330000000000002,C_T,correct,include
+speed_acc_child_noise_18,7,no_gaze,no_noise,chicken,2017-07-27T00:00:00Z,2013-03-07T00:00:00Z,M,NA,NA,order1,"headphones fell off for a sec, but other than that, it went well",center,noun,1.133,C_D,incorrect,include
+speed_acc_child_noise_18,8,no_gaze,no_noise,boat,2017-07-27T00:00:00Z,2013-03-07T00:00:00Z,M,NA,NA,order1,"headphones fell off for a sec, but other than that, it went well",center,noun,1.0670000000000002,C_T,correct,include
+speed_acc_child_noise_18,9,no_gaze,no_noise,shoe,2017-07-27T00:00:00Z,2013-03-07T00:00:00Z,M,NA,NA,order1,"headphones fell off for a sec, but other than that, it went well",center,noun,0.43299999999999983,C_T,correct,include
+speed_acc_child_noise_18,10,no_gaze,no_noise,boat,2017-07-27T00:00:00Z,2013-03-07T00:00:00Z,M,NA,NA,order1,"headphones fell off for a sec, but other than that, it went well",center,noun,0.7000000000000002,C_T,correct,include
+speed_acc_child_noise_18,11,no_gaze,no_noise,chicken,2017-07-27T00:00:00Z,2013-03-07T00:00:00Z,M,NA,NA,order1,"headphones fell off for a sec, but other than that, it went well",target,noun,2.2,T_C,incorrect,include
+speed_acc_child_noise_18,12,no_gaze,no_noise,bunny,2017-07-27T00:00:00Z,2013-03-07T00:00:00Z,M,NA,NA,order1,"headphones fell off for a sec, but other than that, it went well",center,noun,0.367,C_T,correct,include
+speed_acc_child_noise_18,13,no_gaze,no_noise,cookie,2017-07-27T00:00:00Z,2013-03-07T00:00:00Z,M,NA,NA,order1,"headphones fell off for a sec, but other than that, it went well",target,noun,0.6669999999999998,T_C,incorrect,include
+speed_acc_child_noise_18,14,no_gaze,no_noise,ball,2017-07-27T00:00:00Z,2013-03-07T00:00:00Z,M,NA,NA,order1,"headphones fell off for a sec, but other than that, it went well",center,noun,0.5670000000000002,C_T,correct,include
+speed_acc_child_noise_18,15,no_gaze,no_noise,bottle,2017-07-27T00:00:00Z,2013-03-07T00:00:00Z,M,NA,NA,order1,"headphones fell off for a sec, but other than that, it went well",center,noun,0.23299999999999965,C_D,incorrect,include
+speed_acc_child_noise_18,16,no_gaze,no_noise,bunny,2017-07-27T00:00:00Z,2013-03-07T00:00:00Z,M,NA,NA,order1,"headphones fell off for a sec, but other than that, it went well",center,noun,0.367,C_D,incorrect,include
+speed_acc_child_noise_18,17,no_gaze,noise,boat,2017-07-27T00:00:00Z,2013-03-07T00:00:00Z,M,NA,NA,order1,"headphones fell off for a sec, but other than that, it went well",center,noun,0.9329999999999998,C_T,correct,include
+speed_acc_child_noise_18,18,no_gaze,noise,ball,2017-07-27T00:00:00Z,2013-03-07T00:00:00Z,M,NA,NA,order1,"headphones fell off for a sec, but other than that, it went well",center,noun,0.26700000000000035,C_T,correct,include
+speed_acc_child_noise_18,19,no_gaze,noise,chicken,2017-07-27T00:00:00Z,2013-03-07T00:00:00Z,M,NA,NA,order1,"headphones fell off for a sec, but other than that, it went well",center,noun,0.46699999999999964,C_D,incorrect,include
+speed_acc_child_noise_18,20,no_gaze,noise,cookie,2017-07-27T00:00:00Z,2013-03-07T00:00:00Z,M,NA,NA,order1,"headphones fell off for a sec, but other than that, it went well",center,noun,1.633,C_T,correct,include
+speed_acc_child_noise_18,21,no_gaze,noise,boat,2017-07-27T00:00:00Z,2013-03-07T00:00:00Z,M,NA,NA,order1,"headphones fell off for a sec, but other than that, it went well",distracter,noun,1.2670000000000003,D_T,incorrect,include
+speed_acc_child_noise_18,22,no_gaze,noise,bunny,2017-07-27T00:00:00Z,2013-03-07T00:00:00Z,M,NA,NA,order1,"headphones fell off for a sec, but other than that, it went well",center,noun,0.46699999999999964,C_T,correct,include
+speed_acc_child_noise_18,23,no_gaze,noise,bottle,2017-07-27T00:00:00Z,2013-03-07T00:00:00Z,M,NA,NA,order1,"headphones fell off for a sec, but other than that, it went well",center,noun,0.7000000000000002,C_D,incorrect,include
+speed_acc_child_noise_18,24,no_gaze,noise,juice,2017-07-27T00:00:00Z,2013-03-07T00:00:00Z,M,NA,NA,order1,"headphones fell off for a sec, but other than that, it went well",distracter,noun,0.5,D_C,incorrect,include
+speed_acc_child_noise_18,25,no_gaze,noise,shoe,2017-07-27T00:00:00Z,2013-03-07T00:00:00Z,M,NA,NA,order1,"headphones fell off for a sec, but other than that, it went well",center,noun,0.867,C_T,correct,include
+speed_acc_child_noise_18,26,no_gaze,noise,ball,2017-07-27T00:00:00Z,2013-03-07T00:00:00Z,M,NA,NA,order1,"headphones fell off for a sec, but other than that, it went well",target,noun,0.16699999999999982,T_C,incorrect,include
+speed_acc_child_noise_18,27,no_gaze,noise,juice,2017-07-27T00:00:00Z,2013-03-07T00:00:00Z,M,NA,NA,order1,"headphones fell off for a sec, but other than that, it went well",center,noun,0.9329999999999998,C_T,correct,include
+speed_acc_child_noise_18,28,no_gaze,noise,bottle,2017-07-27T00:00:00Z,2013-03-07T00:00:00Z,M,NA,NA,order1,"headphones fell off for a sec, but other than that, it went well",center,noun,0.9669999999999996,C_T,correct,include
+speed_acc_child_noise_18,29,no_gaze,noise,chicken,2017-07-27T00:00:00Z,2013-03-07T00:00:00Z,M,NA,NA,order1,"headphones fell off for a sec, but other than that, it went well",center,noun,0.7329999999999997,C_T,correct,include
+speed_acc_child_noise_18,30,no_gaze,noise,cookie,2017-07-27T00:00:00Z,2013-03-07T00:00:00Z,M,NA,NA,order1,"headphones fell off for a sec, but other than that, it went well",target,noun,0.06700000000000017,T_C,incorrect,include
+speed_acc_child_noise_18,31,no_gaze,noise,bunny,2017-07-27T00:00:00Z,2013-03-07T00:00:00Z,M,NA,NA,order1,"headphones fell off for a sec, but other than that, it went well",center,noun,0.06700000000000017,C_D,incorrect,include
+speed_acc_child_noise_18,32,no_gaze,noise,shoe,2017-07-27T00:00:00Z,2013-03-07T00:00:00Z,M,NA,NA,order1,"headphones fell off for a sec, but other than that, it went well",target,noun,0.5670000000000002,T_D,incorrect,include
+speed_acc_child_noise_19,1,no_gaze,no_noise,shoe,2017-07-27T00:00:00Z,2014-06-24T00:00:00Z,M,NA,NA,order1,"got a little frustrated towards the end, but went well",target,noun,2.2,T_C,incorrect,include
+speed_acc_child_noise_19,2,no_gaze,no_noise,juice,2017-07-27T00:00:00Z,2014-06-24T00:00:00Z,M,NA,NA,order1,"got a little frustrated towards the end, but went well",center,noun,0.06700000000000017,C_T,correct,include
+speed_acc_child_noise_19,3,no_gaze,no_noise,boat,2017-07-27T00:00:00Z,2014-06-24T00:00:00Z,M,NA,NA,order1,"got a little frustrated towards the end, but went well",distracter,noun,0.26700000000000035,D_C,incorrect,include
+speed_acc_child_noise_19,4,no_gaze,no_noise,bunny,2017-07-27T00:00:00Z,2014-06-24T00:00:00Z,M,NA,NA,order1,"got a little frustrated towards the end, but went well",center,noun,1.0999999999999996,C_T,correct,include
+speed_acc_child_noise_19,5,no_gaze,no_noise,cookie,2017-07-27T00:00:00Z,2014-06-24T00:00:00Z,M,NA,NA,order1,"got a little frustrated towards the end, but went well",center,noun,1.0999999999999996,C_T,correct,include
+speed_acc_child_noise_19,6,no_gaze,no_noise,boat,2017-07-27T00:00:00Z,2014-06-24T00:00:00Z,M,NA,NA,order1,"got a little frustrated towards the end, but went well",center,noun,0.7329999999999997,C_T,correct,include
+speed_acc_child_noise_19,7,no_gaze,no_noise,chicken,2017-07-27T00:00:00Z,2014-06-24T00:00:00Z,M,NA,NA,order1,"got a little frustrated towards the end, but went well",center,noun,1.0999999999999996,C_T,correct,include
+speed_acc_child_noise_19,8,no_gaze,no_noise,bottle,2017-07-27T00:00:00Z,2014-06-24T00:00:00Z,M,NA,NA,order1,"got a little frustrated towards the end, but went well",distracter,noun,0.20000000000000018,D_C,incorrect,include
+speed_acc_child_noise_19,9,no_gaze,no_noise,bottle,2017-07-27T00:00:00Z,2014-06-24T00:00:00Z,M,NA,NA,order1,"got a little frustrated towards the end, but went well",center,noun,0.9329999999999998,C_D,incorrect,include
+speed_acc_child_noise_19,10,no_gaze,no_noise,bunny,2017-07-27T00:00:00Z,2014-06-24T00:00:00Z,M,NA,NA,order1,"got a little frustrated towards the end, but went well",center,noun,0.7329999999999997,C_T,correct,include
+speed_acc_child_noise_19,11,no_gaze,no_noise,cookie,2017-07-27T00:00:00Z,2014-06-24T00:00:00Z,M,NA,NA,order1,"got a little frustrated towards the end, but went well",center,noun,1.0670000000000002,C_T,correct,include
+speed_acc_child_noise_19,12,no_gaze,no_noise,juice,2017-07-27T00:00:00Z,2014-06-24T00:00:00Z,M,NA,NA,order1,"got a little frustrated towards the end, but went well",center,noun,1.2000000000000002,C_T,correct,include
+speed_acc_child_noise_19,13,no_gaze,no_noise,ball,2017-07-27T00:00:00Z,2014-06-24T00:00:00Z,M,NA,NA,order1,"got a little frustrated towards the end, but went well",center,noun,0.20000000000000018,C_T,correct,include
+speed_acc_child_noise_19,14,no_gaze,no_noise,ball,2017-07-27T00:00:00Z,2014-06-24T00:00:00Z,M,NA,NA,order1,"got a little frustrated towards the end, but went well",center,noun,1.4000000000000004,C_D,incorrect,include
+speed_acc_child_noise_19,15,no_gaze,no_noise,chicken,2017-07-27T00:00:00Z,2014-06-24T00:00:00Z,M,NA,NA,order1,"got a little frustrated towards the end, but went well",center,noun,1.133,C_T,correct,include
+speed_acc_child_noise_19,16,no_gaze,no_noise,shoe,2017-07-27T00:00:00Z,2014-06-24T00:00:00Z,M,NA,NA,order1,"got a little frustrated towards the end, but went well",center,noun,0.8330000000000002,C_T,correct,include
+speed_acc_child_noise_19,17,no_gaze,noise,bottle,2017-07-27T00:00:00Z,2014-06-24T00:00:00Z,M,NA,NA,order1,"got a little frustrated towards the end, but went well",center,noun,0.7329999999999997,C_D,incorrect,include
+speed_acc_child_noise_19,18,no_gaze,noise,boat,2017-07-27T00:00:00Z,2014-06-24T00:00:00Z,M,NA,NA,order1,"got a little frustrated towards the end, but went well",center,noun,1.5,C_T,correct,include
+speed_acc_child_noise_19,19,no_gaze,noise,juice,2017-07-27T00:00:00Z,2014-06-24T00:00:00Z,M,NA,NA,order1,"got a little frustrated towards the end, but went well",center,noun,1.0330000000000004,C_T,correct,include
+speed_acc_child_noise_19,20,no_gaze,noise,shoe,2017-07-27T00:00:00Z,2014-06-24T00:00:00Z,M,NA,NA,order1,"got a little frustrated towards the end, but went well",center,noun,1.7329999999999997,C_T,correct,include
+speed_acc_child_noise_19,21,no_gaze,noise,bottle,2017-07-27T00:00:00Z,2014-06-24T00:00:00Z,M,NA,NA,order1,"got a little frustrated towards the end, but went well",center,noun,0.9000000000000004,C_D,incorrect,include
+speed_acc_child_noise_19,22,no_gaze,noise,ball,2017-07-27T00:00:00Z,2014-06-24T00:00:00Z,M,NA,NA,order1,"got a little frustrated towards the end, but went well",center,noun,0.8330000000000002,C_D,incorrect,include
+speed_acc_child_noise_19,23,no_gaze,noise,boat,2017-07-27T00:00:00Z,2014-06-24T00:00:00Z,M,NA,NA,order1,"got a little frustrated towards the end, but went well",target,noun,0.16699999999999982,T_C,incorrect,include
+speed_acc_child_noise_19,24,no_gaze,noise,ball,2017-07-27T00:00:00Z,2014-06-24T00:00:00Z,M,NA,NA,order1,"got a little frustrated towards the end, but went well",center,noun,1.7329999999999997,C_T,correct,include
+speed_acc_child_noise_19,25,no_gaze,noise,cookie,2017-07-27T00:00:00Z,2014-06-24T00:00:00Z,M,NA,NA,order1,"got a little frustrated towards the end, but went well",center,noun,1.9000000000000004,C_T,correct,include
+speed_acc_child_noise_19,26,no_gaze,noise,bunny,2017-07-27T00:00:00Z,2014-06-24T00:00:00Z,M,NA,NA,order1,"got a little frustrated towards the end, but went well",center,noun,1.0330000000000004,C_D,incorrect,include
+speed_acc_child_noise_19,27,no_gaze,noise,shoe,2017-07-27T00:00:00Z,2014-06-24T00:00:00Z,M,NA,NA,order1,"got a little frustrated towards the end, but went well",distracter,noun,1.133,D_T,incorrect,include
+speed_acc_child_noise_19,28,no_gaze,noise,cookie,2017-07-27T00:00:00Z,2014-06-24T00:00:00Z,M,NA,NA,order1,"got a little frustrated towards the end, but went well",target,noun,0.8330000000000002,T_C,incorrect,include
+speed_acc_child_noise_19,29,no_gaze,noise,bunny,2017-07-27T00:00:00Z,2014-06-24T00:00:00Z,M,NA,NA,order1,"got a little frustrated towards the end, but went well",center,noun,0.7999999999999998,C_D,incorrect,include
+speed_acc_child_noise_19,30,no_gaze,noise,juice,2017-07-27T00:00:00Z,2014-06-24T00:00:00Z,M,NA,NA,order1,"got a little frustrated towards the end, but went well",distracter,noun,0.46699999999999964,D_C,incorrect,include
+speed_acc_child_noise_19,31,no_gaze,noise,chicken,2017-07-27T00:00:00Z,2014-06-24T00:00:00Z,M,NA,NA,order1,"got a little frustrated towards the end, but went well",center,noun,1.2670000000000003,C_T,correct,include
+speed_acc_child_noise_2,1,no_gaze,noise,bottle,2017-07-18T00:00:00Z,2012-08-03T00:00:00Z,M,NA,NA,order2,session went well; he said that the game made him tired,center,noun,0.867,C_T,correct,include
+speed_acc_child_noise_2,2,no_gaze,noise,bunny,2017-07-18T00:00:00Z,2012-08-03T00:00:00Z,M,NA,NA,order2,session went well; he said that the game made him tired,center,noun,0.9000000000000004,C_D,incorrect,include
+speed_acc_child_noise_2,3,no_gaze,noise,cookie,2017-07-18T00:00:00Z,2012-08-03T00:00:00Z,M,NA,NA,order2,session went well; he said that the game made him tired,target,noun,0.2999999999999998,T_C,incorrect,include
+speed_acc_child_noise_2,4,no_gaze,noise,ball,2017-07-18T00:00:00Z,2012-08-03T00:00:00Z,M,NA,NA,order2,session went well; he said that the game made him tired,target,noun,1.3330000000000002,T_D,incorrect,include
+speed_acc_child_noise_2,5,no_gaze,noise,shoe,2017-07-18T00:00:00Z,2012-08-03T00:00:00Z,M,NA,NA,order2,session went well; he said that the game made him tired,center,noun,0.7329999999999997,C_T,correct,include
+speed_acc_child_noise_2,6,no_gaze,noise,bunny,2017-07-18T00:00:00Z,2012-08-03T00:00:00Z,M,NA,NA,order2,session went well; he said that the game made him tired,center,noun,1.0670000000000002,C_T,correct,include
+speed_acc_child_noise_2,7,no_gaze,noise,cookie,2017-07-18T00:00:00Z,2012-08-03T00:00:00Z,M,NA,NA,order2,session went well; he said that the game made him tired,center,noun,0.867,C_T,correct,include
+speed_acc_child_noise_2,8,no_gaze,noise,boat,2017-07-18T00:00:00Z,2012-08-03T00:00:00Z,M,NA,NA,order2,session went well; he said that the game made him tired,distracter,noun,0.09999999999999964,D_C,incorrect,include
+speed_acc_child_noise_2,9,no_gaze,noise,chicken,2017-07-18T00:00:00Z,2012-08-03T00:00:00Z,M,NA,NA,order2,session went well; he said that the game made him tired,center,noun,0.7000000000000002,C_D,incorrect,include
+speed_acc_child_noise_2,10,no_gaze,noise,ball,2017-07-18T00:00:00Z,2012-08-03T00:00:00Z,M,NA,NA,order2,session went well; he said that the game made him tired,center,noun,0.2999999999999998,C_D,incorrect,include
+speed_acc_child_noise_2,11,no_gaze,noise,juice,2017-07-18T00:00:00Z,2012-08-03T00:00:00Z,M,NA,NA,order2,session went well; he said that the game made him tired,center,noun,0.7670000000000003,C_T,correct,include
+speed_acc_child_noise_2,12,no_gaze,noise,juice,2017-07-18T00:00:00Z,2012-08-03T00:00:00Z,M,NA,NA,order2,session went well; he said that the game made him tired,center,noun,0.23299999999999965,C_D,incorrect,include
+speed_acc_child_noise_2,13,no_gaze,noise,bottle,2017-07-18T00:00:00Z,2012-08-03T00:00:00Z,M,NA,NA,order2,session went well; he said that the game made him tired,distracter,noun,0.5,D_C,incorrect,include
+speed_acc_child_noise_2,14,no_gaze,noise,boat,2017-07-18T00:00:00Z,2012-08-03T00:00:00Z,M,NA,NA,order2,session went well; he said that the game made him tired,distracter,noun,0.09999999999999964,D_C,incorrect,include
+speed_acc_child_noise_2,15,no_gaze,noise,shoe,2017-07-18T00:00:00Z,2012-08-03T00:00:00Z,M,NA,NA,order2,session went well; he said that the game made him tired,distracter,noun,0.5670000000000002,D_C,incorrect,include
+speed_acc_child_noise_2,16,no_gaze,noise,chicken,2017-07-18T00:00:00Z,2012-08-03T00:00:00Z,M,NA,NA,order2,session went well; he said that the game made him tired,center,noun,0.633,C_T,correct,include
+speed_acc_child_noise_2,17,no_gaze,no_noise,shoe,2017-07-18T00:00:00Z,2012-08-03T00:00:00Z,M,NA,NA,order2,session went well; he said that the game made him tired,center,noun,0.5670000000000002,C_D,incorrect,include
+speed_acc_child_noise_2,18,no_gaze,no_noise,bunny,2017-07-18T00:00:00Z,2012-08-03T00:00:00Z,M,NA,NA,order2,session went well; he said that the game made him tired,center,noun,1.1669999999999998,C_T,correct,include
+speed_acc_child_noise_2,19,no_gaze,no_noise,boat,2017-07-18T00:00:00Z,2012-08-03T00:00:00Z,M,NA,NA,order2,session went well; he said that the game made him tired,center,noun,1.4329999999999998,C_D,incorrect,include
+speed_acc_child_noise_2,20,no_gaze,no_noise,cookie,2017-07-18T00:00:00Z,2012-08-03T00:00:00Z,M,NA,NA,order2,session went well; he said that the game made him tired,center,noun,1.2670000000000003,C_T,correct,include
+speed_acc_child_noise_2,21,no_gaze,no_noise,ball,2017-07-18T00:00:00Z,2012-08-03T00:00:00Z,M,NA,NA,order2,session went well; he said that the game made him tired,distracter,noun,0.7000000000000002,D_C,incorrect,include
+speed_acc_child_noise_2,22,no_gaze,no_noise,bunny,2017-07-18T00:00:00Z,2012-08-03T00:00:00Z,M,NA,NA,order2,session went well; he said that the game made him tired,target,noun,0.5,T_D,incorrect,include
+speed_acc_child_noise_2,23,no_gaze,no_noise,ball,2017-07-18T00:00:00Z,2012-08-03T00:00:00Z,M,NA,NA,order2,session went well; he said that the game made him tired,target,noun,0.6669999999999998,T_C,incorrect,include
+speed_acc_child_noise_2,24,no_gaze,no_noise,chicken,2017-07-18T00:00:00Z,2012-08-03T00:00:00Z,M,NA,NA,order2,session went well; he said that the game made him tired,center,noun,0.6669999999999998,C_D,incorrect,include
+speed_acc_child_noise_2,25,no_gaze,no_noise,juice,2017-07-18T00:00:00Z,2012-08-03T00:00:00Z,M,NA,NA,order2,session went well; he said that the game made him tired,target,noun,2.3,T_D,incorrect,include
+speed_acc_child_noise_2,26,no_gaze,no_noise,cookie,2017-07-18T00:00:00Z,2012-08-03T00:00:00Z,M,NA,NA,order2,session went well; he said that the game made him tired,center,noun,0.16699999999999982,C_T,correct,include
+speed_acc_child_noise_2,27,no_gaze,no_noise,boat,2017-07-18T00:00:00Z,2012-08-03T00:00:00Z,M,NA,NA,order2,session went well; he said that the game made him tired,center,noun,0.9000000000000004,C_D,incorrect,include
+speed_acc_child_noise_2,28,no_gaze,no_noise,juice,2017-07-18T00:00:00Z,2012-08-03T00:00:00Z,M,NA,NA,order2,session went well; he said that the game made him tired,target,noun,0.26700000000000035,T_C,incorrect,include
+speed_acc_child_noise_2,29,no_gaze,no_noise,bottle,2017-07-18T00:00:00Z,2012-08-03T00:00:00Z,M,NA,NA,order2,session went well; he said that the game made him tired,center,noun,0.6669999999999998,C_D,incorrect,include
+speed_acc_child_noise_2,30,no_gaze,no_noise,bottle,2017-07-18T00:00:00Z,2012-08-03T00:00:00Z,M,NA,NA,order2,session went well; he said that the game made him tired,target,noun,0.633,T_C,incorrect,include
+speed_acc_child_noise_2,31,no_gaze,no_noise,shoe,2017-07-18T00:00:00Z,2012-08-03T00:00:00Z,M,NA,NA,order2,session went well; he said that the game made him tired,center,noun,0.5999999999999996,C_D,incorrect,include
+speed_acc_child_noise_2,32,no_gaze,no_noise,chicken,2017-07-18T00:00:00Z,2012-08-03T00:00:00Z,M,NA,NA,order2,session went well; he said that the game made him tired,target,noun,NA,no_shift,NA,include
+speed_acc_child_noise_20,1,no_gaze,no_noise,cookie,2017-07-27T00:00:00Z,2011-11-08T00:00:00Z,M,NA,NA,order3,all went well,center,noun,1.367,C_T,correct,include
+speed_acc_child_noise_20,2,no_gaze,no_noise,boat,2017-07-27T00:00:00Z,2011-11-08T00:00:00Z,M,NA,NA,order3,all went well,center,noun,0.23299999999999965,C_D,incorrect,include
+speed_acc_child_noise_20,3,no_gaze,no_noise,juice,2017-07-27T00:00:00Z,2011-11-08T00:00:00Z,M,NA,NA,order3,all went well,distracter,noun,0.6669999999999998,D_T,incorrect,include
+speed_acc_child_noise_20,4,no_gaze,no_noise,chicken,2017-07-27T00:00:00Z,2011-11-08T00:00:00Z,M,NA,NA,order3,all went well,center,noun,0.8330000000000002,C_T,correct,include
+speed_acc_child_noise_20,5,no_gaze,no_noise,juice,2017-07-27T00:00:00Z,2011-11-08T00:00:00Z,M,NA,NA,order3,all went well,center,noun,1,C_D,incorrect,include
+speed_acc_child_noise_20,6,no_gaze,no_noise,bunny,2017-07-27T00:00:00Z,2011-11-08T00:00:00Z,M,NA,NA,order3,all went well,distracter,noun,0.7329999999999997,D_T,incorrect,include
+speed_acc_child_noise_20,7,no_gaze,no_noise,boat,2017-07-27T00:00:00Z,2011-11-08T00:00:00Z,M,NA,NA,order3,all went well,center,noun,1.0670000000000002,C_T,correct,include
+speed_acc_child_noise_20,8,no_gaze,no_noise,shoe,2017-07-27T00:00:00Z,2011-11-08T00:00:00Z,M,NA,NA,order3,all went well,center,noun,0.367,C_T,correct,include
+speed_acc_child_noise_20,9,no_gaze,no_noise,bunny,2017-07-27T00:00:00Z,2011-11-08T00:00:00Z,M,NA,NA,order3,all went well,distracter,noun,1.133,D_C,incorrect,include
+speed_acc_child_noise_20,10,no_gaze,no_noise,chicken,2017-07-27T00:00:00Z,2011-11-08T00:00:00Z,M,NA,NA,order3,all went well,target,noun,0.633,T_D,incorrect,include
+speed_acc_child_noise_20,11,no_gaze,no_noise,bottle,2017-07-27T00:00:00Z,2011-11-08T00:00:00Z,M,NA,NA,order3,all went well,center,noun,0.133,C_D,incorrect,include
+speed_acc_child_noise_20,12,no_gaze,no_noise,shoe,2017-07-27T00:00:00Z,2011-11-08T00:00:00Z,M,NA,NA,order3,all went well,distracter,noun,0.23299999999999965,D_C,incorrect,include
+speed_acc_child_noise_20,13,no_gaze,no_noise,bottle,2017-07-27T00:00:00Z,2011-11-08T00:00:00Z,M,NA,NA,order3,all went well,center,noun,0.43299999999999983,C_D,incorrect,include
+speed_acc_child_noise_20,14,no_gaze,no_noise,ball,2017-07-27T00:00:00Z,2011-11-08T00:00:00Z,M,NA,NA,order3,all went well,center,noun,0.9669999999999996,C_D,incorrect,include
+speed_acc_child_noise_20,15,no_gaze,no_noise,cookie,2017-07-27T00:00:00Z,2011-11-08T00:00:00Z,M,NA,NA,order3,all went well,target,noun,NA,no_shift,NA,include
+speed_acc_child_noise_20,16,no_gaze,no_noise,ball,2017-07-27T00:00:00Z,2011-11-08T00:00:00Z,M,NA,NA,order3,all went well,center,noun,0.9000000000000004,C_T,correct,include
+speed_acc_child_noise_20,17,no_gaze,noise,bunny,2017-07-27T00:00:00Z,2011-11-08T00:00:00Z,M,NA,NA,order3,all went well,center,noun,0.5,C_T,correct,include
+speed_acc_child_noise_20,18,no_gaze,noise,cookie,2017-07-27T00:00:00Z,2011-11-08T00:00:00Z,M,NA,NA,order3,all went well,distracter,noun,0.8330000000000002,D_T,incorrect,include
+speed_acc_child_noise_20,19,no_gaze,noise,boat,2017-07-27T00:00:00Z,2011-11-08T00:00:00Z,M,NA,NA,order3,all went well,center,noun,1.1669999999999998,C_D,incorrect,include
+speed_acc_child_noise_20,20,no_gaze,noise,shoe,2017-07-27T00:00:00Z,2011-11-08T00:00:00Z,M,NA,NA,order3,all went well,center,noun,0.6669999999999998,C_T,correct,include
+speed_acc_child_noise_20,21,no_gaze,noise,chicken,2017-07-27T00:00:00Z,2011-11-08T00:00:00Z,M,NA,NA,order3,all went well,center,noun,1,C_T,correct,include
+speed_acc_child_noise_20,22,no_gaze,noise,cookie,2017-07-27T00:00:00Z,2011-11-08T00:00:00Z,M,NA,NA,order3,all went well,center,noun,1.3330000000000002,C_D,incorrect,include
+speed_acc_child_noise_20,23,no_gaze,noise,ball,2017-07-27T00:00:00Z,2011-11-08T00:00:00Z,M,NA,NA,order3,all went well,center,noun,0.867,C_D,incorrect,include
+speed_acc_child_noise_20,25,no_gaze,noise,boat,2017-07-27T00:00:00Z,2011-11-08T00:00:00Z,M,NA,NA,order3,all went well,distracter,noun,0.133,D_T,incorrect,include
+speed_acc_child_noise_20,26,no_gaze,noise,juice,2017-07-27T00:00:00Z,2011-11-08T00:00:00Z,M,NA,NA,order3,all went well,target,noun,0.3330000000000002,T_C,incorrect,include
+speed_acc_child_noise_20,27,no_gaze,noise,juice,2017-07-27T00:00:00Z,2011-11-08T00:00:00Z,M,NA,NA,order3,all went well,center,noun,0.09999999999999964,C_D,incorrect,include
+speed_acc_child_noise_20,28,no_gaze,noise,bottle,2017-07-27T00:00:00Z,2011-11-08T00:00:00Z,M,NA,NA,order3,all went well,center,noun,1.133,C_T,correct,include
+speed_acc_child_noise_20,29,no_gaze,noise,shoe,2017-07-27T00:00:00Z,2011-11-08T00:00:00Z,M,NA,NA,order3,all went well,center,noun,0.6669999999999998,C_T,correct,include
+speed_acc_child_noise_20,30,no_gaze,noise,chicken,2017-07-27T00:00:00Z,2011-11-08T00:00:00Z,M,NA,NA,order3,all went well,center,noun,0.9000000000000004,C_T,correct,include
+speed_acc_child_noise_20,31,no_gaze,noise,ball,2017-07-27T00:00:00Z,2011-11-08T00:00:00Z,M,NA,NA,order3,all went well,center,noun,0.40000000000000036,C_D,incorrect,include
+speed_acc_child_noise_20,32,no_gaze,noise,bunny,2017-07-27T00:00:00Z,2011-11-08T00:00:00Z,M,NA,NA,order3,all went well,center,noun,0.633,C_D,incorrect,include
+speed_acc_child_noise_21,1,no_gaze,no_noise,chicken,2017-07-27T00:00:00Z,2012-11-29T00:00:00Z,M,NA,NA,order3,stopped playing at the end,center,noun,0.16699999999999982,C_D,incorrect,include
+speed_acc_child_noise_21,2,no_gaze,no_noise,chicken,2017-07-27T00:00:00Z,2012-11-29T00:00:00Z,M,NA,NA,order3,stopped playing at the end,center,noun,0.9669999999999996,C_T,correct,include
+speed_acc_child_noise_21,3,no_gaze,no_noise,shoe,2017-07-27T00:00:00Z,2012-11-29T00:00:00Z,M,NA,NA,order3,stopped playing at the end,center,noun,1.0330000000000004,C_D,incorrect,include
+speed_acc_child_noise_21,4,no_gaze,no_noise,cookie,2017-07-27T00:00:00Z,2012-11-29T00:00:00Z,M,NA,NA,order3,stopped playing at the end,center,noun,0.2999999999999998,C_D,incorrect,include
+speed_acc_child_noise_21,5,no_gaze,no_noise,juice,2017-07-27T00:00:00Z,2012-11-29T00:00:00Z,M,NA,NA,order3,stopped playing at the end,distracter,noun,0.5330000000000004,D_T,incorrect,include
+speed_acc_child_noise_21,6,no_gaze,no_noise,ball,2017-07-27T00:00:00Z,2012-11-29T00:00:00Z,M,NA,NA,order3,stopped playing at the end,center,noun,2.5330000000000004,C_T,correct,include
+speed_acc_child_noise_21,7,no_gaze,no_noise,shoe,2017-07-27T00:00:00Z,2012-11-29T00:00:00Z,M,NA,NA,order3,stopped playing at the end,center,noun,0.23299999999999965,C_D,incorrect,include
+speed_acc_child_noise_21,8,no_gaze,no_noise,bunny,2017-07-27T00:00:00Z,2012-11-29T00:00:00Z,M,NA,NA,order3,stopped playing at the end,target,noun,0.133,T_C,incorrect,include
+speed_acc_child_noise_21,9,no_gaze,no_noise,boat,2017-07-27T00:00:00Z,2012-11-29T00:00:00Z,M,NA,NA,order3,stopped playing at the end,distracter,noun,0.16699999999999982,D_C,incorrect,include
+speed_acc_child_noise_21,10,no_gaze,no_noise,bottle,2017-07-27T00:00:00Z,2012-11-29T00:00:00Z,M,NA,NA,order3,stopped playing at the end,center,noun,0.16699999999999982,C_D,incorrect,include
+speed_acc_child_noise_21,11,no_gaze,no_noise,ball,2017-07-27T00:00:00Z,2012-11-29T00:00:00Z,M,NA,NA,order3,stopped playing at the end,target,noun,0.09999999999999964,T_D,incorrect,include
+speed_acc_child_noise_21,12,no_gaze,no_noise,boat,2017-07-27T00:00:00Z,2012-11-29T00:00:00Z,M,NA,NA,order3,stopped playing at the end,target,noun,0.40000000000000036,T_D,incorrect,include
+speed_acc_child_noise_21,13,no_gaze,no_noise,bottle,2017-07-27T00:00:00Z,2012-11-29T00:00:00Z,M,NA,NA,order3,stopped playing at the end,center,noun,0.09999999999999964,C_D,incorrect,include
+speed_acc_child_noise_21,14,no_gaze,no_noise,juice,2017-07-27T00:00:00Z,2012-11-29T00:00:00Z,M,NA,NA,order3,stopped playing at the end,center,noun,1.1669999999999998,C_T,correct,include
+speed_acc_child_noise_21,15,no_gaze,no_noise,cookie,2017-07-27T00:00:00Z,2012-11-29T00:00:00Z,M,NA,NA,order3,stopped playing at the end,center,noun,2,C_T,correct,include
+speed_acc_child_noise_21,16,no_gaze,no_noise,bunny,2017-07-27T00:00:00Z,2012-11-29T00:00:00Z,M,NA,NA,order3,stopped playing at the end,distracter,noun,0.5999999999999996,D_T,incorrect,include
+speed_acc_child_noise_21,17,no_gaze,noise,shoe,2017-07-27T00:00:00Z,2012-11-29T00:00:00Z,M,NA,NA,order3,stopped playing at the end,center,noun,0.5,C_T,correct,include
+speed_acc_child_noise_21,18,no_gaze,noise,juice,2017-07-27T00:00:00Z,2012-11-29T00:00:00Z,M,NA,NA,order3,stopped playing at the end,center,noun,1.5999999999999996,C_T,correct,include
+speed_acc_child_noise_21,22,no_gaze,noise,shoe,2017-07-27T00:00:00Z,2012-11-29T00:00:00Z,M,NA,NA,order3,stopped playing at the end,distracter,noun,NA,no_shift,NA,include
+speed_acc_child_noise_21,23,no_gaze,noise,boat,2017-07-27T00:00:00Z,2012-11-29T00:00:00Z,M,NA,NA,order3,stopped playing at the end,center,noun,1,C_T,correct,include
+speed_acc_child_noise_21,24,no_gaze,noise,cookie,2017-07-27T00:00:00Z,2012-11-29T00:00:00Z,M,NA,NA,order3,stopped playing at the end,center,noun,NA,no_shift,NA,include
+speed_acc_child_noise_21,26,no_gaze,noise,bottle,2017-07-27T00:00:00Z,2012-11-29T00:00:00Z,M,NA,NA,order3,stopped playing at the end,distracter,noun,NA,no_shift,NA,include
+speed_acc_child_noise_3,1,no_gaze,noise,juice,2017-07-18T00:00:00Z,2012-04-15T00:00:00Z,F,NA,NA,order2,session went welll! Requested more elmo and his friends,center,noun,0.9329999999999998,C_T,correct,include
+speed_acc_child_noise_3,2,no_gaze,noise,chicken,2017-07-18T00:00:00Z,2012-04-15T00:00:00Z,F,NA,NA,order2,session went welll! Requested more elmo and his friends,center,noun,0.7999999999999998,C_D,incorrect,include
+speed_acc_child_noise_3,3,no_gaze,noise,cookie,2017-07-18T00:00:00Z,2012-04-15T00:00:00Z,F,NA,NA,order2,session went welll! Requested more elmo and his friends,center,noun,1.0330000000000004,C_T,correct,include
+speed_acc_child_noise_3,4,no_gaze,noise,cookie,2017-07-18T00:00:00Z,2012-04-15T00:00:00Z,F,NA,NA,order2,session went welll! Requested more elmo and his friends,center,noun,0.16699999999999982,C_D,incorrect,include
+speed_acc_child_noise_3,5,no_gaze,noise,bunny,2017-07-18T00:00:00Z,2012-04-15T00:00:00Z,F,NA,NA,order2,session went welll! Requested more elmo and his friends,center,noun,1.7329999999999997,C_T,correct,include
+speed_acc_child_noise_3,6,no_gaze,noise,ball,2017-07-18T00:00:00Z,2012-04-15T00:00:00Z,F,NA,NA,order2,session went welll! Requested more elmo and his friends,center,noun,0.46699999999999964,C_T,correct,include
+speed_acc_child_noise_3,7,no_gaze,noise,ball,2017-07-18T00:00:00Z,2012-04-15T00:00:00Z,F,NA,NA,order2,session went welll! Requested more elmo and his friends,center,noun,NA,no_shift,NA,include
+speed_acc_child_noise_3,8,no_gaze,noise,chicken,2017-07-18T00:00:00Z,2012-04-15T00:00:00Z,F,NA,NA,order2,session went welll! Requested more elmo and his friends,center,noun,1.0670000000000002,C_T,correct,include
+speed_acc_child_noise_3,9,no_gaze,noise,bottle,2017-07-18T00:00:00Z,2012-04-15T00:00:00Z,F,NA,NA,order2,session went welll! Requested more elmo and his friends,target,noun,2.367000000000001,T_C,incorrect,include
+speed_acc_child_noise_3,10,no_gaze,noise,shoe,2017-07-18T00:00:00Z,2012-04-15T00:00:00Z,F,NA,NA,order2,session went welll! Requested more elmo and his friends,center,noun,0.9000000000000004,C_T,correct,include
+speed_acc_child_noise_3,12,no_gaze,noise,shoe,2017-07-18T00:00:00Z,2012-04-15T00:00:00Z,F,NA,NA,order2,session went welll! Requested more elmo and his friends,center,noun,1.133,C_T,correct,include
+speed_acc_child_noise_3,13,no_gaze,noise,boat,2017-07-18T00:00:00Z,2012-04-15T00:00:00Z,F,NA,NA,order2,session went welll! Requested more elmo and his friends,center,noun,NA,no_shift,NA,include
+speed_acc_child_noise_3,14,no_gaze,noise,bunny,2017-07-18T00:00:00Z,2012-04-15T00:00:00Z,F,NA,NA,order2,session went welll! Requested more elmo and his friends,center,noun,1.0330000000000004,C_D,incorrect,include
+speed_acc_child_noise_3,15,no_gaze,noise,bottle,2017-07-18T00:00:00Z,2012-04-15T00:00:00Z,F,NA,NA,order2,session went welll! Requested more elmo and his friends,distracter,noun,0.23299999999999965,D_C,incorrect,include
+speed_acc_child_noise_3,16,no_gaze,noise,boat,2017-07-18T00:00:00Z,2012-04-15T00:00:00Z,F,NA,NA,order2,session went welll! Requested more elmo and his friends,center,noun,0.09999999999999964,C_D,incorrect,include
+speed_acc_child_noise_3,17,no_gaze,no_noise,juice,2017-07-18T00:00:00Z,2012-04-15T00:00:00Z,F,NA,NA,order2,session went welll! Requested more elmo and his friends,center,noun,1.0670000000000002,C_T,correct,include
+speed_acc_child_noise_3,18,no_gaze,no_noise,bunny,2017-07-18T00:00:00Z,2012-04-15T00:00:00Z,F,NA,NA,order2,session went welll! Requested more elmo and his friends,center,noun,1.2999999999999998,C_T,correct,include
+speed_acc_child_noise_3,19,no_gaze,no_noise,bunny,2017-07-18T00:00:00Z,2012-04-15T00:00:00Z,F,NA,NA,order2,session went welll! Requested more elmo and his friends,center,noun,0.9329999999999998,C_D,incorrect,include
+speed_acc_child_noise_3,20,no_gaze,no_noise,cookie,2017-07-18T00:00:00Z,2012-04-15T00:00:00Z,F,NA,NA,order2,session went welll! Requested more elmo and his friends,center,noun,NA,no_shift,NA,include
+speed_acc_child_noise_3,21,no_gaze,no_noise,ball,2017-07-18T00:00:00Z,2012-04-15T00:00:00Z,F,NA,NA,order2,session went welll! Requested more elmo and his friends,center,noun,2.067,C_D,incorrect,include
+speed_acc_child_noise_3,22,no_gaze,no_noise,cookie,2017-07-18T00:00:00Z,2012-04-15T00:00:00Z,F,NA,NA,order2,session went welll! Requested more elmo and his friends,center,noun,2.7670000000000003,C_T,correct,include
+speed_acc_child_noise_3,23,no_gaze,no_noise,chicken,2017-07-18T00:00:00Z,2012-04-15T00:00:00Z,F,NA,NA,order2,session went welll! Requested more elmo and his friends,target,noun,0.20000000000000018,T_C,incorrect,include
+speed_acc_child_noise_3,24,no_gaze,no_noise,boat,2017-07-18T00:00:00Z,2012-04-15T00:00:00Z,F,NA,NA,order2,session went welll! Requested more elmo and his friends,center,noun,0.133,C_D,incorrect,include
+speed_acc_child_noise_3,25,no_gaze,no_noise,boat,2017-07-18T00:00:00Z,2012-04-15T00:00:00Z,F,NA,NA,order2,session went welll! Requested more elmo and his friends,center,noun,2.067,C_T,correct,include
+speed_acc_child_noise_3,26,no_gaze,no_noise,ball,2017-07-18T00:00:00Z,2012-04-15T00:00:00Z,F,NA,NA,order2,session went welll! Requested more elmo and his friends,target,noun,0.367,T_D,incorrect,include
+speed_acc_child_noise_3,27,no_gaze,no_noise,shoe,2017-07-18T00:00:00Z,2012-04-15T00:00:00Z,F,NA,NA,order2,session went welll! Requested more elmo and his friends,target,noun,2.4000000000000004,T_C,incorrect,include
+speed_acc_child_noise_3,28,no_gaze,no_noise,shoe,2017-07-18T00:00:00Z,2012-04-15T00:00:00Z,F,NA,NA,order2,session went welll! Requested more elmo and his friends,target,noun,0.2999999999999998,T_C,incorrect,include
+speed_acc_child_noise_3,29,no_gaze,no_noise,chicken,2017-07-18T00:00:00Z,2012-04-15T00:00:00Z,F,NA,NA,order2,session went welll! Requested more elmo and his friends,distracter,noun,0.7329999999999997,D_C,incorrect,include
+speed_acc_child_noise_3,30,no_gaze,no_noise,juice,2017-07-18T00:00:00Z,2012-04-15T00:00:00Z,F,NA,NA,order2,session went welll! Requested more elmo and his friends,center,noun,0.633,C_D,incorrect,include
+speed_acc_child_noise_3,31,no_gaze,no_noise,bottle,2017-07-18T00:00:00Z,2012-04-15T00:00:00Z,F,NA,NA,order2,session went welll! Requested more elmo and his friends,distracter,noun,0.06700000000000017,D_C,incorrect,include
+speed_acc_child_noise_3,32,no_gaze,no_noise,bottle,2017-07-18T00:00:00Z,2012-04-15T00:00:00Z,F,NA,NA,order2,session went welll! Requested more elmo and his friends,center,noun,1.4329999999999998,C_D,incorrect,include
+speed_acc_child_noise_4,1,no_gaze,no_noise,chicken,2017-07-18T00:00:00Z,2013-11-27T00:00:00Z,M,NA,NA,order3,did not enjoy the noise and stopped early,center,noun,1.5670000000000002,C_T,correct,include
+speed_acc_child_noise_4,2,no_gaze,no_noise,bottle,2017-07-18T00:00:00Z,2013-11-27T00:00:00Z,M,NA,NA,order3,did not enjoy the noise and stopped early,target,noun,1.2000000000000002,T_C,incorrect,include
+speed_acc_child_noise_4,3,no_gaze,no_noise,juice,2017-07-18T00:00:00Z,2013-11-27T00:00:00Z,M,NA,NA,order3,did not enjoy the noise and stopped early,distracter,noun,0.26700000000000035,D_C,incorrect,include
+speed_acc_child_noise_4,4,no_gaze,no_noise,juice,2017-07-18T00:00:00Z,2013-11-27T00:00:00Z,M,NA,NA,order3,did not enjoy the noise and stopped early,center,noun,1.2999999999999998,C_T,correct,include
+speed_acc_child_noise_4,5,no_gaze,no_noise,boat,2017-07-18T00:00:00Z,2013-11-27T00:00:00Z,M,NA,NA,order3,did not enjoy the noise and stopped early,center,noun,1.5670000000000002,C_D,incorrect,include
+speed_acc_child_noise_4,6,no_gaze,no_noise,shoe,2017-07-18T00:00:00Z,2013-11-27T00:00:00Z,M,NA,NA,order3,did not enjoy the noise and stopped early,center,noun,1.2999999999999998,C_D,incorrect,include
+speed_acc_child_noise_4,7,no_gaze,no_noise,bunny,2017-07-18T00:00:00Z,2013-11-27T00:00:00Z,M,NA,NA,order3,did not enjoy the noise and stopped early,center,noun,1.133,C_T,correct,include
+speed_acc_child_noise_4,9,no_gaze,no_noise,bunny,2017-07-18T00:00:00Z,2013-11-27T00:00:00Z,M,NA,NA,order3,did not enjoy the noise and stopped early,center,noun,1.5,C_T,correct,include
+speed_acc_child_noise_5,1,no_gaze,noise,ball,2017-07-20T00:00:00Z,2012-03-06T00:00:00Z,M,NA,NA,order4,he was a little distracted; may have said their name during the game to get their attention,center,noun,1.5999999999999996,C_T,correct,include
+speed_acc_child_noise_5,2,no_gaze,noise,boat,2017-07-20T00:00:00Z,2012-03-06T00:00:00Z,M,NA,NA,order4,he was a little distracted; may have said their name during the game to get their attention,center,noun,1.0670000000000002,C_D,incorrect,include
+speed_acc_child_noise_5,3,no_gaze,noise,bottle,2017-07-20T00:00:00Z,2012-03-06T00:00:00Z,M,NA,NA,order4,he was a little distracted; may have said their name during the game to get their attention,center,noun,0.9000000000000004,C_D,incorrect,include
+speed_acc_child_noise_5,6,no_gaze,noise,cookie,2017-07-20T00:00:00Z,2012-03-06T00:00:00Z,M,NA,NA,order4,he was a little distracted; may have said their name during the game to get their attention,center,noun,0.40000000000000036,C_D,incorrect,include
+speed_acc_child_noise_5,7,no_gaze,noise,juice,2017-07-20T00:00:00Z,2012-03-06T00:00:00Z,M,NA,NA,order4,he was a little distracted; may have said their name during the game to get their attention,center,noun,1.133,C_D,incorrect,include
+speed_acc_child_noise_5,8,no_gaze,noise,chicken,2017-07-20T00:00:00Z,2012-03-06T00:00:00Z,M,NA,NA,order4,he was a little distracted; may have said their name during the game to get their attention,center,noun,0.9329999999999998,C_T,correct,include
+speed_acc_child_noise_5,9,no_gaze,noise,shoe,2017-07-20T00:00:00Z,2012-03-06T00:00:00Z,M,NA,NA,order4,he was a little distracted; may have said their name during the game to get their attention,center,noun,0.5330000000000004,C_D,incorrect,include
+speed_acc_child_noise_5,10,no_gaze,noise,ball,2017-07-20T00:00:00Z,2012-03-06T00:00:00Z,M,NA,NA,order4,he was a little distracted; may have said their name during the game to get their attention,center,noun,0.7670000000000003,C_D,incorrect,include
+speed_acc_child_noise_5,11,no_gaze,noise,chicken,2017-07-20T00:00:00Z,2012-03-06T00:00:00Z,M,NA,NA,order4,he was a little distracted; may have said their name during the game to get their attention,distracter,noun,0.23299999999999965,D_T,incorrect,include
+speed_acc_child_noise_5,12,no_gaze,noise,bunny,2017-07-20T00:00:00Z,2012-03-06T00:00:00Z,M,NA,NA,order4,he was a little distracted; may have said their name during the game to get their attention,center,noun,0.20000000000000018,C_T,correct,include
+speed_acc_child_noise_5,13,no_gaze,noise,bottle,2017-07-20T00:00:00Z,2012-03-06T00:00:00Z,M,NA,NA,order4,he was a little distracted; may have said their name during the game to get their attention,center,noun,0.9669999999999996,C_T,correct,include
+speed_acc_child_noise_5,14,no_gaze,noise,juice,2017-07-20T00:00:00Z,2012-03-06T00:00:00Z,M,NA,NA,order4,he was a little distracted; may have said their name during the game to get their attention,center,noun,3.4000000000000004,C_D,incorrect,include
+speed_acc_child_noise_5,15,no_gaze,noise,boat,2017-07-20T00:00:00Z,2012-03-06T00:00:00Z,M,NA,NA,order4,he was a little distracted; may have said their name during the game to get their attention,center,noun,0.7670000000000003,C_D,incorrect,include
+speed_acc_child_noise_5,16,no_gaze,noise,shoe,2017-07-20T00:00:00Z,2012-03-06T00:00:00Z,M,NA,NA,order4,he was a little distracted; may have said their name during the game to get their attention,center,noun,0.43299999999999983,C_T,correct,include
+speed_acc_child_noise_5,17,no_gaze,no_noise,shoe,2017-07-20T00:00:00Z,2012-03-06T00:00:00Z,M,NA,NA,order4,he was a little distracted; may have said their name during the game to get their attention,center,noun,0.367,C_T,correct,include
+speed_acc_child_noise_5,18,no_gaze,no_noise,cookie,2017-07-20T00:00:00Z,2012-03-06T00:00:00Z,M,NA,NA,order4,he was a little distracted; may have said their name during the game to get their attention,center,noun,0.867,C_T,correct,include
+speed_acc_child_noise_5,23,no_gaze,no_noise,cookie,2017-07-20T00:00:00Z,2012-03-06T00:00:00Z,M,NA,NA,order4,he was a little distracted; may have said their name during the game to get their attention,distracter,noun,2.367,D_C,incorrect,include
+speed_acc_child_noise_5,25,no_gaze,no_noise,juice,2017-07-20T00:00:00Z,2012-03-06T00:00:00Z,M,NA,NA,order4,he was a little distracted; may have said their name during the game to get their attention,center,noun,1.7670000000000003,C_D,incorrect,include
+speed_acc_child_noise_5,26,no_gaze,no_noise,bunny,2017-07-20T00:00:00Z,2012-03-06T00:00:00Z,M,NA,NA,order4,he was a little distracted; may have said their name during the game to get their attention,center,noun,0.9669999999999996,C_T,correct,include
+speed_acc_child_noise_5,27,no_gaze,no_noise,chicken,2017-07-20T00:00:00Z,2012-03-06T00:00:00Z,M,NA,NA,order4,he was a little distracted; may have said their name during the game to get their attention,distracter,noun,2.167,D_T,incorrect,include
+speed_acc_child_noise_5,28,no_gaze,no_noise,bottle,2017-07-20T00:00:00Z,2012-03-06T00:00:00Z,M,NA,NA,order4,he was a little distracted; may have said their name during the game to get their attention,distracter,noun,2.133,D_T,incorrect,include
+speed_acc_child_noise_5,29,no_gaze,no_noise,ball,2017-07-20T00:00:00Z,2012-03-06T00:00:00Z,M,NA,NA,order4,he was a little distracted; may have said their name during the game to get their attention,target,noun,3,T_C,incorrect,include
+speed_acc_child_noise_5,30,no_gaze,no_noise,chicken,2017-07-20T00:00:00Z,2012-03-06T00:00:00Z,M,NA,NA,order4,he was a little distracted; may have said their name during the game to get their attention,center,noun,0.9000000000000004,C_T,correct,include
+speed_acc_child_noise_5,31,no_gaze,no_noise,juice,2017-07-20T00:00:00Z,2012-03-06T00:00:00Z,M,NA,NA,order4,he was a little distracted; may have said their name during the game to get their attention,distracter,noun,NA,no_shift,NA,include
+speed_acc_child_noise_5,32,no_gaze,no_noise,shoe,2017-07-20T00:00:00Z,2012-03-06T00:00:00Z,M,NA,NA,order4,he was a little distracted; may have said their name during the game to get their attention,center,noun,1.867,C_T,correct,include
+speed_acc_child_noise_6,1,no_gaze,no_noise,shoe,2017-07-20T00:00:00Z,2012-12-24T00:00:00Z,M,NA,NA,order3,"went well, but I didn't take his name tag off; also said the audio was too loud so I turned the volume down",center,noun,0.7000000000000002,C_T,correct,include
+speed_acc_child_noise_6,2,no_gaze,no_noise,chicken,2017-07-20T00:00:00Z,2012-12-24T00:00:00Z,M,NA,NA,order3,"went well, but I didn't take his name tag off; also said the audio was too loud so I turned the volume down",center,noun,0.367,C_D,incorrect,include
+speed_acc_child_noise_6,3,no_gaze,no_noise,juice,2017-07-20T00:00:00Z,2012-12-24T00:00:00Z,M,NA,NA,order3,"went well, but I didn't take his name tag off; also said the audio was too loud so I turned the volume down",center,noun,0.3330000000000002,C_T,correct,include
+speed_acc_child_noise_6,4,no_gaze,no_noise,boat,2017-07-20T00:00:00Z,2012-12-24T00:00:00Z,M,NA,NA,order3,"went well, but I didn't take his name tag off; also said the audio was too loud so I turned the volume down",center,noun,0.43299999999999983,C_T,correct,include
+speed_acc_child_noise_6,5,no_gaze,no_noise,ball,2017-07-20T00:00:00Z,2012-12-24T00:00:00Z,M,NA,NA,order3,"went well, but I didn't take his name tag off; also said the audio was too loud so I turned the volume down",target,noun,0.367,T_C,incorrect,include
+speed_acc_child_noise_6,6,no_gaze,no_noise,boat,2017-07-20T00:00:00Z,2012-12-24T00:00:00Z,M,NA,NA,order3,"went well, but I didn't take his name tag off; also said the audio was too loud so I turned the volume down",target,noun,2.067,T_C,incorrect,include
+speed_acc_child_noise_6,7,no_gaze,no_noise,cookie,2017-07-20T00:00:00Z,2012-12-24T00:00:00Z,M,NA,NA,order3,"went well, but I didn't take his name tag off; also said the audio was too loud so I turned the volume down",distracter,noun,1.4000000000000004,D_T,incorrect,include
+speed_acc_child_noise_6,8,no_gaze,no_noise,bunny,2017-07-20T00:00:00Z,2012-12-24T00:00:00Z,M,NA,NA,order3,"went well, but I didn't take his name tag off; also said the audio was too loud so I turned the volume down",center,noun,0.5999999999999996,C_D,incorrect,include
+speed_acc_child_noise_6,9,no_gaze,no_noise,cookie,2017-07-20T00:00:00Z,2012-12-24T00:00:00Z,M,NA,NA,order3,"went well, but I didn't take his name tag off; also said the audio was too loud so I turned the volume down",center,noun,1.367,C_D,incorrect,include
+speed_acc_child_noise_6,10,no_gaze,no_noise,juice,2017-07-20T00:00:00Z,2012-12-24T00:00:00Z,M,NA,NA,order3,"went well, but I didn't take his name tag off; also said the audio was too loud so I turned the volume down",target,noun,0.3330000000000002,T_D,incorrect,include
+speed_acc_child_noise_6,11,no_gaze,no_noise,shoe,2017-07-20T00:00:00Z,2012-12-24T00:00:00Z,M,NA,NA,order3,"went well, but I didn't take his name tag off; also said the audio was too loud so I turned the volume down",center,noun,0.7329999999999997,C_T,correct,include
+speed_acc_child_noise_6,12,no_gaze,no_noise,bunny,2017-07-20T00:00:00Z,2012-12-24T00:00:00Z,M,NA,NA,order3,"went well, but I didn't take his name tag off; also said the audio was too loud so I turned the volume down",center,noun,0.40000000000000036,C_T,correct,include
+speed_acc_child_noise_6,13,no_gaze,no_noise,bottle,2017-07-20T00:00:00Z,2012-12-24T00:00:00Z,M,NA,NA,order3,"went well, but I didn't take his name tag off; also said the audio was too loud so I turned the volume down",center,noun,0.133,C_T,correct,include
+speed_acc_child_noise_6,14,no_gaze,no_noise,ball,2017-07-20T00:00:00Z,2012-12-24T00:00:00Z,M,NA,NA,order3,"went well, but I didn't take his name tag off; also said the audio was too loud so I turned the volume down",center,noun,2.2329999999999997,C_T,correct,include
+speed_acc_child_noise_6,21,no_gaze,noise,juice,2017-07-20T00:00:00Z,2012-12-24T00:00:00Z,M,NA,NA,order3,"went well, but I didn't take his name tag off; also said the audio was too loud so I turned the volume down",center,noun,2.7329999999999997,C_T,correct,include
+speed_acc_child_noise_6,22,no_gaze,noise,boat,2017-07-20T00:00:00Z,2012-12-24T00:00:00Z,M,NA,NA,order3,"went well, but I didn't take his name tag off; also said the audio was too loud so I turned the volume down",distracter,noun,0.46699999999999964,D_C,incorrect,include
+speed_acc_child_noise_6,26,no_gaze,noise,bunny,2017-07-20T00:00:00Z,2012-12-24T00:00:00Z,M,NA,NA,order3,"went well, but I didn't take his name tag off; also said the audio was too loud so I turned the volume down",distracter,noun,1.133,D_T,incorrect,include
+speed_acc_child_noise_6,27,no_gaze,noise,ball,2017-07-20T00:00:00Z,2012-12-24T00:00:00Z,M,NA,NA,order3,"went well, but I didn't take his name tag off; also said the audio was too loud so I turned the volume down",target,noun,NA,no_shift,NA,include
+speed_acc_child_noise_6,28,no_gaze,noise,cookie,2017-07-20T00:00:00Z,2012-12-24T00:00:00Z,M,NA,NA,order3,"went well, but I didn't take his name tag off; also said the audio was too loud so I turned the volume down",target,noun,0.5330000000000004,T_C,incorrect,include
+speed_acc_child_noise_6,29,no_gaze,noise,shoe,2017-07-20T00:00:00Z,2012-12-24T00:00:00Z,M,NA,NA,order3,"went well, but I didn't take his name tag off; also said the audio was too loud so I turned the volume down",center,noun,2.867,C_D,incorrect,include
+speed_acc_child_noise_6,30,no_gaze,noise,juice,2017-07-20T00:00:00Z,2012-12-24T00:00:00Z,M,NA,NA,order3,"went well, but I didn't take his name tag off; also said the audio was too loud so I turned the volume down",center,noun,1.2670000000000003,C_T,correct,include
+speed_acc_child_noise_7,1,no_gaze,noise,boat,2017-07-20T00:00:00Z,2012-10-12T00:00:00Z,F,NA,NA,order2,went well!,center,noun,0.43299999999999983,C_D,incorrect,include
+speed_acc_child_noise_7,2,no_gaze,noise,chicken,2017-07-20T00:00:00Z,2012-10-12T00:00:00Z,F,NA,NA,order2,went well!,distracter,noun,0.26700000000000035,D_C,incorrect,include
+speed_acc_child_noise_7,3,no_gaze,noise,juice,2017-07-20T00:00:00Z,2012-10-12T00:00:00Z,F,NA,NA,order2,went well!,center,noun,0.2999999999999998,C_D,incorrect,include
+speed_acc_child_noise_7,4,no_gaze,noise,ball,2017-07-20T00:00:00Z,2012-10-12T00:00:00Z,F,NA,NA,order2,went well!,distracter,noun,0.23299999999999965,D_C,incorrect,include
+speed_acc_child_noise_7,5,no_gaze,noise,boat,2017-07-20T00:00:00Z,2012-10-12T00:00:00Z,F,NA,NA,order2,went well!,center,noun,1.633,C_T,correct,include
+speed_acc_child_noise_7,6,no_gaze,noise,juice,2017-07-20T00:00:00Z,2012-10-12T00:00:00Z,F,NA,NA,order2,went well!,target,noun,0.26700000000000035,T_C,incorrect,include
+speed_acc_child_noise_7,7,no_gaze,noise,cookie,2017-07-20T00:00:00Z,2012-10-12T00:00:00Z,F,NA,NA,order2,went well!,center,noun,1.4000000000000004,C_D,incorrect,include
+speed_acc_child_noise_7,8,no_gaze,noise,bottle,2017-07-20T00:00:00Z,2012-10-12T00:00:00Z,F,NA,NA,order2,went well!,center,noun,0.7000000000000002,C_T,correct,include
+speed_acc_child_noise_7,9,no_gaze,noise,ball,2017-07-20T00:00:00Z,2012-10-12T00:00:00Z,F,NA,NA,order2,went well!,center,noun,0.5999999999999996,C_T,correct,include
+speed_acc_child_noise_7,10,no_gaze,noise,cookie,2017-07-20T00:00:00Z,2012-10-12T00:00:00Z,F,NA,NA,order2,went well!,target,noun,0.7670000000000003,T_C,incorrect,include
+speed_acc_child_noise_7,11,no_gaze,noise,chicken,2017-07-20T00:00:00Z,2012-10-12T00:00:00Z,F,NA,NA,order2,went well!,center,noun,1.3330000000000002,C_D,incorrect,include
+speed_acc_child_noise_7,12,no_gaze,noise,bunny,2017-07-20T00:00:00Z,2012-10-12T00:00:00Z,F,NA,NA,order2,went well!,center,noun,1.2670000000000003,C_T,correct,include
+speed_acc_child_noise_7,13,no_gaze,noise,bottle,2017-07-20T00:00:00Z,2012-10-12T00:00:00Z,F,NA,NA,order2,went well!,center,noun,0.06700000000000017,C_D,incorrect,include
+speed_acc_child_noise_7,14,no_gaze,noise,bunny,2017-07-20T00:00:00Z,2012-10-12T00:00:00Z,F,NA,NA,order2,went well!,center,noun,0.7000000000000002,C_D,incorrect,include
+speed_acc_child_noise_7,15,no_gaze,noise,shoe,2017-07-20T00:00:00Z,2012-10-12T00:00:00Z,F,NA,NA,order2,went well!,center,noun,1.9329999999999998,C_T,correct,include
+speed_acc_child_noise_7,16,no_gaze,noise,shoe,2017-07-20T00:00:00Z,2012-10-12T00:00:00Z,F,NA,NA,order2,went well!,center,noun,1.5,C_T,correct,include
+speed_acc_child_noise_7,17,no_gaze,no_noise,bunny,2017-07-20T00:00:00Z,2012-10-12T00:00:00Z,F,NA,NA,order2,went well!,center,noun,1,C_T,correct,include
+speed_acc_child_noise_7,18,no_gaze,no_noise,chicken,2017-07-20T00:00:00Z,2012-10-12T00:00:00Z,F,NA,NA,order2,went well!,center,noun,1.0330000000000004,C_D,incorrect,include
+speed_acc_child_noise_7,19,no_gaze,no_noise,bunny,2017-07-20T00:00:00Z,2012-10-12T00:00:00Z,F,NA,NA,order2,went well!,center,noun,2.2,C_D,incorrect,include
+speed_acc_child_noise_7,20,no_gaze,no_noise,ball,2017-07-20T00:00:00Z,2012-10-12T00:00:00Z,F,NA,NA,order2,went well!,center,noun,0.8330000000000002,C_D,incorrect,include
+speed_acc_child_noise_7,21,no_gaze,no_noise,cookie,2017-07-20T00:00:00Z,2012-10-12T00:00:00Z,F,NA,NA,order2,went well!,center,noun,1.367,C_T,correct,include
+speed_acc_child_noise_7,22,no_gaze,no_noise,chicken,2017-07-20T00:00:00Z,2012-10-12T00:00:00Z,F,NA,NA,order2,went well!,center,noun,0.7670000000000003,C_D,incorrect,include
+speed_acc_child_noise_7,23,no_gaze,no_noise,cookie,2017-07-20T00:00:00Z,2012-10-12T00:00:00Z,F,NA,NA,order2,went well!,distracter,noun,1.2329999999999997,D_C,incorrect,include
+speed_acc_child_noise_7,24,no_gaze,no_noise,juice,2017-07-20T00:00:00Z,2012-10-12T00:00:00Z,F,NA,NA,order2,went well!,center,noun,0.06700000000000017,C_T,correct,include
+speed_acc_child_noise_7,25,no_gaze,no_noise,boat,2017-07-20T00:00:00Z,2012-10-12T00:00:00Z,F,NA,NA,order2,went well!,center,noun,2.567,C_D,incorrect,include
+speed_acc_child_noise_7,26,no_gaze,no_noise,bottle,2017-07-20T00:00:00Z,2012-10-12T00:00:00Z,F,NA,NA,order2,went well!,target,noun,0.9669999999999996,T_C,incorrect,include
+speed_acc_child_noise_7,27,no_gaze,no_noise,shoe,2017-07-20T00:00:00Z,2012-10-12T00:00:00Z,F,NA,NA,order2,went well!,target,noun,0.23299999999999965,T_D,incorrect,include
+speed_acc_child_noise_7,28,no_gaze,no_noise,boat,2017-07-20T00:00:00Z,2012-10-12T00:00:00Z,F,NA,NA,order2,went well!,target,noun,1.2670000000000003,T_D,incorrect,include
+speed_acc_child_noise_7,29,no_gaze,no_noise,ball,2017-07-20T00:00:00Z,2012-10-12T00:00:00Z,F,NA,NA,order2,went well!,target,noun,2.067,T_C,incorrect,include
+speed_acc_child_noise_7,30,no_gaze,no_noise,bottle,2017-07-20T00:00:00Z,2012-10-12T00:00:00Z,F,NA,NA,order2,went well!,distracter,noun,0.5,D_C,incorrect,include
+speed_acc_child_noise_7,31,no_gaze,no_noise,juice,2017-07-20T00:00:00Z,2012-10-12T00:00:00Z,F,NA,NA,order2,went well!,center,noun,0.867,C_T,correct,include
+speed_acc_child_noise_7,32,no_gaze,no_noise,shoe,2017-07-20T00:00:00Z,2012-10-12T00:00:00Z,F,NA,NA,order2,went well!,center,noun,1.7999999999999998,C_T,correct,include
+speed_acc_child_noise_8,1,no_gaze,noise,ball,2017-07-20T00:00:00Z,2013-10-22T00:00:00Z,M,NA,NA,order4,went well!,center,noun,1.0670000000000002,C_D,incorrect,include
+speed_acc_child_noise_8,2,no_gaze,noise,bottle,2017-07-20T00:00:00Z,2013-10-22T00:00:00Z,M,NA,NA,order4,went well!,distracter,noun,0.9669999999999996,D_T,incorrect,include
+speed_acc_child_noise_8,3,no_gaze,noise,chicken,2017-07-20T00:00:00Z,2013-10-22T00:00:00Z,M,NA,NA,order4,went well!,center,noun,1.0670000000000002,C_T,correct,include
+speed_acc_child_noise_8,4,no_gaze,noise,chicken,2017-07-20T00:00:00Z,2013-10-22T00:00:00Z,M,NA,NA,order4,went well!,center,noun,0.7999999999999998,C_D,incorrect,include
+speed_acc_child_noise_8,5,no_gaze,noise,shoe,2017-07-20T00:00:00Z,2013-10-22T00:00:00Z,M,NA,NA,order4,went well!,center,noun,0.9000000000000004,C_D,incorrect,include
+speed_acc_child_noise_8,6,no_gaze,noise,juice,2017-07-20T00:00:00Z,2013-10-22T00:00:00Z,M,NA,NA,order4,went well!,target,noun,0.7999999999999998,T_D,incorrect,include
+speed_acc_child_noise_8,7,no_gaze,noise,cookie,2017-07-20T00:00:00Z,2013-10-22T00:00:00Z,M,NA,NA,order4,went well!,center,noun,1.367,C_T,correct,include
+speed_acc_child_noise_8,8,no_gaze,noise,bunny,2017-07-20T00:00:00Z,2013-10-22T00:00:00Z,M,NA,NA,order4,went well!,center,noun,0.8330000000000002,C_T,correct,include
+speed_acc_child_noise_8,9,no_gaze,noise,boat,2017-07-20T00:00:00Z,2013-10-22T00:00:00Z,M,NA,NA,order4,went well!,distracter,noun,0.5670000000000002,D_C,incorrect,include
+speed_acc_child_noise_8,10,no_gaze,noise,juice,2017-07-20T00:00:00Z,2013-10-22T00:00:00Z,M,NA,NA,order4,went well!,center,noun,1.7000000000000002,C_T,correct,include
+speed_acc_child_noise_8,11,no_gaze,noise,shoe,2017-07-20T00:00:00Z,2013-10-22T00:00:00Z,M,NA,NA,order4,went well!,center,noun,1.9000000000000004,C_D,incorrect,include
+speed_acc_child_noise_8,12,no_gaze,noise,cookie,2017-07-20T00:00:00Z,2013-10-22T00:00:00Z,M,NA,NA,order4,went well!,distracter,noun,0.40000000000000036,D_T,incorrect,include
+speed_acc_child_noise_8,13,no_gaze,noise,boat,2017-07-20T00:00:00Z,2013-10-22T00:00:00Z,M,NA,NA,order4,went well!,center,noun,1.2329999999999997,C_T,correct,include
+speed_acc_child_noise_8,14,no_gaze,noise,bunny,2017-07-20T00:00:00Z,2013-10-22T00:00:00Z,M,NA,NA,order4,went well!,center,noun,0.367,C_T,correct,include
+speed_acc_child_noise_8,15,no_gaze,noise,bottle,2017-07-20T00:00:00Z,2013-10-22T00:00:00Z,M,NA,NA,order4,went well!,center,noun,1.0330000000000004,C_T,correct,include
+speed_acc_child_noise_8,16,no_gaze,noise,ball,2017-07-20T00:00:00Z,2013-10-22T00:00:00Z,M,NA,NA,order4,went well!,center,noun,0.6669999999999998,C_T,correct,include
+speed_acc_child_noise_8,17,no_gaze,no_noise,bottle,2017-07-20T00:00:00Z,2013-10-22T00:00:00Z,M,NA,NA,order4,went well!,center,noun,0.20000000000000018,C_T,correct,include
+speed_acc_child_noise_8,18,no_gaze,no_noise,chicken,2017-07-20T00:00:00Z,2013-10-22T00:00:00Z,M,NA,NA,order4,went well!,center,noun,0.2999999999999998,C_T,correct,include
+speed_acc_child_noise_8,19,no_gaze,no_noise,ball,2017-07-20T00:00:00Z,2013-10-22T00:00:00Z,M,NA,NA,order4,went well!,center,noun,1.133,C_T,correct,include
+speed_acc_child_noise_8,20,no_gaze,no_noise,juice,2017-07-20T00:00:00Z,2013-10-22T00:00:00Z,M,NA,NA,order4,went well!,center,noun,0.23299999999999965,C_T,correct,include
+speed_acc_child_noise_8,21,no_gaze,no_noise,chicken,2017-07-20T00:00:00Z,2013-10-22T00:00:00Z,M,NA,NA,order4,went well!,center,noun,0.3330000000000002,C_D,incorrect,include
+speed_acc_child_noise_8,22,no_gaze,no_noise,shoe,2017-07-20T00:00:00Z,2013-10-22T00:00:00Z,M,NA,NA,order4,went well!,center,noun,1.0670000000000002,C_T,correct,include
+speed_acc_child_noise_8,23,no_gaze,no_noise,ball,2017-07-20T00:00:00Z,2013-10-22T00:00:00Z,M,NA,NA,order4,went well!,center,noun,1.2000000000000002,C_D,incorrect,include
+speed_acc_child_noise_8,24,no_gaze,no_noise,shoe,2017-07-20T00:00:00Z,2013-10-22T00:00:00Z,M,NA,NA,order4,went well!,center,noun,0.46699999999999964,C_D,incorrect,include
+speed_acc_child_noise_8,25,no_gaze,no_noise,cookie,2017-07-20T00:00:00Z,2013-10-22T00:00:00Z,M,NA,NA,order4,went well!,center,noun,1,C_D,incorrect,include
+speed_acc_child_noise_8,26,no_gaze,no_noise,cookie,2017-07-20T00:00:00Z,2013-10-22T00:00:00Z,M,NA,NA,order4,went well!,center,noun,1.5670000000000002,C_T,correct,include
+speed_acc_child_noise_8,27,no_gaze,no_noise,boat,2017-07-20T00:00:00Z,2013-10-22T00:00:00Z,M,NA,NA,order4,went well!,center,noun,1.9000000000000004,C_T,correct,include
+speed_acc_child_noise_8,28,no_gaze,no_noise,bunny,2017-07-20T00:00:00Z,2013-10-22T00:00:00Z,M,NA,NA,order4,went well!,center,noun,1.0670000000000002,C_D,incorrect,include
+speed_acc_child_noise_8,29,no_gaze,no_noise,juice,2017-07-20T00:00:00Z,2013-10-22T00:00:00Z,M,NA,NA,order4,went well!,center,noun,1.2000000000000002,C_T,correct,include
+speed_acc_child_noise_8,30,no_gaze,no_noise,bunny,2017-07-20T00:00:00Z,2013-10-22T00:00:00Z,M,NA,NA,order4,went well!,center,noun,NA,no_shift,NA,include
+speed_acc_child_noise_8,31,no_gaze,no_noise,bottle,2017-07-20T00:00:00Z,2013-10-22T00:00:00Z,M,NA,NA,order4,went well!,distracter,noun,0.9000000000000004,D_T,incorrect,include
+speed_acc_child_noise_8,32,no_gaze,no_noise,boat,2017-07-20T00:00:00Z,2013-10-22T00:00:00Z,M,NA,NA,order4,went well!,distracter,noun,1.7000000000000002,D_C,incorrect,include
+speed_acc_child_noise_9,1,no_gaze,no_noise,bunny,2017-07-20T00:00:00Z,2012-10-10T00:00:00Z,F,NA,NA,order1,"went well! When the noise condition started, she began to say the target words out loud",center,noun,0.9669999999999996,C_T,correct,include
+speed_acc_child_noise_9,2,no_gaze,no_noise,ball,2017-07-20T00:00:00Z,2012-10-10T00:00:00Z,F,NA,NA,order1,"went well! When the noise condition started, she began to say the target words out loud",center,noun,0.09999999999999964,C_T,correct,include
+speed_acc_child_noise_9,3,no_gaze,no_noise,chicken,2017-07-20T00:00:00Z,2012-10-10T00:00:00Z,F,NA,NA,order1,"went well! When the noise condition started, she began to say the target words out loud",center,noun,0.7329999999999997,C_T,correct,include
+speed_acc_child_noise_9,4,no_gaze,no_noise,bunny,2017-07-20T00:00:00Z,2012-10-10T00:00:00Z,F,NA,NA,order1,"went well! When the noise condition started, she began to say the target words out loud",center,noun,0.633,C_T,correct,include
+speed_acc_child_noise_9,5,no_gaze,no_noise,shoe,2017-07-20T00:00:00Z,2012-10-10T00:00:00Z,F,NA,NA,order1,"went well! When the noise condition started, she began to say the target words out loud",center,noun,0.40000000000000036,C_T,correct,include
+speed_acc_child_noise_9,6,no_gaze,no_noise,juice,2017-07-20T00:00:00Z,2012-10-10T00:00:00Z,F,NA,NA,order1,"went well! When the noise condition started, she began to say the target words out loud",target,noun,0.7329999999999997,T_C,incorrect,include
+speed_acc_child_noise_9,7,no_gaze,no_noise,chicken,2017-07-20T00:00:00Z,2012-10-10T00:00:00Z,F,NA,NA,order1,"went well! When the noise condition started, she began to say the target words out loud",center,noun,1.0670000000000002,C_D,incorrect,include
+speed_acc_child_noise_9,8,no_gaze,no_noise,boat,2017-07-20T00:00:00Z,2012-10-10T00:00:00Z,F,NA,NA,order1,"went well! When the noise condition started, she began to say the target words out loud",center,noun,1.133,C_T,correct,include
+speed_acc_child_noise_9,9,no_gaze,no_noise,bottle,2017-07-20T00:00:00Z,2012-10-10T00:00:00Z,F,NA,NA,order1,"went well! When the noise condition started, she began to say the target words out loud",center,noun,1.0999999999999996,C_T,correct,include
+speed_acc_child_noise_9,10,no_gaze,no_noise,cookie,2017-07-20T00:00:00Z,2012-10-10T00:00:00Z,F,NA,NA,order1,"went well! When the noise condition started, she began to say the target words out loud",distracter,noun,0.6669999999999998,D_C,incorrect,include
+speed_acc_child_noise_9,11,no_gaze,no_noise,cookie,2017-07-20T00:00:00Z,2012-10-10T00:00:00Z,F,NA,NA,order1,"went well! When the noise condition started, she began to say the target words out loud",center,noun,1.2329999999999997,C_T,correct,include
+speed_acc_child_noise_9,12,no_gaze,no_noise,juice,2017-07-20T00:00:00Z,2012-10-10T00:00:00Z,F,NA,NA,order1,"went well! When the noise condition started, she began to say the target words out loud",center,noun,1.5670000000000002,C_T,correct,include
+speed_acc_child_noise_9,13,no_gaze,no_noise,bottle,2017-07-20T00:00:00Z,2012-10-10T00:00:00Z,F,NA,NA,order1,"went well! When the noise condition started, she began to say the target words out loud",center,noun,1.0330000000000004,C_T,correct,include
+speed_acc_child_noise_9,14,no_gaze,no_noise,ball,2017-07-20T00:00:00Z,2012-10-10T00:00:00Z,F,NA,NA,order1,"went well! When the noise condition started, she began to say the target words out loud",center,noun,0.20000000000000018,C_D,incorrect,include
+speed_acc_child_noise_9,15,no_gaze,no_noise,shoe,2017-07-20T00:00:00Z,2012-10-10T00:00:00Z,F,NA,NA,order1,"went well! When the noise condition started, she began to say the target words out loud",center,noun,1.0670000000000002,C_T,correct,include
+speed_acc_child_noise_9,16,no_gaze,no_noise,boat,2017-07-20T00:00:00Z,2012-10-10T00:00:00Z,F,NA,NA,order1,"went well! When the noise condition started, she began to say the target words out loud",target,noun,0.16699999999999982,T_C,incorrect,include
+speed_acc_child_noise_9,17,no_gaze,noise,cookie,2017-07-20T00:00:00Z,2012-10-10T00:00:00Z,F,NA,NA,order1,"went well! When the noise condition started, she began to say the target words out loud",center,noun,1.633,C_T,correct,include
+speed_acc_child_noise_9,18,no_gaze,noise,bunny,2017-07-20T00:00:00Z,2012-10-10T00:00:00Z,F,NA,NA,order1,"went well! When the noise condition started, she began to say the target words out loud",center,noun,1.2999999999999998,C_T,correct,include
+speed_acc_child_noise_9,19,no_gaze,noise,chicken,2017-07-20T00:00:00Z,2012-10-10T00:00:00Z,F,NA,NA,order1,"went well! When the noise condition started, she began to say the target words out loud",center,noun,1.0330000000000004,C_D,incorrect,include
+speed_acc_child_noise_9,20,no_gaze,noise,ball,2017-07-20T00:00:00Z,2012-10-10T00:00:00Z,F,NA,NA,order1,"went well! When the noise condition started, she began to say the target words out loud",center,noun,0.633,C_D,incorrect,include
+speed_acc_child_noise_9,21,no_gaze,noise,shoe,2017-07-20T00:00:00Z,2012-10-10T00:00:00Z,F,NA,NA,order1,"went well! When the noise condition started, she began to say the target words out loud",center,noun,1.1669999999999998,C_T,correct,include
+speed_acc_child_noise_9,22,no_gaze,noise,ball,2017-07-20T00:00:00Z,2012-10-10T00:00:00Z,F,NA,NA,order1,"went well! When the noise condition started, she began to say the target words out loud",center,noun,1.4000000000000004,C_T,correct,include
+speed_acc_child_noise_9,23,no_gaze,noise,chicken,2017-07-20T00:00:00Z,2012-10-10T00:00:00Z,F,NA,NA,order1,"went well! When the noise condition started, she began to say the target words out loud",center,noun,NA,no_shift,NA,include
+speed_acc_child_noise_9,24,no_gaze,noise,shoe,2017-07-20T00:00:00Z,2012-10-10T00:00:00Z,F,NA,NA,order1,"went well! When the noise condition started, she began to say the target words out loud",center,noun,0.9000000000000004,C_T,correct,include
+speed_acc_child_noise_9,25,no_gaze,noise,bunny,2017-07-20T00:00:00Z,2012-10-10T00:00:00Z,F,NA,NA,order1,"went well! When the noise condition started, she began to say the target words out loud",center,noun,1.0330000000000004,C_T,correct,include
+speed_acc_child_noise_9,26,no_gaze,noise,juice,2017-07-20T00:00:00Z,2012-10-10T00:00:00Z,F,NA,NA,order1,"went well! When the noise condition started, she began to say the target words out loud",target,noun,0.7999999999999998,T_C,incorrect,include
+speed_acc_child_noise_9,27,no_gaze,noise,boat,2017-07-20T00:00:00Z,2012-10-10T00:00:00Z,F,NA,NA,order1,"went well! When the noise condition started, she began to say the target words out loud",center,noun,0.8330000000000002,C_D,incorrect,include
+speed_acc_child_noise_9,28,no_gaze,noise,bottle,2017-07-20T00:00:00Z,2012-10-10T00:00:00Z,F,NA,NA,order1,"went well! When the noise condition started, she began to say the target words out loud",target,noun,2.5,T_D,incorrect,include
+speed_acc_child_noise_9,29,no_gaze,noise,cookie,2017-07-20T00:00:00Z,2012-10-10T00:00:00Z,F,NA,NA,order1,"went well! When the noise condition started, she began to say the target words out loud",center,noun,1.8330000000000002,C_T,correct,include
+speed_acc_child_noise_9,30,no_gaze,noise,juice,2017-07-20T00:00:00Z,2012-10-10T00:00:00Z,F,NA,NA,order1,"went well! When the noise condition started, she began to say the target words out loud",target,noun,0.5330000000000004,T_C,incorrect,include
+speed_acc_child_noise_9,31,no_gaze,noise,boat,2017-07-20T00:00:00Z,2012-10-10T00:00:00Z,F,NA,NA,order1,"went well! When the noise condition started, she began to say the target words out loud",target,noun,0.40000000000000036,T_D,incorrect,include
+speed_acc_child_noise_9,32,no_gaze,noise,bottle,2017-07-20T00:00:00Z,2012-10-10T00:00:00Z,F,NA,NA,order1,"went well! When the noise condition started, she began to say the target words out loud",center,noun,0.7670000000000003,C_T,correct,include
