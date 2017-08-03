@@ -1,5 +1,5 @@
 ---
-title: "Speed-Acc Child Gaze Analysis"
+title: "Speed-Acc Simulated Analysis"
 author: "Kyle MacDonald"
 output: html_document
 ---
@@ -28,11 +28,13 @@ source("../../helper_functions/libraries_and_functions.R")
 Section 11.2 from [this](http://r4ds.had.co.nz/data-import.html) chapter on data importing is great.
 
 ```{r}
-
+<<<<<<< HEAD
 getwd()
-setwd("~/Desktop/Research/speed-acc/data/3_final_merged_data/first_shifts")
-d <- read_csv("speed_acc_adult_ng_fstshift_tidy.csv")
-
+setwd( "/Users/TamiAlade/Desktop/Research/speed-acc/data/2_cleaned_data")
+read_csv("simulated_data_2afc.csv")
+=======
+d <- read_csv("../../../data/3_final_merged_data/first_shifts/speed_acc_child_gaze_fstshift_tidy.csv.gz")
+>>>>>>> 0356ac79dfee75898ac796e2a85330d7eb6219fa
 ```
 
 ## Check the data
@@ -44,7 +46,7 @@ The goal of this section is to make sure the data match our expectations, or in 
 How many participants in the dataset?  
 
 ```{r}
-by_id <- group_by(d, subid)
+by_id <- group_by(simulated_data_2afc, id)
 summary_by_id <- summarise(.data = by_id)
 count(summary_by_id)
 

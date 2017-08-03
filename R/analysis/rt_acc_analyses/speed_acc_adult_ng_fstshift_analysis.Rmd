@@ -1,5 +1,5 @@
 ---
-title: "Speed-Acc Child Gaze Analysis"
+title: "Speed-Acc Noise Gaze Analysis"
 author: "Kyle MacDonald"
 output: html_document
 ---
@@ -53,7 +53,7 @@ count(summary_by_id)
 How many trials do we have for each participant?
 
 ```{r}
-by_trial <- group_by(simulated_data_2afc,id, trial_num)
+by_trial <- group_by(d, subid, tr.num)
 summary_by_trial <- summarise(.data = by_trial)
 count(summary_by_trial)
 ```
@@ -61,13 +61,13 @@ count(summary_by_trial)
 How many trials in each condition? 
 
 ```{r}
-by_condition <- group_by(simulated_data_2afc, condition,id, trial_num)
-summary_by_condition <-summarise(.data = by_condition)
-count(summary_by_condition)
-guessing <- filter(summary_by_condition, condition == "guessing")
-count(guessing)
-knowledge <- filter(summary_by_condition, condition == "knowledge")
-count(knowledge)
+by_gaze_condition <- group_by(d, gaze_condition, subid, tr.num)
+summary_by_gaze_condition <-summarise(.data = by_gaze_condition)
+count(summary_by_gaze_condition)
+
+by_noise_condition <- group_by(d, noise_condition, subid, tr.num)
+summary_by_noise_condition <-summarise(.data = by_noise_condition)
+count(summary_by_noise_condition)
 ```
 ```{r}
 
@@ -84,19 +84,23 @@ My goal when I visualize the distribution of a variable is usually to check if t
 What does the distribution of age in the sample look like? 
 
 ```{r}
-ggplot(mapping = aes(x = summary_by_condition,y = summary_by_id))
+
 ```
 
 What about Reaction Times (RT)?
 
 ```{r}
-
+library(ggplot2)
+data.frame(d)
+ggplot(data.frame(d)) + geom_point(mapping = aes(x = subid, y = rt))
 ```
 
 What about Accuracy? 
 
 ```{r}
-ggplot(cars)
+library(ggplot2)
+data.frame(d)
+ggplot(data.frame(d)) + geom_bar(mapping = aes(x = subid, fill = shift_accuracy))
 ```
 
 ### Visualize Accuracy
@@ -106,20 +110,28 @@ When thinking about
 What is the overall accuracy of first shifts?
 
 ```{r}
-
+library(ggplot2)
+data.frame(d)
+ggplot(data.frame(d)) + geom_bar(mapping = aes(x = shift_accuracy))
 
 ```
 
 What about the accuracy for each condition?
 
 ```{r}
+library(ggplot2)
+data.frame(d)
+ggplot(data.frame(d)) + geom_bar(mapping = aes(x = gaze_condition, fill = shift_accuracy))
 
+library(ggplot2)
+data.frame(d)
+ggplot(data.frame(d)) + geom_bar(mapping = aes(x = noise_condition, fill = shift_accuracy))
 ```
 
 
 ### Visualize Reaction Time
 
-What is the overall RT for kids in the experiment? 
+What is the overall RT for adults in the experiment? 
 
 ```{r}
 
