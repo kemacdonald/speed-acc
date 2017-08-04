@@ -35,5 +35,3 @@ for (file.name in files) {
 
 ## WRITE DATA OUT TO ZIPPED CSV FOR EASY ACCESS AND SMALL FILE SIZE
 write_csv(all.data, path=paste0(processed.data.path, "speed_acc_processed_adult_ng_data.csv.gz"))
-
-

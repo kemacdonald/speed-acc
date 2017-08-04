@@ -261,7 +261,10 @@ d.fs <- d %>%
 Write to zipped csv: 
 
 ```{r}
-write.path <- "../../data/3_final_merged_data/"
-write_csv(d.timecourse, path = paste0(write.path, "speed_acc_adult_timecourse_tidy.csv.gz"))
-write_csv(d.fs, path = paste0(write.path, "speed_acc_adult_fstshift_tidy.csv.gz"))
+write.path.time <- "../../../data/3_final_merged_data/timecourse/"
+write_csv(d.timecourse, path = paste0(write.path.time, 
+                                      "speed_acc_adult_timecourse_tidy.csv.gz"))
+
+write.path.time <- "../../../data/3_final_merged_data/first_shifts/"
+write_csv(d.fs, path = paste0(write.path.time, "speed_acc_adult_fstshift_tidy.csv"))
 ```
