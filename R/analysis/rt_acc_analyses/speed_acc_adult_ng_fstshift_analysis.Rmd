@@ -36,6 +36,7 @@ Section 11.2 from [this](http://r4ds.had.co.nz/data-import.html) chapter on data
 
 # read in the data using a relative path that starts from the analysis file directory
 d <- read_csv("../../../data/3_final_merged_data/first_shifts/speed_acc_adult_ng_fstshift_tidy.csv")
+
 ```
 
 ## Check the data
@@ -52,6 +53,7 @@ How many participants in the dataset?
 by_id <- group_by(d, subid)
 summary_by_id <- summarise(.data = by_id)
 count(summary_by_id)
+
 ```
 
 How many trials do we have for each participant?
@@ -76,6 +78,7 @@ summary_by_noise_condition <-summarise(.data = by_noise_condition)
 count(summary_by_noise_condition)
 ```
 
+
 **KM note**: Looks like we need to create a single variable that stores information about both the noise and gaze condition. 
 
 ```{r}
@@ -87,8 +90,9 @@ d <- d %>% mutate(condition_long = paste(gaze_condition, noise_condition, sep = 
 ```{r}
 d %>% 
   group_by(subid,condition_long) %>% 
-  summarise(n = n()) %>% 
-  kable()
+  summarise(n = n())  
+
+
 ```
 
 Check out what's going on with #8
@@ -133,8 +137,10 @@ ggplot(d, aes(x = rt)) +
 What about Accuracy? 
 
 ```{r}
-ggplot(d) + geom_bar(mapping = aes(x = subid, fill = shift_accuracy)) +
+   ggplot(d) + geom_bar(mapping = aes(x = subid, fill = shift_accuracy)) +
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+
 ```
 
 **KM note**: This is a great exploratory plot! We can see that a couple of participants are doing "weird" things that we would want to investigate further. The only thing I changed was the angle of the x-axis text, so we can see the subids more easily. 
@@ -193,7 +199,7 @@ ss %>%
 ```
 
 **Interpretation here**: How would you interpret this plot in a sentence or two?
-
+It appears that people are more accurate in the no gaze conditions (regardless of of noise vs no noise) compared to the gaze conditions. 
 ### Visualize Reaction Time
 
 **KM note**: next, I would try to make a similar boxplot for the average RT for each condition. Remember that we are now storing the information about condition in the `condition_long` variable.
@@ -207,13 +213,34 @@ What is the overall RT for adults in the experiment?
 What about RTs for correct vs. incorrect shifts?
 
 ```{r}
+rr <- d %>% 
+  filter(!is.na(shift_accuracy)) %>% # remove trials where they did not shift
+  group_by(condition_long, subid, shift_accuracy, rt) %>% 
+  summarise(n = n()) %>% 
+  group_by(subid, condition_long)
 
+# aggreate at the condition level(correct)
+rs <- rr %>% 
+  filter(shift_accuracy == "correct") %>% 
+  group_by(condition_long) %>% 
+  summarise(mean_correct = mean(rt),
+            sd_correct = sd(rt))
+
+# aggreate at the condition level(incorrect)
+rk <- rr %>% 
+  filter(shift_accuracy == "incorrect") %>% 
+  group_by(condition_long) %>% 
+  summarise(mean_correct = mean(rt),
+            sd_correct = sd(rt))
 ```
 
-What about RTs separated by condition? 
+Boxplot
 
 ```{r}
-
+rr %>% 
+  filter(shift_accuracy == "correct") %>% 
+  ggplot(aes(x = condition_long, y = rt)) +
+  geom_boxplot()
 ```
 
 ## Statistical models
