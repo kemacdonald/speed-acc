@@ -1,5 +1,5 @@
 ## [iView]
-## Converted from:	C:\Users\iView X\Desktop\Results\speed-acc-stimuli3\speed_acc_noise_4-[31d93a77-c070-475f-8dde-822dd7bad46e]\speed_acc_noise_4-eye_data.idf
+## Converted from:	C:\Users\iView X\Desktop\Results\speed-acc-stimuli3\speed_acc_noise_4-[31d93a77-c070-475f-8dde-822dd7bad46e]\speed_acc_child_noise_4-eye_data.idf
 ## Date:	18.07.2017 14:16:47
 ## Version:	IDF Converter 3.0.20
 ## IDF Version:	9
@@ -10,7 +10,7 @@
 ## Number of Samples:	2869                                                                                                                                                                                                                                                            
 ## Reversed:	none
 ## [Run]
-## Subject:	speed_acc_noise_4                                                                                                                                                                                                                                               
+## Subject:	speed_acc_child_noise_4                                                                                                                                                                                                                                               
 ## Description:	                                                                                                                                                                                                                                                                
 ## [Calibration]
 ## Calibration Area:	1920	1080

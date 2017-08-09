@@ -39,8 +39,7 @@ subinfo_df <- readxl::read_xlsx("../../../data/0a_demographics/speed_acc_child_n
 
 # clean up subid to join
 subinfo_df %<>% mutate(subid = str_to_lower(subid),
-                       subid = str_replace_all(subid, pattern = "-", "_"),
-                       subid = str_replace(subid, pattern = "_noise", "_child_noise"))
+                       subid = str_replace_all(subid, pattern = "-", "_"))
 # clean up subid in data file
 # if "child" is already in the subid, then we do not need to add it
 d %<>% mutate(subid = str_to_lower(subid),
@@ -111,11 +110,10 @@ Here we label Areas of Interest to be Left Picture, Right Picture, and the Cente
 Plot the distribution of looking across x-y coordinates. This is a useful check that participants were looking where we thought they should be, and it helps us find the AOIs for data analysis. 
 
 ```{r, eval = F}
-d.rois <- sample_n(d, size = 0.05*nrow(d)) # get a sample so we don't plot all 200k plus rows
+d.rois <- sample_n(d, size = 0.1*nrow(d)) # get a sample so we don't plot all 200k plus rows
 
-ggplot(aes(x = x, y = y), data = d) +
+ggplot(aes(x = x, y = y), data = d.rois) +
   geom_density2d() +
-  facet_wrap(~subid) +
   theme_bw()
 ```
 
@@ -149,7 +147,12 @@ d %>%
   kable()
 ```
 
-not sure what's going on with participant #P01?
+Extract short subid
+
+```{r}
+d %<>% mutate(subid_short = as.numeric(str_extract(subid, "[:digit:]+")),
+              experiment = "noise")
+```
 
 ### Flag left/right/center looking based on ROIs
 
@@ -185,6 +188,16 @@ And for our RT analyses, we need to mark the critical onset for each trial. Here
 2. sentence onset
 3. target noun onset
 
+First, we need to convert the trial measurement information from frames to milliseconds and seconds.
+
+```{r}
+d %<>% 
+  mutate(noun_onset_ms = (noun_onset_sec * 1000) + (noun_onset_frames * 33),
+         noun_onset_seconds = noun_onset_ms / 1000,
+         sentence_onset_ms = (sentence_onset_sec * 1000) + (sentence_onset_frames * 33),
+         sentence_onset_seconds = sentence_onset_ms / 1000)
+```
+
 ```{r}
 center.fix.onset <- 2.5 # experiment was programmed such that center fixation appeared 2.5 sec after trial onset
 
@@ -194,9 +207,9 @@ d %<>% filter(gaze_target != "away", is.na(gaze_target) == F) %>%
          target_looking = ifelse(gaze_target == "center", "center",
                                  ifelse(gaze_target == target_side, "target", 
                                         "distracter")),
-         t.rel.noun = t.stim - noun_onset_sec,
+         t.rel.noun = t.stim - noun_onset_seconds,
          t.rel.center.fixation = t.stim - center.fix.onset,
-         t.rel.sentence = t.stim - sentence_onset_sec)
+         t.rel.sentence = t.stim - sentence_onset_seconds)
 ```
 
 ### Flag where participant was looking at each of the critical points in the trial 
@@ -264,7 +277,7 @@ d %<>%
   do(score_trial_et(., crit_onset_type = .$response_onset_type))
 ```
 
-Check the distribution of shift types over the different response types
+Check the distribution of shift types over the different response types.
 
 ```{r check freq of each shift}
 d %>% 
@@ -275,7 +288,7 @@ d %>%
   kable()
 ```
 
-Now we have an RT, a shift type, and a correct/incorrect value for each trial based on three different critical onset points in the trial (i.e., center fixation, sentence, and noun onset)
+Now we have an RT, a shift type, and a correct/incorrect value for each trial based on three different critical onset points in the trial (i.e., center fixation, sentence, and noun onset).
 
 ### Write tidy data to .csv file
 
@@ -302,5 +315,5 @@ write.path.time <- "../../../data/3_final_merged_data/timecourse/"
 write_csv(d.timecourse, path = paste0(write.path.time, "speed_acc_child_noise_timecourse_tidy.csv.gz"))
 
 write.path.fst <- "../../../data/3_final_merged_data/first_shifts/"
-write_csv(d.fs, path = paste0(write.path.fst, "speed_acc_child_noise_fstshift_tidy.csv.gz"))
+write_csv(d.fs, path = paste0(write.path.fst, "speed_acc_child_noise_fstshift_tidy.csv"))
 ```

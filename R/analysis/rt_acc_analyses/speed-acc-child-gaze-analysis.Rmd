@@ -1,6 +1,6 @@
 ---
 title: "Speed-Acc Child Gaze Analysis"
-author: "Kyle MacDonald"
+author: "Tami Alade and Kyle MacDonald"
 output: html_document
 ---
 
@@ -28,11 +28,7 @@ source("../../helper_functions/libraries_and_functions.R")
 Section 11.2 from [this](http://r4ds.had.co.nz/data-import.html) chapter on data importing is great.
 
 ```{r}
-
-getwd()
-setwd("~/Desktop/Research/speed-acc/data/3_final_merged_data/first_shifts")
-d <- read_csv("speed_acc_adult_ng_fstshift_tidy.csv")
-
+d <- read_csv("../../../data/3_final_merged_data/first_shifts/speed_acc_child_gaze_fstshift_tidy.csv")
 ```
 
 ## Check the data
@@ -47,13 +43,12 @@ How many participants in the dataset?
 by_id <- group_by(d, subid)
 summary_by_id <- summarise(.data = by_id)
 count(summary_by_id)
-
 ```
 
 How many trials do we have for each participant?
 
 ```{r}
-by_trial <- group_by(simulated_data_2afc,id, trial_num)
+by_trial <- group_by(d, subid, tr.num)
 summary_by_trial <- summarise(.data = by_trial)
 count(summary_by_trial)
 ```
@@ -61,16 +56,10 @@ count(summary_by_trial)
 How many trials in each condition? 
 
 ```{r}
-by_condition <- group_by(simulated_data_2afc, condition,id, trial_num)
-summary_by_condition <-summarise(.data = by_condition)
-count(summary_by_condition)
-guessing <- filter(summary_by_condition, condition == "guessing")
-count(guessing)
-knowledge <- filter(summary_by_condition, condition == "knowledge")
-count(knowledge)
-```
-```{r}
-
+d %>% 
+  group_by(subid, gaze_condition) %>% 
+  summarise(n_trials = n()) %>% 
+  kable()
 ```
 
 ## Explore data via visualization
@@ -84,57 +73,104 @@ My goal when I visualize the distribution of a variable is usually to check if t
 What does the distribution of age in the sample look like? 
 
 ```{r}
-ggplot(mapping = aes(x = summary_by_condition,y = summary_by_id))
+
 ```
 
 What about Reaction Times (RT)?
 
 ```{r}
-
+ggplot(aes(x = rt), data = d) +
+  geom_histogram()
 ```
 
 What about Accuracy? 
 
 ```{r}
-ggplot(cars)
+d %>% 
+  filter(shift_type %in% c("C_T", "C_D")) %>% 
+  ggplot(aes(x = shift_accuracy)) +
+  geom_bar()
+```
+
+## Filter the data
+
+Next, let's remove extreme RTs. 
+
+```{r}
+d.filt <- d %>% filter(rt <= 2)
 ```
 
 ### Visualize Accuracy
 
-When thinking about 
 
 What is the overall accuracy of first shifts?
 
 ```{r}
-
-
+ss <- d.filt %>% 
+  filter(!is.na(shift_accuracy),
+         shift_type %in% c("C_T", "C_D")) %>% 
+  group_by(gaze_condition, subid, shift_accuracy) %>% 
+  summarise(n = n()) %>% 
+  group_by(subid, gaze_condition) %>% 
+  mutate(total_trials = sum(n),
+         prop = round(n / total_trials, 2)) 
 ```
 
-What about the accuracy for each condition?
+Now make a boxplot of the accuracy data for each condition. Note that we have to first filter out the proprotion "incorrect" rows, so we are only seeing the proprotion correct data.
 
 ```{r}
-
+ss %>% 
+  filter(shift_accuracy == "correct") %>% 
+  ggplot(aes(x = gaze_condition, y = prop)) +
+  geom_boxplot() +
+  geom_hline(yintercept = 0.5, linetype = "dashed")
 ```
 
+```{r}
+# aggregate at the condition level
+ms <- ss %>% 
+  filter(shift_accuracy == "correct") %>% 
+  group_by(gaze_condition) %>% 
+  multi_boot_standard(column = "prop")
+```
+
+Plot the mean accuracy and confidence interval for each condition.
+
+```{r}
+ms %>% 
+  ggplot(aes(x = gaze_condition, y = mean)) +
+  geom_pointrange(aes(ymin = summary_ci_lower, ymax = summary_ci_upper)) +
+  ylim(0.4, 0.8) +
+  geom_hline(yintercept = 0.5, linetype = "dashed")
+```
 
 ### Visualize Reaction Time
 
 What is the overall RT for kids in the experiment? 
 
 ```{r}
+d %>% 
+  filter(!is.na(shift_accuracy), 
+         shift_type %in% c("C_T", "C_D"),
+         rt <= 2) %>% 
+  group_by(subid, gaze_condition) %>% 
+  summarise(m_rt = mean(rt)) %>% 
+  ggplot(aes(x = gaze_condition, y = m_rt)) + 
+  geom_boxplot(width = 0.5)
 
 ```
 
 What about RTs for correct vs. incorrect shifts?
 
 ```{r}
-
-```
-
-What about RTs separated by condition? 
-
-```{r}
-
+d %>% 
+  filter(!is.na(shift_accuracy), 
+         shift_type %in% c("C_T", "C_D"),
+         rt <= 2) %>% 
+  group_by(subid, gaze_condition, shift_accuracy) %>% 
+  summarise(m_rt = mean(rt)) %>% 
+  ggplot(aes(x = gaze_condition, y = m_rt, fill = shift_accuracy)) + 
+  geom_boxplot(width = 0.5)
 ```
 
 ## Statistical models
