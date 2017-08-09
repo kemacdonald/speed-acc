@@ -30,10 +30,6 @@ Section 11.2 from [this](http://r4ds.had.co.nz/data-import.html) chapter on data
 **KM note**: this way of reading the file will work, but it only will work on your computer since this part of the path [~/Desktop/Research/] is specific to where you saved the data. The solution is to use a relative path like I've done here. You can check out this [video](https://www.youtube.com/watch?v=fe6GA200dks) for more background.
 
 ```{r}
-#getwd()
-#setwd("~/Desktop/Research/speed-acc/data/3_final_merged_data/first_shifts")
-#d <- read_csv("speed_acc_adult_ng_fstshift_tidy.csv")
-
 # read in the data using a relative path that starts from the analysis file directory
 d <- read_csv("../../../data/3_final_merged_data/first_shifts/speed_acc_adult_ng_fstshift_tidy.csv")
 
@@ -53,7 +49,6 @@ How many participants in the dataset?
 by_id <- group_by(d, subid)
 summary_by_id <- summarise(.data = by_id)
 count(summary_by_id)
-
 ```
 
 How many trials do we have for each participant?
@@ -78,7 +73,6 @@ summary_by_noise_condition <-summarise(.data = by_noise_condition)
 count(summary_by_noise_condition)
 ```
 
-
 **KM note**: Looks like we need to create a single variable that stores information about both the noise and gaze condition. 
 
 ```{r}
@@ -90,19 +84,13 @@ d <- d %>% mutate(condition_long = paste(gaze_condition, noise_condition, sep = 
 ```{r}
 d %>% 
   group_by(subid,condition_long) %>% 
-  summarise(n = n())  
-
-
+  summarise(n = n()) %>% 
+  kable()
 ```
 
-Check out what's going on with #8
-
-```{r}
-tmp <- d %>% filter(subid == "speed_acc_adult_ng_8")
-```
+TODO: Check out what's going on with #8
 
 This looks like a data merging issue where #8's data. Not sure what's going on?
-
 
 ## Explore data via visualization
 
@@ -112,19 +100,14 @@ This looks like a data merging issue where #8's data. Not sure what's going on?
 
 My goal when I visualize the distribution of a variable is usually to check if there any data points that look like outliers (really different from the other values in the sample). There are more precise, quantitative ways to define outlier, but the visualization helps us spot them quickly. If some observations look really different, I then try to reason about why that might be the case: data entry error? equipment measurement error? 
 
-What does the distribution of age in the sample look like? 
-
-```{r}
-
-```
-
 What about Reaction Times (RT)?
 
 **KM note**: Nice job! Small point, but there's no need to load the library in each chunk. Just need to do it once, which we usually do at the beginning of the document. Also, there's no need to wrap the `d` object in the `data.frame()` function since it is already a data frame.
 
 ```{r}
 #data.frame(d)
-ggplot(d) + geom_point(mapping = aes(x = subid, y = rt))
+ggplot(d) + 
+  geom_point(mapping = aes(x = subid, y = rt))
 ```
 
 `geom_histogram()` is a good one for viewing the overall distribution of RTs in the experiment.
@@ -137,34 +120,47 @@ ggplot(d, aes(x = rt)) +
 What about Accuracy? 
 
 ```{r}
-   ggplot(d) + geom_bar(mapping = aes(x = subid, fill = shift_accuracy)) +
+ggplot(d) + 
+  geom_bar(mapping = aes(x = subid, fill = shift_accuracy)) +
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
-
-
 ```
 
 **KM note**: This is a great exploratory plot! We can see that a couple of participants are doing "weird" things that we would want to investigate further. The only thing I changed was the angle of the x-axis text, so we can see the subids more easily. 
+
+## filter the data
+
+Let's filter out the participants who was not a native speaker of English
+
+```{r}
+d.filt <- d %>% 
+  filter(!(subid %in% c("speed_acc_adult_ng_1")))
+```
+
+Next, let's remove extreme RTs. 
+
+```{r}
+d.filt %<>% filter(rt <= 1.5)
+```
 
 ### Visualize Accuracy
 
 What is the overall accuracy of first shifts?
 
 ```{r}
-library(ggplot2)
-data.frame(d)
-ggplot(data.frame(d)) + geom_bar(mapping = aes(x = shift_accuracy))
+ggplot(d.filt) + 
+  geom_bar(mapping = aes(x = shift_accuracy))
 ```
 
 What about the accuracy for each condition?
 
 ```{r}
-library(ggplot2)
-data.frame(d)
-ggplot(data.frame(d)) + geom_bar(mapping = aes(x = gaze_condition, fill = shift_accuracy))
+ggplot(d.filt) + 
+  geom_bar(mapping = aes(x = gaze_condition, fill = shift_accuracy))
+```
 
-library(ggplot2)
-data.frame(d)
-ggplot(data.frame(d)) + geom_bar(mapping = aes(x = noise_condition, fill = shift_accuracy))
+```{r}
+ggplot(d.filt) + 
+  geom_bar(mapping = aes(x = noise_condition, fill = shift_accuracy))
 ```
 
 **KM code after here**
@@ -173,41 +169,52 @@ Let's visualize accuracy collapsing across the gaze and noise conditions. First 
 
 ```{r}
 # aggregate accuracy at the participant level
-ss <- d %>% 
-  filter(!is.na(shift_accuracy)) %>% # remove trials where they did not shift
+ss <- d.filt %>% 
+  filter(!is.na(shift_accuracy)) %>% 
   group_by(condition_long, subid, shift_accuracy) %>% 
   summarise(n = n()) %>% 
   group_by(subid, condition_long) %>% 
   mutate(total_trials = sum(n),
          prop = round(n / total_trials, 2)) 
 
-# aggreate at the condition level
+# aggregate at the condition level
 ms <- ss %>% 
   filter(shift_accuracy == "correct") %>% 
   group_by(condition_long) %>% 
-  summarise(mean_correct = mean(prop),
-            sd_correct = sd(prop))
+  multi_boot_standard(column = "prop")
 ```
 
 Now make a boxplot of the accuracy data for each condition. Note that we have to first filter out the proprotion "incorrect" rows, so we are only seeing the proprotion correct data.
 
 ```{r}
 ss %>% 
-  filter(shift_accuracy == "correct") %>% 
   ggplot(aes(x = condition_long, y = prop)) +
   geom_boxplot()
+```
+
+Plot the mean accuracy and confidence interval for each condition.
+
+```{r}
+ms %>% 
+  ggplot(aes(x = condition_long, y = mean)) +
+  geom_pointrange(aes(ymin = summary_ci_lower, ymax = summary_ci_upper)) +
+  ylim(0.4, 1.1) +
+  geom_hline(yintercept = 0.5, linetype = "dashed")
 ```
 
 **Interpretation here**: How would you interpret this plot in a sentence or two?
 It appears that people are more accurate in the no gaze conditions (regardless of of noise vs no noise) compared to the gaze conditions. 
 ### Visualize Reaction Time
 
-**KM note**: next, I would try to make a similar boxplot for the average RT for each condition. Remember that we are now storing the information about condition in the `condition_long` variable.
-
 What is the overall RT for adults in the experiment? 
 
 ```{r}
-
+d %>% 
+  filter(!is.na(shift_accuracy)) %>% 
+  group_by(subid, condition_long) %>% 
+  summarise(m_rt = mean(rt)) %>% 
+  ggplot(aes(x = condition_long, y = m_rt)) + 
+  geom_boxplot()
 ```
 
 What about RTs for correct vs. incorrect shifts?
@@ -241,6 +248,37 @@ rr %>%
   filter(shift_accuracy == "correct") %>% 
   ggplot(aes(x = condition_long, y = rt)) +
   geom_boxplot()
+```
+
+
+## RT Distributions
+
+```{r}
+acc_colors <- c("grey10", "black")
+fill_vals <- c("grey90", "darkviolet")
+
+p <- d.filt %>% 
+  filter(is.na(rt) == F) %>% 
+  ggplot(aes(x = forcats::fct_rev(condition_long), y = rt, color = shift_accuracy, 
+             fill = shift_accuracy)) +
+  ggbeeswarm::geom_quasirandom(shape = 21) + 
+  scale_color_manual(values = acc_colors) +
+  scale_fill_manual(values = fill_vals) +
+  labs(y = "RT (sec)", x = NULL) +
+  theme_bw() +
+  theme(legend.position = "right") + 
+  theme(axis.title.x = element_text(size = 16, 
+                                    face = "bold"), 
+        axis.title.y = element_text(size = 16,
+                                    face = "bold"), axis.text.x = element_text(size = 14),
+        axis.text.y = element_text(size = 14)) +
+  coord_flip()
+
+p
+```
+
+```{r}
+rogme::plot_dec_bars(p, col = "darkorange", dec_size = 0.8, alpha = 0.5)
 ```
 
 ## Statistical models

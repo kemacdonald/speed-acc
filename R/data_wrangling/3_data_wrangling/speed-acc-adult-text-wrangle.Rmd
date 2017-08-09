@@ -6,7 +6,7 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo=T, warning=F, cache=F, message=F, sanitize = T)
-source("../helper_functions/libraries_and_functions.R")
+source("../../helper_functions/libraries_and_functions.R")
 ```
 
 This script munges eye-tracking data for an experiment comparing speed-accuracy tradeoffs when establishing reference in real-time. We vary the information value and saliency of the center fixation and measure the effects on accuracy and RT.
@@ -15,7 +15,7 @@ Load data and join with trial information (timing, left/right/center images, tar
 
 ```{r load data}
 #### read in processed data
-d <- read_csv("../../data/2_cleaned_data/speed_acc_processed_adult_data.csv.gz")
+d <- read_csv("../../../data/2_cleaned_data/speed_acc_processed_adult_text_data.csv.gz")
 
 #### strip .avi and .jpg from stimulus
 d$stimulus <- gsub(pattern = ".jpg", "", x = d$stimulus)
@@ -25,11 +25,11 @@ d$stimulus <- gsub(pattern = ".avi", "", x = d$stimulus)
 d %<>% filter(stimulus != "Validation")
 
 #### join trial info
-trialinfo_d <- read_csv("../../data/trial_info/speed-acc-adult-trial-info-final.csv")
+trialinfo_d <- read_csv("../../../data/0b_trial_information/speed-acc-adult-text-trial-info-final.csv")
 d %<>% left_join(., trialinfo_d, by = "stimulus")
 
 #### join subject info
-subinfo_df <- read_csv("../../data/demographics/speed-acc-adult-runsheet.csv")
+subinfo_df <- read_csv("../../../data/0a_demographics/speed-acc-adult-text-runsheet.csv")
 d %<>% left_join(subinfo_df, by = "subid")
 ```
 

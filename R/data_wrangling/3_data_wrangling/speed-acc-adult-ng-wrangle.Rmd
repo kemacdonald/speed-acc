@@ -47,19 +47,20 @@ d %<>% filter(!(stimulus %in% trials_to_remove))
 
 ### Filter out unusable participants 
 
-We use our lab criterion of having a proprtion of AWAY looks +3 standard deviations away from the mean.
+We use our lab criterion of having a proprtion of AWAY looks +3 standard deviations away from the mean. We calculate percentage of non-looks - that is, looking away from the screen entirely. offscreen == TRUE if x is 0 and y is 1050, so higher bad_looks are worse
 
 ```{r filter out participants with bad data}
-##calculate percentage of non-looks - that is, looking away from the screen entirely.
-##offscreen == TRUE if x is 0 and y is 1050, so higher bad_looks are worse
 d_screentime <- transform(d, offscreen = ((x == 0 & y == 1050) | is.na(x) | is.na(y))) %>%
   select(subid, t, offscreen) %>%
   group_by(subid) %>%
   summarise(bad_looks = sum(offscreen, na.rm = TRUE), total_timeslices = n())
 
 d_screentime <- transform(d_screentime, percent_bad_looks = bad_looks/total_timeslices)
+```
 
-##filter out participants more than 3 standard dev away from mean screentime
+Filter out participants more than 3 standard dev away from mean screentime
+
+```{r}
 sd_ss <- sd(d_screentime$percent_bad_looks)
 mean_ss <- mean(d_screentime$percent_bad_looks)
 
@@ -80,27 +81,27 @@ d %>% select(subid, gender, dot, notes) %>%
 
 Here we label Areas of Interest to be Left Picture, Right Picture, and the Center Fixation. We also add trial number variable.
 
+Remove filler trials
+
+```{r}
+d %<>% filter(is.na(stimulus_name) == F) 
+```
+
 ### ROIs
 
 Plot the distribution of looking across x-y coordinates. This is a useful check that participants were looking where we thought they should be, and it helps us find the AOIs for data analysis. 
 
 ```{r, eval = F}
-d.rois <- sample_n(d, size = 0.05*nrow(d)) # get a sample so we don't plot all 200k plus rows
+d.rois <- sample_n(d, size = 0.1*nrow(d)) # get a sample so we don't plot all 200k plus rows
 
-ggplot(aes(x = x, y = y), data = d) +
+ggplot(aes(x = x, y = y), data = d.rois) +
   geom_density2d() +
-  facet_wrap(~subid) +
   theme_bw()
 ```
 
 ### Add trial numbers
 
 We have 4 blocks of 16 trials, so `r 4 * 16` total trials. To add the trial numbers we first get each unique trial name and the time it started. Then we sort by the time each trial started, and bind the trial numbers. Finally, we join the trial number information with the rest of the eye movement data.
-
-```{r}
-d %<>% filter(is.na(stimulus_name) == F) 
-```
-
 
 ```{r add trial numbers}
 # apply the add trials function to each subid's data frame using the do() operator 
@@ -157,10 +158,23 @@ And for our RT analyses, we need to mark the critical onset for each trial. Here
 2. sentence onset
 3. target noun onset
 
-```{r}
-center.fix.onset <- 2.5 # experiment was programmed such that center fixation appeared 2.5 sec after trial onset
 
-d %<>% filter(gaze_target != "away", 
+First, we need to convert the trial measurement information from frames to milliseconds and seconds.
+
+```{r}
+d %<>% 
+  mutate(noun_onset_ms = (noun_onset_sec * 1000) + (noun_onset_frames * 33),
+         noun_onset_seconds = noun_onset_ms / 1000,
+         sentence_onset_ms = (sentence_onset_sec * 1000) + (sentence_onset_frames * 33),
+         sentence_onset_seconds = sentence_onset_ms / 1000)
+```
+
+
+```{r}
+center.fix.onset.seconds <- 2.5 # experiment was programmed such that center fixation appeared 2.5 sec after trial onset
+
+d %<>% 
+  filter(gaze_target != "away", 
               is.na(gaze_target) == F,
               is.na(stimulus_name) == F) %>% 
   mutate(t.stim = ifelse(t.stim == 0, 0, round(t.stim, digits = 3)),
@@ -168,10 +182,15 @@ d %<>% filter(gaze_target != "away",
          target_looking = ifelse(gaze_target == "center", "center",
                                  ifelse(gaze_target == target_side, "target", 
                                         "distracter")),
-         t.rel.noun = t.stim - noun_onset_sec,
-         t.rel.center.fixation = t.stim - center.fix.onset,
-         t.rel.sentence = t.stim - sentence_onset_sec)
+         t.rel.noun = t.stim - noun_onset_seconds,
+         t.rel.center.fixation = t.stim - center.fix.onset.seconds,
+         t.rel.sentence = t.stim - sentence_onset_seconds)
 ```
+
+```{r}
+tmp <- d %>% filter(subid == "speed_acc_adult_ng_2", tr.num == 20)
+```
+
 
 ### Flag where participant was looking at each of the critical points in the trial 
 
