@@ -297,14 +297,14 @@ Before writing to .csv, we split the data into the timecourse information and fi
 ```{r}
 # timecourse
 d.timecourse <- filter(d, response_onset_type == "noun") %>% 
-  select(subid, t.stim, gaze_condition, noise_condition, tr.num, noun_onset_sec,
-         gaze_target:shift_accuracy, target_image, keep)
+  select(subid, subid_short, t.stim, gaze_condition, noise_condition, tr.num, noun_onset_sec,
+         gaze_target:shift_accuracy, target_image, keep, exclude)
 
 # first shift
 d.fs <- d %>% 
   filter(response_onset_type == "noun") %>% # km remember to remove this line after HUMBIO
-  select(subid, tr.num, gaze_condition, noise_condition, target_image, run_date:comments, 
-         response:shift_accuracy, keep) %>% 
+  select(subid, subid_short, tr.num, gaze_condition, noise_condition, target_image, run_date:comments, 
+         response:shift_accuracy, keep, exclude) %>% 
   unique()
 ```
 
