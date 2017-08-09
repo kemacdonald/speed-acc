@@ -5,13 +5,6 @@ editor_options:
   chunk_output_type: inline
 ---
 
----
-title: "Speed-acc-adult timecourse"
-author: "Kyle MacDonald"
-date: "11/4/2016"
-output: html_document
----
-
 This script plots and analyzes the timecrouse eye-tracking data for an experiment comparing speed-accuracy tradeoffs when establishing reference in real-time. We vary the information value and saliency of the center fixation and measure the effects on accuracy and RT.
 
 ## Setup
@@ -26,7 +19,7 @@ source("../../helper_functions/libraries_and_functions.R")
 Read data. 
 
 ```{r read data}
-d <- read_csv("../../../data/3_final_merged_data/speed_acc_adult_ng_timecourse_tidy.csv.gz")
+d <- read_csv("../../../data/3_final_merged_data/timecourse/speed_acc_adult_ng_timecourse_tidy.csv.gz")
 ```
 
 Create condition column
@@ -37,10 +30,10 @@ d %<>% mutate(condition = paste(gaze_condition, noise_condition, sep = "_"))
 
 ## Visualize looking behavior 
 
-Filter to get the anlaysis window (one second before the noun onset). Start is when the center fixation appeared. End is the end of the trial. 
+Filter to get the analysis window (one second before the noun onset). Start is when the center fixation appeared. End is the end of the trial. 
 
 ```{r}
-d.filt <- d %>% filter(t.stim > 0, t.stim <= 5) 
+d.filt <- d %>% filter(t.stim > 0, t.stim <= 9) 
 ```
 
 First, we generate curves that represent center, target, and distractor looking over time
@@ -72,33 +65,59 @@ Get means and CIs for proportion looking at each time slice across particpants
 ```{r}
 ms.means.timeslice <- ss.d %>% 
   group_by(t.stim, condition, target_looking) %>% 
-  summarise(mean = mean(proportion_looking, na.rm = T))
+  summarise(mean = mean(proportion_looking, na.rm = T)) %>% 
+  mutate(gaze_condition = ifelse(str_detect(condition, "no_gaze"), "no_gaze", "gaze"),
+         noise_condition = ifelse(str_detect(condition, "no_noise"), "no_noise", "noise"))
 ```
 
 Now make the Tanenhaus style curves for each condition 
 
-```{r, fig.width=10}
+```{r}
 ms.means.timeslice %>% 
-  #filter(target_looking == "target") %>% 
+  #filter(target_looking == "center") %>% 
   ggplot(aes(x = as.numeric(t.stim), y = mean, 
-           color = condition, linetype = target_looking), data = .) + 
+           color = target_looking, linetype = noise_condition), data = .) + 
   ylim(0,1) +
-  xlim(-0.5,5) +
+  xlim(-0.5,10) +
   geom_line(size=1) +
-  #facet_wrap(~condition) +
+  facet_wrap(~gaze_condition, ncol = 1) +
   xlab("Time in sec from onset of trial") +
-  geom_vline(xintercept = mean(d$noun_onset_sec_1), linetype = "dashed") +
-  geom_vline(xintercept = mean(d$sentence_onset_sec), linetype = "dashed") +
+  geom_vline(xintercept = mean(d$noun_onset_seconds), linetype = "dashed") +
+  geom_vline(xintercept = mean(d$sentence_onset_seconds), linetype = "dashed") +
   ylab("Proportion looking") +
-  guides(color = F, shape = F, linetype = F) +
-  geom_dl(aes(label = condition), method = "first.bumpup") +
-  annotate("text", label = "Sentence Onset", x = mean(d$sentence_onset_sec)-0.3, 
+  #geom_dl(aes(label = condition), method = "first.bumpup") +
+  annotate("text", label = "Sentence Onset", x = mean(d$sentence_onset_seconds)-0.3, 
            y = 0.4, size = 4, colour = "dodgerblue") +
-  annotate("text", label = "Noun Onset", x = mean(d$noun_onset_sec_1)-0.3, 
-           y = 0.4, size =4 , colour = "dodgerblue") +
+  annotate("text", label = "Noun Onset", x = mean(d$noun_onset_seconds)-0.3, 
+           y = 0.4, size = 4 , colour = "dodgerblue") +
   theme(text = element_text(size = 16)) +
   theme_bw()
 ```
+
+We can do the same thing to compare the effect of gaze across the noise conditions.
+
+```{r}
+ms.means.timeslice %>% 
+  #filter(target_looking == "center") %>% 
+  ggplot(aes(x = as.numeric(t.stim), y = mean, 
+           color = target_looking, linetype = gaze_condition), data = .) + 
+  ylim(0,1) +
+  xlim(-0.5,10) +
+  geom_line(size=1) +
+  facet_wrap(~noise_condition, ncol = 1) +
+  xlab("Time in sec from onset of trial") +
+  geom_vline(xintercept = mean(d$noun_onset_seconds), linetype = "dashed") +
+  geom_vline(xintercept = mean(d$sentence_onset_seconds), linetype = "dashed") +
+  ylab("Proportion looking") +
+  #geom_dl(aes(label = condition), method = "first.bumpup") +
+  annotate("text", label = "Sentence Onset", x = mean(d$sentence_onset_seconds)-0.3, 
+           y = 0.4, size = 4, colour = "dodgerblue") +
+  annotate("text", label = "Noun Onset", x = mean(d$noun_onset_seconds)-0.3, 
+           y = 0.4, size = 4 , colour = "dodgerblue") +
+  theme(text = element_text(size = 16)) +
+  theme_bw()
+```
+
 
 ## Standard "window" accuracy analyses
 
@@ -107,7 +126,7 @@ ms.means.timeslice %>%
 First we need to filter to get the analysis window
 
 ```{r}
-d.analysis <- d.filt %>% filter(t.rel.sentence >= 0)  
+d.analysis <- d.filt %>% filter(t.rel.noun >= 0)  
 ```
 
 Then we get the proportion looking to each location for each trial for each participant.
@@ -153,10 +172,10 @@ KM: STOPPED HERE
 ```{r}
 d.order.analysis <- d.filt %>% 
   filter(t.rel.center.fixation <= 0) %>%
-  group_by(subid, tr.num, condition, audio, target_looking) %>%
+  group_by(subid, tr.num, condition, target_looking) %>%
   summarise(count = n()) %>% 
   ungroup() %>% 
-  complete(nesting(subid, tr.num, condition, audio), target_looking, 
+  complete(nesting(subid, tr.num, condition), target_looking, 
            fill = list(count=0)) %>% 
   group_by(subid, tr.num) %>%
   mutate(prop_looking = count / sum(count))
@@ -164,9 +183,10 @@ d.order.analysis <- d.filt %>%
 
 ```{r}
 d.order.analysis %>% 
-  filter(target_looking == "center") %>% 
   ggplot(aes(x = prop_looking, fill = condition)) + 
-  geom_density(alpha = 0.5) 
+  geom_density(alpha = 0.5) +
+  facet_wrap(~target_looking) + 
+  theme_bw()
 ```
 
 ### Does looking to center prior to fixation onset change over time in the task?
@@ -240,12 +260,11 @@ d.order.analysis %>%
                   position = position_jitter(width = 0.05)) +
   geom_line(size = 1) +
   ylim(0.4, 1) +
-  scale_x_discrete(expand = c(0,1.2)) +
+  scale_x_discrete(expand = c(-0.5,1.2)) +
   guides(color=F) +
   geom_dl(aes(label = condition), method = list("first.bumpup", hjust = 1.1, cex = 1.2)) +
   geom_hline(yintercept = 0.5, linetype = "dashed")  +
   labs(x = "Binned Trial Number", 
        y = "Prop. Looks to Center",
-       title = "Change in anticipatory looking to center") +
-  theme(text = element_text(size = 12))
+       title = "Change in anticipatory looking to center") 
 ```
