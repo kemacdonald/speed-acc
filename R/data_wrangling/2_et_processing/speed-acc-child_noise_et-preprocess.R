@@ -41,7 +41,6 @@ all.data %>%
   geom_density2d() +
   xlim(0, 1980) +
   ylim(0, 1080) +
-  facet_wrap(~subid) +
   theme_bw()
 
 ## WRITE DATA OUT TO ZIPPED CSV FOR EASY ACCESS AND SMALL FILE SIZE

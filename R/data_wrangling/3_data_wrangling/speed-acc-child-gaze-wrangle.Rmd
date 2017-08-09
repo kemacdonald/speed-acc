@@ -39,7 +39,12 @@ subinfo_df <- readxl::read_xlsx("../../../data/0a_demographics/speed_acc_child_g
 
 # clean up subid to join
 subinfo_df %<>% mutate(subid = str_to_lower(subid),
-                       subid = str_replace_all(subid, pattern = "_", "-"))
+                       subid = str_replace_all(subid, pattern = "-", "_"))
+
+# clean up subid in data file
+# if "child" is already in the subid, then we do not need to add it
+d %<>% mutate(subid = str_to_lower(subid),
+                       subid = str_replace_all(subid, pattern = "-", "_"))
 
 d %<>% left_join(subinfo_df, by = "subid")
 ```
@@ -76,13 +81,13 @@ mean_ss <- mean(d_screentime$percent_bad_looks)
 
 d %<>% left_join(., d_screentime, by = "subid")
 
-d$keep <- ifelse(d$percent_bad_looks > (3*sd_ss + mean_ss), 'exclude', 'include')
+d$keep_et <- ifelse(d$percent_bad_looks > (3*sd_ss + mean_ss), 'exclude', 'include')
 ```
 
 Now we make a table of participant information.
 
 ```{r}
-d %>% select(subid, gender, run_date, comments) %>% 
+d %>% select(subid, gender, run_date, comments, exclude) %>% 
   unique() %>% 
   kable()
 ```
@@ -96,11 +101,10 @@ Here we label Areas of Interest to be Left Picture, Right Picture, and the Cente
 Plot the distribution of looking across x-y coordinates. This is a useful check that participants were looking where we thought they should be, and it helps us find the AOIs for data analysis. 
 
 ```{r, eval = F}
-d.rois <- sample_n(d, size = 0.05*nrow(d)) # get a sample so we don't plot all 200k plus rows
+d.rois <- sample_n(d, size = 0.1*nrow(d)) # get a sample so we don't plot all 200k plus rows
 
-ggplot(aes(x = x, y = y), data = d) +
+ggplot(aes(x = x, y = y), data = d.rois) +
   geom_density2d() +
-  facet_wrap(~subid) +
   theme_bw()
 ```
 
@@ -130,10 +134,16 @@ d %>%
   select(subid, tr.num) %>% 
   unique() %>% 
   group_by(subid) %>% 
-  count()
+  count() %>% 
+  kable()
 ```
 
-not sure what's going on with participant #17?
+Extract short subid
+
+```{r}
+d %<>% mutate(subid_short = as.numeric(str_extract(subid, "[:digit:]+")),
+              experiment = "gaze")
+```
 
 ### Flag left/right/center looking based on ROIs
 
@@ -171,6 +181,16 @@ And for our RT analyses, we need to mark the critical onset for each trial. Here
 2. sentence onset
 3. target noun onset
 
+First, we need to convert the trial measurement information from frames to milliseconds and seconds.
+
+```{r}
+d %<>% 
+  mutate(noun_onset_ms = (noun_onset_sec * 1000) + (noun_onset_frames * 33),
+         noun_onset_seconds = noun_onset_ms / 1000,
+         sentence_onset_ms = (sentence_onset_sec * 1000) + (sentence_onset_frames * 33),
+         sentence_onset_seconds = sentence_onset_ms / 1000)
+```
+
 ```{r}
 center.fix.onset <- 2.5 # experiment was programmed such that center fixation appeared 2.5 sec after trial onset
 
@@ -180,9 +200,9 @@ d %<>% filter(gaze_target != "away", is.na(gaze_target) == F) %>%
          target_looking = ifelse(gaze_target == "center", "center",
                                  ifelse(gaze_target == target_side, "target", 
                                         "distracter")),
-         t.rel.noun = t.stim - noun_onset_sec,
+         t.rel.noun = t.stim - noun_onset_seconds,
          t.rel.center.fixation = t.stim - center.fix.onset,
-         t.rel.sentence = t.stim - sentence_onset_sec)
+         t.rel.sentence = t.stim - sentence_onset_seconds)
 ```
 
 ### Flag where participant was looking at each of the critical points in the trial 
@@ -263,6 +283,13 @@ d %>%
 
 Now we have an RT, a shift type, and a correct/incorrect value for each trial based on three different critical onset points in the trial (i.e., center fixation, sentence, and noun onset)
 
+### Compute child's age at test
+
+```{r}
+
+```
+
+
 ### Write tidy data to .csv file
 
 Before writing to .csv, we split the data into the timecourse information and first shift information. This will make analysis more efficient since we won't have to load large datasets into working memory.
@@ -270,14 +297,14 @@ Before writing to .csv, we split the data into the timecourse information and fi
 ```{r}
 # timecourse
 d.timecourse <- filter(d, response_onset_type == "noun") %>% 
-  select(subid, t.stim, gaze_condition, noise_condition, tr.num, noun_onset_sec,
-         gaze_target:shift_accuracy, target_image, keep)
+  select(subid, subid_short, t.stim, gaze_condition, noise_condition, tr.num, noun_onset_sec,
+         gaze_target:shift_accuracy, target_image, keep_et, exclude)
 
 # first shift
 d.fs <- d %>% 
   filter(response_onset_type == "noun") %>% # km remember to remove this after HUMBIO is finished
-  select(subid, tr.num, gaze_condition, noise_condition, target_image, run_date:comments, 
-         response:shift_accuracy, keep) %>% 
+  select(subid, subid_short, tr.num, gaze_condition, noise_condition, target_image, run_date:comments, 
+         response:shift_accuracy, keep_et, exclude) %>% 
   unique()
 ```
 
@@ -288,5 +315,5 @@ write.path.time <- "../../../data/3_final_merged_data/timecourse/"
 write_csv(d.timecourse, path = paste0(write.path.time, "speed_acc_child_gaze_timecourse_tidy.csv.gz"))
 
 write.path.fst <- "../../../data/3_final_merged_data/first_shifts/"
-write_csv(d.fs, path = paste0(write.path.fst, "speed_acc_child_gaze_fstshift_tidy.csv.gz"))
+write_csv(d.fs, path = paste0(write.path.fst, "speed_acc_child_gaze_fstshift_tidy.csv"))
 ```

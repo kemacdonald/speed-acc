@@ -32,7 +32,6 @@ Section 11.2 from [this](http://r4ds.had.co.nz/data-import.html) chapter on data
 ```{r}
 # read in the data using a relative path that starts from the analysis file directory
 d <- read_csv("../../../data/3_final_merged_data/first_shifts/speed_acc_adult_ng_fstshift_tidy.csv")
-
 ```
 
 ## Check the data
@@ -132,8 +131,7 @@ ggplot(d) +
 Let's filter out the participants who was not a native speaker of English
 
 ```{r}
-d.filt <- d %>% 
-  filter(!(subid %in% c("speed_acc_adult_ng_1")))
+d.filt <- d %>% filter(!(subid %in% c("speed_acc_adult_ng_1")))
 ```
 
 Next, let's remove extreme RTs. 
