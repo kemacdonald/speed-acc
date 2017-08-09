@@ -97,7 +97,14 @@ d %>%
 Next, let's remove extreme RTs. 
 
 ```{r}
-d.filt <- d %>% filter(rt <= 2)
+d.filt <- d %>% filter(rt <= 5)
+```
+
+Remove participants who couldn't calibrate and who had alots of missing looks
+
+```{r}
+d.filt %<>% filter(keep_et == "include",
+                   exclude == "keep")
 ```
 
 ### Visualize Accuracy
@@ -149,7 +156,7 @@ ms %>%
 What is the overall RT for kids in the experiment? 
 
 ```{r}
-d %>% 
+d.filt %>% 
   filter(!is.na(shift_accuracy), 
          shift_type %in% c("C_T", "C_D"),
          rt <= 2) %>% 
@@ -157,7 +164,6 @@ d %>%
   summarise(m_rt = mean(rt)) %>% 
   ggplot(aes(x = gaze_condition, y = m_rt)) + 
   geom_boxplot(width = 0.5)
-
 ```
 
 What about RTs for correct vs. incorrect shifts?
@@ -171,6 +177,76 @@ d %>%
   summarise(m_rt = mean(rt)) %>% 
   ggplot(aes(x = gaze_condition, y = m_rt, fill = shift_accuracy)) + 
   geom_boxplot(width = 0.5)
+```
+
+```{r}
+acc_colors <- c("grey10", "black")
+fill_vals <- c("grey90", "darkviolet")
+
+p <- d.filt %>% 
+  filter(is.na(rt) == F,
+         shift_type %in% c("C_T", "C_D")) %>% 
+  ggplot(aes(x = forcats::fct_rev(gaze_condition), y = rt, color = shift_accuracy, 
+             fill = shift_accuracy)) +
+  ggbeeswarm::geom_quasirandom(shape = 21) + 
+  scale_color_manual(values = acc_colors) +
+  scale_fill_manual(values = fill_vals) +
+  labs(y = "RT (sec)", x = NULL) +
+  theme_bw() +
+  theme(legend.position = "right") + 
+  theme(axis.title.x = element_text(size = 16, 
+                                    face = "bold"), 
+        axis.title.y = element_text(size = 16,
+                                    face = "bold"), axis.text.x = element_text(size = 14),
+        axis.text.y = element_text(size = 14)) +
+  coord_flip()
+
+p
+```
+
+### Block effects RT
+
+```{r}
+d.filt %<>% mutate(block = ifelse(tr.num <= 16, "block_1", "block_2"))
+```
+
+Now, let's plot RT as a function of block
+
+```{r}
+ss <- d.filt %>% 
+  group_by(subid, gaze_condition, shift_accuracy, block) %>% 
+  summarise(m_rt = mean(rt))
+```
+
+```{r}
+ss %>% 
+  ggplot(aes(x = gaze_condition, y = m_rt, fill = shift_accuracy)) + 
+  geom_boxplot() +
+  facet_wrap(~block) +
+  theme_bw()
+```
+
+### Block effects Accuracy
+
+```{r}
+ss.acc <- d.filt %>% 
+  group_by(subid, gaze_condition, block, shift_accuracy) %>% 
+  summarise(n_trials = n()) %>% 
+  group_by(subid, gaze_condition, block) %>% 
+  mutate(n_total_trials = sum(n_trials),
+         prop = n_trials / n_total_trials)
+```
+
+```{r}
+ss.acc %>% 
+  filter(shift_accuracy == "correct") %>% 
+  ggplot(aes(x = gaze_condition, y = prop)) + 
+  geom_boxplot(width = 0.3) +
+  geom_jitter(alpha = 0.4, width = 0.05) +
+  ylim(0,1) +
+  geom_hline(yintercept = 0.5, linetype == "dashed") +
+  facet_wrap(~block) +
+  theme_bw() 
 ```
 
 ## Statistical models
