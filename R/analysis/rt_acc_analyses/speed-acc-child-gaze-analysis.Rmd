@@ -64,7 +64,6 @@ d %>%
   kable()
 ```
 
-
 ## Compute age 
 
 ```{r}
@@ -99,7 +98,6 @@ d %>%
   geom_histogram()
 ```
 
-
 What about Reaction Times (RT)?
 
 ```{r}
@@ -133,7 +131,6 @@ d.filt %<>% filter(keep_et == "include",
 
 ### Visualize Accuracy
 
-
 What is the overall accuracy of first shifts?
 
 ```{r}
@@ -160,13 +157,14 @@ ms %<>% rename(prop = mean)
 Now make a boxplot of the accuracy data for each condition. Note that we have to first filter out the proprotion "incorrect" rows, so we are only seeing the proprotion correct data.
 
 ```{r}
-ss %>% 
+acc_boxplot <- ss %>% 
   filter(shift_accuracy == "correct") %>% 
   ggplot(aes(x = gaze_condition, y = prop)) +
-  geom_boxplot(width = 0.5) +
-  geom_jitter(width = 0.05, alpha = 0.6, aes(color = as.factor(age_group))) + 
-  geom_hline(yintercept = 0.5, linetype = "dashed") #+
-  #geom_pointrange(data = ms, aes(ymin = summary_ci_lower, ymax = summary_ci_upper), color = "darkgreen", size = 1)
+  geom_boxplot(width = 0.5, fill = "dodgerblue") +
+  geom_jitter(width = 0.05, alpha = 0.3) + 
+  geom_hline(yintercept = 0.5, linetype = "dashed") +
+  labs(x = "Condition", y = "Prop. Correct") +
+  theme(text = element_text(size = 18))
 ```
 
 Plot the mean accuracy and confidence interval for each condition.
@@ -184,14 +182,22 @@ ms %>%
 What is the overall RT for kids in the experiment? 
 
 ```{r}
-d.filt %>% 
+rt_boxplot <- d.filt %>% 
   filter(!is.na(shift_accuracy), 
          shift_type %in% c("C_T", "C_D"),
-         rt <= 2) %>% 
+         rt <= 1.5) %>% 
   group_by(subid, gaze_condition) %>% 
   summarise(m_rt = mean(rt)) %>% 
   ggplot(aes(x = gaze_condition, y = m_rt)) + 
-  geom_boxplot(width = 0.5)
+  geom_boxplot(width = 0.5, fill = "#de2d26") +
+  geom_jitter(width = 0.05, alpha = 0.3) + 
+  ylim(0,1) +
+  labs(x = "Condition", y = "RT (sec)") +
+  theme(text = element_text(size = 18))
+```
+
+```{r}
+cowplot::plot_grid(rt_boxplot, acc_boxplot)
 ```
 
 What about RTs for correct vs. incorrect shifts?
@@ -200,11 +206,14 @@ What about RTs for correct vs. incorrect shifts?
 d %>% 
   filter(!is.na(shift_accuracy), 
          shift_type %in% c("C_T", "C_D"),
-         rt <= 2) %>% 
+         rt <= 1.5) %>% 
   group_by(subid, gaze_condition, shift_accuracy) %>% 
   summarise(m_rt = mean(rt)) %>% 
   ggplot(aes(x = gaze_condition, y = m_rt, fill = shift_accuracy)) + 
-  geom_boxplot(width = 0.5)
+  geom_boxplot(width = 0.5) +
+  ylim(0,1) +
+  labs(x = "Condition", y = "RT (sec)") +
+  theme(text = element_text(size = 18))
 ```
 
 ```{r}
@@ -212,13 +221,11 @@ acc_colors <- c("grey10", "black")
 fill_vals <- c("grey90", "darkviolet")
 
 p <- d.filt %>% 
-  filter(is.na(rt) == F,
-         shift_type %in% c("C_T", "C_D")) %>% 
-  ggplot(aes(x = forcats::fct_rev(gaze_condition), y = rt, color = shift_accuracy, 
-             fill = shift_accuracy)) +
-  ggbeeswarm::geom_quasirandom(shape = 21) + 
-  scale_color_manual(values = acc_colors) +
-  scale_fill_manual(values = fill_vals) +
+  filter(is.na(rt) == F) %>% 
+  ggplot(aes(x = forcats::fct_rev(gaze_condition), y = rt)) +
+  ggbeeswarm::geom_quasirandom(shape = 21, fill = "grey10", color = "black") + 
+  #scale_color_manual(values = acc_colors) +
+  #scale_fill_manual(values = fill_vals) +
   labs(y = "RT (sec)", x = NULL) +
   theme_bw() +
   theme(legend.position = "right") + 
@@ -226,7 +233,7 @@ p <- d.filt %>%
                                     face = "bold"), 
         axis.title.y = element_text(size = 16,
                                     face = "bold"), axis.text.x = element_text(size = 14),
-        axis.text.y = element_text(size = 14)) +
+        axis.text.y = element_text(size = 16)) +
   coord_flip()
 
 p

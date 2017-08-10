@@ -106,7 +106,6 @@ What about Reaction Times (RT)?
 **KM note**: Nice job! Small point, but there's no need to load the library in each chunk. Just need to do it once, which we usually do at the beginning of the document. Also, there's no need to wrap the `d` object in the `data.frame()` function since it is already a data frame.
 
 ```{r}
-#data.frame(d)
 ggplot(d) + 
   geom_point(mapping = aes(x = subid, y = rt))
 ```
@@ -163,93 +162,60 @@ ggplot(d.filt) +
   geom_bar(mapping = aes(x = noise_condition, fill = shift_accuracy))
 ```
 
-**KM code after here**
-
 Let's visualize accuracy collapsing across the gaze and noise conditions. First we are going to summarise to get a proportion correct for each participant and condition. Then we aggregate again to get an overall proportion correct for each condition. 
 
 ```{r}
 # aggregate accuracy at the participant level
-ss <- d.filt %>% 
+ss.acc <- d.filt %>% 
   filter(!is.na(shift_accuracy),
-         shift_type %in% c("C_T", "C_D")) %>% 
-  group_by(condition_long, subid, shift_accuracy) %>% 
+         shift_type %in% c("C_T", "C_D"),
+         str_detect(condition_long, "no_noise")) %>% 
+  group_by(gaze_condition, subid, shift_accuracy) %>% 
   summarise(n = n()) %>% 
-  group_by(subid, condition_long) %>% 
+  group_by(subid, gaze_condition) %>% 
   mutate(total_trials = sum(n),
          prop = round(n / total_trials, 2)) 
-
-# aggregate at the condition level
-ms <- ss %>% 
-  filter(shift_accuracy == "correct") %>% 
-  group_by(condition_long) %>% 
-  multi_boot_standard(column = "prop")
 ```
 
 Now make a boxplot of the accuracy data for each condition. Note that we have to first filter out the proprotion "incorrect" rows, so we are only seeing the proprotion correct data.
 
 ```{r}
-ss %>% 
-  ggplot(aes(x = condition_long, y = prop)) +
-  geom_boxplot()
+acc_boxplot <- ss.acc %>% 
+  filter(shift_accuracy == "correct") %>% 
+  ggplot(aes(x = gaze_condition, y = prop)) +
+  geom_boxplot(width = 0.5, fill = "dodgerblue") +
+  geom_jitter(width = 0.05, alpha = 0.3) + 
+  geom_hline(yintercept = 0.5, linetype = "dashed") +
+  labs(x = "Condition", y = "Prop. Correct") +
+  theme(text = element_text(size = 18)) +
+  ylim(0,1)
 ```
 
-Plot the mean accuracy and confidence interval for each condition.
-
-```{r}
-ms %>% 
-  ggplot(aes(x = condition_long, y = mean)) +
-  geom_pointrange(aes(ymin = summary_ci_lower, ymax = summary_ci_upper)) +
-  ylim(0.4, 1.1) +
-  geom_hline(yintercept = 0.5, linetype = "dashed")
-```
-
-**Interpretation here**: How would you interpret this plot in a sentence or two?
-It appears that people are more accurate in the no gaze conditions (regardless of of noise vs no noise) compared to the gaze conditions. 
 ### Visualize Reaction Time
 
-What is the overall RT for adults in the experiment? 
+RT Boxplot
 
 ```{r}
-d %>% 
+ss.rt <- d.filt %>% 
   filter(!is.na(shift_accuracy),
-          shift_type %in% c("C_T", "C_D")) %>% 
-  group_by(subid, condition_long) %>% 
-  summarise(m_rt = mean(rt)) %>% 
-  ggplot(aes(x = condition_long, y = m_rt)) + 
-  geom_boxplot()
+         shift_type %in% c("C_T", "C_D"),
+         str_detect(condition_long, "no_noise")) %>% 
+  group_by(gaze_condition, subid) %>% 
+  summarise(m_rt = mean(rt))
 ```
 
-What about RTs for correct vs. incorrect shifts?
-
 ```{r}
-rr <- d %>% 
-  filter(!is.na(shift_accuracy)) %>% # remove trials where they did not shift
-  group_by(condition_long, subid, shift_accuracy, rt) %>% 
-  summarise(n = n()) %>% 
-  group_by(subid, condition_long)
-
-# aggreate at the condition level(correct)
-rs <- rr %>% 
-  filter(shift_accuracy == "correct") %>% 
-  group_by(condition_long) %>% 
-  summarise(mean_correct = mean(rt),
-            sd_correct = sd(rt))
-
-# aggreate at the condition level(incorrect)
-rk <- rr %>% 
-  filter(shift_accuracy == "incorrect") %>% 
-  group_by(condition_long) %>% 
-  summarise(mean_correct = mean(rt),
-            sd_correct = sd(rt))
+rt_boxplot <- ss.rt %>% 
+  ggplot(aes(x = gaze_condition, y = m_rt)) +
+  geom_boxplot(width = 0.5, fill = "#de2d26") +
+  geom_jitter(width = 0.05, alpha = 0.3) + 
+  ylim(0,1) +
+  labs(x = "Condition", y = "RT (sec)") +
+  theme(text = element_text(size = 18))
 ```
 
-Boxplot
-
 ```{r}
-rr %>% 
-  filter(shift_accuracy == "correct") %>% 
-  ggplot(aes(x = condition_long, y = rt)) +
-  geom_boxplot()
+cowplot::plot_grid(rt_boxplot, acc_boxplot)
 ```
 
 
@@ -259,29 +225,25 @@ rr %>%
 acc_colors <- c("grey10", "black")
 fill_vals <- c("grey90", "darkviolet")
 
-p <- d.filt %>% 
-  filter(is.na(rt) == F) %>% 
-  ggplot(aes(x = forcats::fct_rev(condition_long), y = rt, color = shift_accuracy, 
-             fill = shift_accuracy)) +
-  ggbeeswarm::geom_quasirandom(shape = 21) + 
-  scale_color_manual(values = acc_colors) +
-  scale_fill_manual(values = fill_vals) +
+p <- d %>% 
+  filter(is.na(rt) == F,
+         rt <= 4,
+         str_detect(condition_long, "no_noise")) %>% 
+  ggplot(aes(x = forcats::fct_rev(gaze_condition), y = rt)) +
+  ggbeeswarm::geom_quasirandom(shape = 21, fill = "black", color = "black") + 
   labs(y = "RT (sec)", x = NULL) +
   theme_bw() +
   theme(legend.position = "right") + 
-  theme(axis.title.x = element_text(size = 16, 
+  theme(axis.title.x = element_text(size = 18, 
                                     face = "bold"), 
-        axis.title.y = element_text(size = 16,
+        axis.title.y = element_text(size = 18,
                                     face = "bold"), axis.text.x = element_text(size = 14),
-        axis.text.y = element_text(size = 14)) +
+        axis.text.y = element_text(size = 18)) +
   coord_flip()
 
 p
 ```
 
-```{r}
-rogme::plot_dec_bars(p, col = "darkorange", dec_size = 0.8, alpha = 0.5)
-```
 
 ## Statistical models
 
