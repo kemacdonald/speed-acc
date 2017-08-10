@@ -20,7 +20,7 @@ knitr::opts_chunk$set(warning=F, message=F, sanitize = T,
                       fig.height=5, fig.width=8, echo=T, cache = F)
 
 # read in personal library of helper functions
-#source("../../helper_functions/libraries_and_functions.R")
+source("../../helper_functions/libraries_and_functions.R")
 ```
 
 ## Load data
@@ -29,8 +29,14 @@ Section 11.2 from [this](http://r4ds.had.co.nz/data-import.html) chapter on data
 
 
 ```{r}
-table_adult <- read_csv("speed_acc_adult_ng_fstshift_tidy.csv")
+table_adult <- read_csv("../../../data/3_final_merged_data/first_shifts/speed_acc_adult_ng_fstshift_tidy.csv")
 ```
+
+```{r}
+table_adult <- table_adult %>% 
+  filter(gaze_condition == "no_gaze")
+```
+
 
 ## Check the data
 
@@ -64,9 +70,8 @@ noise_trials_adult <- table(table_adult["noise_condition"])
 num_no_noise_adult <- noise_trials_adult["no_noise"]
 num_noise_adult <- noise_trials_adult["noise"]
 
-#gaze_trials <- table(table1["gaze_condition"])
-#num_no_gaze <- gaze_trials["no_gaze"]
-#num_gaze <- gaze_trials["gaze"]
+num_no_noise_adult
+num_noise_adult
 ```
 
 ## Clean up the data
@@ -97,7 +102,7 @@ My goal when I visualize the distribution of a variable is usually to check if t
 What does the distribution of age in the sample look like? 
 
 ```{r}
-library(ggplot2)
+
 ggplot(data = table_adult.analysis) + geom_point(mapping = aes(x= subid, y=age)) 
 
 ```
@@ -143,9 +148,8 @@ table_adult.analysis %>%
 What is the overall RT for participants in the experiment? 
 
 ```{r}
-table_adult.analysis %>% 
-  ggplot() + 
-  geom_bar(mapping = aes(x = rt))
+  ggplot(data = table_adult.analysis) + 
+  geom_boxplot(mapping = aes(x = noise_condition, y = rt))
 ```
 
 What about RTs for correct vs. incorrect shifts?
@@ -155,14 +159,16 @@ table_adult.analysis %>%
   ggplot() + geom_line(mapping = aes(x = rt, color = shift_accuracy), stat = "density") +
   facet_wrap(~noise_condition, ncol = 2) +
   theme_bw()
+
 ```
 
 What about RTs separated by condition? 
 
 ```{r}
 table_adult.analysis %>% 
-  ggplot() + geom_bar(mapping = aes(x = rt, fill = noise_condition)) +
+  ggplot() + geom_histogram(mapping = aes(x = rt, fill = noise_condition)) +
   facet_wrap(~shift_accuracy, ncol = 2)
+
 ```
 
 ## Aggregated visualizations
@@ -174,9 +180,9 @@ ss_adult <- table_adult.analysis %>%
 ```
 
 ```{r}
-ss_adult %>% 
-  ggplot(aes(x = noise_condition, y = m_rt, fill = shift_accuracy)) + 
-  geom_boxplot()
+ ss_adult %>% 
+  ggplot() + 
+  geom_boxplot(mapping = aes(x = noise_condition, y = m_rt), fill = ("#F8766D"))
 ```
 
 ```{r}
@@ -190,7 +196,7 @@ Let's try visualizing RT distributions using dotplots
 
 ```{r}
 acc_colors <- c("grey10", "black")
-fill_vals <- c("grey90", "darkviolet")
+fill_vals <- c("#F8766D", "#00BFC4")
 
 p_adult <- table_adult.analysis %>% 
   ggplot(aes(x = forcats::fct_rev(noise_condition), y = rt, 
