@@ -149,7 +149,7 @@ ss <- d.filt %>%
 ms <- ss %>% 
   filter(shift_accuracy == "correct") %>% 
   group_by(gaze_condition) %>% 
-  multi_boot_standard(column = "prop") 
+  multi_boot_standard(column = "prop", nboot = 100) 
   
 ms %<>% rename(prop = mean)
 ```
@@ -321,6 +321,34 @@ ms %>%
   ylim(0,1.1) +
   geom_hline(yintercept = 0.5, linetype = "dashed") +
   theme_bw() 
+```
+
+
+## Predictions with fake data
+
+```{r}
+prediction <- c("speed accuracy tradeoff", "speed accuracy tradeoff", "language cue dominates", "language cue dominates")
+condition <- c("gaze", "no_gaze", "gaze", "no_gaze")
+reaction_time <- c(0.9, 0.6, 0.6, 0.6)
+accuracy <- c(0.9, 0.55, 0.55, 0.55)
+
+fake_df <- data.frame(prediction, condition, reaction_time, accuracy)
+
+fake_df %<>% gather(key = measure, value = response, reaction_time:accuracy)
+```
+
+Now plot the predictions
+
+```{r}
+fake_df %>% 
+  ggplot(aes(x = condition, y = response, fill = prediction)) +
+  geom_bar(stat = "identity", width = 0.3) +
+  facet_grid(prediction~measure) +
+  guides(fill = F) +
+  scale_fill_manual(values = c("dodgerblue", "darkred")) +
+  ylim(0,1) +
+  theme_bw() +
+  theme(text = element_text(size = 18))
 ```
 
 
