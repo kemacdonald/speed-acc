@@ -18,7 +18,9 @@ rm(list=ls())
 # set some global options
 knitr::opts_chunk$set(warning=F, message=F, sanitize = T, 
                       fig.height=5, fig.width=8, echo=T, cache = F)
+```
 
+```{r}
 # read in personal library of helper functions
 source("../../helper_functions/libraries_and_functions.R")
 ```
@@ -168,7 +170,8 @@ Let's visualize accuracy collapsing across the gaze and noise conditions. First 
 ```{r}
 # aggregate accuracy at the participant level
 ss <- d.filt %>% 
-  filter(!is.na(shift_accuracy)) %>% 
+  filter(!is.na(shift_accuracy),
+         shift_type %in% c("C_T", "C_D")) %>% 
   group_by(condition_long, subid, shift_accuracy) %>% 
   summarise(n = n()) %>% 
   group_by(subid, condition_long) %>% 
@@ -208,7 +211,8 @@ What is the overall RT for adults in the experiment?
 
 ```{r}
 d %>% 
-  filter(!is.na(shift_accuracy)) %>% 
+  filter(!is.na(shift_accuracy),
+          shift_type %in% c("C_T", "C_D")) %>% 
   group_by(subid, condition_long) %>% 
   summarise(m_rt = mean(rt)) %>% 
   ggplot(aes(x = condition_long, y = m_rt)) + 

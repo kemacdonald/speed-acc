@@ -18,7 +18,9 @@ rm(list=ls())
 # set some global options
 knitr::opts_chunk$set(warning=F, message=F, sanitize = T, 
                       fig.height=5, fig.width=8, echo=T, cache = F)
+```
 
+```{r}
 # read in personal library of helper functions
 source("../../helper_functions/libraries_and_functions.R")
 ```
@@ -62,6 +64,17 @@ d %>%
   kable()
 ```
 
+
+## Compute age 
+
+```{r}
+d %<>% 
+  mutate(age = as.double(run_date - birthday),
+         age_years = age / 365,
+         age_group = as.integer(age / 365))
+```
+
+
 ## Explore data via visualization
 
 [This](http://r4ds.had.co.nz/data-visualisation.html) is a great book chapter on data visualization using the ggplot2 R package
@@ -73,8 +86,19 @@ My goal when I visualize the distribution of a variable is usually to check if t
 What does the distribution of age in the sample look like? 
 
 ```{r}
-
+d %>% 
+  ggplot(aes(x = age_years)) +
+  geom_histogram()
 ```
+
+```{r}
+d %>% 
+  select(subid_short, age_group) %>% 
+  unique() %>% 
+  ggplot(aes(x = age_group)) +
+  geom_histogram()
+```
+
 
 What about Reaction Times (RT)?
 
@@ -116,11 +140,21 @@ What is the overall accuracy of first shifts?
 ss <- d.filt %>% 
   filter(!is.na(shift_accuracy),
          shift_type %in% c("C_T", "C_D")) %>% 
-  group_by(gaze_condition, subid, shift_accuracy) %>% 
+  group_by(gaze_condition, subid, shift_accuracy, age_group) %>% 
   summarise(n = n()) %>% 
-  group_by(subid, gaze_condition) %>% 
+  group_by(subid, gaze_condition, age_group) %>% 
   mutate(total_trials = sum(n),
          prop = round(n / total_trials, 2)) 
+```
+
+```{r}
+# aggregate at the condition level
+ms <- ss %>% 
+  filter(shift_accuracy == "correct") %>% 
+  group_by(gaze_condition) %>% 
+  multi_boot_standard(column = "prop") 
+  
+ms %<>% rename(prop = mean)
 ```
 
 Now make a boxplot of the accuracy data for each condition. Note that we have to first filter out the proprotion "incorrect" rows, so we are only seeing the proprotion correct data.
@@ -129,23 +163,17 @@ Now make a boxplot of the accuracy data for each condition. Note that we have to
 ss %>% 
   filter(shift_accuracy == "correct") %>% 
   ggplot(aes(x = gaze_condition, y = prop)) +
-  geom_boxplot() +
-  geom_hline(yintercept = 0.5, linetype = "dashed")
-```
-
-```{r}
-# aggregate at the condition level
-ms <- ss %>% 
-  filter(shift_accuracy == "correct") %>% 
-  group_by(gaze_condition) %>% 
-  multi_boot_standard(column = "prop")
+  geom_boxplot(width = 0.5) +
+  geom_jitter(width = 0.05, alpha = 0.6, aes(color = as.factor(age_group))) + 
+  geom_hline(yintercept = 0.5, linetype = "dashed") #+
+  #geom_pointrange(data = ms, aes(ymin = summary_ci_lower, ymax = summary_ci_upper), color = "darkgreen", size = 1)
 ```
 
 Plot the mean accuracy and confidence interval for each condition.
 
 ```{r}
 ms %>% 
-  ggplot(aes(x = gaze_condition, y = mean)) +
+  ggplot(aes(x = gaze_condition, y = prop)) +
   geom_pointrange(aes(ymin = summary_ci_lower, ymax = summary_ci_upper)) +
   ylim(0.4, 0.8) +
   geom_hline(yintercept = 0.5, linetype = "dashed")
@@ -214,6 +242,7 @@ Now, let's plot RT as a function of block
 
 ```{r}
 ss <- d.filt %>% 
+  filter(shift_type %in% c("C_T", "C_D")) %>% 
   group_by(subid, gaze_condition, shift_accuracy, block) %>% 
   summarise(m_rt = mean(rt))
 ```
@@ -230,6 +259,7 @@ ss %>%
 
 ```{r}
 ss.acc <- d.filt %>% 
+  filter(shift_type %in% c("C_T", "C_D")) %>% 
   group_by(subid, gaze_condition, block, shift_accuracy) %>% 
   summarise(n_trials = n()) %>% 
   group_by(subid, gaze_condition, block) %>% 
@@ -248,6 +278,44 @@ ss.acc %>%
   facet_wrap(~block) +
   theme_bw() 
 ```
+
+### Accuracy as a function of RT
+
+```{r}
+d.cut <- d.filt %>% 
+  filter(rt <= 2) %>% 
+  mutate(rt_bin = cut(rt, breaks = 4)) 
+```
+
+
+```{r}
+ss.acc.rt <- d.cut %>% 
+  filter(shift_type %in% c("C_T", "C_D")) %>% 
+  group_by(subid, gaze_condition, shift_accuracy, rt_bin) %>% 
+  summarise(n_trials = n()) %>% 
+  group_by(subid, gaze_condition, rt_bin) %>% 
+  mutate(n_total_trials = sum(n_trials),
+         prop = n_trials / n_total_trials)
+```
+
+
+```{r}
+ms <- ss.acc.rt %>% 
+  filter(shift_accuracy == "correct") %>% 
+  group_by(gaze_condition, shift_accuracy, rt_bin) %>% 
+  multi_boot_standard(column = "prop", nboot = 100)  
+```
+  
+```{r}
+ms %>% 
+  ggplot(aes(x = rt_bin, y = mean, color = gaze_condition)) + 
+  geom_pointrange(aes(ymin = summary_ci_lower, ymax = summary_ci_upper), position = position_jitter(width = .2)) + 
+  #geom_jitter(alpha = 1, width = 0.05) +
+  ylim(0,1.1) +
+  geom_hline(yintercept = 0.5, linetype = "dashed") +
+  theme_bw() 
+```
+
 
 ## Statistical models
 
