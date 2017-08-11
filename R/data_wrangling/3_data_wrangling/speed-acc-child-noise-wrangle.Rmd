@@ -290,6 +290,15 @@ d %>%
 
 Now we have an RT, a shift type, and a correct/incorrect value for each trial based on three different critical onset points in the trial (i.e., center fixation, sentence, and noun onset).
 
+Compute child's age at test.
+
+```{r}
+d %<>% 
+  mutate(age = as.double(run_date - birthday),
+         age_years = age / 365,
+         age_group = as.integer(age / 365))
+```
+
 ### Write tidy data to .csv file
 
 Before writing to .csv, we split the data into the timecourse information and first shift information. This will make analysis more efficient since we won't have to load large datasets into working memory.
@@ -302,7 +311,6 @@ d.timecourse <- filter(d, response_onset_type == "noun") %>%
 
 # first shift
 d.fs <- d %>% 
-  filter(response_onset_type == "noun") %>% # km remember to remove this line after HUMBIO
   select(subid, subid_short, tr.num, gaze_condition, noise_condition, target_image, run_date:comments, 
          response:shift_accuracy, keep, exclude) %>% 
   unique()

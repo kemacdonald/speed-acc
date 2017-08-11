@@ -44,47 +44,30 @@ The goal of this section is to make sure the data match our expectations, or in 
 
 How many participants in the dataset?  
 
-**KM note**: Nice work on the checks! It made me catch a few errors in my data processing pipeline. Note that you could also write these series of commands as connected using pipes. Check [this](http://r4ds.had.co.nz/pipes.html) out for more information.
-
 ```{r}
-by_id <- group_by(d, subid)
-summary_by_id <- summarise(.data = by_id)
-count(summary_by_id)
+d %>% select(subid) %>% unique() %>% count()
 ```
 
 How many trials do we have for each participant?
 
 ```{r}
-by_trial <- group_by(d, subid, tr.num)
-summary_by_trial <- summarise(.data = by_trial)
-count(summary_by_trial)
+d %>% 
+  group_by(subid) %>% 
+  select()
 ```
 
-**Km note**: Looks like there are only 25 trials for *speed_acc_adult_ng-8*. Not sure what's going on? 
-
-How many trials in each condition? 
+Looks like we need to create a single variable that stores information about both the noise and gaze condition. 
 
 ```{r}
-by_gaze_condition <- group_by(d, gaze_condition, subid, tr.num)
-summary_by_gaze_condition <-summarise(.data = by_gaze_condition)
-count(summary_by_gaze_condition)
-
-by_noise_condition <- group_by(d, noise_condition, subid, tr.num)
-summary_by_noise_condition <-summarise(.data = by_noise_condition)
-count(summary_by_noise_condition)
-```
-
-**KM note**: Looks like we need to create a single variable that stores information about both the noise and gaze condition. 
-
-```{r}
-d <- d %>% mutate(condition_long = paste(gaze_condition, noise_condition, sep = "_"))
+d %<>% mutate(condition_long = paste(gaze_condition, noise_condition, sep = "_"))
 ```
 
 **KM note**: Now we can see how many trials are in each condition.
 
 ```{r}
 d %>% 
-  group_by(subid,condition_long) %>% 
+  filter(response_onset_type == "noun") %>% 
+  group_by(subid, condition_long) %>% 
   summarise(n = n()) %>% 
   kable()
 ```
@@ -99,46 +82,38 @@ This looks like a data merging issue where #8's data. Not sure what's going on?
 
 ### Visualize data distributions
 
-My goal when I visualize the distribution of a variable is usually to check if there any data points that look like outliers (really different from the other values in the sample). There are more precise, quantitative ways to define outlier, but the visualization helps us spot them quickly. If some observations look really different, I then try to reason about why that might be the case: data entry error? equipment measurement error? 
-
 What about Reaction Times (RT)?
 
-**KM note**: Nice job! Small point, but there's no need to load the library in each chunk. Just need to do it once, which we usually do at the beginning of the document. Also, there's no need to wrap the `d` object in the `data.frame()` function since it is already a data frame.
-
 ```{r}
-ggplot(d) + 
-  geom_point(mapping = aes(x = subid, y = rt))
-```
-
-`geom_histogram()` is a good one for viewing the overall distribution of RTs in the experiment.
-
-```{r}
-ggplot(d, aes(x = rt)) +
-  geom_histogram()
+ggplot(d, aes(x = rt, color = condition_long)) +
+  geom_freqpoly(alpha = 1, size = 1) +
+  facet_grid(~response_onset_type) +
+  theme_bw()
 ```
 
 What about Accuracy? 
 
 ```{r}
-ggplot(d) + 
+d %>% 
+  filter(response_onset_type == "sentence", shift_type %in% c("C_T", "C_D")) %>% 
+  ggplot() +
   geom_bar(mapping = aes(x = subid, fill = shift_accuracy)) +
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
 ```
-
-**KM note**: This is a great exploratory plot! We can see that a couple of participants are doing "weird" things that we would want to investigate further. The only thing I changed was the angle of the x-axis text, so we can see the subids more easily. 
 
 ## filter the data
 
 Let's filter out the participants who was not a native speaker of English
 
 ```{r}
-d.filt <- d %>% filter(!(subid %in% c("speed_acc_adult_ng_1")))
+d.filt <- d %>% filter(!(subid %in% c("speed_acc_adult_ng_1", "speed_acc_adult_ng_8")), 
+                       response_onset_type == "center.fixation")
 ```
 
 Next, let's remove extreme RTs. 
 
 ```{r}
-d.filt %<>% filter(rt <= 1.5)
+d.filt %<>% filter(rt <= 5)
 ```
 
 ### Visualize Accuracy
@@ -150,29 +125,17 @@ ggplot(d.filt) +
   geom_bar(mapping = aes(x = shift_accuracy))
 ```
 
-What about the accuracy for each condition?
-
-```{r}
-ggplot(d.filt) + 
-  geom_bar(mapping = aes(x = gaze_condition, fill = shift_accuracy))
-```
-
-```{r}
-ggplot(d.filt) + 
-  geom_bar(mapping = aes(x = noise_condition, fill = shift_accuracy))
-```
-
 Let's visualize accuracy collapsing across the gaze and noise conditions. First we are going to summarise to get a proportion correct for each participant and condition. Then we aggregate again to get an overall proportion correct for each condition. 
 
 ```{r}
 # aggregate accuracy at the participant level
 ss.acc <- d.filt %>% 
   filter(!is.na(shift_accuracy),
-         shift_type %in% c("C_T", "C_D"),
-         str_detect(condition_long, "no_noise")) %>% 
-  group_by(gaze_condition, subid, shift_accuracy) %>% 
+        shift_type %in% c("C_T", "C_D")) %>% 
+        # str_detect(condition_long, "no_noise")) 
+  group_by(condition_long, subid, shift_accuracy) %>% 
   summarise(n = n()) %>% 
-  group_by(subid, gaze_condition) %>% 
+  group_by(subid, condition_long) %>% 
   mutate(total_trials = sum(n),
          prop = round(n / total_trials, 2)) 
 ```
@@ -182,7 +145,7 @@ Now make a boxplot of the accuracy data for each condition. Note that we have to
 ```{r}
 acc_boxplot <- ss.acc %>% 
   filter(shift_accuracy == "correct") %>% 
-  ggplot(aes(x = gaze_condition, y = prop)) +
+  ggplot(aes(x = condition_long, y = prop)) +
   geom_boxplot(width = 0.5, fill = "dodgerblue") +
   geom_jitter(width = 0.05, alpha = 0.3) + 
   geom_hline(yintercept = 0.5, linetype = "dashed") +

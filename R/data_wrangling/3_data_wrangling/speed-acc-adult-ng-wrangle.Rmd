@@ -169,6 +169,7 @@ d %<>%
          sentence_onset_seconds = sentence_onset_ms / 1000)
 ```
 
+Next, we compute time relative to several critical points in the trial. 
 
 ```{r}
 center.fix.onset.seconds <- 2.5 # experiment was programmed such that center fixation appeared 2.5 sec after trial onset
@@ -186,11 +187,6 @@ d %<>%
          t.rel.center.fixation = t.stim - center.fix.onset.seconds,
          t.rel.sentence = t.stim - sentence_onset_seconds)
 ```
-
-```{r}
-tmp <- d %>% filter(subid == "speed_acc_adult_ng_2", tr.num == 20)
-```
-
 
 ### Flag where participant was looking at each of the critical points in the trial 
 
@@ -270,6 +266,12 @@ d %>%
 
 Now we have an RT, a shift type, and a correct/incorrect value for each trial based on three different critical onset points in the trial (i.e., center fixation, sentence onset, and noun onset)
 
+Extract short subid
+
+```{r}
+d %<>% mutate(subid_short = as.numeric(str_extract(subid, "[:digit:]+")))
+```
+
 ### Write tidy data to .csv file
 
 Before writing to .csv, we split the data into the timecourse information and first shift information. This will make analysis more efficient since we won't have to load large datasets into working memory.
@@ -282,7 +284,6 @@ d.timecourse <- filter(d, response_onset_type == "noun") %>%
 
 # first shift
 d.fs <- d %>% 
-  filter(response_onset_type == "noun") %>% # km remember to remove this after HUMBIO is finished
   select(subid, tr.num, gaze_condition, noise_condition, target_image, 
          dot:reason_excluded, response:shift_accuracy) %>% 
   unique()

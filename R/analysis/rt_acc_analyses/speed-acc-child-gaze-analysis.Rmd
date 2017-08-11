@@ -64,15 +64,6 @@ d %>%
   kable()
 ```
 
-## Compute age 
-
-```{r}
-d %<>% 
-  mutate(age = as.double(run_date - birthday),
-         age_years = age / 365,
-         age_group = as.integer(age / 365))
-```
-
 
 ## Explore data via visualization
 
@@ -327,10 +318,10 @@ ms %>%
 ## Predictions with fake data
 
 ```{r}
-prediction <- c("speed accuracy tradeoff", "speed accuracy tradeoff", "language cue dominates", "language cue dominates")
-condition <- c("gaze", "no_gaze", "gaze", "no_gaze")
-reaction_time <- c(0.9, 0.6, 0.6, 0.6)
-accuracy <- c(0.9, 0.55, 0.55, 0.55)
+prediction <- c("speed accuracy tradeoff", "speed accuracy tradeoff", "language cue dominates", "language cue dominates", "gaze cue dominates", "gaze cue dominates")
+condition <- c("gaze", "no_gaze", "gaze", "no_gaze", "gaze", "no_gaze")
+reaction_time <- c(0.9, 0.6, 0.6, 0.6, 1.4, 0.6)
+accuracy <- c(0.9, 0.55, 0.55, 0.55, 0.95, 0.55)
 
 fake_df <- data.frame(prediction, condition, reaction_time, accuracy)
 
@@ -343,10 +334,10 @@ Now plot the predictions
 fake_df %>% 
   ggplot(aes(x = condition, y = response, fill = prediction)) +
   geom_bar(stat = "identity", width = 0.3) +
-  facet_grid(prediction~measure) +
+  facet_grid(measure~prediction, scales = "free_y") +
   guides(fill = F) +
-  scale_fill_manual(values = c("dodgerblue", "darkred")) +
-  ylim(0,1) +
+  scale_fill_manual(values = c("dodgerblue", "darkred", "darkorange")) +
+  #ylim(0,1.2) +
   theme_bw() +
   theme(text = element_text(size = 18))
 ```

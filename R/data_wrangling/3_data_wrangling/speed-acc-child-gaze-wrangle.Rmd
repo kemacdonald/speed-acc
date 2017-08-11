@@ -286,7 +286,10 @@ Now we have an RT, a shift type, and a correct/incorrect value for each trial ba
 ### Compute child's age at test
 
 ```{r}
-
+d %<>% 
+  mutate(age = as.double(run_date - birthday),
+         age_years = age / 365,
+         age_group = as.integer(age / 365))
 ```
 
 
@@ -302,7 +305,6 @@ d.timecourse <- filter(d, response_onset_type == "noun") %>%
 
 # first shift
 d.fs <- d %>% 
-  filter(response_onset_type == "noun") %>% # km remember to remove this after HUMBIO is finished
   select(subid, subid_short, tr.num, gaze_condition, noise_condition, target_image, run_date:comments, 
          response:shift_accuracy, keep_et, exclude) %>% 
   unique()
