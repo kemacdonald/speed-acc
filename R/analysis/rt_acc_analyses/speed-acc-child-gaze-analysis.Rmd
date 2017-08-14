@@ -42,20 +42,10 @@ The goal of this section is to make sure the data match our expectations, or in 
 How many participants in the dataset?  
 
 ```{r}
-by_id <- group_by(d, subid)
-summary_by_id <- summarise(.data = by_id)
-count(summary_by_id)
+d %>% select(subid_short) %>% unique() %>% count
 ```
 
-How many trials do we have for each participant?
-
-```{r}
-by_trial <- group_by(d, subid, tr.num)
-summary_by_trial <- summarise(.data = by_trial)
-count(summary_by_trial)
-```
-
-How many trials in each condition? 
+How many trials do we have for each participant in each condition? 
 
 ```{r}
 d %>% 
@@ -70,8 +60,6 @@ d %>%
 [This](http://r4ds.had.co.nz/data-visualisation.html) is a great book chapter on data visualization using the ggplot2 R package
 
 ### Visualize data distributions
-
-My goal when I visualize the distribution of a variable is usually to check if there any data points that look like outliers (really different from the other values in the sample). There are more precise, quantitative ways to define outlier, but the visualization helps us spot them quickly. If some observations look really different, I then try to reason about why that might be the case: data entry error? equipment measurement error? 
 
 What does the distribution of age in the sample look like? 
 
@@ -119,6 +107,14 @@ Remove participants who couldn't calibrate and who had alots of missing looks
 d.filt %<>% filter(keep_et == "include",
                    exclude == "keep")
 ```
+
+```{r}
+d.filt %<>%
+  mutate(shift_start_location = ifelse(shift_type %in% c("C_T", "C_D"), 
+                                       "center", 
+                                       "not_center"))
+```
+
 
 ### Visualize Accuracy
 
