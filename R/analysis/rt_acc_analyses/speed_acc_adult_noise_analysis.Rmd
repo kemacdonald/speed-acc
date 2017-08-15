@@ -91,6 +91,15 @@ table_adult.analysis <- table_adult %>%
   filter(shift_start_location == "center",
          !(is.na(shift_accuracy)))
 ```
+
+Change condition labels to make it clearer.
+
+```{r}
+table_adult.analysis %<>%
+  mutate(noise_condition = ifelse(noise_condition == "no_noise", "clear", noise_condition))
+```
+
+
 ## Explore data via visualization
 
 [This](http://r4ds.had.co.nz/data-visualisation.html) is a great book chapter on data visualization using the ggplot2 R package
@@ -180,9 +189,23 @@ ss_adult <- table_adult.analysis %>%
 ```
 
 ```{r}
+ss_adult %>% 
+  ggplot(aes(x = noise_condition, y = m_rt, fill = shift_accuracy)) + 
+  geom_boxplot()
+```
+
+
+```{r}
  ss_adult %>% 
-  ggplot() + 
-  geom_boxplot(mapping = aes(x = noise_condition, y = m_rt), fill = ("#F8766D"))
+  ggplot(mapping = aes(x = noise_condition, y = m_rt)) +
+  geom_boxplot(fill = ("#00BFC4"), width = 0.3) +
+  theme_bw() +
+  theme(legend.position = "right") + 
+  theme(axis.title.x = element_text(size = 16, 
+                                    face = "bold"), 
+        axis.title.y = element_text(size = 16, 
+                                    face = "bold"), axis.text.x = element_text(size = 14),
+        axis.text.y = element_text(size = 14)) + scale_y_continuous(limits=c(0,1)) + labs(y = "reaction time")
 ```
 
 ```{r}
@@ -190,6 +213,28 @@ ms_adult <- ss_adult %>%
   group_by(noise_condition, shift_accuracy) %>% 
   summarise(m = mean(m_rt),
             stdev = sd(m_rt))
+```
+## Accuracy boxplot
+
+```{r}
+ss_adult <- table_adult.analysis %>% 
+  group_by(noise_condition, subid, shift_accuracy) %>% 
+  summarise(n = n()) %>% 
+  group_by(subid, noise_condition) %>% 
+  mutate(total_trials = sum(n),
+         prop = round(n / total_trials, 2)) 
+
+ss_adult %>% 
+  filter(shift_accuracy == "correct") %>% 
+  ggplot() + 
+  geom_boxplot(mapping = aes(x = noise_condition, y = prop), fill = ("#F8766D"), width = 0.3) +
+  theme_bw() +
+  theme(legend.position = "right") + 
+  theme(axis.title.x = element_text(size = 16, 
+                                    face = "bold"), 
+        axis.title.y = element_text(size = 16, 
+                                    face = "bold"), axis.text.x = element_text(size = 14),
+        axis.text.y = element_text(size = 14)) + labs(y = "shift accuracy")
 ```
 
 Let's try visualizing RT distributions using dotplots

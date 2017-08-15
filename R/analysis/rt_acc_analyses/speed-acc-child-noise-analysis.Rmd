@@ -91,6 +91,14 @@ table1.analysis <- table1 %>%
          !(is.na(shift_accuracy)))
 ```
 
+Change condition labels to make it clearer.
+
+```{r}
+table1.analysis %<>%
+  mutate(noise_condition = ifelse(noise_condition == "no_noise", "clear", noise_condition))
+```
+
+
 ## Explore data via visualization
 
 [This](http://r4ds.had.co.nz/data-visualisation.html) is a great book chapter on data visualization using the ggplot2 R package
@@ -102,19 +110,24 @@ My goal when I visualize the distribution of a variable is usually to check if t
 What does the distribution of age in the sample look like? 
 
 ```{r}
-ggplot(data = table1.analysis) + geom_point(mapping = aes(x= subid, y=age)) +
-  scale_colour_manual(values = c("darksalmon", "firebrick")) +
- # geom_point(aes(colour = noise_condition)) +
-  theme(plot.background = element_rect(fill = "blanchedalmond", colour = "blanchedalmond"))
-
+table1.analysis %<>%
+  mutate(age = as.double(run_date - birthday), 
+         age_years = age / 365)
 ```
 
+```{r}
+table1.analysis %>% 
+  select(subid, age_years) %>% 
+  unique() %>% 
+  ggplot(aes(x = age_years)) +
+  geom_histogram()
+```
 
 What about Reaction Times (RT)?
 
 ```{r}
 table1.analysis %>% 
-  ggplot() + geom_point(mapping = aes(x = subid, y = rt))
+  ggplot() + geom_point(mapping = aes(x = as.factor(subid_short), y = rt))
 ```
 
 What about Accuracy? 
@@ -122,9 +135,10 @@ What about Accuracy?
 ```{r}
 table1.analysis %>% 
   ggplot() + 
-  geom_bar(mapping = aes(x = subid, fill = shift_accuracy)) +
+  geom_bar(mapping = aes(x = as.factor(subid_short), fill = shift_accuracy)) +
   theme(axis.text.x = element_text(angle = 90)) +
-  facet_wrap(~noise_condition)
+  facet_wrap(~noise_condition) +
+  theme_bw()
 ```
 
 ### Visualize Accuracy
@@ -178,24 +192,65 @@ table1.analysis %>%
 
 ## Aggregated visualizations
 
+Aggregate RT
+
 ```{r}
-ss <- table1.analysis %>% 
+ss.rt <- table1.analysis %>% 
   group_by(subid, noise_condition, shift_accuracy) %>% 
   summarise(m_rt = mean(rt))
 ```
 
+Aggregate Accuracy
+
 ```{r}
-ss %>% 
+ss.acc <- table1.analysis %>% 
+  group_by(noise_condition, subid, shift_accuracy) %>% 
+  summarise(n = n()) %>% 
+  group_by(subid, noise_condition) %>% 
+  mutate(total_trials = sum(n),
+         prop = round(n / total_trials, 2)) 
+```
+
+RT boxplot
+
+```{r}
+ ss.rt %>% 
+  ggplot(mapping = aes(x = noise_condition, y = m_rt)) +
+  geom_boxplot(fill = ("#00BFC4"), width = 0.3) +
+  theme_bw() +
+  theme(legend.position = "right") + 
+  theme(axis.title.x = element_text(size = 16, 
+                                    face = "bold"), 
+        axis.title.y = element_text(size = 16, 
+                                    face = "bold"), axis.text.x = element_text(size = 14),
+        axis.text.y = element_text(size = 14)) + scale_y_continuous(limits=c(0,1)) + labs(y = "reaction time")
+```
+
+Now plot RT as a funtion of correct or incorrect shifts
+
+```{r}
+ss.rt %>% 
   ggplot(aes(x = noise_condition, y = m_rt, fill = shift_accuracy)) + 
   geom_boxplot()
 ```
 
+Now plot accuracy boxplot
+
 ```{r}
-ms <- ss %>% 
-  group_by(noise_condition, shift_accuracy) %>% 
-  summarise(m = mean(m_rt),
-            stdev = sd(m_rt))
+ss.acc %>% 
+  filter(shift_accuracy == "correct") %>% 
+  ggplot() + 
+  geom_boxplot(mapping = aes(x = noise_condition, y = prop), fill = ("#F8766D"),
+               width = 0.3) +
+  theme_bw() + 
+  theme(axis.title.x = element_text(size = 16, 
+                                    face = "bold"), 
+        axis.title.y = element_text(size = 16, 
+                                    face = "bold"), axis.text.x = element_text(size = 14),
+        axis.text.y = element_text(size = 14)) + scale_y_continuous(limits=c(0,1)) + labs(y = "shift accuracy")
 ```
+
+### block effects
 
 Let's take a look at block effects. First, we create a variable to store information about block. We konw that trials 1-16 are block 1 and 17-32 are block 2. 
 
@@ -207,13 +262,13 @@ table1.analysis <- table1.analysis %>%
 Now, let's plot RT as a function of block
 
 ```{r}
-ss <- table1.analysis %>% 
+ss.rt <- table1.analysis %>% 
   group_by(subid, noise_condition, shift_accuracy, block) %>% 
   summarise(m_rt = mean(rt))
 ```
 
 ```{r}
-ss %>% 
+ss.rt %>% 
   ggplot(aes(x = noise_condition, y = m_rt, fill = shift_accuracy)) + 
   geom_boxplot() +
   facet_wrap(~block) +
@@ -224,9 +279,10 @@ Let's try visualizing RT distributions using dotplots
 
 ```{r}
 acc_colors <- c("grey10", "black")
-fill_vals <- c("grey90", "darkviolet")
+fill_vals <- c("#F8766D", "#00BFC4")
 
 p <- table1.analysis %>% 
+  filter(rt <= 1.5) %>% 
   ggplot(aes(x = forcats::fct_rev(noise_condition), y = rt, 
              color = shift_accuracy, fill = shift_accuracy)) +
   ggbeeswarm::geom_quasirandom(shape = 21) + 
@@ -246,42 +302,97 @@ p
 ```
 
 
-### accuracy plots
+## Fake data for predictions
 
 ```{r}
-ss.acc <- table1.analysis %>% 
-  group_by(subid, noise_condition, block, shift_accuracy) %>% 
-  summarise(n_trials = n()) %>% 
-  group_by(subid, noise_condition, block) %>% 
-  mutate(n_total_trials = sum(n_trials),
-         prop = n_trials / n_total_trials)
+#prediction_names <- c("everything is terrible", "speed/accuracy tradeoff", "just good enough")
+#condition <- c("noise", "noise", "noise", "clear", "clear", "clear")
+#reaction_time <- c(0.85, 0.8, 0.7, 0.4, 0.4, 0.4)
+#accuracy <- c(0.55, 0.85, 0.6, 0.7, 0.7, 0.7)
+
+#fake_df <- data.frame(prediction_names, condition, reaction_time, accuracy)
+
+#fake_df %<>% gather(key = measure, value = response, reaction_time:accuracy)
 ```
 
 ```{r}
-ss.acc %>% 
-  filter(shift_accuracy == "correct") %>% 
-  ggplot(aes(x = noise_condition, y = prop)) + 
-  geom_boxplot(width = 0.3) +
-  geom_jitter(alpha = 0.4, width = 0.05) +
+#ggplot(fake_df, aes(x = condition, y = response)) +
+ # geom_bar(stat = "identity") +
+#  facet_grid(prediction_names~measure) +
+ # ylim(0,1) +
+  #theme_bw()
+```
+
+## Fake models for poster
+
+Everything is terrible
+```{r}
+terrible_model <- c("everything is terrible")
+condition <- c("noise", "clear")
+accuracy <- c(0.55, 0.7)
+reaction_time <- c(0.85, 0.4)
+
+fake_df <- data.frame(terrible_model, condition, accuracy, reaction_time)
+
+fake_df %<>% gather(key = measure, value = response, reaction_time:accuracy)
+
+```
+
+```{r}
+fake_df$measure <- factor(fake_df$measure, levels=unique(fake_df$measure))
+
+ggplot(fake_df, aes(x = condition, y = response, fill = condition)) +
+  geom_bar(stat = "identity") +
+  facet_wrap(~measure) +
   ylim(0,1) +
-  geom_hline(yintercept = 0.5, linetype == "dashed") +
+  theme_bw()
+```
+Just good enough
+
+```{r}
+good_enough <- c("just good enough")
+condition <- c("noise", "clear")
+reaction_time <- c(0.6, 0.4)
+accuracy <- c(0.67, 0.7)
+
+fake_df_enough <- data.frame(good_enough, condition, accuracy, reaction_time)
+
+fake_df_enough %<>% gather(key = measure, value = response, reaction_time:accuracy)
+```
+
+```{r}
+fake_df_enough$measure <- factor(fake_df_enough$measure, levels=unique(fake_df_enough$measure))
+
+ggplot(fake_df_enough, aes(x = condition, y = response, fill = condition)) +
+  geom_bar(stat = "identity") +
+  facet_wrap(~measure) +
+  ylim(0,1) +
   theme_bw()
 ```
 
-Now let's try facetting by block 
+Speed accuracy tradeoff
 
 ```{r}
-ss.acc %>% 
-  filter(shift_accuracy == "correct") %>% 
-  ggplot(aes(x = noise_condition, y = prop)) + 
-  geom_boxplot(width = 0.3) +
-  geom_jitter(alpha = 0.4, width = 0.05) +
-  ylim(0,1) +
-  geom_hline(yintercept = 0.5, linetype == "dashed") +
-  theme_bw() +
-  facet_wrap(~block)
+speed_acc <- c("speed/accuracy tradeoff")
+condition <- c("noise", "clear")
+reaction_time <- c(0.75, 0.4)
+accuracy <- c(0.85, 0.7)
+
+fake_df_speed <- data.frame(speed_acc, condition, accuracy, reaction_time)
+
+fake_df_speed %<>% gather(key = measure, value = response, reaction_time:accuracy)
 ```
 
+
+```{r}
+fake_df_speed$measure <- factor(fake_df_speed$measure, levels=unique(fake_df_speed$measure))
+
+ggplot(fake_df_speed, aes(x = condition, y = response, fill = condition)) +
+  geom_bar(stat = "identity") +
+  facet_wrap(~measure) +
+  ylim(0,1) +
+  theme_bw()
+```
 
 ## Statistical models
 
