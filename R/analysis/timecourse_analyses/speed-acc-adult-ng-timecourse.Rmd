@@ -73,49 +73,57 @@ ms.means.timeslice <- ss.d %>%
 Now make the Tanenhaus style curves for each condition 
 
 ```{r}
+ms.means.timeslice %<>%
+  mutate(noise_condition = ifelse(noise_condition == "no_noise", 
+                                  "clear", noise_condition))
+
 ms.means.timeslice %>% 
-  #filter(target_looking == "center") %>% 
+  filter(gaze_condition == "no_gaze") %>% 
   ggplot(aes(x = as.numeric(t.stim), y = mean, 
            color = target_looking, linetype = noise_condition), data = .) + 
   ylim(0,1) +
-  xlim(-0.5,10) +
+  xlim(0,10.5) +
   geom_line(size=1) +
-  facet_wrap(~gaze_condition, ncol = 1) +
+  #facet_wrap(~noise_condition, ncol = 1) +
+  guides(color = F) +
   xlab("Time in sec from onset of trial") +
   geom_vline(xintercept = mean(d$noun_onset_seconds), linetype = "dashed") +
   geom_vline(xintercept = mean(d$sentence_onset_seconds), linetype = "dashed") +
   ylab("Proportion looking") +
-  #geom_dl(aes(label = condition), method = "first.bumpup") +
-  annotate("text", label = "Sentence Onset", x = mean(d$sentence_onset_seconds)-0.3, 
-           y = 0.4, size = 4, colour = "dodgerblue") +
-  annotate("text", label = "Noun Onset", x = mean(d$noun_onset_seconds)-0.3, 
-           y = 0.4, size = 4 , colour = "dodgerblue") +
-  theme(text = element_text(size = 16)) +
-  theme_bw()
+  geom_dl(aes(label = target_looking), method = "last.bumpup") +
+  #annotate("text", label = "Sentence Onset", x = mean(d$sentence_onset_seconds)-0.3, 
+           #y = 0.4, size = 4, colour = "dodgerblue") +
+  #annotate("text", label = "Noun Onset", x = mean(d$noun_onset_seconds)-0.3, 
+   #        y = 0.4, size = 4 , colour = "dodgerblue") +
+  theme_bw() +
+  theme(text = element_text(size = 18),
+        legend.position = "top") 
 ```
 
 We can do the same thing to compare the effect of gaze across the noise conditions.
 
 ```{r}
 ms.means.timeslice %>% 
-  #filter(target_looking == "center") %>% 
+  filter(noise_condition == "no_noise") %>% 
   ggplot(aes(x = as.numeric(t.stim), y = mean, 
            color = target_looking, linetype = gaze_condition), data = .) + 
   ylim(0,1) +
-  xlim(-0.5,10) +
+  xlim(0,10.5) +
   geom_line(size=1) +
-  facet_wrap(~noise_condition, ncol = 1) +
+  #facet_wrap(~noise_condition, ncol = 1) +
+  guides(color = F) +
   xlab("Time in sec from onset of trial") +
   geom_vline(xintercept = mean(d$noun_onset_seconds), linetype = "dashed") +
   geom_vline(xintercept = mean(d$sentence_onset_seconds), linetype = "dashed") +
   ylab("Proportion looking") +
-  #geom_dl(aes(label = condition), method = "first.bumpup") +
-  annotate("text", label = "Sentence Onset", x = mean(d$sentence_onset_seconds)-0.3, 
-           y = 0.4, size = 4, colour = "dodgerblue") +
-  annotate("text", label = "Noun Onset", x = mean(d$noun_onset_seconds)-0.3, 
-           y = 0.4, size = 4 , colour = "dodgerblue") +
-  theme(text = element_text(size = 16)) +
-  theme_bw()
+  geom_dl(aes(label = target_looking), method = "last.bumpup") +
+  #annotate("text", label = "Sentence Onset", x = mean(d$sentence_onset_seconds)-0.3, 
+           #y = 0.4, size = 4, colour = "dodgerblue") +
+  #annotate("text", label = "Noun Onset", x = mean(d$noun_onset_seconds)-0.3, 
+   #        y = 0.4, size = 4 , colour = "dodgerblue") +
+  theme_bw() +
+  theme(text = element_text(size = 18),
+        legend.position = "top") 
 ```
 
 

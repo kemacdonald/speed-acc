@@ -1,0 +1,157 @@
+---
+title: "Timecourse plots Noise-Gaze Kids"
+output: html_notebook
+editor_options: 
+  chunk_output_type: inline
+---
+
+This script plots and analyzes the timecrouse eye-tracking data for an experiment comparing speed-accuracy tradeoffs when establishing reference in real-time. We vary the information value and saliency of the center fixation and measure the effects on accuracy and RT.
+
+## Setup
+
+Load libraries and read in tidy data.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=F, warning=F, cache=F, message=F, sanitize = T, results = 'asis')
+source("../../helper_functions/libraries_and_functions.R")
+```
+
+Read data. 
+
+```{r read data}
+d <- read_csv("../../../data/3_final_merged_data/timecourse/speed_acc_child_gaze_timecourse_tidy.csv.gz")
+
+d.noise <- read_csv("../../../data/3_final_merged_data/timecourse/speed_acc_child_noise_timecourse_tidy.csv.gz") 
+```
+
+
+## Visualize looking behavior 
+
+Filter to get the analysis window (one second before the noun onset). Start is when the center fixation appeared. End is the end of the trial. 
+
+```{r}
+d.filt <- d %>% filter(t.stim > 0, t.stim <= 9) 
+```
+
+First, we generate curves that represent center, target, and distractor looking over time
+
+Summarize data for each ROI for each participant and each time slice.
+
+```{r}
+# get number of trials looking at each gaze target for each time slice
+ss.d <- d.filt %>% 
+  group_by(subid, t.stim, gaze_condition) %>% 
+  summarise(count = n()) %>% 
+  ungroup() %>% 
+  complete(nesting(subid, t.stim), gaze_condition,
+           fill = list(count = 0)) %>% 
+  mutate(subid = as.character(subid))
+
+# get proportion looking by dividing the freq looking at each target by the total looking 
+# derived in step 1 of this chunk
+ss.d <- as.data.frame(xtabs(~ subid + t.stim + target_looking + gaze_condition, 
+                            data = d.filt),
+                      stringsAsFactors = F) %>% 
+  mutate(t.stim = as.numeric(t.stim)) %>% 
+  left_join(x = ss.d, y = ., by = c("subid", "t.stim", "gaze_condition")) %>% 
+  mutate(proportion_looking = Freq / count)
+```
+
+Get means and CIs for proportion looking at each time slice across particpants
+
+```{r}
+ms.means.timeslice <- ss.d %>% 
+  group_by(t.stim, gaze_condition, target_looking) %>% 
+  summarise(mean = mean(proportion_looking, na.rm = T))
+```
+
+Now make the Tanenhaus style curves for each gaze_condition 
+
+```{r}
+plot <- ms.means.timeslice %>% 
+  ggplot(aes(x = as.numeric(t.stim), y = mean, 
+           color = target_looking, linetype = gaze_condition), data = .) + 
+  ylim(0,1) +
+  xlim(0,10.5) +
+  geom_line(size=1) +
+  #facet_wrap(~noise_gaze_condition, ncol = 1) +
+  guides(color = F) +
+  xlab("Time in sec from onset of trial") +
+  geom_vline(xintercept = mean(d$noun_onset_seconds), linetype = "dashed") +
+  geom_vline(xintercept = mean(d$sentence_onset_seconds), linetype = "dashed") +
+  ylab("Proportion looking") +
+  geom_dl(aes(label = target_looking), method = "last.bumpup") +
+  #annotate("text", label = "Sentence Onset", x = mean(d$sentence_onset_seconds)-0.3, 
+           #y = 0.4, size = 4, colour = "dodgerblue") +
+  #annotate("text", label = "Noun Onset", x = mean(d$noun_onset_seconds)-0.3, 
+   #        y = 0.4, size = 4 , colour = "dodgerblue") +
+  theme_bw() +
+  theme(text = element_text(size = 18),
+        legend.position = "top") 
+```
+
+
+## Noise timecourse
+
+```{r}
+d.filt <- d.noise %>% filter(t.stim > 0, t.stim <= 9) 
+```
+
+
+```{r}
+# get number of trials looking at each gaze target for each time slice
+ss.d <- d.filt %>% 
+  group_by(subid, t.stim, noise_condition) %>% 
+  summarise(count = n()) %>% 
+  ungroup() %>% 
+  complete(nesting(subid, t.stim), noise_condition,
+           fill = list(count = 0)) %>% 
+  mutate(subid = as.character(subid))
+
+# get proportion looking by dividing the freq looking at each target by the total looking 
+# derived in step 1 of this chunk
+ss.d <- as.data.frame(xtabs(~ subid + t.stim + target_looking + noise_condition, 
+                            data = d.filt),
+                      stringsAsFactors = F) %>% 
+  mutate(t.stim = as.numeric(t.stim)) %>% 
+  left_join(x = ss.d, y = ., by = c("subid", "t.stim", "noise_condition")) %>% 
+  mutate(proportion_looking = Freq / count)
+```
+
+Get means and CIs for proportion looking at each time slice across particpants
+
+```{r}
+ms.means.timeslice <- ss.d %>% 
+  group_by(t.stim, noise_condition, target_looking) %>% 
+  summarise(mean = mean(proportion_looking, na.rm = T))
+```
+
+Now make the Tanenhaus style curves for each noise_condition 
+
+```{r}
+ms.means.timeslice %<>%
+  ungroup() %>% 
+  mutate(noise_condition = ifelse(noise_condition == "no_noise", 
+                                  "clear", noise_condition))
+
+ms.means.timeslice %>% 
+  ggplot(aes(x = as.numeric(t.stim), y = mean, 
+           color = target_looking, linetype = noise_condition), data = .) + 
+  ylim(0,1) +
+  xlim(0,10.5) +
+  geom_line(size=1) +
+  #facet_wrap(~noise_noise_condition, ncol = 1) +
+  guides(color = F) +
+  xlab("Time in sec from onset of trial") +
+  geom_vline(xintercept = mean(d$noun_onset_seconds), linetype = "dashed") +
+  geom_vline(xintercept = mean(d$sentence_onset_seconds), linetype = "dashed") +
+  ylab("Proportion looking") +
+  geom_dl(aes(label = target_looking), method = "last.bumpup") +
+  #annotate("text", label = "Sentence Onset", x = mean(d$sentence_onset_seconds)-0.3, 
+           #y = 0.4, size = 4, colour = "dodgerblue") +
+  #annotate("text", label = "Noun Onset", x = mean(d$noun_onset_seconds)-0.3, 
+   #        y = 0.4, size = 4 , colour = "dodgerblue") +
+  theme_bw() +
+  theme(text = element_text(size = 18),
+        legend.position = "top") 
+```
