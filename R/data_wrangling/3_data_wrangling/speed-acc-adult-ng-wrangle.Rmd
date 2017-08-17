@@ -37,10 +37,14 @@ d %<>% left_join(subinfo_df, by = "subid")
 Filter out calibration trial and any keypress events, and outro.
 
 ```{r}
-trials_to_remove <- c("UE-keypress VolumeUp", "UE-keypress VolumeDown", "cc3bd7c5c8d457694031c7630357751f", 
-                 "85e91b277ab3c43334caff8617a99a27_1920x1080", "4337eacb25c57e93db4b9168b10de6c4_1920x1080",
-                 "73043104237bf1c8335572c8bf9254a3_1920x1080", "5e4f06a7769042d0b320ba9269ce65f2_1920x1080",
-                 "85e91b277ab3c43334caff8617a99a27_1920x1080", "9b9688edf70346b1c9c0e8af36e383cd_1920x1080")
+trials_to_remove <- c("UE-keypress VolumeUp", "UE-keypress VolumeDown", 
+                      "cc3bd7c5c8d457694031c7630357751f", 
+                      "85e91b277ab3c43334caff8617a99a27_1920x1080", 
+                      "4337eacb25c57e93db4b9168b10de6c4_1920x1080",
+                      "73043104237bf1c8335572c8bf9254a3_1920x1080",
+                      "5e4f06a7769042d0b320ba9269ce65f2_1920x1080",
+                      "85e91b277ab3c43334caff8617a99a27_1920x1080",
+                      "9b9688edf70346b1c9c0e8af36e383cd_1920x1080")
 
 d %<>% filter(!(stimulus %in% trials_to_remove))
 ```
@@ -84,7 +88,7 @@ Here we label Areas of Interest to be Left Picture, Right Picture, and the Cente
 Remove filler trials
 
 ```{r}
-d %<>% filter(is.na(stimulus_name) == F) 
+d %<>% filter(!(is.na(stimulus_name))) 
 ```
 
 ### ROIs
@@ -95,7 +99,7 @@ Plot the distribution of looking across x-y coordinates. This is a useful check 
 d.rois <- sample_n(d, size = 0.1*nrow(d)) # get a sample so we don't plot all 200k plus rows
 
 ggplot(aes(x = x, y = y), data = d.rois) +
-  geom_density2d() +
+  stat_density_2d(aes(fill = ..level..), geom = "polygon") +
   theme_bw()
 ```
 

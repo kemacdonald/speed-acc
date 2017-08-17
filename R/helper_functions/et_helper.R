@@ -52,7 +52,8 @@ read.smi.idf <- function (file.name, suffix.len = 4) {
   #clean up data frame
   d %<>% 
     select(Time, lx, ly, rx, ry) %>%
-    rename(t = Time)
+    rename(t = Time) %>% 
+    mutate(t = to.n(t))
   
   ## Now get "messages" - about the stimulus that's being presented
   all.d$rawx <- all.d$"L Raw X [px]"
@@ -62,9 +63,13 @@ read.smi.idf <- function (file.name, suffix.len = 4) {
     select(Time, rawx) %>%
     rename(t = Time,
            msg = rawx) %>%
-    mutate(stimulus = gsub("# Message: ", "",msg))
+    mutate(stimulus = gsub("# Message: ", "",msg),
+           t = to.n(t))
   
   ## merge stimulus information back into d frame as a column
+  
+  
+  
   d$stimulus <- sapply(d$t,
                        function(x) {
                          set <- msgs$stimulus[msgs$t < x]
@@ -75,9 +80,6 @@ read.smi.idf <- function (file.name, suffix.len = 4) {
   
   ## drop the times before the first video
   d %<>% filter(stimulus != "character(0)") 
-  
-  ## convert Time to numeric
-  d %<>% dplyr::mutate(t = to.n(t)) 
   
   ## add subid
   d$subid <- subid
