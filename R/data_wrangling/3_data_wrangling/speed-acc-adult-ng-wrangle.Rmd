@@ -6,6 +6,9 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo=T, warning=F, cache=F, message=F, sanitize = T)
+```
+
+```{r}
 source("../../helper_functions/libraries_and_functions.R")
 ```
 
@@ -283,17 +286,20 @@ Before writing to .csv, we split the data into the timecourse information and fi
 ```{r}
 # timecourse
 d.timecourse <- filter(d, response_onset_type == "noun") %>% 
-  select(subid, t.stim, gaze_condition, noise_condition, tr.num, noun_onset_sec,
+  select(subid, subid_short, t.stim, x, y, gaze_condition, noise_condition, 
+         tr.num, noun_onset_sec,
          gaze_target:shift_accuracy, target_image)
 
 # first shift
 d.fs <- d %>% 
-  select(subid, tr.num, gaze_condition, noise_condition, target_image, 
+  select(subid, subid_short, tr.num, gaze_condition, noise_condition, target_image, 
          dot:reason_excluded, response:shift_accuracy) %>% 
   unique()
 ```
 
 Write to zipped csv: 
+
+
 
 ```{r}
 ## timecourse data
@@ -305,4 +311,14 @@ write_csv(d.timecourse, path = paste0(write.path.time,
 write.path.fst <- "../../../data/3_final_merged_data/first_shifts/"
 write_csv(d.fs, path = paste0(write.path.fst, 
                               "speed_acc_adult_ng_fstshift_tidy.csv"))
+```
+
+Save a smaller version of the timecourse data for testing new visualizations
+
+```{r eval = F}
+d.timecourse.small <- d.timecourse %>% 
+  filter(subid_short %in% 2:6)
+
+write_csv(d.timecourse, path = paste0(write.path.time,
+                                      "speed_acc_adult_ng_timecourse_tidy_small.csv"))
 ```

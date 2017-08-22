@@ -13,6 +13,9 @@ Load libraries and read in tidy data.
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo=F, warning=F, cache=F, message=F, sanitize = T, results = 'asis')
+```
+
+```{r}
 source("../../helper_functions/libraries_and_functions.R")
 ```
 
