@@ -167,7 +167,9 @@ ewma_function <- function(df, rt_column = "RT", lambda = .01, cs = .5, sigma = .
     acc <- as.integer(subj["correct"])
     rt <- as.numeric(subj["RT"])
     cs <- lambda*acc + (1-lambda)*cs # weighted average for each rt (row)
+    print(paste("cs is", cs))
     ucl <- .5 + L*sigma*sqrt((lambda/(2 - lambda))*(1-((1-lambda)^(2*row)))) # threshold
+    print(paste("ucl is", ucl))
     # add emwa params to results data frame
     subj$cs <- cs
     subj$ucl <- ucl
