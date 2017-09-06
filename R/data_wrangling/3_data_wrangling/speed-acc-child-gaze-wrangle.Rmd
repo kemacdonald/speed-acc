@@ -25,14 +25,14 @@ d$stimulus <- gsub(pattern = ".avi", "", x = d$stimulus)
 d %<>% filter(stimulus != "Validation")
 ```
 
-Join trial info
+Join with trial information.
 
 ```{r}
 trialinfo_d <- read_csv("../../../data/0b_trial_information/speed-acc-child-gaze-trial-info.csv")
 d %<>% left_join(., trialinfo_d, by = "stimulus")
 ```
 
-Join subject info
+Join with subject information.
 
 ```{r}
 subinfo_df <- readxl::read_xlsx("../../../data/0a_demographics/speed_acc_child_gaze_Runsheet_Bing.xlsx")
@@ -52,11 +52,16 @@ d %<>% left_join(subinfo_df, by = "subid")
 Filter out calibration trial and any keypress events, and outro.
 
 ```{r}
-bad_stimuli <- c("UE-keypress VolumeUp", "UE-keypress VolumeDown", "cc3bd7c5c8d457694031c7630357751f", 
-                 "85e91b277ab3c43334caff8617a99a27_1920x1080", "a14e8d2f42de904c74b227f460058f80_1920x1080",
-                 "c7280d7cf8d2071e0a099f77fef07087", "cb574a221f2b82f8cd9ab49f3da75b49_1920x1080",
-                 "ee996bde25388f5c35c6bd48740a00d6_1920x1080", "2cfc78e6145270a07971626e1be0caf5_1920x1080",
-                 "6cc2283d5439516a7f183c460278aed5_1920x1080", "074d7edcd6e1aaa51346a9225dc5e669_1920x1080")
+bad_stimuli <- c("UE-keypress VolumeUp", "UE-keypress VolumeDown", 
+                 "cc3bd7c5c8d457694031c7630357751f", 
+                 "85e91b277ab3c43334caff8617a99a27_1920x1080", 
+                 "a14e8d2f42de904c74b227f460058f80_1920x1080",
+                 "c7280d7cf8d2071e0a099f77fef07087", 
+                 "cb574a221f2b82f8cd9ab49f3da75b49_1920x1080",
+                 "ee996bde25388f5c35c6bd48740a00d6_1920x1080", 
+                 "2cfc78e6145270a07971626e1be0caf5_1920x1080",
+                 "6cc2283d5439516a7f183c460278aed5_1920x1080", 
+                 "074d7edcd6e1aaa51346a9225dc5e669_1920x1080")
 
 d %<>% filter(!(stimulus %in% bad_stimuli))
 ```
@@ -69,7 +74,7 @@ We use our lab criterion of having a proprtion of AWAY looks +3 standard deviati
 ##calculate percentage of non-looks - that is, looking away from the screen entirely.
 ##offscreen == TRUE if x is 0 and y is 1050, so higher bad_looks are worse
 d_screentime <- transform(d, offscreen = ((x == 0 & y == 1050) | is.na(x) | is.na(y))) %>%
-  select(subid, t, offscreen) %>%
+  dplyr::select(subid, t, offscreen) %>%
   group_by(subid) %>%
   summarise(bad_looks = sum(offscreen, na.rm = TRUE), total_timeslices = n())
 
@@ -84,10 +89,17 @@ d %<>% left_join(., d_screentime, by = "subid")
 d$keep_et <- ifelse(d$percent_bad_looks > (3*sd_ss + mean_ss), 'exclude', 'include')
 ```
 
+How many participants are removed by the "away looking" filter?
+
+```{r}
+d %>% select(subid, keep_et) %>% distinct() %>% group_by(keep_et) %>% count
+```
+
+
 Now we make a table of participant information.
 
 ```{r}
-d %>% select(subid, gender, run_date, comments, exclude) %>% 
+d %>% select(subid, gender, run_date, comments, keep_et) %>% 
   unique() %>% 
   kable()
 ```
@@ -101,7 +113,7 @@ Here we label Areas of Interest to be Left Picture, Right Picture, and the Cente
 Plot the distribution of looking across x-y coordinates. This is a useful check that participants were looking where we thought they should be, and it helps us find the AOIs for data analysis. 
 
 ```{r, eval = F}
-d.rois <- sample_n(d, size = 0.1*nrow(d)) # get a sample so we don't plot all 200k plus rows
+d.rois <- sample_n(d, size = 0.05*nrow(d)) # get a sample so we don't plot all 200k plus rows
 
 ggplot(aes(x = x, y = y), data = d.rois) +
   geom_density2d() +
@@ -138,7 +150,7 @@ d %>%
   kable()
 ```
 
-Extract short subid
+Create short subid
 
 ```{r}
 d %<>% mutate(subid_short = as.numeric(str_extract(subid, "[:digit:]+")),
@@ -157,7 +169,9 @@ d %<>%
                                             "away"))))
 ```
 
-Make a table of proportion looking to each area of interest: Left, Right, Center, and Away
+There's a pretty heavy concentration of looking to the top left of the screen. This is a "catch-all" for any looks the ET could not measure. So we just filter these out for our analyses. 
+
+Next, we make a table of proportion looking to each area of interest: Left, Right, Center, and Away
 
 ```{r}
 d %>% 
@@ -168,8 +182,6 @@ d %>%
          prop_looks = round(count_looks / total_looks, 2)) %>% 
   kable()
 ```
-
-There's a pretty heavy concentration of looking to the top left of the screen. This is a "catch-all" for any looks the ET could not measure. So we just filter these out for our analyses. 
 
 ### Score each trial: RT and Accuracy of first shift
 
@@ -185,9 +197,9 @@ First, we need to convert the trial measurement information from frames to milli
 
 ```{r}
 d %<>% 
-  mutate(noun_onset_ms = (noun_onset_sec * 1000) + (noun_onset_frames * 33),
+  mutate(noun_onset_ms = (noun_onset_sec * 1000) + (noun_onset_frames * 30),
          noun_onset_seconds = noun_onset_ms / 1000,
-         sentence_onset_ms = (sentence_onset_sec * 1000) + (sentence_onset_frames * 33),
+         sentence_onset_ms = (sentence_onset_sec * 1000) + (sentence_onset_frames * 30),
          sentence_onset_seconds = sentence_onset_ms / 1000)
 ```
 
@@ -255,7 +267,7 @@ d <- d.orig %>%
 
 Next, we need to compute RT for each trial, using my own score trial function. 
 
-The function takes in a data frame for each trial and computes an RT and whether the shift was correct or incorrect. You can tell the function the kind of onset value from which you want to compute RT. The different onset values are:
+The function takes in a data frame for each trial and computes (1) an RT and (2) whether the shift was correct or incorrect. You can tell the function the kind of onset value from which you want to compute RT. The different onset values are:
 
 * noun 
 * center_fixation
@@ -281,7 +293,7 @@ d %>%
   kable()
 ```
 
-Now we have an RT, a shift type, and a correct/incorrect value for each trial based on three different critical onset points in the trial (i.e., center fixation, sentence, and noun onset)
+Now we have an RT, a shift type, and a correct/incorrect value for each trial based on three different critical onset points in the trial (center fixation, sentence, and noun onset)
 
 ### Compute child's age at test
 
@@ -300,13 +312,14 @@ Before writing to .csv, we split the data into the timecourse information and fi
 ```{r}
 # timecourse
 d.timecourse <- filter(d, response_onset_type == "noun") %>% 
-  select(subid, subid_short, t.stim, gaze_condition, noise_condition, tr.num, noun_onset_sec,
-         gaze_target:shift_accuracy, target_image, keep_et, exclude)
+  select(subid, subid_short, t.stim, gaze_condition, noise_condition, tr.num, 
+         noun_onset_sec, gaze_target:shift_accuracy, target_image, keep_et)
 
 # first shift
 d.fs <- d %>% 
-  select(subid, subid_short, tr.num, gaze_condition, noise_condition, target_image, run_date:comments, 
-         response:shift_accuracy, keep_et, exclude) %>% 
+  select(subid, subid_short, tr.num, gaze_condition, noise_condition, 
+         target_image, run_date:comments, 
+         response:shift_accuracy, keep_et) %>% 
   unique()
 ```
 
