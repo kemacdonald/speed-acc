@@ -39,12 +39,22 @@ subinfo_df <- readxl::read_xlsx("../../../data/0a_demographics/speed_acc_child_g
 
 # clean up subid to join
 subinfo_df %<>% mutate(subid = str_to_lower(subid),
-                       subid = str_replace_all(subid, pattern = "-", "_"))
+                       subid = str_replace_all(subid, pattern = "-", "_"),
+                       subid = ifelse(str_detect(subid, pattern = "gaze"), 
+                             subid,
+                             str_replace(subid, pattern = "_child",
+                                         "_child_gaze"))
+                       )
 
 # clean up subid in data file
 # if "child" is already in the subid, then we do not need to add it
 d %<>% mutate(subid = str_to_lower(subid),
-                       subid = str_replace_all(subid, pattern = "-", "_"))
+              subid = str_replace_all(subid, pattern = "-", "_"),
+              subid = ifelse(str_detect(subid, pattern = "gaze"), 
+                             subid,
+                             str_replace(subid, pattern = "_child",
+                                         "_child_gaze"))
+              )
 
 d %<>% left_join(subinfo_df, by = "subid")
 ```
@@ -95,12 +105,23 @@ How many participants are removed by the "away looking" filter?
 d %>% select(subid, keep_et) %>% distinct() %>% group_by(keep_et) %>% count
 ```
 
-
-Now we make a table of participant information.
+How many participants are removed by the "failure to calibrate" filter?
 
 ```{r}
-d %>% select(subid, gender, run_date, comments, keep_et) %>% 
+d %>% select(subid, keep_runsheet) %>% distinct() %>% group_by(keep_runsheet) %>% count
+```
+
+Now we make a table of participant information, but first extract short subid.
+
+```{r}
+d %<>% mutate(subid_short = as.numeric(str_extract(subid, "[:digit:]+")),
+              experiment = "noise")
+```
+
+```{r}
+d %>% select(subid_short, gender, run_date, keep_et, keep_runsheet, comments) %>% 
   unique() %>% 
+  arrange(subid_short) %>% 
   kable()
 ```
 
@@ -126,7 +147,6 @@ ggplot(aes(x = x, y = y), data = d.rois) +
 d %<>% filter(!(is.na(target_image)))
 ```
 
-
 ### Add trial numbers
 
 We have 2 blocks of 16 trials, so `r 2 * 16` total trials. To add the trial numbers we first get each unique trial name and the time it started. Then we sort by the time each trial started, and bind the trial numbers. Finally, we join the trial number information with the rest of the eye movement data.
@@ -148,13 +168,6 @@ d %>%
   group_by(subid) %>% 
   count() %>% 
   kable()
-```
-
-Create short subid
-
-```{r}
-d %<>% mutate(subid_short = as.numeric(str_extract(subid, "[:digit:]+")),
-              experiment = "gaze")
 ```
 
 ### Flag left/right/center looking based on ROIs
@@ -197,9 +210,9 @@ First, we need to convert the trial measurement information from frames to milli
 
 ```{r}
 d %<>% 
-  mutate(noun_onset_ms = (noun_onset_sec * 1000) + (noun_onset_frames * 30),
+  mutate(noun_onset_ms = (noun_onset_sec * 1000) + (noun_onset_frames * 33),
          noun_onset_seconds = noun_onset_ms / 1000,
-         sentence_onset_ms = (sentence_onset_sec * 1000) + (sentence_onset_frames * 30),
+         sentence_onset_ms = (sentence_onset_sec * 1000) + (sentence_onset_frames * 33),
          sentence_onset_seconds = sentence_onset_ms / 1000)
 ```
 
@@ -301,7 +314,26 @@ Now we have an RT, a shift type, and a correct/incorrect value for each trial ba
 d %<>% 
   mutate(age = as.double(run_date - birthday),
          age_years = age / 365,
-         age_group = as.integer(age / 365))
+         age_group = ifelse(is.na(age_group), as.integer(age / 365), age_group))
+```
+
+Add variable that stores information about center-initial shifts. Change condition labels to make it clearer. And add variable to track block.
+
+```{r}
+d %<>% 
+  mutate(shift_start_location = ifelse(shift_type %in% c("C_T", "C_D"), 
+                                       "center", 
+                                       "not_center"),
+         shift_accuracy_clean = ifelse(str_detect(shift_type, "_T"), 
+                                       "correct", 
+                                       "incorrect"),
+         block = ifelse(tr.num <= 16, "block_1", "block_2"),
+         gaze_condition = ifelse(gaze_condition == "no_gaze", 
+                                  "straight_ahead", gaze_condition),
+         resp_onset_type_fact = factor(response_onset_type, 
+                                       levels = c('center.fixation', 
+                                                  'sentence', 'noun'))
+  )
 ```
 
 
@@ -311,15 +343,17 @@ Before writing to .csv, we split the data into the timecourse information and fi
 
 ```{r}
 # timecourse
-d.timecourse <- filter(d, response_onset_type == "noun") %>% 
+d.timecourse <- d %>%  
+  filter(response_onset_type == "noun") %>% 
   select(subid, subid_short, t.stim, gaze_condition, noise_condition, tr.num, 
-         noun_onset_sec, gaze_target:shift_accuracy, target_image, keep_et)
-
+         noun_onset_sec, gaze_target:shift_accuracy, shift_accuracy_clean, shift_start_location,
+         block, keep_et, keep_runsheet)
+  
 # first shift
 d.fs <- d %>% 
-  select(subid, subid_short, tr.num, gaze_condition, noise_condition, 
-         target_image, run_date:comments, 
-         response:shift_accuracy, keep_et) %>% 
+  select(subid, subid_short, tr.num, gaze_condition, noise_condition, target_image, 
+         run_date:comments, response:shift_accuracy, shift_accuracy_clean, shift_start_location,
+         block, keep_et, keep_runsheet) %>% 
   unique()
 ```
 

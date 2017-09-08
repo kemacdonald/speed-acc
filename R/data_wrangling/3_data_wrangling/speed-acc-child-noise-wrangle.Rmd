@@ -39,7 +39,12 @@ subinfo_df <- readxl::read_xlsx("../../../data/0a_demographics/speed_acc_child_n
 
 # clean up subid to join
 subinfo_df %<>% mutate(subid = str_to_lower(subid),
-                       subid = str_replace_all(subid, pattern = "-", "_"))
+                       subid = str_replace_all(subid, pattern = "-", "_"),
+                       subid = ifelse(str_detect(subid, pattern = "child"), 
+                                      subid,
+                                      str_replace(subid, pattern = "_noise",
+                                                             "_child_noise"))
+                       )
 # clean up subid in data file
 # if "child" is already in the subid, then we do not need to add it
 d %<>% mutate(subid = str_to_lower(subid),
@@ -47,8 +52,8 @@ d %<>% mutate(subid = str_to_lower(subid),
                        subid = ifelse(str_detect(subid, pattern = "child"), 
                                       subid,
                                       str_replace(subid, pattern = "_noise",
-                                                             "_child_noise")
-                                      ))
+                                                             "_child_noise"))
+              )
 
 d %<>% left_join(subinfo_df, by = "subid")
 ```
@@ -90,13 +95,13 @@ mean_ss <- mean(d_screentime$percent_bad_looks)
 
 d %<>% left_join(., d_screentime, by = "subid")
 
-d$keep <- ifelse(d$percent_bad_looks > (3*sd_ss + mean_ss), 'exclude', 'include')
+d$keep_et <- ifelse(d$percent_bad_looks > (3*sd_ss + mean_ss), 'exclude', 'include')
 ```
 
 Now we make a table of participant information.
 
 ```{r}
-d %>% select(subid, gender, run_date, comments) %>% 
+d %>% select(subid, gender, run_date, keep_et, keep_runsheet) %>% 
   unique() %>% 
   kable()
 ```
@@ -288,6 +293,20 @@ d %>%
   kable()
 ```
 
+Check one trial to make sure the scoring function is working. 
+
+```{r}
+check <- d %>% 
+  filter(subid_short == 2, tr.num == 16,
+         response_onset_type == "noun") %>% 
+  ungroup() %>% 
+  select(t.stim, t.rel.noun,
+         rt, gaze_target, 
+         response, shift_type,
+         shift_accuracy)
+```
+
+
 Now we have an RT, a shift type, and a correct/incorrect value for each trial based on three different critical onset points in the trial (i.e., center fixation, sentence, and noun onset).
 
 Compute child's age at test.
@@ -296,7 +315,26 @@ Compute child's age at test.
 d %<>% 
   mutate(age = as.double(run_date - birthday),
          age_years = age / 365,
-         age_group = as.integer(age / 365))
+         age_group = ifelse(is.na(age_group), as.integer(age / 365), age_group))
+```
+
+Add variable that stores information about center-initial shifts. Change condition labels to make it clearer. And add variable to track block.
+
+```{r}
+d %<>% 
+  mutate(shift_start_location = ifelse(shift_type %in% c("C_T", "C_D"), 
+                                       "center", 
+                                       "not_center"),
+         shift_accuracy_clean = ifelse(str_detect(shift_type, "_T"), 
+                                       "correct", 
+                                       "incorrect"),
+         block = ifelse(tr.num <= 16, "block_1", "block_2"),
+         noise_condition = ifelse(noise_condition == "no_noise", 
+                                  "clear", noise_condition),
+         resp_onset_type_fact = factor(response_onset_type, 
+                                       levels = c('center.fixation', 
+                                                  'sentence', 'noun'))
+  )
 ```
 
 ### Write tidy data to .csv file
@@ -305,16 +343,17 @@ Before writing to .csv, we split the data into the timecourse information and fi
 
 ```{r}
 # timecourse
-d.timecourse <- filter(d, response_onset_type == "noun") %>% 
-  select(subid, subid_short, t.stim, gaze_condition, noise_condition, 
-         tr.num, noun_onset_sec, gaze_target:shift_accuracy, target_image, 
-         keep_et = keep)
+d.timecourse <- d %>%
+  filter(response_onset_type == "noun") %>% 
+  select(subid, subid_short, t.stim, gaze_condition, noise_condition, target_image,
+         tr.num, noun_onset_sec, gaze_target:shift_accuracy, shift_accuracy_clean, shift_start_location,
+         block, keep_runsheet, keep_et, resp_onset_type_fact)
 
 # first shift
 d.fs <- d %>% 
   select(subid, subid_short, tr.num, gaze_condition, noise_condition, target_image,
-         run_date:comments, response:shift_accuracy, 
-         keep_et = keep) %>% 
+         run_date:comments, response:shift_accuracy, shift_accuracy_clean, shift_start_location,
+         block, keep_runsheet, keep_et, resp_onset_type_fact) %>% 
   unique()
 ```
 

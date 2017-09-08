@@ -1,16 +1,11 @@
 ---
-title: "Speed-Acc Child Noise Analysis"
+title: "Speed-Acc-Child Noise first shift analysis"
 author: "Hannah Slater and Kyle MacDonald"
 output: html_document
 ---
 
 ## Set up 
 
-Here are some helpful links for understanding the workflow for analyzing data in R Markdown (what you're doing in this document!):
-
- * [Scripts](http://r4ds.had.co.nz/workflow-scripts.html)
- * An R Markdown [guide](https://docs.google.com/document/d/1ajv1VJqEheVws93tnzH-K7145vBKtwD3Az5pg3faRdw/edit?usp=sharing) that I wrote for the lab
- 
 ```{r chunk_options, echo = F}
 # code to clear workspace
 rm(list=ls()) 
@@ -18,168 +13,122 @@ rm(list=ls())
 # set some global options
 knitr::opts_chunk$set(warning=F, message=F, sanitize = T, 
                       fig.height=5, fig.width=8, echo=T, cache = F)
+```
 
-# read in personal library of helper functions
+read in personal library of helper functions
+
+```{r}
 source("../../helper_functions/libraries_and_functions.R")
+theme_set(ggthemes::theme_few())
 ```
 
 ## Load data
 
-Section 11.2 from [this](http://r4ds.had.co.nz/data-import.html) chapter on data importing is great.
-
 ```{r}
-table1 <- read_csv("../../../data/3_final_merged_data/first_shifts/speed_acc_child_noise_fstshift_tidy.csv")
+d <- read_csv("../../../data/3_final_merged_data/first_shifts/speed_acc_child_noise_fstshift_tidy.csv")
 ```
 
 ## Check the data
 
-The goal of this section is to make sure the data match our expectations, or in other words, we are "testing" our data. Usually this involves comparing a known value to the number actually in the data set. For example, I know how I ran 20 participants, do I have 20 unique participant IDs?
-
-[This](http://r4ds.had.co.nz/transform.html) chapter from the book **R for Data Science** is a good reference for writing code to manipulate data to do data "sanity" checks.
-
 How many participants in the dataset?  
 
 ```{r}
-unique <- apply(table1, 2, function(x)length(unique(x)))
-participants <- unique[1]
-print(participants)
+d %>% distinct(subid_short) %>% count() %>% kable()
 ```
 
 How many trials do we have for each participant?
 
 ```{r}
-trials_number <- unique[2]
-print(trials_number)
-# not every participant has the same number of trials
+d %>% 
+  select(subid_short, tr.num) %>% 
+  unique() %>% 
+  group_by(subid_short) %>%
+  count() %>% 
+  kable()
 ```
+
+Not every participant has the same number of trials, but no participant has more than 32 trials, which is good.
+
+How many trials does each participoant have in each condition? 
 
 ```{r}
-table1 %>% 
-  group_by(subid, noise_condition) %>% 
-  summarise(n_trials = n())
+trials_df <- d %>% 
+  filter(!(is.na(rt))) %>% 
+  select(subid_short, tr.num, noise_condition) %>% 
+  unique() %>% 
+  group_by(subid_short, noise_condition) %>%
+  count() 
+
+# add this information to the rest of the data
+d %<>% left_join(., trials_df, by = c("subid_short", "noise_condition"))
+
+trials_df %>% kable()
 ```
 
-
-How many trials in each condition? 
+What's the average number of trials for each condition?
 
 ```{r}
-trials <- table(table1["noise_condition"])
-num_no_noise <- trials["no_noise"]
-num_noise <- trials["noise"]
+d %>% 
+  filter(!(is.na(rt))) %>% 
+  select(subid_short, noise_condition, tr.num) %>% 
+  unique() %>% 
+  group_by(subid_short, noise_condition) %>% 
+  summarise(n = n()) %>% 
+  group_by(noise_condition) %>% 
+  summarise(avg_trials = mean(n) %>% round(digits = 2))
 ```
 
-## Clean up the data
-
-Add variable that stores information about center-initial shifts
+Let's visualize it just to be sure there's no difference in attrition.
 
 ```{r}
-table1 <- table1 %>% 
-  mutate(shift_start_location = ifelse(shift_type %in% c("C_T", "C_D"), 
-                                       "center", 
-                                       "not_center"))
+d %>% 
+  filter(!(is.na(rt))) %>% 
+  select(subid_short, noise_condition, tr.num) %>% 
+  unique() %>% 
+  group_by(subid_short, noise_condition) %>% 
+  summarise(n = n()) %>% 
+  ggplot(aes(x = n, color = noise_condition)) +
+  geom_freqpoly() +
+  geom_vline(xintercept = 8, linetype = "dashed")
 ```
 
-Remove shifts that do not start at center, participant exclusions
+The distribution of trials completed looks pretty similar across conditions, which is nice. 
+
+## Data filtering
+
+Remove shifts that do not start at center, participant exclusions, and extreme RTs
 
 ```{r}
-table1.analysis <- table1 %>% 
-  filter(shift_start_location == "center",
-         !(is.na(shift_accuracy)),
-         keep == "include",
-         exclude == "keep")
+d.analysis <- d %>% 
+  filter(!(is.na(shift_accuracy_clean)),
+         response_onset_type == "noun",
+         keep_et == "include",
+         keep_runsheet == "keep",
+         rt <= 1.5) 
 ```
-
-Change condition labels to make it clearer.
-
-```{r}
-table1.analysis %<>%
-  mutate(noise_condition = ifelse(noise_condition == "no_noise", "clear", noise_condition))
-```
-
 
 ## Explore data via visualization
-
-[This](http://r4ds.had.co.nz/data-visualisation.html) is a great book chapter on data visualization using the ggplot2 R package
-
-### Visualize data distributions
-
-My goal when I visualize the distribution of a variable is usually to check if there any data points that look like outliers (really different from the other values in the sample). There are more precise, quantitative ways to define outlier, but the visualization helps us spot them quickly. If some observations look really different, I then try to reason about why that might be the case: data entry error? equipment measurement error? 
 
 What does the distribution of age in the sample look like? 
 
 ```{r}
-<<<<<<< HEAD
-table1.analysis %<>%
-  mutate(age = as.double(run_date - birthday), 
-         age_years = age / 365)
-```
-
-```{r}
-table1.analysis %>% 
-  select(subid, age_years) %>% 
+d.analysis %>% 
+  select(subid_short, age_group) %>% 
   unique() %>% 
-  ggplot(aes(x = age_years)) +
-  geom_histogram()
+  ggplot(aes(x = as.factor(age_group))) +
+  geom_histogram(stat = 'count')
 ```
 
-=======
-ggplot(data = table1.analysis) + geom_point(mapping = aes(x= subid, y=age)) +
-  scale_colour_manual(values = c("darksalmon", "firebrick")) +
- # geom_point(aes(colour = noise_condition)) +
-  theme(plot.background = element_rect(fill = "blanchedalmond", colour = "blanchedalmond"))
-```
-
->>>>>>> 719f9aaace6b385c9614c85aef2c089eeef9669a
-What about Reaction Times (RT)?
+Plot the distribution of Reaction Times (RT)
 
 ```{r}
-table1.analysis %>% 
-<<<<<<< HEAD
-  ggplot() + geom_point(mapping = aes(x = as.factor(subid_short), y = rt))
-=======
-  ggplot() + geom_point(mapping = aes(x = subid_short, y = rt))
->>>>>>> 719f9aaace6b385c9614c85aef2c089eeef9669a
-```
-
-What about Accuracy? 
-
-```{r}
-table1.analysis %>% 
-  ggplot() + 
-  geom_bar(mapping = aes(x = as.factor(subid_short), fill = shift_accuracy)) +
-  theme(axis.text.x = element_text(angle = 90)) +
-  facet_wrap(~noise_condition) +
-  theme_bw()
-```
-
-### Visualize Accuracy
-
-When thinking about 
-
-What is the overall accuracy of first shifts?
-
-```{r}
-table1.analysis %>% 
-  ggplot() + geom_bar(mapping = aes(x = shift_accuracy))
-```
-
-What about the accuracy for each condition?
-
-```{r}
-table1.analysis %>% 
-  ggplot() + 
-  geom_bar(mapping = aes(x = noise_condition, fill = shift_accuracy), position = "fill") 
-```
-
-### Visualize Reaction Time
-
-What is the overall RT for kids in the experiment? 
-
-```{r}
-table1.analysis %>% 
+d.analysis %>% 
+  filter(shift_start_location == "center") %>% 
   ggplot() + 
   geom_density(mapping = aes(x = rt, fill = noise_condition), 
-               alpha = 0.4)
+               alpha = 0.5, binwidth = 0.05, position = "identity", 
+               adjust = 2) +
+  facet_grid(shift_accuracy_clean~block)
 ```
 
 ## Aggregated visualizations
@@ -187,118 +136,52 @@ table1.analysis %>%
 Aggregate RT
 
 ```{r}
-ss.rt <- table1.analysis %>% 
-<<<<<<< HEAD
-  group_by(subid, noise_condition, shift_accuracy) %>% 
-  summarise(m_rt = mean(rt))
-```
-
-Aggregate Accuracy
-
-```{r}
-ss.acc <- table1.analysis %>% 
-  group_by(noise_condition, subid, shift_accuracy) %>% 
-  summarise(n = n()) %>% 
-  group_by(subid, noise_condition) %>% 
-  mutate(total_trials = sum(n),
-         prop = round(n / total_trials, 2)) 
+ss.rt <- d.analysis %>% 
+  filter(shift_start_location == "center") %>% 
+  group_by(subid_short, noise_condition, shift_accuracy_clean, block) %>% 
+  summarise(m_rt = median(rt, na.rm = T)) 
 ```
 
 RT boxplot
 
 ```{r}
- ss.rt %>% 
-  ggplot(mapping = aes(x = noise_condition, y = m_rt)) +
-  geom_boxplot(fill = ("#00BFC4"), width = 0.3) +
-  theme_bw() +
-  theme(legend.position = "right") + 
-  theme(axis.title.x = element_text(size = 16, 
-                                    face = "bold"), 
-        axis.title.y = element_text(size = 16, 
-                                    face = "bold"), axis.text.x = element_text(size = 14),
-        axis.text.y = element_text(size = 14)) + scale_y_continuous(limits=c(0,1)) + labs(y = "reaction time")
-```
-
-Now plot RT as a funtion of correct or incorrect shifts
-
-```{r}
 ss.rt %>% 
-  ggplot(aes(x = noise_condition, y = m_rt, fill = shift_accuracy)) + 
-  geom_boxplot()
-```
-
-Now plot accuracy boxplot
-
-```{r}
-ss.acc %>% 
-  filter(shift_accuracy == "correct") %>% 
-  ggplot() + 
-  geom_boxplot(mapping = aes(x = noise_condition, y = prop), fill = ("#F8766D"),
-               width = 0.3) +
-  theme_bw() + 
-  theme(axis.title.x = element_text(size = 16, 
-                                    face = "bold"), 
-        axis.title.y = element_text(size = 16, 
-                                    face = "bold"), axis.text.x = element_text(size = 14),
-        axis.text.y = element_text(size = 14)) + scale_y_continuous(limits=c(0,1)) + labs(y = "shift accuracy")
-```
-
-### block effects
-
-Let's take a look at block effects. First, we create a variable to store information about block. We konw that trials 1-16 are block 1 and 17-32 are block 2. 
-
-```{r}
-table1.analysis <- table1.analysis %>% 
-  mutate(block = ifelse(tr.num <= 16, "block_1", "block_2"))
-```
-
-Now, let's plot RT as a function of block
-
-```{r}
-ss.rt <- table1.analysis %>% 
-  group_by(subid, noise_condition, shift_accuracy, block) %>% 
-  summarise(m_rt = mean(rt))
-```
-
-```{r}
-ss.rt %>% 
-  ggplot(aes(x = noise_condition, y = m_rt, fill = shift_accuracy)) + 
-  geom_boxplot() +
-  facet_wrap(~block) +
-  theme_bw()
-=======
-  group_by(subid_short, noise_condition) %>% 
-  summarise(m_rt = median(rt))
-```
-
-```{r}
-ss.rt %>% 
-  ggplot(aes(x = noise_condition, y = m_rt)) + 
+  ggplot(mapping = aes(x = noise_condition, y = m_rt, fill = shift_accuracy_clean)) +
   geom_boxplot(width = 0.3) +
-  geom_jitter(width = 0.03, alpha = 0.6) +
-  ylim(0,1.5)
->>>>>>> 719f9aaace6b385c9614c85aef2c089eeef9669a
+  theme(legend.position = "right") + 
+  theme(axis.title.x = element_text(size = 16, face = "bold"), 
+        axis.title.y = element_text(size = 16, face = "bold"), 
+        axis.text.x = element_text(size = 14),
+        axis.text.y = element_text(size = 14)) + 
+  scale_y_continuous(limits=c(0,1)) + 
+  labs(y = "reaction time", x = "condition") + 
+  facet_wrap(~block)
 ```
 
-Let's try visualizing RT distributions using dotplots
+Now plot RT as a function of correct or incorrect shifts, collapsing across blocks.
+
+```{r}
+ss.rt %>% 
+  ggplot(aes(x = noise_condition, y = m_rt, fill = shift_accuracy_clean)) + 
+  geom_boxplot() +
+  scale_y_continuous(limits=c(0,0.8)) + 
+  labs(y = "reaction time") 
+```
+
+Let's try visualizing RT distributions using beeswarm plot to see if the shape of the RT distributions look different across the noise conditions.
 
 ```{r}
 acc_colors <- c("grey10", "black")
 fill_vals <- c("#F8766D", "#00BFC4")
 
-<<<<<<< HEAD
-p <- table1.analysis %>% 
-  filter(rt <= 1.5) %>% 
-=======
-p <- table1 %>% 
->>>>>>> 719f9aaace6b385c9614c85aef2c089eeef9669a
+d.analysis %>% 
   ggplot(aes(x = forcats::fct_rev(noise_condition), y = rt, 
-             color = shift_accuracy, fill = shift_accuracy)) +
+             color = shift_accuracy_clean, fill = shift_accuracy_clean)) +
   ggbeeswarm::geom_quasirandom(shape = 21) + 
   scale_color_manual(values = acc_colors) +
   scale_fill_manual(values = fill_vals) +
   labs(y = "RT (sec)", x = NULL) +
-  theme_bw() +
+  #facet_wrap(~block, ncol = 1) +
   theme(legend.position = "right") + 
   theme(axis.title.x = element_text(size = 16, 
                                     face = "bold"), 
@@ -306,199 +189,60 @@ p <- table1 %>%
                                     face = "bold"), axis.text.x = element_text(size = 14),
         axis.text.y = element_text(size = 14)) +
   coord_flip()
-
-p
 ```
 
-<<<<<<< HEAD
-
-## Fake data for predictions
+### Aggregate Accuracy
 
 ```{r}
-#prediction_names <- c("everything is terrible", "speed/accuracy tradeoff", "just good enough")
-#condition <- c("noise", "noise", "noise", "clear", "clear", "clear")
-#reaction_time <- c(0.85, 0.8, 0.7, 0.4, 0.4, 0.4)
-#accuracy <- c(0.55, 0.85, 0.6, 0.7, 0.7, 0.7)
-
-#fake_df <- data.frame(prediction_names, condition, reaction_time, accuracy)
-
-#fake_df %<>% gather(key = measure, value = response, reaction_time:accuracy)
-=======
-### Accuracy plots
-
-```{r}
-ss.acc <- table1.analysis %>% 
-  group_by(subid_short, noise_condition, shift_accuracy) %>% 
-  summarise(n_trials = n()) %>%
-  ungroup %>% 
-  tidyr::complete(noise_condition, nesting(subid_short, shift_accuracy), 
-           fill = list(n_trials = 0))
-
-ss.acc %<>%
+ss.acc <- d.analysis %>% 
+  filter(shift_start_location == "center") %>% 
+  group_by(noise_condition, subid_short, shift_accuracy_clean, block) %>% 
+  summarise(n = n()) %>% 
   group_by(subid_short, noise_condition) %>% 
-  mutate(n_total_trials = sum(n_trials),
-         prop = n_trials / n_total_trials)
->>>>>>> 719f9aaace6b385c9614c85aef2c089eeef9669a
+  mutate(total_trials = sum(n),
+         prop = round(n / total_trials, 2)) 
 ```
 
-```{r}
-#ggplot(fake_df, aes(x = condition, y = response)) +
- # geom_bar(stat = "identity") +
-#  facet_grid(prediction_names~measure) +
- # ylim(0,1) +
-  #theme_bw()
-```
-
-## Fake models for poster
-
-Everything is terrible
-```{r}
-terrible_model <- c("everything is terrible")
-condition <- c("noise", "clear")
-accuracy <- c(0.55, 0.7)
-reaction_time <- c(0.85, 0.4)
-
-fake_df <- data.frame(terrible_model, condition, accuracy, reaction_time)
-
-fake_df %<>% gather(key = measure, value = response, reaction_time:accuracy)
-
-```
+Now make accuracy boxplot
 
 ```{r}
-fake_df$measure <- factor(fake_df$measure, levels=unique(fake_df$measure))
-
-ggplot(fake_df, aes(x = condition, y = response, fill = condition)) +
-  geom_bar(stat = "identity") +
-  facet_wrap(~measure) +
-  ylim(0,1) +
-  theme_bw()
-```
-Just good enough
-
-```{r}
-good_enough <- c("just good enough")
-condition <- c("noise", "clear")
-reaction_time <- c(0.6, 0.4)
-accuracy <- c(0.67, 0.7)
-
-<<<<<<< HEAD
-fake_df_enough <- data.frame(good_enough, condition, accuracy, reaction_time)
-
-fake_df_enough %<>% gather(key = measure, value = response, reaction_time:accuracy)
-```
-
-```{r}
-fake_df_enough$measure <- factor(fake_df_enough$measure, levels=unique(fake_df_enough$measure))
-
-ggplot(fake_df_enough, aes(x = condition, y = response, fill = condition)) +
-  geom_bar(stat = "identity") +
-  facet_wrap(~measure) +
-  ylim(0,1) +
-  theme_bw()
-```
-
-Speed accuracy tradeoff
-
-```{r}
-speed_acc <- c("speed/accuracy tradeoff")
-condition <- c("noise", "clear")
-reaction_time <- c(0.75, 0.4)
-accuracy <- c(0.85, 0.7)
-
-fake_df_speed <- data.frame(speed_acc, condition, accuracy, reaction_time)
-
-fake_df_speed %<>% gather(key = measure, value = response, reaction_time:accuracy)
-=======
-## Block analysis
-
-Let's take a look at block effects. First, we create a variable to store information about block. We konw that trials 1-16 are block 1 and 17-32 are block 2. 
-
-```{r}
-table1.analysis <- table1.analysis %>% 
-  mutate(block = ifelse(tr.num <= 16, "block_1", "block_2"))
-```
-
-Now, let's plot RT as a function of block
-
-```{r}
-ss.rt.block <- table1.analysis %>% 
-  group_by(subid, noise_condition, shift_accuracy, block) %>% 
-  summarise(m_rt = mean(rt))
-```
-
-```{r}
-ss.rt.block %>% 
-  ggplot(aes(x = noise_condition, y = m_rt, fill = shift_accuracy)) + 
-  geom_boxplot() +
-  facet_wrap(~block) +
-  theme_bw()
-```
-
-Now do the same thing for accuracy
-
-```{r}
-ss.acc.block <- table1.analysis %>% 
-  group_by(subid_short, noise_condition, shift_accuracy, block) %>% 
-  summarise(n_trials = n()) %>%
-  ungroup %>% 
-  tidyr::complete(noise_condition, nesting(subid_short, shift_accuracy, block), 
-           fill = list(n_trials = 0))
-
-ss.acc.block %<>%
-  group_by(subid_short, noise_condition, block) %>% 
-  mutate(n_total_trials = sum(n_trials),
-         prop = n_trials / n_total_trials)
-```
-
-Plot accuracy by block
-
-```{r}
-ss.acc.block %>% 
-  filter(shift_accuracy == "correct") %>% 
-  ggplot(aes(x = noise_condition, y = prop)) + 
-  geom_boxplot(width = 0.3) +
-  geom_jitter(alpha = 0.4, width = 0.05) +
-  ylim(0,1) +
-  geom_hline(yintercept = 0.5, linetype = "dashed") +
-  theme_bw() +
+ss.acc %>% 
+  filter(shift_accuracy_clean == "correct") %>% 
+  ggplot() + 
+  geom_boxplot(mapping = aes(x = noise_condition, y = prop), 
+               fill = ("#F8766D"), width = 0.3) +
+  theme(axis.title.x = element_text(size = 16, face = "bold"), 
+        axis.title.y = element_text(size = 16, face = "bold"), 
+        axis.text.x = element_text(size = 14),
+        axis.text.y = element_text(size = 14)) +
+  scale_y_continuous(limits=c(0,1)) + 
+  labs(y = "shift accuracy") +
   facet_wrap(~block)
->>>>>>> 719f9aaace6b385c9614c85aef2c089eeef9669a
-```
-
-Plot RT by block
-
-```{r}
-ss.rt.block %>% 
-  filter(shift_accuracy == "correct") %>% 
-  ggplot(aes(x = noise_condition, y = m_rt)) + 
-  geom_boxplot(width = 0.3) +
-  geom_jitter(alpha = 0.4, width = 0.05) +
-  ylim(0,1.5) +
-  theme_bw() +
-  facet_wrap(~block)
-```
-
-```{r}
-fake_df_speed$measure <- factor(fake_df_speed$measure, levels=unique(fake_df_speed$measure))
-
-ggplot(fake_df_speed, aes(x = condition, y = response, fill = condition)) +
-  geom_bar(stat = "identity") +
-  facet_wrap(~measure) +
-  ylim(0,1) +
-  theme_bw()
 ```
 
 ## Statistical models
 
-We can talk more about this aspect of the anlaysis once you made some progress on data viz. 
-
 ```{r}
-table1.model <- table1.analysis %>% mutate(correct = ifelse(shift_accuracy == "correct", 1, 0))
-
-m1 <- glmer(correct ~ noise_condition + (noise_condition|subid_short), 
-      data = table1.model,
-      family = "binomial")
+d.model <- d.analysis %>% 
+  filter(shift_start_location == "center") %>% 
+  mutate(correct = ifelse(shift_accuracy_clean == "correct", 1, 0))
 ```
 
+Accuracy model
 
+```{r}
+m1.acc <- glmer(correct ~ noise_condition * block + (noise_condition|subid_short) + (1|target_image), 
+                data = d.model,
+                family = "binomial")
 
+summary(m1.acc)
+```
+
+RT model
+
+```{r}
+m1.rt  <- lmer(log(rt) ~ noise_condition * block + (noise_condition|subid_short) + (1|target_image), 
+               data = d.model)
+
+summary(m1.rt)
+```

@@ -7,8 +7,7 @@
 
 ## PRELIMINARIES
 rm(list = ls())
-library(dplyr); library(readr); library(magrittr); library(feather); library(pryr)
-library(stringr); source("../helper_functions/et_helper.R")
+source("../../helper_functions/libraries_and_functions.R")
 
 raw.data.path <- "../../data/1_raw_data/trio-adult/"
 processed.data.path <- "../../data/2_cleaned_data/"

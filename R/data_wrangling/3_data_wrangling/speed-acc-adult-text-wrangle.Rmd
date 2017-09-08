@@ -16,7 +16,11 @@ Load data and join with trial information (timing, left/right/center images, tar
 ```{r load data}
 #### read in processed data
 d <- read_csv("../../../data/2_cleaned_data/speed_acc_processed_adult_text_data.csv.gz")
+```
 
+General variable clean up 
+
+```{r}
 #### strip .avi and .jpg from stimulus
 d$stimulus <- gsub(pattern = ".jpg", "", x = d$stimulus)
 d$stimulus <- gsub(pattern = ".avi", "", x = d$stimulus)
@@ -53,13 +57,13 @@ mean_ss <- mean(d_screentime$percent_bad_looks)
 
 d %<>% left_join(., d_screentime, by = "subid")
 
-d$keep <- ifelse(d$percent_bad_looks > (3*sd_ss + mean_ss), 'exclude', 'include')
+d$keep_et <- ifelse(d$percent_bad_looks > (3*sd_ss + mean_ss), 'exclude', 'include')
 ```
 
 Now we make a table of participant information.
 
 ```{r}
-d %>% select(subid, gender, dot, notes) %>% 
+d %>% select(subid, gender, dot, notes, keep_et, keep_runsheet) %>% 
   unique() %>% 
   kable()
 ```
@@ -73,7 +77,7 @@ Here we label Areas of Interest to be Left Picture, Right Picture, and the Cente
 Plot the distribution of looking across x-y coordinates. This is a useful check that participants were looking where we thought they should be, and it helps us find the AOIs for data analysis. 
 
 ```{r, eval = F}
-d.rois <- sample_n(d, size = 0.10*nrow(d)) # get a sample so we don't plot all 200k plus rows
+d.rois <- sample_n(d, size = 0.05 * nrow(d)) # get a sample so we don't plot all 200k plus rows
 
 ggplot(aes(x = x, y = y), data = d.rois) +
   geom_density2d() +
@@ -96,6 +100,17 @@ d %<>%
   group_by(subid) %>% 
   do(add.tr.nums.fun(.)) %>% 
   left_join(x = d, y = ., by = c("subid", "stimulus"))
+```
+
+Check that we have the right number of trials for each participant: 96 trials
+
+```{r}
+d %>% 
+  select(subid, tr.num) %>% 
+  unique() %>% 
+  group_by(subid) %>% 
+  count() %>% 
+  kable()
 ```
 
 ### Flag left/right/center looking based on ROIs
@@ -214,9 +229,9 @@ Next, we need to compute RT for each trial, using my own score trial function.
 
 The function takes in a data frame for each trial and computes an RT and whether the shift was correct or incorrect. You can tell the function the kind of onset value from which you want to compute RT. The different onset values are:
 
-* noun 
-* center_fixation
-* sentence
+  * center_fixation
+  * sentence
+  * noun 
 
 Now we apply the score trial function to each trial for each participant in the tidy data frame using the do() functionality in dplyr. Note that we are using the .$ index to use a variable from the piped data frame as an argument to the score trial function.
 
@@ -240,6 +255,27 @@ d %>%
 
 Now we have an RT, a shift type, and a correct/incorrect value for each trial based on three different critical onset points in the trial (i.e., center fixation, sentence, and noun onset)
 
+
+```{r}
+d %<>% 
+  mutate(shift_start_location = ifelse(shift_type %in% c("C_T", "C_D"), 
+                                       "center", 
+                                       "not_center"),
+         shift_accuracy_clean = ifelse(str_detect(shift_type, "_T"), 
+                                       "correct", 
+                                       "incorrect"),
+         block = case_when(
+           tr.num <= 24 ~ "block_1", 
+           tr.num > 24 & tr.num <= 48 ~ "block_2",
+           tr.num > 48 & tr.num <= 72 ~ "block_3",
+           tr.num > 72 ~ "block_4"
+           ),
+         resp_onset_type_fact = factor(response_onset_type, 
+                                       levels = c('center.fixation', 
+                                                  'sentence', 'noun'))
+  )
+```
+
 ### Write tidy data to .csv file
 
 Before writing to .csv, we split the data into the timecourse information and first shift information. This will make analysis more efficient since we won't have to load large datasets into working memory.
@@ -247,14 +283,15 @@ Before writing to .csv, we split the data into the timecourse information and fi
 ```{r}
 # timecourse
 d.timecourse <- filter(d, response_onset_type == "noun") %>% 
-  select(subid, t.stim, condition, tr.num, noun_onset_sec_1, noun_offset_msec_1, audio,
-         gaze_target:shift_accuracy, target_image)
-
-d.timecourse <- filter(d, response_onset_type == "noun")
+  select(subid, t.stim, condition, tr.num, noun_onset_sec_1, audio,
+         gaze_target:shift_accuracy, shift_accuracy_clean, shift_start_location, target_image, 
+         keep_et, keep_runsheet, resp_onset_type_fact)
 
 # first shift
 d.fs <- d %>% 
-  select(subid, tr.num, condition, target_image, dot:reason_excluded, response:shift_accuracy) %>% 
+  select(subid, tr.num, condition, target_image, dot:reason_excluded, 
+         response:shift_accuracy, shift_accuracy_clean, shift_start_location,
+         keep_et, keep_runsheet, resp_onset_type_fact) %>% 
   unique()
 ```
 
@@ -263,8 +300,8 @@ Write to zipped csv:
 ```{r}
 write.path.time <- "../../../data/3_final_merged_data/timecourse/"
 write_csv(d.timecourse, path = paste0(write.path.time, 
-                                      "speed_acc_adult_timecourse_tidy.csv.gz"))
+                                      "speed_acc_adult_text_timecourse_tidy.csv.gz"))
 
 write.path.time <- "../../../data/3_final_merged_data/first_shifts/"
-write_csv(d.fs, path = paste0(write.path.time, "speed_acc_adult_fstshift_tidy.csv"))
+write_csv(d.fs, path = paste0(write.path.time, "speed_acc_adult_text_fstshift_tidy.csv"))
 ```

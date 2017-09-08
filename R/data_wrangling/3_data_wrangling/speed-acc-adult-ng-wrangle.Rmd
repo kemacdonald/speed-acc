@@ -25,8 +25,7 @@ d$stimulus <- gsub(pattern = ".jpg", "", x = d$stimulus)
 d$stimulus <- gsub(pattern = ".avi", "", x = d$stimulus)
 
 ### remove validation trial
-d %<>% filter(stimulus != "Validation",
-              is.na(stimlus_name) == F)
+d %<>% filter(stimulus != "Validation", is.na(stimlus_name) == F)
 
 #### join trial info
 trialinfo_d <- read_csv("../../../data/0b_trial_information/speed-acc-adult-ng-trial-info.csv")
@@ -73,13 +72,13 @@ mean_ss <- mean(d_screentime$percent_bad_looks)
 
 d %<>% left_join(., d_screentime, by = "subid")
 
-d$keep <- ifelse(d$percent_bad_looks > (3*sd_ss + mean_ss), 'exclude', 'include')
+d$keep_et <- ifelse(d$percent_bad_looks > (3*sd_ss + mean_ss), 'exclude', 'include')
 ```
 
 Now we make a table of participant information.
 
 ```{r}
-d %>% select(subid, gender, dot, notes) %>% 
+d %>% select(subid, gender, dot, keep_runsheet, keep_et) %>% 
   unique() %>% 
   kable()
 ```
@@ -99,7 +98,7 @@ d %<>% filter(!(is.na(stimulus_name)))
 Plot the distribution of looking across x-y coordinates. This is a useful check that participants were looking where we thought they should be, and it helps us find the AOIs for data analysis. 
 
 ```{r, eval = F}
-d.rois <- sample_n(d, size = 0.1*nrow(d)) # get a sample so we don't plot all 200k plus rows
+d.rois <- sample_n(d, size = 0.05 * nrow(d)) # get a sample so we don't plot all 200k plus rows
 
 ggplot(aes(x = x, y = y), data = d.rois) +
   stat_density_2d(aes(fill = ..level..), geom = "polygon") +
@@ -279,27 +278,53 @@ Extract short subid
 d %<>% mutate(subid_short = as.numeric(str_extract(subid, "[:digit:]+")))
 ```
 
+Add variable that stores information about center-initial shifts. Change condition labels to make it clearer. And add variable to track block.
+
+```{r}
+d %<>% 
+  mutate(shift_start_location = ifelse(shift_type %in% c("C_T", "C_D"), 
+                                       "center", 
+                                       "not_center"),
+         shift_accuracy_clean = ifelse(str_detect(shift_type, "_T"), 
+                                       "correct", 
+                                       "incorrect"),
+         block = case_when(
+           tr.num <= 16 ~ "block_1", 
+           tr.num > 16 & tr.num <= 32 ~ "block_2",
+           tr.num > 32 & tr.num <= 48 ~ "block_3",
+           tr.num > 48 ~ "block_4"
+           ),
+         noise_condition = ifelse(noise_condition == "no_noise", 
+                                  "clear", noise_condition),
+         gaze_condition = ifelse(gaze_condition == "no_gaze", 
+                                  "straight_ahead", gaze_condition),
+         resp_onset_type_fact = factor(response_onset_type, 
+                                       levels = c('center.fixation', 
+                                                  'sentence', 'noun'))
+  )
+```
+
 ### Write tidy data to .csv file
 
 Before writing to .csv, we split the data into the timecourse information and first shift information. This will make analysis more efficient since we won't have to load large datasets into working memory.
 
 ```{r}
 # timecourse
-d.timecourse <- filter(d, response_onset_type == "noun") %>% 
-  select(subid, subid_short, t.stim, x, y, gaze_condition, noise_condition, 
-         tr.num, noun_onset_sec,
-         gaze_target:shift_accuracy, target_image)
+d.timecourse <- d %>% 
+  filter(response_onset_type == "noun") %>% 
+  select(subid, subid_short, t.stim, x, y, gaze_condition, noise_condition, target_image, 
+         tr.num, noun_onset_sec, gaze_target:shift_accuracy, shift_accuracy_clean, shift_start_location,
+         block, keep_et, keep_runsheet, resp_onset_type_fact)
 
 # first shift
 d.fs <- d %>% 
   select(subid, subid_short, tr.num, gaze_condition, noise_condition, target_image, 
-         dot:reason_excluded, response:shift_accuracy) %>% 
+         dot:reason_excluded, response:shift_accuracy, shift_accuracy_clean, shift_start_location,
+         block, keep_et, keep_runsheet, resp_onset_type_fact) %>% 
   unique()
 ```
 
 Write to zipped csv: 
-
-
 
 ```{r}
 ## timecourse data
@@ -311,14 +336,4 @@ write_csv(d.timecourse, path = paste0(write.path.time,
 write.path.fst <- "../../../data/3_final_merged_data/first_shifts/"
 write_csv(d.fs, path = paste0(write.path.fst, 
                               "speed_acc_adult_ng_fstshift_tidy.csv"))
-```
-
-Save a smaller version of the timecourse data for testing new visualizations
-
-```{r eval = F}
-d.timecourse.small <- d.timecourse %>% 
-  filter(subid_short %in% 2:6)
-
-write_csv(d.timecourse, path = paste0(write.path.time,
-                                      "speed_acc_adult_ng_timecourse_tidy_small.csv"))
 ```

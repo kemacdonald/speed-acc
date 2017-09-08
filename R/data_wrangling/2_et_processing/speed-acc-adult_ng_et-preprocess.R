@@ -9,7 +9,6 @@
 
 ## PRELIMINARIES
 source("../../helper_functions/libraries_and_functions.R")
-source("../../helper_functions/et_helper.R")
 
 raw.data.path <- "../../../data/1_raw_data/speed-acc-adult-ng/"
 processed.data.path <- "../../../data/2_cleaned_data/"

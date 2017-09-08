@@ -12,7 +12,7 @@ rm(list = ls())
 library(tidyverse); library(readr); 
 library(magrittr); library(pryr); library(stringr);
 library(purrr)
-source("../../helper_functions/et_helper.R")
+source("../../helper_functions/libraries_and_functions.R")
 
 raw.data.path <- "../../../data/1_raw_data/speed-acc-child-gaze/"
 processed.data.path <- "../../../data/2_cleaned_data/"

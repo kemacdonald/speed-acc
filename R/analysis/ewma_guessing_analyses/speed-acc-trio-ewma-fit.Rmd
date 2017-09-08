@@ -1,0 +1,123 @@
+---
+title: "Speed-acc EWMA model fitting"
+author: "Kyle MacDonald"
+output: html_document
+---
+
+This script analyzes first shift accuracy and RT using an EWMA guesssing model. In the task, we vary the information value and the saliency of the center fixation and measure the effects on accuracy and RT.
+
+## Setup
+
+Load libraries and read in tidy data.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=F, warning=F, cache=F, message=F, sanitize = T)
+source("../../helper_functions/libraries_and_functions.R")
+```
+
+Read 5 datasets with first shift accuracy and RTs:
+
+  1. Speed-acc-trio (4 datasets)
+    - ASL (27 kids: 18-54m, median age = 27 months; 16 adults): human signing
+    - Face (22 kids: 26m): human face talking
+    - Trio (18 kids at 26m and 22 kids at 36m): static images of real world objects, e.g., cats
+    - Bull (22 kids at 26m): different static "bullseyes"
+  2. Speed-acc-child-noise
+  3. Speed-acc-child-gaze
+  4. Speed-acc-adult-noise-gaze
+  5. Speed-acc-adult-text
+
+```{r read data}
+path <- "../../../data/3_final_merged_data/first_shifts/"
+wr.path <- "../../../data/3_final_merged_data/ewma_output/"
+
+df_trio_kid <- read_csv(paste0(path, "speed-acc-child-trio-fst-shift.csv"))
+df_noise_kid <- read_csv(paste0(path, "speed_acc_child_noise_fstshift_tidy.csv"))
+df_gaze_kid <- read_csv(paste0(path, "speed_acc_child_gaze_fstshift_tidy.csv"))
+df_ng_adult <- read_csv(paste0(path, "speed_acc_adult_ng_fstshift_tidy.csv"))
+df_text_adult <- read_csv(paste0(path, "speed_acc_adult_text_fstshift_tidy.csv"))
+```
+
+Global EWMA model parameters
+
+```{r}
+L <- 2
+lambda <- .01
+cs <- 0.5
+sig <- 0.5
+```
+
+
+### Fit EWMA to Speed-Acc Trio
+
+Clean up condition variable.
+
+```{r}
+df_trio_kid %<>% 
+  mutate(stimuli = ifelse(stimuli %in% c("V1", "V2"), "ASL", 
+                          ifelse(stimuli == "Trio", "Object", 
+                                 ifelse(stimuli == "Bull", "Bullseye",
+                                        stimuli))),
+         stimuli = factor(stimuli, levels = c("ASL", "Face", "Object", "Bullseye")))
+```
+
+Fit the model to the kid data.
+
+```{r e1 fit ewma model}
+ss.ewma.trio <- df_trio_kid %>% 
+  dplyr::select(Sub.Num, Tr.Num, RT_sec, stimuli, age_code, correct, Months) %>% 
+  filter(is.na(RT_sec) == F, age_code != "adult") %>% 
+  mutate(RT = RT_sec, condition = as.character(stimuli)) %>% 
+  select(-RT_sec) %>% 
+  group_by(condition) %>% 
+  do(ewma_function(., rt_column = "RT", L = L, lambda = lambda, cs = cs, sigma = sig)) %>% 
+  mutate(rt = round(as.numeric(RT), 2),
+         cs = round(as.numeric(cs), 2),
+         ucl = round(as.numeric(ucl), 2),
+         guess = ifelse(cs < ucl, "guess", "response"),
+         guess_num = ifelse(guess == "response", 1, 0),
+         ucl_bound = abs(ucl-cs)) %>% 
+  gather(key = ewma_param, value = param_value, cs:ucl) 
+```
+
+Write the output to file.
+
+```{r write emwa output, eval = T}
+write_csv(ss.ewma.trio, paste0(wr.path, "speed_acc_kids_ewma_results.csv"))
+```
+
+## Child Noise experiment
+
+```{r}
+df_noise_kid %<>% mutate(correct = ifelse(shift_accuracy_clean == "correct", 1, 0))
+```
+
+Fit model
+
+```{r}
+ss.ewma.noise.kid <- df_noise_kid %>% 
+  filter(keep_et == "include", keep_runsheet == "keep",
+         !(is.na(rt)), 
+         response_onset_type == "noun") %>% 
+  dplyr::select(subid_short, tr.num, rt, noise_condition, correct, age, age_group) %>% 
+  mutate(RT = rt, condition = as.character(noise_condition)) %>% 
+  select(-rt) %>% 
+  group_by(condition) %>% 
+  do(ewma_function(., rt_column = "RT", L = L, lambda = lambda, cs = cs, sigma = sig)) %>% 
+  mutate(rt = round(as.numeric(RT), 2),
+         cs = round(as.numeric(cs), 2),
+         ucl = round(as.numeric(ucl), 2),
+         guess = ifelse(cs < ucl, "guess", "response"),
+         guess_num = ifelse(guess == "response", 1, 0),
+         ucl_bound = abs(ucl-cs)) %>% 
+  gather(key = ewma_param, value = param_value, cs:ucl) 
+```
+
+
+```{r}
+ggplot(aes(x = param_value), data = ss.ewma.noise.kid) +
+  geom_histogram() + 
+  facet_wrap(noise_condition~ewma_param) +
+  ggthemes::theme_few()
+```
+

@@ -5,11 +5,6 @@ output: html_document
 ---
 
 ## Set up 
-
-Here are some helpful links for understanding the workflow for analyzing data in R Markdown (what you're doing in this document!):
-
- * [Scripts](http://r4ds.had.co.nz/workflow-scripts.html)
- * An R Markdown [guide](https://docs.google.com/document/d/1ajv1VJqEheVws93tnzH-K7145vBKtwD3Az5pg3faRdw/edit?usp=sharing) that I wrote for the lab
  
 ```{r chunk_options, echo = F}
 # code to clear workspace
@@ -26,8 +21,6 @@ source("../../helper_functions/libraries_and_functions.R")
 ```
 
 ## Load data
-
-Section 11.2 from [this](http://r4ds.had.co.nz/data-import.html) chapter on data importing is great.
 
 ```{r}
 d <- read_csv("../../../data/3_final_merged_data/first_shifts/speed_acc_child_gaze_fstshift_tidy.csv")
