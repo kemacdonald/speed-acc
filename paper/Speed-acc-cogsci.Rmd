@@ -7,8 +7,7 @@ document-params: "10pt, letterpaper"
 author-information: > 
      \author{ {\large \bf Kyle MacDonald}$^1$ (kylem4@stanford.edu), {\large \bf Aviva Blonder}$^2$ (aviva.blonder@oberlin.edu), \\ 
      {\large \bf Virginia Marchman}$^1$ (marchman@stanford.edu), {\large \bf Anne Fernald}$^1$ (afernald@stanford.edu), \\ {\large \bf Michael C. Frank}$^1$ (mcfrank@stanford.edu) 
-     \\
-        $^1$ Department of Psychology Stanford University, $^2$ Department of Psychology Oberlin College}
+     \\ $^1$ Department of Psychology Stanford University, $^2$ Department of Psychology Oberlin College}
 
 abstract: 
   "Language comprehension in grounded contexts involves integrating visual and linguistic information
@@ -486,12 +485,14 @@ read_hddm_file <- function(file_name, path) {
 ```
 
 ```{r e1 read and munge hddm params}
-hddm_files <- list.files("../analysis/ddm/hddm_output/kids/")
+ddm.path <- "../data/3_final_merged_data/hddm_output/kids/"
+
+hddm_files <- list.files(ddm.path)
 e1.hddm.df <- data.frame(matrix(nrow = 1900))
 colnames(e1.hddm.df) <- "dummy"
 
 for (file in hddm_files) {
-  tmp_df <- read_hddm_file(file, path = "../analysis/ddm/hddm_output/kids/")
+  tmp_df <- read_hddm_file(file, path = ddm.path)
   e1.hddm.df %<>% bind_cols(., tmp_df)
 }
 
@@ -554,9 +555,9 @@ grid::grid.raster(png::readPNG("figs/hddm_plot_final.png"))
 # Experiment 2
 
 ```{r e2 read data}
-read.path <- "../../data/3_final_merged_data/"
-d.fs <- read_csv(paste0(read.path, "speed_acc_adult_text_fstshift_tidy.csv.gz"))
-d.asl <- read_csv(paste0(read.path, "speed-acc-participant-level-df.csv"))
+read.path <- "../data/3_final_merged_data/first_shifts/"
+d.fs <- read_csv(paste0(read.path, "speed_acc_adult_text_fstshift_tidy.csv"))
+d.asl <- read_csv(paste0(read.path, "speed-acc-child-trio-fst-shift.csv"))
 ```
 
 ```{r e2 clean datasets to merge}
@@ -740,25 +741,10 @@ m.acc.e2.coefs <- m.acc.e2 %>%
 ### Model-based analyses
 
 ```{r e2 munge ewma data}
-d.fs.ewma <- d.fs %>% 
-  dplyr::select(subid, tr.num, shift_accuracy, rt, response_onset_type, condition) %>% 
-  filter(is.na(rt) == F, response_onset_type == "noun") %>% 
-  mutate(correct = ifelse(shift_accuracy == "correct", 1, 0), 
-         RT = rt)
+ss.ewma.results.e2 <- read_csv("../data/3_final_merged_data/ewma_output/speed_acc_adult_text_ewma_results.csv")
 ```
 
 ```{r e2 fit ewma model}
-ss.ewma.results.e2 <- d.fs.ewma %>% 
-  group_by(condition) %>% 
-  do(ewma_function(., rt_column = "RT", L = 3, lambda = .01)) %>% 
-  mutate(rt = round(as.numeric(rt), 2),
-         cs = round(as.numeric(cs), 2),
-         ucl = round(as.numeric(ucl), 2),
-         guess = ifelse(cs < ucl, "guess", "response"),
-         guess_num = ifelse(guess == "response", 1, 0),
-         ucl_bound = abs(ucl-cs)) %>% 
-  gather(key = ewma_param, value = param_value, cs:ucl) 
-
 ## aggreate ewma results to get average curve for plot
 ms.ewma.e2 <- ss.ewma.results.e2 %>% 
   group_by(ewma_param, subid, condition, rt) %>% 
@@ -874,12 +860,13 @@ e2.ewma.m2.coefs <- e2.ewma.m2 %>%
 *EWMA.* For all four conditions, the CS crossed the UCL (see Fig 6), suggesting that for all tasks some proportion of adults' shifts were language-driven. Interestingly, we found a graded effect of condition (see the shift in the vertical dashed lines in Fig 5) on the point when the CS crossed the UCL such that the Text-no-audio condition occurred earliest ($M_{text-no-audio}$ = `r lsm_e2_means$mean[4]`), followed by the Text and Face conditions that were not different from one another ($M_{text}$ = `r lsm_e2_means$mean[3]`, $M_{face}$ = `r lsm_e2_means$mean[2]`, $p$ > .05), and finally the Bullseye condition ($M_{bullseye}$ = `r lsm_e2_means$mean[1]`). We also found the same graded difference in the proportion of shifts that occurred while the CS was below the UCL (see the red vs. green shaded area in Fig 5), indicating a higher proportion of first shifts were language-driven in the Text conditions, with the highest proportion in the Text-no-audio condition when tested against the three other conditions ($M_{text-no-audio}$ = `r lsm_e2_glmer$mean[4]`, $\beta$ = `r e2.ewma.m2.coefs$estimate[4]`, $p$ `r e2.ewma.m2.coefs$p.value[4]`). These results provide strong evidence for our key prediction: that increasing the value of fixating the language source reduces exploratory gaze shifts to the nonlinguistic visual world.
 
 ```{r e2 read and munge hddm params}
-hddm_files <- list.files("../analysis/ddm/hddm_output/adults/")
+hddm2.path <- "../data/3_final_merged_data/hddm_output/adults/"
+hddm_files <- list.files(hddm2.path)
 e2.hddm.df <- data.frame(matrix(nrow = 2980))
 colnames(e2.hddm.df) <- "dummy"
 
 for (file in hddm_files) {
-  tmp_df <- read_hddm_file(file, path = "../analysis/ddm/hddm_output/adults/")
+  tmp_df <- read_hddm_file(file, path = hddm2.path)
   e2.hddm.df %<>% bind_cols(., tmp_df)
 }
 
