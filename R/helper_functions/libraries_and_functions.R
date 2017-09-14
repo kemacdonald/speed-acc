@@ -100,7 +100,7 @@ add.tr.nums.fun <- function (df) {
 score_trial_et <- function(trial_df, crit_onset_type = "noun") {
   # filter trial to keep just that onset type
   trial_df %<>% filter(response_onset_type == crit_onset_type)
-  
+  # print the subid and trial number to make debugging easier
   print(paste(trial_df$tr.num[1], trial_df$subid[1]))
   
   # build variables to index each trial
@@ -153,52 +153,6 @@ score_trial_et <- function(trial_df, crit_onset_type = "noun") {
   return(trial_df)
 }
 
-## EWMA function
-## Takes in a data frame
-## Returns the EWMA statistic and upper threshold for each RT in the data frame
-
-ewma_function <- function(df, rt_column = "RT", lambda = .01, cs = .5, sigma = .5, L = 1.5) {
-  df <- arrange_(df, rt_column)
-  results <- data.frame(rt = numeric(), cs = numeric(), ucl = numeric(), 
-                        cond = character(), stringsAsFactors = F)
-  
-  for(row in 1:nrow(df)) {
-    subj <- df[row, ]
-    cond <- as.character(subj["condition"])
-    acc <- as.integer(subj["correct"])
-    rt <- as.numeric(subj["RT"])
-    cs <- lambda*acc + (1-lambda)*cs # weighted average for each rt (row)
-    ucl <- .5 + L*sigma*sqrt((lambda/(2 - lambda))*(1-((1-lambda)^(2*row)))) # threshold
-    # add emwa params to results data frame
-    subj$cs <- cs
-    subj$ucl <- ucl
-    results <- rbind(results, subj)
-  }
-  return(results)
-}
-
-## Compute guessing window for EWMA analysis
-## Takes a data frame for each participant
-## Returns a window of RTs where the participant was producing guesses 
-
-compute_guessing_window <- function(sub_df) {
-  # compute guessing window
-  crit.window.responses <- sub_df %>%
-    ungroup() %>% 
-    dplyr::select(guess, RT) %>% 
-    group_by(guess) %>% 
-    summarise(min_rt = min(RT)) %>% 
-    arrange(min_rt) 
-  # if "resposne" not in the vector then ss was guessing on all shifts in that condition 
-  if (!("response" %in% crit.window.responses$guess)) {
-    # just use the diff between earliest and latest shifts
-    sub_df$time_guessing <- max(sub_df$RT) - min(sub_df$RT) 
-  } else {
-    # here we use the diff between the earliest shift and the earliest "valid" (non-guess) shift
-    sub_df$time_guessing <- max(crit.window.responses$min_rt) - min(crit.window.responses$min_rt)  
-  }
-  return(sub_df)
-}
 
 ## Fit DDM function 
 ## Takes in a data frame that has been split by participant and condition

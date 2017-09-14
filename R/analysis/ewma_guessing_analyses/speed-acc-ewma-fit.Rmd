@@ -13,6 +13,7 @@ Load libraries and read in tidy data.
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo=F, warning=F, cache=F, message=F, sanitize = T)
 source("../../helper_functions/libraries_and_functions.R")
+source("../../helper_functions/ewma_helper_funs.R")
 ```
 
 Read 5 datasets with first shift accuracy and RTs:
@@ -28,16 +29,16 @@ Read 5 datasets with first shift accuracy and RTs:
   5. Speed-acc-adult-text
 
 ```{r}
-path <- "../../../data/3_final_merged_data/first_shifts/"
+read.path <- "../../../data/3_final_merged_data/first_shifts/"
 wr.path <- "../../../data/3_final_merged_data/ewma_output/"
 ```
 
 ```{r}
-df_trio_kid <- read_csv(paste0(path, "speed-acc-child-trio-fst-shift.csv"))
-df_noise_kid <- read_csv(paste0(path, "speed_acc_child_noise_fstshift_tidy.csv"))
-df_gaze_kid <- read_csv(paste0(path, "speed_acc_child_gaze_fstshift_tidy.csv"))
-df_ng_adult <- read_csv(paste0(path, "speed_acc_adult_ng_fstshift_tidy.csv"))
-df_text_adult <- read_csv(paste0(path, "speed_acc_adult_text_fstshift_tidy.csv"))
+df_trio_kid <- read_csv(paste0(read.path, "speed-acc-child-trio-fst-shift.csv"))
+df_noise_kid <- read_csv(paste0(read.path, "speed_acc_child_noise_fstshift_tidy.csv"))
+df_gaze_kid <- read_csv(paste0(read.path, "speed_acc_child_gaze_fstshift_tidy.csv"))
+df_ng_adult <- read_csv(paste0(read.path, "speed_acc_adult_ng_fstshift_tidy.csv"))
+df_text_adult <- read_csv(paste0(read.path, "speed_acc_adult_text_fstshift_tidy.csv"))
 ```
 
 Set the global EWMA model parameters.
@@ -61,23 +62,23 @@ df_trio_kid %<>%
                           ifelse(stimuli == "Trio", "Object", 
                                  ifelse(stimuli == "Bull", "Bullseye",
                                         stimuli))),
-         stimuli = factor(stimuli, levels = c("ASL", "Face", "Object", "Bullseye")))
+         stimuli = factor(stimuli, levels = c("ASL", "Face", "Object", "Bullseye"))) %>%
+  dplyr::select(Sub.Num, Tr.Num, RT_sec, stimuli, age_code, correct, Months) %>% 
+  filter(is.na(RT_sec) == F, age_code != "adult") %>% 
+  mutate(RT = RT_sec, condition = as.character(stimuli)) %>% 
+  select(-RT_sec)  
 ```
 
 Fit the model to the kid data.
 
 ```{r e1 fit ewma model}
 ss.ewma.trio <- df_trio_kid %>% 
-  dplyr::select(Sub.Num, Tr.Num, RT_sec, stimuli, age_code, correct, Months) %>% 
-  filter(is.na(RT_sec) == F, age_code != "adult") %>% 
-  mutate(RT = RT_sec, condition = as.character(stimuli)) %>% 
-  select(-RT_sec) %>% 
   group_by(condition) %>% 
-  do(ewma_function(., rt_column = "RT", L = L, lambda = lambda, cs = cs, sigma = sig)) %>% 
+  do(fit_ewma(., rt_column = "RT", L = L, lambda = lambda, cs = cs, sigma = sig)) %>% 
   mutate(rt = round(as.numeric(RT), 2),
          cs = round(as.numeric(cs), 2),
          ucl = round(as.numeric(ucl), 2),
-         guess = ifelse(cs < ucl, "guess", "response"),
+         guess = ifelse(cs <= ucl, "guess", "response"),
          guess_num = ifelse(guess == "response", 1, 0),
          ucl_bound = abs(ucl-cs)) %>% 
   gather(key = ewma_param, value = param_value, cs:ucl) 
@@ -88,26 +89,28 @@ ss.ewma.trio <- df_trio_kid %>%
 Set up data.
 
 ```{r}
-df_noise_kid %<>% mutate(correct = ifelse(shift_accuracy_clean == "correct", 1, 0))
+df_noise_kid %<>% 
+  mutate(correct = ifelse(shift_accuracy_clean == "correct", 1, 0)) %>% 
+  filter(keep_et == "include", 
+         keep_runsheet == "keep",
+         !(is.na(rt)), 
+         response_onset_type == "noun") %>% 
+  dplyr::select(subid_short, tr.num, rt, noise_condition, correct, age, age_group) %>%
+  rename(subid = subid_short) %>% 
+  mutate(RT = rt, condition = as.character(noise_condition)) %>% 
+  select(-rt)
 ```
 
 Fit model
 
 ```{r}
 ss.ewma.noise.kid <- df_noise_kid %>% 
-  filter(keep_et == "include", 
-         keep_runsheet == "keep",
-         !(is.na(rt)), 
-         response_onset_type == "noun") %>% 
-  dplyr::select(subid_short, tr.num, rt, noise_condition, correct, age, age_group) %>% 
-  mutate(RT = rt, condition = as.character(noise_condition)) %>% 
-  select(-rt) %>% 
   group_by(condition) %>% 
-  do(ewma_function(., rt_column = "RT", L = L, lambda = lambda, cs = cs, sigma = sig)) %>% 
+  do(fit_ewma(., rt_column = "RT", L = L, lambda = lambda, cs = cs, sigma = sig)) %>% 
   mutate(rt = round(as.numeric(RT), 2),
          cs = round(as.numeric(cs), 2),
          ucl = round(as.numeric(ucl), 2),
-         guess = ifelse(cs < ucl, "guess", "response"),
+         guess = ifelse(cs <= ucl, "guess", "response"),
          guess_num = ifelse(guess == "response", 1, 0),
          ucl_bound = abs(ucl-cs)) %>% 
   gather(key = ewma_param, value = param_value, cs:ucl) 
@@ -118,27 +121,28 @@ ss.ewma.noise.kid <- df_noise_kid %>%
 Set up data.
 
 ```{r}
-df_gaze_kid %<>% mutate(correct = ifelse(shift_accuracy_clean == "correct", 1, 0))
+df_gaze_kid %<>% 
+  mutate(correct = ifelse(shift_accuracy_clean == "correct", 1, 0)) %>% 
+  filter(keep_et == "include", 
+         keep_runsheet == "keep",
+         !(is.na(rt)), 
+         response_onset_type == "noun") %>% 
+  dplyr::select(subid_short, tr.num, rt, gaze_condition, correct, age, age_group) %>% 
+  mutate(RT = rt, condition = as.character(gaze_condition)) %>% 
+  rename(subid = subid_short) %>% 
+  select(-rt)
 ```
 
 Fit model. 
 
 ```{r}
 ss.ewma.gaze.kid <- df_gaze_kid %>% 
-  filter(keep_et == "include", 
-         keep_runsheet == "keep",
-         keep_et == "include",
-         !(is.na(rt)), 
-         response_onset_type == "noun") %>% 
-  dplyr::select(subid_short, tr.num, rt, gaze_condition, correct, age, age_group) %>% 
-  mutate(RT = rt, condition = as.character(gaze_condition)) %>% 
-  select(-rt) %>% 
   group_by(condition) %>% 
-  do(ewma_function(., rt_column = "RT", L = L, lambda = lambda, cs = cs, sigma = sig)) %>% 
+  do(fit_ewma(., rt_column = "RT", L = L, lambda = lambda, cs = cs, sigma = sig)) %>% 
   mutate(rt = round(as.numeric(RT), 2),
          cs = round(as.numeric(cs), 2),
          ucl = round(as.numeric(ucl), 2),
-         guess = ifelse(cs < ucl, "guess", "response"),
+         guess = ifelse(cs <= ucl, "guess", "response"),
          guess_num = ifelse(guess == "response", 1, 0),
          ucl_bound = abs(ucl-cs)) %>% 
   gather(key = ewma_param, value = param_value, cs:ucl) 
@@ -149,26 +153,27 @@ ss.ewma.gaze.kid <- df_gaze_kid %>%
 Set up data.
 
 ```{r}
-df_text_adult %<>% mutate(correct = ifelse(shift_accuracy == "correct", 1, 0))
-```
-
-Fit model. 
-
-```{r}
-ss.ewma.text.adult <- df_text_adult %>% 
+df_text_adult %<>% 
+  mutate(correct = ifelse(shift_accuracy == "correct", 1, 0)) %>% 
   filter(keep_et == "include", 
          keep_runsheet == "include",
          !(is.na(rt)), 
          response_onset_type == "noun") %>% 
   dplyr::select(subid, tr.num, rt, condition, correct) %>% 
   mutate(RT = rt, condition = as.character(condition)) %>% 
-  select(-rt) %>% 
+  select(-rt)
+```
+
+Fit model. 
+
+```{r}
+ss.ewma.text.adult <- df_text_adult  %>% 
   group_by(condition) %>% 
-  do(ewma_function(., rt_column = "RT", L = 3, lambda = lambda, cs = cs, sigma = sig)) %>% 
+  do(fit_ewma(., rt_column = "RT", L = 3, lambda = lambda, cs = cs, sigma = sig)) %>% 
   mutate(rt = round(as.numeric(RT), 2),
          cs = round(as.numeric(cs), 2),
          ucl = round(as.numeric(ucl), 2),
-         guess = ifelse(cs < ucl, "guess", "response"),
+         guess = ifelse(cs <= ucl, "guess", "response"),
          guess_num = ifelse(guess == "response", 1, 0),
          ucl_bound = abs(ucl-cs)) %>% 
   gather(key = ewma_param, value = param_value, cs:ucl) 
@@ -177,27 +182,29 @@ ss.ewma.text.adult <- df_text_adult %>%
 ## Speed-acc adult Noise-Gaze
 
 ```{r}
-df_ng_adult %<>% mutate(correct = ifelse(shift_accuracy == "correct", 1, 0),
-                        condition_long = paste(gaze_condition, noise_condition, sep = "_"))
+df_ng_adult %<>% 
+  mutate(correct = ifelse(shift_accuracy_clean == "correct", 1, 0),
+         condition_long = paste(gaze_condition, noise_condition, sep = "_")) %>% 
+  filter(keep_et == "include", 
+         keep_runsheet == "yes",
+         !(is.na(rt)), 
+         response_onset_type == "noun") %>% 
+  dplyr::select(subid_short, tr.num, rt, condition_long, correct) %>% 
+  mutate(RT = rt, condition = as.character(condition_long)) %>% 
+  rename(subid = subid_short) %>% 
+  select(-rt)
 ```
 
 Fit model. 
 
 ```{r}
 ss.ewma.ng.adult <- df_ng_adult %>% 
-  filter(keep_et == "include", 
-         keep_runsheet == "no",
-         !(is.na(rt)), 
-         response_onset_type == "noun") %>% 
-  dplyr::select(subid, tr.num, rt, condition_long, correct) %>% 
-  mutate(RT = rt, condition = as.character(condition_long)) %>% 
-  select(-rt) %>% 
   group_by(condition) %>% 
-  do(ewma_function(., rt_column = "RT", L = 3, lambda = lambda, cs = cs, sigma = sig)) %>% 
+  do(fit_ewma(., rt_column = "RT", L = 3, lambda = lambda, cs = cs, sigma = sig)) %>% 
   mutate(rt = round(as.numeric(RT), 2),
          cs = round(as.numeric(cs), 2),
          ucl = round(as.numeric(ucl), 2),
-         guess = ifelse(cs < ucl, "guess", "response"),
+         guess = ifelse(cs <= ucl, "guess", "response"),
          guess_num = ifelse(guess == "response", 1, 0),
          ucl_bound = abs(ucl-cs)) %>% 
   gather(key = ewma_param, value = param_value, cs:ucl) 

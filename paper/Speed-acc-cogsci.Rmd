@@ -5,25 +5,25 @@ csl: apa6.csl
 document-params: "10pt, letterpaper"
 
 author-information: > 
-     \author{ {\large \bf Kyle MacDonald}$^1$ (kylem4@stanford.edu), {\large \bf Aviva Blonder}$^2$ (aviva.blonder@oberlin.edu), \\ 
-     {\large \bf Virginia Marchman}$^1$ (marchman@stanford.edu), {\large \bf Anne Fernald}$^1$ (afernald@stanford.edu), \\ {\large \bf Michael C. Frank}$^1$ (mcfrank@stanford.edu) 
-     \\ $^1$ Department of Psychology Stanford University, $^2$ Department of Psychology Oberlin College}
+  \author{ {\large \bf Kyle MacDonald}$^1$ (kylem4@stanford.edu), {\large \bf Aviva Blonder}$^2$ (aviva.blonder@oberlin.edu), \\ 
+    {\large \bf Virginia Marchman}$^1$ (marchman@stanford.edu), {\large \bf Anne Fernald}$^1$ (afernald@stanford.edu), \\ {\large \bf Michael C. Frank}$^1$ (mcfrank@stanford.edu) 
+    \\ $^1$ Department of Psychology Stanford University, $^2$ Department of Psychology Oberlin College}
 
 abstract: 
   "Language comprehension in grounded contexts involves integrating visual and linguistic information
-  through decisions about visual fixation. But when the visual signal also contains information about
-  the language source -- as in the case of written text or sign language -- how do we decide where to
-  look? Here, we hypothesize that eye movements during language comprehension represent an adaptive
-  response. Using two case studies, we show that, compared to English-learners, young signers delayed
-  their gaze shifts away from a language source, were more accurate with these shifts, and produced a
-  smaller proportion of nonlanguage-driven shifts (E1). Next, we present a well-controlled,
-  confirmatory experiment, showing that English-speaking adults produced fewer nonlanguage-driven
-  shifts when processing printed text compared to spoken language (E2). Together, these data suggest
-  that people adapt to the value of seeking different information in order to increase the chance of
-  rapid and accurate language understanding."
+through decisions about visual fixation. But when the visual signal also contains information about
+the language source -- as in the case of written text or sign language -- how do we decide where to
+look? Here, we hypothesize that eye movements during language comprehension represent an adaptive
+response. Using two case studies, we show that, compared to English-learners, young signers delayed
+their gaze shifts away from a language source, were more accurate with these shifts, and produced a
+smaller proportion of nonlanguage-driven shifts (E1). Next, we present a well-controlled,
+confirmatory experiment, showing that English-speaking adults produced fewer nonlanguage-driven
+shifts when processing printed text compared to spoken language (E2). Together, these data suggest
+that people adapt to the value of seeking different information in order to increase the chance of
+rapid and accurate language understanding."
 
 keywords:
-    "eye movements; language processing; information-seeking; American Sign Language"
+  "eye movements; language processing; information-seeking; American Sign Language"
 
 output: cogsci2016::cogsci_paper
 ---
@@ -103,14 +103,13 @@ E1 provides an initial test of our adaptive tradeoffs account. We compared eye m
 To test this prediction, we present traditional behavioral analyses of first shift Accuracy and RT. We also present two model-based analyses. First, we use an exponentially weighted moving average (EWMA) method [@vandekerckhove2007fitting] to categorize participants' gaze shifts as language-driven or random. In contrast to the standard RT/Accuracy analysis, the EMWA allows us to quantify differences in the accuracy of gaze shifts as a function of *when* that shift occurred in time. Next, we use drift-diffusion models (DDMs) [@ratcliff2015individual] to quantify differences in the underlying psychological variables that might drive behavioral differences in Accuracy and RT. For example, the DDM uses the shape of *both* the correct and incorrect RT distributions to provide a quantiative estimate of whether higher accuracy is driven by more cautious responding or by more efficient information processing.
 
 <!---
-
 Since our results are complex, we preview them here: when the center stimulus was an Object or a Bullseye, children's first shifts away from the center stimulus were fast and at chance, and models suggested they never stopped guessing even when the language was informative. In contrast, for the Face condition and even more so for the signers, children fixated on the speaker to gather information and generated more accurate first shifts. In other words, their eye movements reflected a tradeoff between the value of gathering information from the speaker and exploring the nonlinguistic visual world.
 -->
 
-```{r e1_stimuli, fig.env = "figure", fig.pos = "t", fig.width=3.3, fig.height=2, fig.align='center', fig.cap = "Stimuli for E1 and E2. Panel A shows the layout of the fixation locations for all tasks: the center stimulus, the target, and the distracter. Panel B shows the five center stimulus items: a static geometric shape (Bullseye), a static image of a familiar object (Object), a person speaking (Face), a person signing (ASL), and printed text (Text)."}
-
+```{r e1_stim, fig.env = "figure", fig.pos = "t", fig.width=3.3, fig.height=2, fig.align='center', fig.cap = "Stimuli for E1 and E2. Panel A shows the layout of the fixation locations for all tasks: the center stimulus, the target, and the distracter. Panel B shows the five center stimulus items: a static geometric shape (Bullseye), a static image of a familiar object (Object), a person speaking (Face), a person signing (ASL), and printed text (Text)."}
 grid::grid.raster(png::readPNG("figs/stimuli.png"))
 ```
+
 
 ## Method
 
@@ -245,7 +244,7 @@ Next, we present two exploratory model-based analyses to quantify differences in
 
 Finally, we took the shifts that were categorized as language-driven by the EWMA and fit a hierarchical Bayesian drift-diffusion model (HDDM) to quantify differences in the speed and accuracy of language-driven eye movements. We chose to implement a hierarchical Bayesian version of the DDM using the HDDM Python package [@wiecki2013hddm] since we had relatively few trials from child participants and recent simulation studies have shown that the HDDM approach was better than other DDM fitting methods for small data sets [@ratcliff2015individual]. The model assumes that people accumulate noisy evidence in favor of one alternative with a response generated when the evidence crosses a pre-defined decision threshold. Here we focus on two parameters of interest that map onto meaningful psychological variables: *boundary separation*, which indexes the amount of evidence gathered before a response (higher values suggest more cautious responding) and *drift rate*, which indexes the amount of evidence accumulated per unit time (higher values suggest more efficient processing). 
 
-```{r e1_acc_rt_plot, fig.env = "figure", fig.pos = "t", fig.width=3, fig.height=3, fig.align='center', fig.cap = "First shift accuracy and RTs from E1. Panel A shows a boxplot representing the distribution of RTs for correct (orange) and incorrect (blue) shifts for each center stimulus type. Panel B shows the distribution of mean first shift accuracy scores for each center stimulus type. The solid lines represent median values, the boundaries of the box show the upper and lower quartiles, and the whiskers show the full range of the data excluding outliers."}
+```{r e1_acc_rt_plot, fig.env = "figure", fig.pos = "t", fig.width=3, fig.height=2.5, fig.align='center', fig.cap = "First shift accuracy and RTs from E1. Panel A shows a boxplot representing the distribution of RTs for correct (orange) and incorrect (blue) shifts for each center stimulus type. Panel B shows the distribution of mean first shift accuracy scores for each center stimulus type. The solid lines represent median values, the boundaries of the box show the upper and lower quartiles, and the whiskers show the full range of the data excluding outliers."}
 
 ss_prop$stimuli <- factor(ss_prop$stimuli, 
                           levels = c("Bullseye", "Object", "Face", "ASL"))
@@ -617,7 +616,7 @@ ss.rt %<>% remove_extreme_vals(., sd_cut_val = 3, value_column = "m_rt")
 e2_rt_plot <- ss.rt %>% 
   filter(condition != "ASL") %>% 
   ggplot(aes(x = condition, y = m_rt, fill = shift_accuracy), data = .) +
-  geom_boxplot(width = 0.4, outlier.shape = NA) +
+  geom_boxplot(width = 0.3, outlier.shape = NA) +
   scale_fill_manual(values = c("darkorange", "dodgerblue")) +
   labs(x = "Condition", 
        y = "RT (sec)") +
@@ -635,7 +634,7 @@ e2_rt_plot <- ss.rt %>%
 e2_acc_plot <- ss.acc %>% 
   filter(condition != "ASL") %>%
   ggplot(aes(x = condition, y = mean_acc), data = .) +
-  geom_boxplot(width = 0.3, fill = "darkgrey", alpha = 0.7) +
+  geom_boxplot(width = 0.2, fill = "darkgrey", alpha = 0.7) +
   geom_hline(yintercept = 0.5, linetype = "dashed") +
   ylim(0.4,1) +
   labs(x = "Condition", 
@@ -643,7 +642,7 @@ e2_acc_plot <- ss.acc %>%
   theme(text = element_text(size = 10)) 
 ```
 
-```{r e2_plot_print, fig.env = "figure", fig.pos = "t",fig.width=3, fig.height=2.8, fig.align='center', fig.cap = "Behavioral results from E2. All plotting conventions are the same as in Figure 2."}
+```{r e2_plot_print, fig.env = "figure", fig.pos = "t",fig.width=2.8, fig.height=2.8, fig.align='center', fig.cap = "Behavioral results from E2. All plotting conventions are the same as in Figure 2."}
 
 plot_grid(e2_rt_plot, e2_acc_plot, labels = c("A", "B"), nrow = 2, align = "v")
 ```
@@ -932,7 +931,7 @@ This work attempts to integrate top-down, goal-based models of vision [@hayhoe20
 
 # Acknowledgements
 
-We are grateful to the families who participated in this research. This work was supported by an NSF GRFP to KM and an NIDCD grant to Anne Fernald and David Corina (DC012505).
+We are grateful to the families who participated in this research. Thanks to Melina Wailing for help with data collection. This work was supported by an NSF GRFP to KM and an NIDCD grant to AF and DC (DC012505).
 
 # References 
 
@@ -943,7 +942,7 @@ We are grateful to the families who participated in this research. This work was
 
 ---
 nocite: | 
-@macdonald2017realtime
+  @macdonald2017realtime
 ...
 
 \setlength{\parindent}{-0.1in} 

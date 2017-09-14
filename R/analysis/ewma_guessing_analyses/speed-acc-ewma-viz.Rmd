@@ -8,25 +8,32 @@ output: html_document
 rm(list=ls())
 knitr::opts_chunk$set(echo=F, warning=F, cache=F, message=F, sanitize = T)
 source("../../helper_functions/libraries_and_functions.R")
-library(tidyverse)
+source("../../helper_functions/ewma_helper_funs.R")
+```
+
+```{r}
+ewma.path <- "../../../data/3_final_merged_data/ewma_output/"
+plot.save.path <- "../../../paper/figs/"
 ```
 
 ## Read data
 
 ```{r read data}
-d <- read_csv("../../../data/3_final_merged_data/speed_acc_adult_ewma_results.csv")
+files <- dir(path = ewma.path, pattern = "*.csv") 
+
+# read in all files using purrr
+d <- files %>% purrr::map_df(read_ewma, path = ewma.path)
 ```
 
-## Visualize EWMA results: boxplot 
+## Visualize EWMA results: boxplots 
 
-```{r}
+```{r make_text_boxplot}
 ss.responding.prop <- d %>% 
+  filter(experiment == "text") %>% 
   group_by(subid, condition, guess) %>% 
   summarise(count = n()) %>% 
   mutate(prop.responding = round(count / sum(count), 2))
-```
 
-```{r}
 ss.responding.prop %>% 
   filter(condition != "ASL", guess == "response") %>% 
   ggplot(aes(x = fct_rev(condition), y = prop.responding)) +
@@ -35,122 +42,91 @@ ss.responding.prop %>%
   theme(text = element_text(size = 12))
 ```
 
-## Visualize EWMA results: control chart
+## Visualize EWMA results: control charts
 
-## Aggregate 
+### Text experiment (adults)
 
-TODO: write with aggregation without using bootsrapped CIs
+```{r make_text_ewma_plot}
+text_model_vals <- d %>% 
+  filter(experiment == "text", rt <= 0.9) %>% 
+  aggregate_ewma()
+
+text_control_chart <- plot_ewma_chart(text_model_vals)
+text_control_chart
+```
+
+Save control chart.
 
 ```{r}
-# Aggregate cutoffs for each participant
-# TODO: how to handle participants who do not cross the guessing threshold? (i.e., censored data)
-ss.cutoffs <- d %>% 
-  filter(guess == "response") %>% 
-  group_by(condition, subid) %>% 
-  summarise_(cutoff = interp(~ min(x), x = as.name("rt")))
-
-# Aggregate cutoffs for each condition.
-ms.cutoffs <- ss.cutoffs %>% 
-  group_by(condition) %>% 
-  multi_boot_standard(column = "cutoff", empirical_function = "mean")
+ggsave(plot = text_control_chart, 
+       filename = paste0(plot.save.path, "e2_control_chart.png"), 
+       width = 3, height = 3.5)
 ```
 
+### Noise/Gaze experiment (adults)
 
-```{r ewma plot, fig.height=8}
-d %>% 
-  filter(condition != "ASL") %>% 
-  ggplot(data = ., aes(x = rt, y = param_value, color = ewma_param)) +
-  geom_line(size = 1) +
-  geom_vline(aes(xintercept = mean), linetype = 2, 
-             data = filter(ms.cutoffs, condition != "ASL")) +
-  geom_hline(yintercept = 0.5, linetype = "solid") +
-  labs(x = "RT (sec)", y = "EWMA statistic") +
-  guides(color=F) + 
-  xlim(0, 1) +
-  facet_grid(condition~.) +
-  scale_color_manual(values = c("darkorange", "dodgerblue")) +
-  theme_bw() +
-  theme(text = element_text(size = 14)) 
+```{r make_text_ewma_plot}
+ng_model_vals <- d %>% 
+  filter(experiment == "noise_gaze", rt <= 0.9) %>% 
+  aggregate_ewma()
+
+ng_control_chart <- plot_ewma_chart(ng_model_vals)
+ng_control_chart
 ```
 
-What do we see? The bullseye condition crosses the threshold after 1 second. The face, text, and text-audio all cross the threshold earlier in the window. Text-no-audio crosses earliest given these parameters of the EWMA model. Finally, in the text-no-audio condition there aren't any early RTs to model. How should we add this information to the analysis?
-
-What we can do is compute the proportion of shifts that were categorized as a "fast guess" compared to a "valid response" for each participant for each condition.
+Save control chart.
 
 ```{r}
-ss.guessing.prop <- ss.ewma.results %>% 
-  group_by(subid, condition, guess) %>% 
-  summarise(count = n()) %>% 
-  mutate(prop.guessing = round(count / sum(count), 2))
+ggsave(plot = ng_control_chart, 
+       filename = paste0(plot.save.path, "adult_ng_control_chart.png"), 
+       width = 3, height = 3.5)
 ```
 
-Boxplot of proportion guessing by condition.
+### Trio experiment (kids)
 
 ```{r}
-ggplot(aes(x = fct_rev(condition), y = prop.guessing), 
-       data = filter(ss.guessing.prop, guess == "guess")) +
-  geom_boxplot(fill = "dodgerblue", width = 0.3, alpha = 0.7) +
-  labs(x = "Condition",y = "Prop. Guess") +
-  theme(text = element_text(size = 12))
+trio_model_vals <- d %>% 
+  filter(experiment == "trio", age_code != "adult", 
+         rt <= 1.5) %>%
+  mutate(condition = forcats::fct_relevel(condition, "ASL", "Face", "Object", "Bullseye")) %>% 
+  aggregate_ewma()
+
+trio_control_chart <- plot_ewma_chart(trio_model_vals)
+trio_control_chart
 ```
 
-This looks like what we saw in the EWMA control charts: bullseye has the higher proportion of guesses, whereas face, text, and text-no-audio are mostly valid responses. However, this analysis still does not caputre one effect in the EWMA chart, which is the amount of *time* each participant spends in a guessing phase vs. a valid response phase for each condition.
-
-To get at this effect, we use a function to compute the difference in time from first guessing response to first valid response for each participant for each condition. 
+Save control chart.
 
 ```{r}
-ss.guessing.window <- ss.ewma.results %>% 
-  group_by(subid, condition) %>% 
-  do(compute_guessing_window(.)) %>% 
-  dplyr::select(subid, time_guessing, condition) %>%
-  mutate(time_guessing = as.numeric(time_guessing)) %>% 
-  unique()
+ggsave(plot = trio_control_chart, 
+       filename = paste0(plot.save.path, "e1_control_chart.png"), 
+       width = 3, height = 3.5)
 ```
 
-Boxplot of time guessing across the different conditions.
+### Noise experiment (kids)
 
 ```{r}
-ggplot(aes(x = fct_rev(condition), y = time_guessing), data = ss.guessing.window) +
-  geom_boxplot(fill = "dodgerblue", width = 0.3, alpha = 0.7) +
-  labs(x = "Condition", y = "Avg. Time Guessing (sec)") +
-  coord_flip() +
-  theme(text = element_text(size = 12))
+noise_model_vals <- d %>% 
+  filter(experiment == "noise", age_code != "adult", 
+         rt <= 1.5) %>% 
+  aggregate_ewma()
 ```
-
-## Stats for EWMA parameters
-
-Model the effect of condition on the the trial-level guessing vs. non-guessing responses. Note that the outcome measure -- guessing behavior -- is determined by the EWMA control process model described above. 
-
-In this model, we include a fixed effect of condition and a random effect of participant. We also test the following contrasts of interest: 
-
-* Bullseye vs. Face/Text/Text-no-audio
-* Text vs. No-text
-* Text-audio vs. Text-no-audio
-* Bullseye vs. Face
-
-```{r glmer guessing behavior}
-# contrast coding to test comparisons of interest
-# todo: fix contrast coding so model is not rank deficient
-ss.ewma.results$condition_fact <- as.factor(ss.ewma.results$condition)
-
-contrasts(ss.ewma.results$condition_fact) <- cbind("noaudio_vs_audio" = c(1, 1, 1, -3), 
-                                      "textaudio_vs_textnoaudio" = c(0, 0, 1, -1))
-
-m1 <- glmer(guess_num ~ condition_fact + (1 + condition |subid), 
-            data = ss.ewma.results,
-            nAGQ = 0,
-            family = binomial)
-```
-
-#### ANOVA for time spent guessing
-
-```{r anova guessing window}
-summary(aov(time_guessing ~ condition, data = ss.guessing.window))
-```
-
-#### ANOVA for cutoffs
 
 ```{r}
-summary(aov(cutoff ~ condition, data = ss.cutoffs))
+noise_control_chart <- plot_ewma_chart(noise_model_vals)
+noise_control_chart
 ```
 
+### Gaze experiment (kids)
+
+```{r}
+gaze_model_vals <- d %>% 
+  filter(experiment == "gaze", age_code != "adult", 
+         rt <= 1.5) %>% 
+  aggregate_ewma()
+```
+
+```{r}
+gaze_control_chart <- plot_ewma_chart(gaze_model_vals)
+gaze_control_chart
+```
