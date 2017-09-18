@@ -77,14 +77,12 @@ d <- bind_rows(d.adults, d.kids)
 
 Use purrr to create a plot for each kid experiment. 
 
-```{r make the ddm plots}
+```{r make the kid ddm plots}
 hddm_plots_kids <- d %>% 
   filter(age_code == "kid") %>% 
   split(.$experiment) %>% 
   purrr::map(plot_hddm)
-```
 
-```{r}
 cowplot::plot_grid(plotlist = hddm_plots_kids, ncol = 1, 
                    labels = names(hddm_plots_kids))
 ```
@@ -93,6 +91,7 @@ Now do the same thing but for the adult experiments
 
 ```{r make the adult ddm plots}
 hddm_plots_adults <- d %>% 
+  filter(age_code == "adult") %>% 
   split(.$experiment) %>% 
   purrr::map(plot_hddm)
 
@@ -111,17 +110,9 @@ ggsave(hddm_plot_final, file = paste0(plot.save.path, "hddm_plot_final.png"), wi
 
 ## Stats
 
+Get means and 95% HDI
+
 ```{r}
-boundary_asl <- d %>% filter(param_name == "boundary", condition == "asl", age_code == "kid")
-boundary_face <- d %>% filter(param_name == "boundary", condition == "face", age_code == "kid")
-p_hddm_boundary <- mean(boundary_face$param_value > boundary_asl$param_value)
-
-# drift
-drift_asl <- d %>% filter(param_name == "drift", condition == "asl", age_code == "kid")
-drift_face <- d %>% filter(param_name == "drift", condition == "face", age_code == "kid")
-p_hddm_drift <- mean(drift_face$param_value < drift_asl$param_value)
-
-# means and 95% HDI
 ms.hddm <- d %>% 
   group_by(param_name, experiment, condition, age_code) %>% 
   summarise(Mean = mean(param_value),
@@ -130,10 +121,10 @@ ms.hddm <- d %>%
   rename(Parameter = param_name) %>% 
   mutate_at(vars(Mean, HDI_lower, HDI_upper), round, digits = 2) %>% 
   arrange(experiment)
-```
 
-Print table.
 
-```{r}
+#Print table.
 ms.hddm %>% kable()
 ```
+
+
