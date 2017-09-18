@@ -1,0 +1,139 @@
+---
+title: "Speed-acc-adult Drift Diffusion Analysis"
+author: "Kyle MacDonald"
+output: html_document
+---
+
+## Setup
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=F, warning=F, cache=F, message=F, sanitize = T)
+source("../../helper_functions/libraries_and_functions.R")
+```
+
+```{r}
+hddm.adults.path <- "../../../data/3_final_merged_data/hddm_output/adults/"
+hddm.kids.path <- "../../../data/3_final_merged_data/hddm_output/kids/"
+plot.save.path <- "../../../paper/figs/"
+```
+
+## Read data
+
+Read adult data.
+
+```{r read data}
+# get a vector of file names
+files.adults <- dir(path = hddm.adults.path, pattern = "*.csv") 
+
+# map my custom read_hddm function over all the file names using using purrr
+d.adults <- files.adults %>% 
+  purrr::map_df(read_hddm_file, path = hddm.adults.path, 
+                condition_list = c("bull", "face", "text_no_audio", "text",
+                                   "straight_ahead_clear", "straight_ahead_noise", "gaze_clear", "gaze_noise"), 
+                param_list = c("boundary", "drift")) 
+```
+
+Read kid data
+
+```{r}
+files.kids <- dir(path = hddm.kids.path, pattern = "*.csv") 
+
+# map my custom read_hddm function over all the file names using using purrr
+d.kids <- files.kids %>% 
+  purrr::map_df(read_hddm_file, path = hddm.kids.path, 
+                condition_list = c("asl", "clear", "straightahead", "face", "gaze", "noise"), 
+                param_list = c("boundary", "drift")) 
+```
+
+Some minor clean up of variable names and merging adult and kid data.
+
+```{r}
+# adult data
+d.adults %<>% 
+  mutate(age_code = "adult", 
+         experiment = case_when(
+           condition %in% c("bull", "face", "text_no_audio", "text") ~ "text",
+           condition %in% c("straight_ahead_clear", "straight_ahead_noise", "gaze_clear", "gaze_noise") ~ "noise_gaze",
+           TRUE ~ "NA"
+         )
+  )
+
+# kid data
+d.kids %<>% 
+  mutate(age_code = "kid", 
+         experiment = case_when(
+           condition %in% c("asl", "face") ~ "trio",
+           condition %in% c("clear", "noise") ~ "noise",
+           condition %in% c("straightahead", "gaze") ~ "gaze",
+           TRUE ~ "NA"
+         )
+  )
+
+# bind together
+d <- bind_rows(d.adults, d.kids)
+```
+
+## Plots
+
+Use purrr to create a plot for each kid experiment. 
+
+```{r make the ddm plots}
+hddm_plots_kids <- d %>% 
+  filter(age_code == "kid") %>% 
+  split(.$experiment) %>% 
+  purrr::map(plot_hddm)
+```
+
+```{r}
+cowplot::plot_grid(plotlist = hddm_plots_kids, ncol = 1, 
+                   labels = names(hddm_plots_kids))
+```
+
+Now do the same thing but for the adult experiments
+
+```{r make the adult ddm plots}
+hddm_plots_adults <- d %>% 
+  split(.$experiment) %>% 
+  purrr::map(plot_hddm)
+
+cowplot::plot_grid(plotlist = hddm_plots_adults, ncol = 1, 
+                   labels = names(hddm_plots_adults))
+```
+
+Save plot
+
+```{r e2 save ddm plot, eval = F}
+hddm_plot_final <- cowplot::plot_grid(hddm_plots_kids$trio, hddm_plots_adults$text, 
+                                      labels = c("A", "B"), nrow = 2)
+
+ggsave(hddm_plot_final, file = paste0(plot.save.path, "hddm_plot_final.png"), width=4, height=4)
+```
+
+## Stats
+
+```{r}
+boundary_asl <- d %>% filter(param_name == "boundary", condition == "asl", age_code == "kid")
+boundary_face <- d %>% filter(param_name == "boundary", condition == "face", age_code == "kid")
+p_hddm_boundary <- mean(boundary_face$param_value > boundary_asl$param_value)
+
+# drift
+drift_asl <- d %>% filter(param_name == "drift", condition == "asl", age_code == "kid")
+drift_face <- d %>% filter(param_name == "drift", condition == "face", age_code == "kid")
+p_hddm_drift <- mean(drift_face$param_value < drift_asl$param_value)
+
+# means and 95% HDI
+ms.hddm <- d %>% 
+  group_by(param_name, experiment, condition, age_code) %>% 
+  summarise(Mean = mean(param_value),
+            HDI_lower = quantile(param_value, probs = 0.025),
+            HDI_upper = quantile(param_value, probs = 0.975)) %>% 
+  rename(Parameter = param_name) %>% 
+  mutate_at(vars(Mean, HDI_lower, HDI_upper), round, digits = 2) %>% 
+  arrange(experiment)
+```
+
+Print table.
+
+```{r}
+ms.hddm %>% kable()
+```

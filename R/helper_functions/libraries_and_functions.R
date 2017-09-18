@@ -23,6 +23,44 @@ theme_set(
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
 )
 
+
+## Read HDDM file
+
+read_hddm_file <- function(file_name, path, condition_list, param_list) {
+  raw_file <- read_csv(paste0(path, file_name), col_names = F)
+  
+  # get condition and param name from the file name
+  condition_name <- str_extract(string = file_name, pattern = paste(condition_list, collapse = '|'))
+  param_name <- str_extract(string = file_name, pattern = paste(param_list, collapse = '|'))
+  
+  final_df <- t(raw_file) %>% 
+    as.data.frame() %>% 
+    rename(param_value = V1) %>% 
+    mutate(condition = condition_name,
+           param_name = param_name)
+  
+  # return the data frame
+  final_df
+}
+
+
+
+## Plot HDDM parameter values
+
+plot_hddm <- function(d) {
+  ggplot(aes(x = param_value, color = condition), data = d) +
+    geom_line(stat="density", size = 1.5) + 
+    langcog::scale_color_solarized() +
+    facet_grid(.~param_name, scales = "free") +
+    labs(x = "Parameter value", y = "Density", color = "") +
+    guides(color=guide_legend(nrow=2,byrow=TRUE)) +
+    ggthemes::theme_few() +
+    theme(text = element_text(size=10),
+          legend.position=c(0.75,0.75),
+          legend.direction="horizontal",
+          legend.background = element_rect(fill=alpha('white', 0.4)))
+}
+
 ## Score trial function
 ## Categorizes trials as correct or incorrect in 2-AFC gaze task
 ## Takes in a row (trial), a start window, and an end window
