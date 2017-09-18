@@ -25,108 +25,77 @@ files <- dir(path = ewma.path, pattern = "*.csv")
 d <- files %>% purrr::map_df(read_ewma, path = ewma.path)
 ```
 
-## Visualize EWMA results: boxplots 
-
-```{r make_text_boxplot}
-ss.responding.prop <- d %>% 
-  filter(experiment == "text") %>% 
-  group_by(subid, condition, guess) %>% 
-  summarise(count = n()) %>% 
-  mutate(prop.responding = round(count / sum(count), 2))
-
-ss.responding.prop %>% 
-  filter(condition != "ASL", guess == "response") %>% 
-  ggplot(aes(x = fct_rev(condition), y = prop.responding)) +
-  geom_boxplot(fill = "dodgerblue", width = 0.3, alpha = 0.9) +
-  labs(x = "Condition",y = "Prop. Shifts Language Driven") +
-  theme(text = element_text(size = 12))
-```
-
 ## Visualize EWMA results: control charts
 
-### Text experiment (adults)
-
-```{r make_text_ewma_plot}
-text_model_vals <- d %>% 
-  filter(experiment == "text", rt <= 0.9) %>% 
-  aggregate_ewma()
-
-text_control_chart <- plot_ewma_chart(text_model_vals)
-text_control_chart
-```
-
-Save control chart.
+Make all the control charts. 
 
 ```{r}
-ggsave(plot = text_control_chart, 
+ewma_control_charts <- d %>% 
+  filter(rt <= 1.5) %>% 
+  split(.$experiment) %>% 
+  purrr::map(.f = aggregate_ewma) %>% 
+  purrr::map(.f = plot_ewma_chart)
+```
+
+Put all the plots together.
+
+```{r}
+cowplot::plot_grid(plotlist = ewma_control_charts, 
+                   ncol = 3)
+```
+
+Save control charts.
+
+```{r save_control_charts, eval = F}
+# text
+ggsave(plot = ewma_control_charts$text, 
        filename = paste0(plot.save.path, "e2_control_chart.png"), 
        width = 3, height = 3.5)
-```
 
-### Noise/Gaze experiment (adults)
 
-```{r make_text_ewma_plot}
-ng_model_vals <- d %>% 
-  filter(experiment == "noise_gaze", rt <= 0.9) %>% 
-  aggregate_ewma()
-
-ng_control_chart <- plot_ewma_chart(ng_model_vals)
-ng_control_chart
-```
-
-Save control chart.
-
-```{r}
-ggsave(plot = ng_control_chart, 
+# noise gaze adults
+ggsave(plot = ewma_control_charts$noise_gaze, 
        filename = paste0(plot.save.path, "adult_ng_control_chart.png"), 
        width = 3, height = 3.5)
-```
 
-### Trio experiment (kids)
-
-```{r}
-trio_model_vals <- d %>% 
-  filter(experiment == "trio", age_code != "adult", 
-         rt <= 1.5) %>%
-  mutate(condition = forcats::fct_relevel(condition, "ASL", "Face", "Object", "Bullseye")) %>% 
-  aggregate_ewma()
-
-trio_control_chart <- plot_ewma_chart(trio_model_vals)
-trio_control_chart
-```
-
-Save control chart.
-
-```{r}
-ggsave(plot = trio_control_chart, 
+# trio kids
+ggsave(plot = ewma_control_charts$trio, 
        filename = paste0(plot.save.path, "e1_control_chart.png"), 
        width = 3, height = 3.5)
 ```
 
-### Noise experiment (kids)
+## Visualize EWMA results: Proportion guessing boxplots 
 
 ```{r}
-noise_model_vals <- d %>% 
-  filter(experiment == "noise", age_code != "adult", 
-         rt <= 1.5) %>% 
-  aggregate_ewma()
+make_ewma_boxplot <- function(d) {
+  # aggregate prop guessing for each participant
+  ss <- d %>% 
+    group_by(subid, condition, guess) %>% 
+    summarise(count = n()) %>% 
+    mutate(prop.responding = round(count / sum(count), 2))
+  
+  # make plot
+  ss %>% 
+  filter(guess == "response") %>% 
+  ggplot(aes(x = fct_rev(condition), y = prop.responding)) +
+  geom_boxplot(fill = "dodgerblue", width = 0.2, alpha = 0.9) +
+  labs(x = "Condition",y = "Prop. Language Driven") +
+  theme(text = element_text(size = 12))
+  
+}
 ```
 
+Make all the boxplots for each experiment. 
+
 ```{r}
-noise_control_chart <- plot_ewma_chart(noise_model_vals)
-noise_control_chart
+ewma_boxplots <- d %>% 
+  filter(rt <= 2) %>% 
+  split(.$experiment) %>% 
+  purrr::map(.f = make_ewma_boxplot)
 ```
 
-### Gaze experiment (kids)
+Put all the boxplots together. 
 
 ```{r}
-gaze_model_vals <- d %>% 
-  filter(experiment == "gaze", age_code != "adult", 
-         rt <= 1.5) %>% 
-  aggregate_ewma()
-```
-
-```{r}
-gaze_control_chart <- plot_ewma_chart(gaze_model_vals)
-gaze_control_chart
+cowplot::plot_grid(plotlist = c(ewma_boxplots, NULL), ncol = 2)
 ```
