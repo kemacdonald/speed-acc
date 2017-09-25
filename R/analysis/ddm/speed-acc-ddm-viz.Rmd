@@ -29,7 +29,8 @@ files.adults <- dir(path = hddm.adults.path, pattern = "*.csv")
 d.adults <- files.adults %>% 
   purrr::map_df(read_hddm_file, path = hddm.adults.path, 
                 condition_list = c("bull", "face", "text_no_audio", "text",
-                                   "straight_ahead_clear", "straight_ahead_noise", "gaze_clear", "gaze_noise"), 
+                                   "straight_ahead_clear", "straight_ahead_noise", "gaze_clear",
+                                   "gaze_noise"), 
                 param_list = c("boundary", "drift")) 
 ```
 
@@ -53,7 +54,8 @@ d.adults %<>%
   mutate(age_code = "adult", 
          experiment = case_when(
            condition %in% c("bull", "face", "text_no_audio", "text") ~ "text",
-           condition %in% c("straight_ahead_clear", "straight_ahead_noise", "gaze_clear", "gaze_noise") ~ "noise_gaze",
+           condition %in% c("straight_ahead_clear", "straight_ahead_noise", 
+                            "gaze_clear", "gaze_noise") ~ "noise_gaze",
            TRUE ~ "NA"
          )
   )
@@ -75,6 +77,8 @@ d <- bind_rows(d.adults, d.kids)
 
 ## Plots
 
+#### Kid experiments
+
 Use purrr to create a plot for each kid experiment. 
 
 ```{r make the kid ddm plots}
@@ -86,6 +90,8 @@ hddm_plots_kids <- d %>%
 cowplot::plot_grid(plotlist = hddm_plots_kids, ncol = 1, 
                    labels = names(hddm_plots_kids))
 ```
+
+#### Adult experiments
 
 Now do the same thing but for the adult experiments
 

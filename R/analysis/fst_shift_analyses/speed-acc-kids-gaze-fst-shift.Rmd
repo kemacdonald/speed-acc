@@ -1,6 +1,5 @@
 ---
-title: "Speed-Acc Child Gaze Analysis"
-author: "Tami Alade and Kyle MacDonald"
+title: "Speed-Acc Child Gaze First-shift Analysis"
 output: html_document
 ---
 
@@ -12,7 +11,7 @@ rm(list=ls())
 
 # set some global options
 knitr::opts_chunk$set(warning=F, message=F, sanitize = T, 
-                      fig.height=5, fig.width=8, echo=T, cache = F)
+                      fig.height=4, fig.width=8, echo=T, cache = F)
 ```
 
 ```{r}
@@ -28,10 +27,6 @@ d <- read_csv("../../../data/3_final_merged_data/first_shifts/speed_acc_child_ga
 
 ## Check the data
 
-The goal of this section is to make sure the data match our expectations, or in other words, we are "testing" our data. Usually this involves comparing a known value to the number actually in the data set. For example, I know how I ran 20 participants, do I have 20 unique participant IDs?
-
-[This](http://r4ds.had.co.nz/transform.html) chapter from the book **R for Data Science** is a good reference for writing code to manipulate data to do data "sanity" checks.
-
 How many participants in the dataset?  
 
 ```{r}
@@ -40,29 +35,18 @@ d %>% select(subid_short) %>% unique() %>% count
 
 How many trials do we have for each participant in each condition? 
 
-```{r}
+```{r, eval = F}
 d %>% 
   group_by(subid, gaze_condition) %>% 
   summarise(n_trials = n()) %>% 
   kable()
 ```
 
-
 ## Explore data via visualization
-
-[This](http://r4ds.had.co.nz/data-visualisation.html) is a great book chapter on data visualization using the ggplot2 R package
-
-### Visualize data distributions
 
 What does the distribution of age in the sample look like? 
 
-```{r}
-d %>% 
-  ggplot(aes(x = age_years)) +
-  geom_histogram()
-```
-
-```{r}
+```{r, fig.width=4}
 d %>% 
   select(subid_short, age_group) %>% 
   unique() %>% 
@@ -72,14 +56,14 @@ d %>%
 
 What about Reaction Times (RT)?
 
-```{r}
+```{r, fig.width=6}
 ggplot(aes(x = rt), data = d) +
   geom_histogram()
 ```
 
 What about Accuracy? 
 
-```{r}
+```{r, fig.width=5}
 d %>% 
   filter(shift_type %in% c("C_T", "C_D")) %>% 
   ggplot(aes(x = shift_accuracy)) +
@@ -91,23 +75,11 @@ d %>%
 Next, let's remove extreme RTs. 
 
 ```{r}
-d.filt <- d %>% filter(rt <= 5)
+d.filt <- d %>% 
+  filter(rt <= 5,
+    keep_et == "include",
+    keep_runsheet == "keep")
 ```
-
-Remove participants who couldn't calibrate and who had alots of missing looks
-
-```{r}
-d.filt %<>% filter(keep_et == "include",
-                   exclude == "keep")
-```
-
-```{r}
-d.filt %<>%
-  mutate(shift_start_location = ifelse(shift_type %in% c("C_T", "C_D"), 
-                                       "center", 
-                                       "not_center"))
-```
-
 
 ### Visualize Accuracy
 
@@ -115,46 +87,39 @@ What is the overall accuracy of first shifts?
 
 ```{r}
 ss <- d.filt %>% 
-  filter(!is.na(shift_accuracy),
-         shift_type %in% c("C_T", "C_D")) %>% 
-  group_by(gaze_condition, subid, shift_accuracy, age_group) %>% 
+  filter(!is.na(shift_accuracy_clean),
+         shift_start_location == "center",
+         rt <= 1.5) %>% 
+  group_by(gaze_condition, subid, shift_accuracy_clean, age_group, block) %>% 
   summarise(n = n()) %>% 
   group_by(subid, gaze_condition, age_group) %>% 
   mutate(total_trials = sum(n),
          prop = round(n / total_trials, 2)) 
 ```
 
-```{r}
-# aggregate at the condition level
-ms <- ss %>% 
-  filter(shift_accuracy == "correct") %>% 
-  group_by(gaze_condition) %>% 
-  multi_boot_standard(column = "prop", nboot = 100) 
-  
-ms %<>% rename(prop = mean)
-```
-
 Now make a boxplot of the accuracy data for each condition. Note that we have to first filter out the proprotion "incorrect" rows, so we are only seeing the proprotion correct data.
 
 ```{r}
 acc_boxplot <- ss %>% 
-  filter(shift_accuracy == "correct") %>% 
+  filter(shift_accuracy_clean == "correct") %>% 
   ggplot(aes(x = gaze_condition, y = prop)) +
-  geom_boxplot(width = 0.5, fill = "dodgerblue") +
-  geom_jitter(width = 0.05, alpha = 0.3) + 
+  geom_boxplot(width = 0.2, fill = "dodgerblue") +
+  #geom_jitter(width = 0.05, alpha = 0.3) + 
   geom_hline(yintercept = 0.5, linetype = "dashed") +
-  labs(x = "Condition", y = "Prop. Correct") +
-  theme(text = element_text(size = 18))
+  labs(x = "Condition", y = "Prop. Correct") 
 ```
 
-Plot the mean accuracy and confidence interval for each condition.
+Make accuracy by block plot.
 
 ```{r}
-ms %>% 
+acc_block <- ss %>% 
+  filter(shift_accuracy_clean == "correct") %>% 
   ggplot(aes(x = gaze_condition, y = prop)) +
-  geom_pointrange(aes(ymin = summary_ci_lower, ymax = summary_ci_upper)) +
-  ylim(0.4, 0.8) +
-  geom_hline(yintercept = 0.5, linetype = "dashed")
+  geom_boxplot(width = 0.2, fill = "dodgerblue") +
+  #geom_jitter(width = 0.05, alpha = 0.3) + 
+  geom_hline(yintercept = 0.5, linetype = "dashed") +
+  labs(x = "Condition", y = "Prop. Correct") +
+  facet_wrap(~block)
 ```
 
 ### Visualize Reaction Time
@@ -163,146 +128,46 @@ What is the overall RT for kids in the experiment?
 
 ```{r}
 rt_boxplot <- d.filt %>% 
-  filter(!is.na(shift_accuracy), 
+  filter(!is.na(shift_accuracy_clean), 
          shift_type %in% c("C_T", "C_D"),
          rt <= 1.5) %>% 
   group_by(subid, gaze_condition) %>% 
-  summarise(m_rt = mean(rt)) %>% 
+  summarise(m_rt = median(rt)) %>% 
   ggplot(aes(x = gaze_condition, y = m_rt)) + 
-  geom_boxplot(width = 0.5, fill = "#de2d26") +
-  geom_jitter(width = 0.05, alpha = 0.3) + 
+  geom_boxplot(width = 0.2, fill = "darkorange") +
+ # geom_jitter(width = 0.05, alpha = 0.3) + 
   ylim(0,1) +
-  labs(x = "Condition", y = "RT (sec)") +
-  theme(text = element_text(size = 18))
+  labs(x = "Condition", y = "RT (sec)") 
 ```
+
+Make RT by block plot.
+
+```{r}
+rt_block <- d.filt %>% 
+  filter(!is.na(shift_accuracy_clean), 
+         shift_type %in% c("C_T", "C_D"),
+         rt <= 1.5) %>% 
+  group_by(subid, gaze_condition, block) %>% 
+  summarise(m_rt = median(rt)) %>% 
+  ggplot(aes(x = gaze_condition, y = m_rt)) + 
+  geom_boxplot(width = 0.2, fill = "darkorange") +
+ # geom_jitter(width = 0.05, alpha = 0.3) + 
+  ylim(0, 1) +
+  labs(x = "Condition", y = "RT (sec)") +
+  facet_wrap(~block)
+```
+
+### Plot RT and Accuracy together
 
 ```{r}
 cowplot::plot_grid(rt_boxplot, acc_boxplot)
 ```
 
-What about RTs for correct vs. incorrect shifts?
+### Plot RT and Accurcy block effects
 
 ```{r}
-d %>% 
-  filter(!is.na(shift_accuracy), 
-         shift_type %in% c("C_T", "C_D"),
-         rt <= 1.5) %>% 
-  group_by(subid, gaze_condition, shift_accuracy) %>% 
-  summarise(m_rt = mean(rt)) %>% 
-  ggplot(aes(x = gaze_condition, y = m_rt, fill = shift_accuracy)) + 
-  geom_boxplot(width = 0.5) +
-  ylim(0,1) +
-  labs(x = "Condition", y = "RT (sec)") +
-  theme(text = element_text(size = 18))
+cowplot::plot_grid(rt_block, acc_block)
 ```
-
-```{r}
-acc_colors <- c("grey10", "black")
-fill_vals <- c("grey90", "darkviolet")
-
-p <- d.filt %>% 
-  filter(is.na(rt) == F) %>% 
-  ggplot(aes(x = forcats::fct_rev(gaze_condition), y = rt)) +
-  ggbeeswarm::geom_quasirandom(shape = 21, fill = "grey10", color = "black") + 
-  #scale_color_manual(values = acc_colors) +
-  #scale_fill_manual(values = fill_vals) +
-  labs(y = "RT (sec)", x = NULL) +
-  theme_bw() +
-  theme(legend.position = "right") + 
-  theme(axis.title.x = element_text(size = 16, 
-                                    face = "bold"), 
-        axis.title.y = element_text(size = 16,
-                                    face = "bold"), axis.text.x = element_text(size = 14),
-        axis.text.y = element_text(size = 16)) +
-  coord_flip()
-
-p
-```
-
-### Block effects RT
-
-```{r}
-d.filt %<>% mutate(block = ifelse(tr.num <= 16, "block_1", "block_2"))
-```
-
-Now, let's plot RT as a function of block
-
-```{r}
-ss <- d.filt %>% 
-  filter(shift_type %in% c("C_T", "C_D")) %>% 
-  group_by(subid, gaze_condition, shift_accuracy, block) %>% 
-  summarise(m_rt = mean(rt))
-```
-
-```{r}
-ss %>% 
-  ggplot(aes(x = gaze_condition, y = m_rt, fill = shift_accuracy)) + 
-  geom_boxplot() +
-  facet_wrap(~block) +
-  theme_bw()
-```
-
-### Block effects Accuracy
-
-```{r}
-ss.acc <- d.filt %>% 
-  filter(shift_type %in% c("C_T", "C_D")) %>% 
-  group_by(subid, gaze_condition, block, shift_accuracy) %>% 
-  summarise(n_trials = n()) %>% 
-  group_by(subid, gaze_condition, block) %>% 
-  mutate(n_total_trials = sum(n_trials),
-         prop = n_trials / n_total_trials)
-```
-
-```{r}
-ss.acc %>% 
-  filter(shift_accuracy == "correct") %>% 
-  ggplot(aes(x = gaze_condition, y = prop)) + 
-  geom_boxplot(width = 0.3) +
-  geom_jitter(alpha = 0.4, width = 0.05) +
-  ylim(0,1) +
-  geom_hline(yintercept = 0.5, linetype == "dashed") +
-  facet_wrap(~block) +
-  theme_bw() 
-```
-
-### Accuracy as a function of RT
-
-```{r}
-d.cut <- d.filt %>% 
-  filter(rt <= 2) %>% 
-  mutate(rt_bin = cut(rt, breaks = 4)) 
-```
-
-
-```{r}
-ss.acc.rt <- d.cut %>% 
-  filter(shift_type %in% c("C_T", "C_D")) %>% 
-  group_by(subid, gaze_condition, shift_accuracy, rt_bin) %>% 
-  summarise(n_trials = n()) %>% 
-  group_by(subid, gaze_condition, rt_bin) %>% 
-  mutate(n_total_trials = sum(n_trials),
-         prop = n_trials / n_total_trials)
-```
-
-
-```{r}
-ms <- ss.acc.rt %>% 
-  filter(shift_accuracy == "correct") %>% 
-  group_by(gaze_condition, shift_accuracy, rt_bin) %>% 
-  multi_boot_standard(column = "prop", nboot = 100)  
-```
-  
-```{r}
-ms %>% 
-  ggplot(aes(x = rt_bin, y = mean, color = gaze_condition)) + 
-  geom_pointrange(aes(ymin = summary_ci_lower, ymax = summary_ci_upper), position = position_jitter(width = .2)) + 
-  #geom_jitter(alpha = 1, width = 0.05) +
-  ylim(0,1.1) +
-  geom_hline(yintercept = 0.5, linetype = "dashed") +
-  theme_bw() 
-```
-
 
 ## Predictions with fake data
 
@@ -325,15 +190,9 @@ fake_df %>%
   geom_bar(stat = "identity", width = 0.3) +
   facet_grid(measure~prediction, scales = "free_y") +
   guides(fill = F) +
-  scale_fill_manual(values = c("dodgerblue", "darkred", "darkorange")) +
-  #ylim(0,1.2) +
-  theme_bw() +
-  theme(text = element_text(size = 18))
+  scale_fill_manual(values = c("dodgerblue", "darkred", "darkorange")) 
 ```
 
-
 ## Statistical models
-
-We can talk more about this aspect of the anlaysis once you made some progress on data viz. 
 
 

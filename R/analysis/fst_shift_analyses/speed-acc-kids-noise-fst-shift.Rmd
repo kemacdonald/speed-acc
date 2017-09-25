@@ -1,6 +1,5 @@
 ---
 title: "Speed-Acc-Child Noise first shift analysis"
-author: "Hannah Slater and Kyle MacDonald"
 output: html_document
 ---
 
@@ -12,7 +11,7 @@ rm(list=ls())
 
 # set some global options
 knitr::opts_chunk$set(warning=F, message=F, sanitize = T, 
-                      fig.height=5, fig.width=8, echo=T, cache = F)
+                      fig.height=4, fig.width=8, echo=T, cache = F)
 ```
 
 read in personal library of helper functions
@@ -38,7 +37,7 @@ d %>% distinct(subid_short) %>% count() %>% kable()
 
 How many trials do we have for each participant?
 
-```{r}
+```{r, eval = F}
 d %>% 
   select(subid_short, tr.num) %>% 
   unique() %>% 
@@ -51,7 +50,7 @@ Not every participant has the same number of trials, but no participant has more
 
 How many trials does each participoant have in each condition? 
 
-```{r}
+```{r, eval = F}
 trials_df <- d %>% 
   filter(!(is.na(rt))) %>% 
   select(subid_short, tr.num, noise_condition) %>% 
@@ -142,53 +141,41 @@ ss.rt <- d.analysis %>%
   summarise(m_rt = median(rt, na.rm = T)) 
 ```
 
-RT boxplot
+Make RT boxplot.
 
 ```{r}
-ss.rt %>% 
-  ggplot(mapping = aes(x = noise_condition, y = m_rt, fill = shift_accuracy_clean)) +
-  geom_boxplot(width = 0.3) +
-  theme(legend.position = "right") + 
-  theme(axis.title.x = element_text(size = 16, face = "bold"), 
-        axis.title.y = element_text(size = 16, face = "bold"), 
-        axis.text.x = element_text(size = 14),
-        axis.text.y = element_text(size = 14)) + 
-  scale_y_continuous(limits=c(0,1)) + 
-  labs(y = "reaction time", x = "condition") + 
-  facet_wrap(~block)
+rt_boxplot <- ss.rt %>% 
+  filter(block == "block_1") %>% 
+  ggplot(aes(x = noise_condition, y = m_rt)) + 
+  geom_boxplot(width = 0.2, fill = "darkorange") +
+  ylim(0,1) +
+  labs(x = "Condition", y = "RT (sec)")  
 ```
 
-Now plot RT as a function of correct or incorrect shifts, collapsing across blocks.
+Make plot for RT block effects
 
 ```{r}
-ss.rt %>% 
+rt_block <- ss.rt %>% 
   ggplot(aes(x = noise_condition, y = m_rt, fill = shift_accuracy_clean)) + 
-  geom_boxplot() +
-  scale_y_continuous(limits=c(0,0.8)) + 
-  labs(y = "reaction time") 
+  geom_boxplot(width = 0.3) +
+  ylim(0,1) +
+  labs(x = "Condition", y = "RT (sec)")  +
+  facet_wrap(~block) +
+  langcog::scale_fill_solarized() +
+  theme(legend.position = "top")
 ```
 
 Let's try visualizing RT distributions using beeswarm plot to see if the shape of the RT distributions look different across the noise conditions.
 
 ```{r}
-acc_colors <- c("grey10", "black")
-fill_vals <- c("#F8766D", "#00BFC4")
-
 d.analysis %>% 
   ggplot(aes(x = forcats::fct_rev(noise_condition), y = rt, 
              color = shift_accuracy_clean, fill = shift_accuracy_clean)) +
   ggbeeswarm::geom_quasirandom(shape = 21) + 
-  scale_color_manual(values = acc_colors) +
-  scale_fill_manual(values = fill_vals) +
   labs(y = "RT (sec)", x = NULL) +
-  #facet_wrap(~block, ncol = 1) +
   theme(legend.position = "right") + 
-  theme(axis.title.x = element_text(size = 16, 
-                                    face = "bold"), 
-        axis.title.y = element_text(size = 16, 
-                                    face = "bold"), axis.text.x = element_text(size = 14),
-        axis.text.y = element_text(size = 14)) +
-  coord_flip()
+  coord_flip() +
+  langcog::scale_color_solarized()
 ```
 
 ### Aggregate Accuracy
@@ -206,18 +193,41 @@ ss.acc <- d.analysis %>%
 Now make accuracy boxplot
 
 ```{r}
-ss.acc %>% 
+acc_boxplot <- ss.acc %>% 
   filter(shift_accuracy_clean == "correct") %>% 
   ggplot() + 
   geom_boxplot(mapping = aes(x = noise_condition, y = prop), 
-               fill = ("#F8766D"), width = 0.3) +
-  theme(axis.title.x = element_text(size = 16, face = "bold"), 
-        axis.title.y = element_text(size = 16, face = "bold"), 
-        axis.text.x = element_text(size = 14),
-        axis.text.y = element_text(size = 14)) +
+               width = 0.2,
+               fill = "dodgerblue") +
   scale_y_continuous(limits=c(0,1)) + 
-  labs(y = "shift accuracy") +
-  facet_wrap(~block)
+  geom_hline(yintercept = 0.5, linetype = "dashed") +
+  labs(x = "Condition", y = "Prop. Correct") 
+```
+
+
+```{r}
+acc_block <- ss.acc %>% 
+  filter(shift_accuracy_clean == "correct") %>% 
+  ggplot() + 
+  geom_boxplot(mapping = aes(x = noise_condition, y = prop), 
+               width = 0.2,
+               fill = "dodgerblue") +
+  scale_y_continuous(limits=c(0,1)) + 
+  geom_hline(yintercept = 0.5, linetype = "dashed") +
+  labs(x = "Condition", y = "Prop. Correct") +
+  facet_wrap(~block) 
+```
+
+### Plot Acc and RT together
+
+```{r}
+cowplot::plot_grid(rt_boxplot, acc_boxplot)
+```
+
+### Plot Block effects
+
+```{r}
+cowplot::plot_grid(rt_block, acc_block)
 ```
 
 ## Statistical models

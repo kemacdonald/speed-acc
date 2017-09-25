@@ -324,9 +324,6 @@ read.smi.idf <- function (file.name, suffix.len = 4) {
            t = to.n(t))
   
   ## merge stimulus information back into d frame as a column
-  
-  
-  
   d$stimulus <- sapply(d$t,
                        function(x) {
                          set <- msgs$stimulus[msgs$t < x]
