@@ -230,6 +230,31 @@ cowplot::plot_grid(rt_boxplot, acc_boxplot)
 cowplot::plot_grid(rt_block, acc_block)
 ```
 
+## Learning effects
+
+```{r}
+n_trials_block <- 16
+d.analysis %<>% mutate(tr.num.block = ifelse(block == "block_1", 
+                                             tr.num, 
+                                             tr.num - n_trials_block))
+```
+
+Summarise and plot the change in RT over the course of a block.
+
+```{r}
+d.analysis %>% 
+  filter(shift_start_location == "center") %>% 
+  mutate(tr.num.bin = cut(tr.num.block, breaks = 3)) %>% 
+  group_by(subid_short, noise_condition, shift_accuracy_clean, tr.num.bin, block) %>% 
+  summarise(m_rt = median(rt, na.rm = T))  %>% 
+  ggplot(aes(x = tr.num.bin, y = m_rt, fill = noise_condition)) +
+  geom_boxplot(width = 0.2) +
+  scale_y_continuous(limits=c(0,1.5)) + 
+  labs(x = "Condition", y = "RT (sec)") +
+  facet_wrap(~block, ncol = 1) +
+  langcog::scale_fill_solarized()
+```
+
 ## Statistical models
 
 ```{r}
@@ -241,7 +266,7 @@ d.model <- d.analysis %>%
 Accuracy model
 
 ```{r}
-m1.acc <- glmer(correct ~ noise_condition * block + (noise_condition|subid_short) + (1|target_image), 
+m1.acc <- glmer(correct ~ noise_condition * block + (noise_condition|subid_short) + (1|target_image),
                 data = d.model,
                 family = "binomial")
 
