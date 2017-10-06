@@ -29,8 +29,16 @@ d <- files %>% purrr::map_df(read_ewma, path = ewma.path)
 Make all the control charts. 
 
 ```{r}
+ewma_control_charts_trio <- d %>% 
+  filter(rt <= 1.5, experiment == "trio") %>% 
+  split(.$experiment) %>% 
+  purrr::map(.f = aggregate_ewma) %>% 
+  purrr::map(.f = plot_ewma_chart)
+```
+
+```{r}
 ewma_control_charts <- d %>% 
-  filter(rt <= 1.5) %>% 
+  filter(rt <= 1, experiment != "trio") %>% 
   split(.$experiment) %>% 
   purrr::map(.f = aggregate_ewma) %>% 
   purrr::map(.f = plot_ewma_chart)
@@ -39,7 +47,7 @@ ewma_control_charts <- d %>%
 ### Experiment 1: Trio (kids)
 
 ```{r kid_ewma}
-ewma_control_charts$trio
+ewma_control_charts_trio$trio
 ```
 
 ### Experiment 2: Text (Adults)
@@ -50,8 +58,10 @@ ewma_control_charts$text
 
 ### Experiment 3: Noise and Gaze (kids)
 
-```{r, fig.width = 9}
-cowplot::plot_grid(ewma_control_charts$noise, ewma_control_charts$gaze, ncol = 2)
+```{r, fig.width = 9, fig.height = 4}
+cowplot::plot_grid(ewma_control_charts$noise, ewma_control_charts$gaze, 
+                   labels = c("noise", "gaze"),
+                   ncol = 2)
 ```
 
 Save control charts.
