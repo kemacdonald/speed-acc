@@ -1,10 +1,7 @@
 ---
-title: "R Notebook"
+title: "Speed-acc-adult-ng timecourse"
 output:
-  html_document: default
-  html_notebook: default
-editor_options:
-  chunk_output_type: inline
+output: html_document
 ---
 
 This script plots and analyzes the timecrouse eye-tracking data for an experiment comparing speed-accuracy tradeoffs when establishing reference in real-time. We vary the information value and saliency of the center fixation and measure the effects on accuracy and RT.
@@ -70,22 +67,15 @@ Get means and CIs for proportion looking at each time slice across particpants
 ```{r}
 ms.means.timeslice <- ss.d %>% 
   group_by(t.stim, condition, target_looking) %>% 
-  summarise(mean = mean(proportion_looking, na.rm = T)) %>% 
-  mutate(gaze_condition = ifelse(str_detect(condition, "no_gaze"), "no_gaze", "gaze"),
-         noise_condition = ifelse(str_detect(condition, "no_noise"), "no_noise", "noise"))
+  summarise(mean = mean(proportion_looking, na.rm = T))
 ```
 
 Now make the Tanenhaus style curves for each condition 
 
 ```{r}
-ms.means.timeslice %<>%
-  mutate(noise_condition = ifelse(noise_condition == "no_noise", 
-                                  "clear", noise_condition))
-
 ms.means.timeslice %>% 
-  filter(gaze_condition == "no_gaze") %>% 
   ggplot(aes(x = as.numeric(t.stim), y = mean, 
-           color = target_looking, linetype = noise_condition), data = .) + 
+           color = target_looking, linetype = noise_condition)) + 
   ylim(0,1) +
   xlim(0,10.5) +
   geom_line(size=1) +

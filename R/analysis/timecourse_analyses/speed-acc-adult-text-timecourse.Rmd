@@ -1,7 +1,6 @@
 ---
-title: "Speed-acc-adult timecourse"
+title: "Speed-acc-adult-text timecourse"
 author: "Kyle MacDonald"
-date: "11/4/2016"
 output: html_document
 ---
 
