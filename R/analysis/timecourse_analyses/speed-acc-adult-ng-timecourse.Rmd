@@ -1,6 +1,5 @@
 ---
 title: "Speed-acc-adult-ng timecourse"
-output:
 output: html_document
 ---
 
@@ -12,9 +11,6 @@ Load libraries and read in tidy data.
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo=F, warning=F, cache=F, message=F, sanitize = T, results = 'asis')
-```
-
-```{r}
 source("../../helper_functions/libraries_and_functions.R")
 ```
 
@@ -28,6 +24,30 @@ Create condition column
 
 ```{r}
 d %<>% mutate(condition = paste(gaze_condition, noise_condition, sep = "_"))
+```
+
+## Diagnostic plots
+
+```{r}
+d %>% 
+  filter(subid == subid[8], block == "block_1") %>% 
+  ggplot(aes(x = t.stim, y = x)) + 
+  geom_line() + 
+  geom_point(alpha = .3) + 
+  facet_wrap(~tr.num) + 
+  ylim(c(0,1920)) + 
+  geom_hline(yintercept = 1920/2, lty =2 )
+```
+
+```{r}
+d %>% 
+  filter(subid == subid[10], block == "block_1") %>% 
+  ggplot( aes(x = x, y = y, col = t.stim)) + 
+  geom_line() + 
+  geom_point(alpha = .3) + 
+  facet_wrap(~tr.num) + 
+  xlim(c(0,1920)) + 
+  ylim(c(0,1080)) 
 ```
 
 ## Visualize looking behavior 
@@ -75,7 +95,7 @@ Now make the Tanenhaus style curves for each condition
 ```{r}
 ms.means.timeslice %>% 
   ggplot(aes(x = as.numeric(t.stim), y = mean, 
-           color = target_looking, linetype = noise_condition)) + 
+             color = target_looking, linetype = noise_condition)) + 
   ylim(0,1) +
   xlim(0,10.5) +
   geom_line(size=1) +
@@ -87,9 +107,9 @@ ms.means.timeslice %>%
   ylab("Proportion looking") +
   geom_dl(aes(label = target_looking), method = "last.bumpup") +
   #annotate("text", label = "Sentence Onset", x = mean(d$sentence_onset_seconds)-0.3, 
-           #y = 0.4, size = 4, colour = "dodgerblue") +
+  #y = 0.4, size = 4, colour = "dodgerblue") +
   #annotate("text", label = "Noun Onset", x = mean(d$noun_onset_seconds)-0.3, 
-   #        y = 0.4, size = 4 , colour = "dodgerblue") +
+  #        y = 0.4, size = 4 , colour = "dodgerblue") +
   theme_bw() +
   theme(text = element_text(size = 18),
         legend.position = "top") 
@@ -101,7 +121,7 @@ We can do the same thing to compare the effect of gaze across the noise conditio
 ms.means.timeslice %>% 
   filter(noise_condition == "no_noise") %>% 
   ggplot(aes(x = as.numeric(t.stim), y = mean, 
-           color = target_looking, linetype = gaze_condition), data = .) + 
+             color = target_looking, linetype = gaze_condition), data = .) + 
   ylim(0,1) +
   xlim(0,10.5) +
   geom_line(size=1) +
@@ -113,9 +133,9 @@ ms.means.timeslice %>%
   ylab("Proportion looking") +
   geom_dl(aes(label = target_looking), method = "last.bumpup") +
   #annotate("text", label = "Sentence Onset", x = mean(d$sentence_onset_seconds)-0.3, 
-           #y = 0.4, size = 4, colour = "dodgerblue") +
+  #y = 0.4, size = 4, colour = "dodgerblue") +
   #annotate("text", label = "Noun Onset", x = mean(d$noun_onset_seconds)-0.3, 
-   #        y = 0.4, size = 4 , colour = "dodgerblue") +
+  #        y = 0.4, size = 4 , colour = "dodgerblue") +
   theme_bw() +
   theme(text = element_text(size = 18),
         legend.position = "top") 
@@ -145,8 +165,8 @@ ss.d.tr <- d.analysis %>%
 # get proportion looking by dividing the freq looking at each target by the total looking 
 # derived in step 1 of this chunk
 ss.d.tr <- as.data.frame(xtabs(~ subid + tr.num + target_looking + condition,
-                            data = d.analysis),
-                      stringsAsFactors = F) %>% 
+                               data = d.analysis),
+                         stringsAsFactors = F) %>% 
   mutate(tr.num = as.numeric(tr.num)) %>% 
   left_join(x = ss.d.tr, y = ., by = c("subid", "tr.num", "condition")) %>%
   mutate(proportion_looking = Freq / count) %>% 
@@ -253,7 +273,7 @@ Now summarise and plot.
 d.order.analysis %>% 
   ungroup() %>% 
   filter(target_looking == "center") %>% 
-    mutate(tr_cond = as.numeric(tr_cond), 
+  mutate(tr_cond = as.numeric(tr_cond), 
          tr.binned = cut(tr_cond, breaks = 4)) %>% 
   group_by(tr.binned, condition) %>% 
   summarise(m = mean(prop_looking),
