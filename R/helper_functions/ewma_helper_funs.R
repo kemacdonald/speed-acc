@@ -136,7 +136,7 @@ make_ribbons <- function(ewma_df, cutoffs_df) {
 plot_ewma_chart <- function(model_vals) {
   ewma_df <- model_vals$ewma_summary
   cutoffs_df <- model_vals$cutoff_summary %>% filter(guess == "response")
-  
+
   # get x-axis limit
   x_max <- max(ewma_df$rt) + 0.1
   
@@ -162,7 +162,7 @@ plot_ewma_chart <- function(model_vals) {
     labs(x = "RT (sec)", y = "EWMA statistic") +
     guides(color=F) + 
     xlim(0, x_max) +
-    facet_grid(condition~.) +
+    facet_wrap(~condition, ncol = 1) +
     scale_color_manual(values = c("black", "darkgrey")) +
     geom_dl(aes(label = ewma_param), method = "last.bumpup") +
     ggthemes::theme_few() +

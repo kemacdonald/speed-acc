@@ -23,11 +23,38 @@ for (file.name in files) {
   
   ## these are the two functions that are most meaningful
   d <- read.smi.idf(paste(raw.data.path,file.name,sep=""))
-  d <- preprocess.data(d, x.max = 1920, y.max= 1080) 
+  d <- preprocess.data(d, x.max = 1920, y.max= 1080, samp.rate = 30) 
   
   ## now here's where data get bound togetherq
   all.data <- bind_rows(all.data, d)
 }
+
+## some diagnostic plots
+d_plot <- all.data %>%
+  filter(!is.na(x), !is.na(y)) %>%
+  mutate(x = ifelse(x < 1 | x > 1919, NA, x), 
+         y = ifelse(y < 1 | y > 1079, NA, y))
+
+stimulus_test_idx <- 10
+
+d_plot %>% 
+  filter(stimulus == stimulus[stimulus_test_idx]) %>% 
+  ggplot(aes(x = t.stim, y = x)) + 
+  geom_line(col = "darkgrey") + 
+  geom_point(alpha = .3) + 
+  ylim(c(0,1920)) + 
+  geom_hline(yintercept = 1920/2, lty = 2) +
+  facet_wrap(~subid) 
+
+d_plot %>% 
+  filter(stimulus == stimulus[stimulus_test_idx]) %>% 
+  ggplot(aes(x = x, y = y)) + 
+  geom_line(col = "darkgrey") + 
+  geom_point(alpha = .3) + 
+  xlim(c(0,1920)) + 
+  ylim(c(0,1080)) +
+  theme(legend.position = "top") +
+  facet_wrap(~subid) 
 
 # check how many unique trial labels we have for each participant
 all.data %>% 

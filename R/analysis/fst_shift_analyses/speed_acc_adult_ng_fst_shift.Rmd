@@ -1,15 +1,10 @@
 ---
-title: "Speed-Acc Noise Gaze Analysis"
+title: "Speed-Acc Adult Noise-Gaze first shift"
 author: "Kyle MacDonald"
 output: html_document
 ---
 
 ## Set up 
-
-Here are some helpful links for understanding the workflow for analyzing data in R Markdown (what you're doing in this document!):
-
- * [Scripts](http://r4ds.had.co.nz/workflow-scripts.html)
- * An R Markdown [guide](https://docs.google.com/document/d/1ajv1VJqEheVws93tnzH-K7145vBKtwD3Az5pg3faRdw/edit?usp=sharing) that I wrote for the lab
  
 ```{r chunk_options, echo = F}
 # code to clear workspace
@@ -27,33 +22,30 @@ source("../../helper_functions/libraries_and_functions.R")
 
 ## Load data
 
-Section 11.2 from [this](http://r4ds.had.co.nz/data-import.html) chapter on data importing is great.
-
-**KM note**: this way of reading the file will work, but it only will work on your computer since this part of the path [~/Desktop/Research/] is specific to where you saved the data. The solution is to use a relative path like I've done here. You can check out this [video](https://www.youtube.com/watch?v=fe6GA200dks) for more background.
-
 ```{r}
-# read in the data using a relative path that starts from the analysis file directory
 d <- read_csv("../../../data/3_final_merged_data/first_shifts/speed_acc_adult_ng_fstshift_tidy.csv")
 ```
 
+Remove participants who didn't pass data checks or who should be excluded for things like first language not English. 
+
+```{r}
+d %<>% filter(keep_runsheet == "yes", keep_et == "include")
+```
+
 ## Check the data
-
-The goal of this section is to make sure the data match our expectations, or in other words, we are "testing" our data. Usually this involves comparing a known value to the number actually in the data set. For example, I know how I ran 20 participants, do I have 20 unique participant IDs?
-
-[This](http://r4ds.had.co.nz/transform.html) chapter from the book **R for Data Science** is a good reference for writing code to manipulate data to do data "sanity" checks.
-
-How many participants in the dataset?  
 
 ```{r}
 d %>% select(subid) %>% unique() %>% count()
 ```
 
-How many trials do we have for each participant?
+Do we have 64 trials for each participant?
 
 ```{r}
 d %>% 
   group_by(subid) %>% 
-  select()
+  select(tr.num) %>% 
+  unique() %>% 
+  count() %>% pull(n) == 64
 ```
 
 Looks like we need to create a single variable that stores information about both the noise and gaze condition. 
@@ -62,32 +54,17 @@ Looks like we need to create a single variable that stores information about bot
 d %<>% mutate(condition_long = paste(gaze_condition, noise_condition, sep = "_"))
 ```
 
-**KM note**: Now we can see how many trials are in each condition.
+## Visualize data distributions
+
+Reaction Times (RT)
 
 ```{r}
 d %>% 
-  filter(response_onset_type == "noun") %>% 
-  group_by(subid, condition_long) %>% 
-  summarise(n = n()) %>% 
-  kable()
-```
-
-TODO: Check out what's going on with #8
-
-This looks like a data merging issue where #8's data. Not sure what's going on?
-
-## Explore data via visualization
-
-[This](http://r4ds.had.co.nz/data-visualisation.html) is a great book chapter on data visualization using the ggplot2 R package
-
-### Visualize data distributions
-
-What about Reaction Times (RT)?
-
-```{r}
-ggplot(d, aes(x = rt, color = condition_long)) +
-  geom_freqpoly(alpha = 1, size = 1) +
-  facet_grid(~response_onset_type) +
+  filter(is.na(shift_accuracy) == F) %>% 
+  ggplot(aes(x = rt, color = condition_long)) +
+  geom_line(stat = "density", adjust = 1, size = 1) +
+  facet_grid(response_onset_type~shift_accuracy) +
+  theme(legend.position = "top") +
   theme_bw()
 ```
 
@@ -95,49 +72,41 @@ What about Accuracy?
 
 ```{r}
 d %>% 
-  filter(response_onset_type == "sentence", shift_type %in% c("C_T", "C_D")) %>% 
+  filter(response_onset_type == "noun", 
+         shift_type %in% c("C_T", "C_D")) %>% 
   ggplot() +
-  geom_bar(mapping = aes(x = subid, fill = shift_accuracy)) +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+  geom_bar(mapping = aes(x = as.factor(subid_short), fill = shift_accuracy)) +
+  labs(x = "Participant ID") +
+  facet_wrap(~condition_long, ncol = 1) +
+  theme(legend.position = "top")
 ```
 
-## filter the data
-
-Let's filter out the participants who was not a native speaker of English
-
-```{r}
-d.filt <- d %>% filter(!(subid %in% c("speed_acc_adult_ng_1", "speed_acc_adult_ng_8")), 
-                       response_onset_type == "center.fixation")
-```
+## Filter the data
 
 Next, let's remove extreme RTs. 
 
 ```{r}
-d.filt %<>% filter(rt <= 5)
+d.filt <- d %>% 
+  filter(response_onset_type == "noun", 
+         rt <= 5) %>% 
+  mutate(shift_acc_num = ifelse(shift_accuracy == "correct", 1, 0))
 ```
 
 ### Visualize Accuracy
-
-What is the overall accuracy of first shifts?
-
-```{r}
-ggplot(d.filt) + 
-  geom_bar(mapping = aes(x = shift_accuracy))
-```
 
 Let's visualize accuracy collapsing across the gaze and noise conditions. First we are going to summarise to get a proportion correct for each participant and condition. Then we aggregate again to get an overall proportion correct for each condition. 
 
 ```{r}
 # aggregate accuracy at the participant level
 ss.acc <- d.filt %>% 
-  filter(!is.na(shift_accuracy),
-        shift_type %in% c("C_T", "C_D")) %>% 
-        # str_detect(condition_long, "no_noise")) 
-  group_by(condition_long, subid, shift_accuracy) %>% 
+  filter(!is.na(shift_accuracy)) %>% 
+  group_by(condition_long, subid, shift_accuracy, gaze_condition, 
+           noise_condition) %>% 
   summarise(n = n()) %>% 
-  group_by(subid, condition_long) %>% 
-  mutate(total_trials = sum(n),
-         prop = round(n / total_trials, 2)) 
+  group_by(subid, condition_long, gaze_condition, noise_condition) %>% 
+  mutate(total_trials = sum(n)) %>% 
+  filter(total_trials >= 8) %>%
+  mutate(prop = round(n / total_trials, 2)) 
 ```
 
 Now make a boxplot of the accuracy data for each condition. Note that we have to first filter out the proprotion "incorrect" rows, so we are only seeing the proprotion correct data.
@@ -145,13 +114,16 @@ Now make a boxplot of the accuracy data for each condition. Note that we have to
 ```{r}
 acc_boxplot <- ss.acc %>% 
   filter(shift_accuracy == "correct") %>% 
-  ggplot(aes(x = condition_long, y = prop)) +
-  geom_boxplot(width = 0.5, fill = "dodgerblue") +
-  geom_jitter(width = 0.05, alpha = 0.3) + 
+  ggplot(aes(x = gaze_condition, y = prop)) +
+  geom_boxplot(aes(fill = noise_condition), width = 0.2,
+               notch = T, outlier.alpha = 0) +
+  guides(fill = F) +
+  scale_fill_manual(values = c("darkorange", "dodgerblue")) +
   geom_hline(yintercept = 0.5, linetype = "dashed") +
-  labs(x = "Condition", y = "Prop. Correct") +
-  theme(text = element_text(size = 18)) +
-  ylim(0,1)
+  labs(x = "Gaze condition", y = "Prop. Correct") +
+  ylim(0.3,1)
+
+acc_boxplot
 ```
 
 ### Visualize Reaction Time
@@ -160,27 +132,33 @@ RT Boxplot
 
 ```{r}
 ss.rt <- d.filt %>% 
-  filter(!is.na(shift_accuracy),
-         shift_type %in% c("C_T", "C_D"),
-         str_detect(condition_long, "no_noise")) %>% 
-  group_by(gaze_condition, subid) %>% 
-  summarise(m_rt = mean(rt))
+  filter(!is.na(rt)) %>% 
+  select(subid, condition_long, rt, gaze_condition, noise_condition) %>% 
+  group_by(condition_long, subid, gaze_condition, noise_condition) %>% 
+  mutate(n_trials = n()) %>% 
+  filter(n_trials >= 8) %>% 
+  summarise(m_rt = median(rt))
 ```
 
 ```{r}
 rt_boxplot <- ss.rt %>% 
-  ggplot(aes(x = gaze_condition, y = m_rt)) +
-  geom_boxplot(width = 0.5, fill = "#de2d26") +
-  geom_jitter(width = 0.05, alpha = 0.3) + 
-  ylim(0,1) +
-  labs(x = "Condition", y = "RT (sec)") +
-  theme(text = element_text(size = 18))
+  ggplot(aes(x = fct_reorder(gaze_condition, m_rt, fun = "mean"), y = m_rt,
+             fill = noise_condition)) +
+  geom_boxplot(width = 0.2, notch = T, outlier.alpha = 0) +
+  labs(x = "Gaze condition", y = "RT (sec)") +
+  ylim(0.2, 1) +
+  geom_quantile() +
+  guides(fill=F) +
+  scale_fill_manual(values = c("darkorange", "dodgerblue")) +
+  theme(legend.position = "top") +
+  labs(fill = "noise condition:")
+
+rt_boxplot
 ```
 
 ```{r}
 cowplot::plot_grid(rt_boxplot, acc_boxplot)
 ```
-
 
 ## RT Distributions
 
@@ -189,27 +167,14 @@ acc_colors <- c("grey10", "black")
 fill_vals <- c("grey90", "darkviolet")
 
 p <- d %>% 
-  filter(is.na(rt) == F,
-         rt <= 4,
-         str_detect(condition_long, "no_noise")) %>% 
-  ggplot(aes(x = forcats::fct_rev(gaze_condition), y = rt)) +
-  ggbeeswarm::geom_quasirandom(shape = 21, fill = "black", color = "black") + 
+  filter(is.na(rt) == F, 
+         response_onset_type == "noun") %>% 
+  ggplot(aes(x = forcats::fct_reorder(noise_condition, rt, fun = "mean"), y = rt)) +
+  ggbeeswarm::geom_quasirandom(shape = 21, color = "black", fill = "grey90") + 
   labs(y = "RT (sec)", x = NULL) +
-  theme_bw() +
-  theme(legend.position = "right") + 
-  theme(axis.title.x = element_text(size = 18, 
-                                    face = "bold"), 
-        axis.title.y = element_text(size = 18,
-                                    face = "bold"), axis.text.x = element_text(size = 14),
-        axis.text.y = element_text(size = 18)) +
-  coord_flip()
+  coord_flip() +
+  facet_wrap(~gaze_condition, ncol = 1) +
+  theme(legend.position = "top") 
 
 p
 ```
-
-
-## Statistical models
-
-We can talk more about this aspect of the anlaysis once you made some progress on data viz. 
-
-

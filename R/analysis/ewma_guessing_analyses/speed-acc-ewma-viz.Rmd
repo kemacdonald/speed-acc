@@ -6,11 +6,11 @@ output: html_document
 ```{r setup, include=FALSE}
 rm(list=ls())
 knitr::opts_chunk$set(echo=F, warning=F, cache=F, message=F, sanitize = T, fig.height=6, fig.width=6)
-source("../../helper_functions/libraries_and_functions.R")
-source("../../helper_functions/ewma_helper_funs.R")
-```
+````
 
 ```{r}
+source("../../helper_functions/libraries_and_functions.R")
+source("../../helper_functions/ewma_helper_funs.R")
 ewma.path <- "../../../data/3_final_merged_data/ewma_output/"
 plot.save.path <- "../../../paper/figs/"
 ```
@@ -60,8 +60,13 @@ ewma_control_charts$text
 
 ```{r, fig.width = 9, fig.height = 4}
 cowplot::plot_grid(ewma_control_charts$noise, ewma_control_charts$gaze, 
-                   labels = c("noise", "gaze"),
                    ncol = 2)
+```
+
+### Experiment 3: Noise and Gaze (adults)
+
+```{r}
+ewma_control_charts$noise_gaze
 ```
 
 Save control charts.
@@ -71,7 +76,6 @@ Save control charts.
 ggsave(plot = ewma_control_charts$text, 
        filename = paste0(plot.save.path, "e2_control_chart.png"), 
        width = 3, height = 3.5)
-
 
 # noise gaze adults
 ggsave(plot = ewma_control_charts$noise_gaze, 
@@ -96,11 +100,12 @@ make_ewma_boxplot <- function(d) {
   
   # make plot
   ss %>% 
-  filter(guess == "response") %>% 
-  ggplot(aes(x = fct_rev(condition), y = prop.responding)) +
-  geom_boxplot(fill = "dodgerblue", width = 0.2, alpha = 0.9) +
-  labs(x = "Condition",y = "Prop. Language Driven") +
-  theme(text = element_text(size = 12))
+    filter(guess == "response") %>% 
+    ggplot(aes(x = fct_reorder(condition, prop.responding), y = prop.responding)) +
+    geom_boxplot(fill = "dodgerblue", width = 0.2, alpha = 0.9, outlier.color = "white",
+                 notch = F) +
+    lims(y = c(0,1)) +
+    labs(x = "Condition", y = "Prop. Language Driven") 
   
 }
 ```
@@ -109,7 +114,7 @@ Make all the boxplots for each experiment.
 
 ```{r}
 ewma_boxplots <- d %>% 
-  filter(rt <= 2) %>% 
+  filter(rt <= 1) %>% 
   split(.$experiment) %>% 
   purrr::map(.f = make_ewma_boxplot)
 ```
@@ -119,7 +124,7 @@ Put all the boxplots together.
 ### Experiment 1: Trio (kids)
 
 ```{r, fig.height = 4}
-ewma_boxplots$trio
+ewma_boxplots$trio 
 ```
 
 ### Experiment 2: Text (Adults)
@@ -132,4 +137,10 @@ ewma_boxplots$text
 
 ```{r, fig.height = 4}
 cowplot::plot_grid(ewma_boxplots$noise, ewma_boxplots$gaze, ncol = 2)
+```
+
+### Experiment 3: Noise and Gaze (adults)
+
+```{r, fig.height = 4}
+ewma_boxplots$noise_gaze
 ```

@@ -41,7 +41,7 @@ df_ng_adult <- read_csv(paste0(read.path, "speed_acc_adult_ng_fstshift_tidy.csv"
 df_text_adult <- read_csv(paste0(read.path, "speed_acc_adult_text_fstshift_tidy.csv"))
 ```
 
-Set the global EWMA model parameters.
+Set the global EWMA model parameters. These parameters are taken from Vandekerckhove and Tuerlinckx, 2007. 
 
 ```{r}
 L <- 2

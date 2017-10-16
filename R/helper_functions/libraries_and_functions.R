@@ -355,6 +355,13 @@ preprocess.data <- function(d,
   ## drop the .jpg from the stimulus
   ##d$stimulus <- str_replace(d$stimulus,pattern=".jpg",replacement="")
   
+  # remove bad looks before averaging the eyes
+  d %<>%
+    mutate(rx = ifelse(rx < 1 | rx > 1919, NA, rx),
+           lx = ifelse(lx < 1 | lx > 1919, NA, lx),
+           ry = ifelse(ry < 1 | ry > 1079, NA, ry),
+           ly = ifelse(ly < 1 | ly > 1079, NA, ly))
+  
   ## average the eyes
   if (avg.eyes) {
     # round to the nearest pixel

@@ -30,7 +30,7 @@ d %<>% mutate(condition = paste(gaze_condition, noise_condition, sep = "_"))
 
 ```{r}
 d %>% 
-  filter(subid == subid[8], block == "block_1") %>% 
+  filter(subid == subid[8], block == "block_1", t.stim <= 10) %>% 
   ggplot(aes(x = t.stim, y = x)) + 
   geom_line() + 
   geom_point(alpha = .3) + 
@@ -65,20 +65,21 @@ Summarize data for each ROI for each participant and each time slice.
 ```{r}
 # get number of trials looking at each gaze target for each time slice
 ss.d <- d.filt %>% 
-  group_by(subid, t.stim, condition) %>% 
+  group_by(subid, t.stim, gaze_condition, noise_condition) %>% 
   summarise(count = n()) %>% 
   ungroup() %>% 
-  complete(nesting(subid, t.stim), condition,
+  complete(nesting(subid, t.stim), gaze_condition, noise_condition,
            fill = list(count = 0)) %>% 
   mutate(subid = as.character(subid))
 
 # get proportion looking by dividing the freq looking at each target by the total looking 
 # derived in step 1 of this chunk
-ss.d <- as.data.frame(xtabs(~ subid + t.stim + target_looking + condition, 
+ss.d <- as.data.frame(xtabs(~ subid + t.stim + target_looking + gaze_condition + 
+                              noise_condition, 
                             data = d.filt),
                       stringsAsFactors = F) %>% 
   mutate(t.stim = as.numeric(t.stim)) %>% 
-  left_join(x = ss.d, y = ., by = c("subid", "t.stim", "condition")) %>% 
+  left_join(x = ss.d, y = ., by = c("subid", "t.stim", "gaze_condition", "noise_condition")) %>% 
   mutate(proportion_looking = Freq / count)
 ```
 
@@ -86,61 +87,41 @@ Get means and CIs for proportion looking at each time slice across particpants
 
 ```{r}
 ms.means.timeslice <- ss.d %>% 
-  group_by(t.stim, condition, target_looking) %>% 
+  group_by(t.stim, gaze_condition, noise_condition, target_looking) %>% 
   summarise(mean = mean(proportion_looking, na.rm = T))
 ```
 
 Now make the Tanenhaus style curves for each condition 
 
 ```{r}
-ms.means.timeslice %>% 
-  ggplot(aes(x = as.numeric(t.stim), y = mean, 
-             color = target_looking, linetype = noise_condition)) + 
+p <- ms.means.timeslice %>% 
+  ungroup() %>% 
+  mutate(t.stim = as.numeric(t.stim)) %>% 
+  ggplot(aes(x = t.stim, y = mean, frame = t.stim, 
+             color = target_looking, linetype = gaze_condition)) + 
   ylim(0,1) +
   xlim(0,10.5) +
-  geom_line(size=1) +
-  #facet_wrap(~noise_condition, ncol = 1) +
+  geom_path(aes(cumulative = TRUE), size = 1) +
+  facet_wrap(~noise_condition, ncol = 2) +
   guides(color = F) +
-  xlab("Time in sec from onset of trial") +
+  xlab("Time (sec) from onset of trial") +
   geom_vline(xintercept = mean(d$noun_onset_seconds), linetype = "dashed") +
   geom_vline(xintercept = mean(d$sentence_onset_seconds), linetype = "dashed") +
-  ylab("Proportion looking") +
+  ylab("Prop. looking") +
   geom_dl(aes(label = target_looking), method = "last.bumpup") +
-  #annotate("text", label = "Sentence Onset", x = mean(d$sentence_onset_seconds)-0.3, 
-  #y = 0.4, size = 4, colour = "dodgerblue") +
-  #annotate("text", label = "Noun Onset", x = mean(d$noun_onset_seconds)-0.3, 
-  #        y = 0.4, size = 4 , colour = "dodgerblue") +
-  theme_bw() +
-  theme(text = element_text(size = 18),
-        legend.position = "top") 
+  annotate("text", label = "Sentence Onset", x = mean(d$sentence_onset_seconds)-1.8, 
+           y = 1, size = 4, colour = "black") +
+  annotate("text", label = "Noun Onset", x = mean(d$noun_onset_seconds)+1.5, 
+          y = 1, size = 4 , colour = "black") +
+  theme(legend.position = "top") +
+  scale_color_manual(values = c("dodgerblue", "red", "forestgreen"))
+p
 ```
-
-We can do the same thing to compare the effect of gaze across the noise conditions.
 
 ```{r}
-ms.means.timeslice %>% 
-  filter(noise_condition == "no_noise") %>% 
-  ggplot(aes(x = as.numeric(t.stim), y = mean, 
-             color = target_looking, linetype = gaze_condition), data = .) + 
-  ylim(0,1) +
-  xlim(0,10.5) +
-  geom_line(size=1) +
-  #facet_wrap(~noise_condition, ncol = 1) +
-  guides(color = F) +
-  xlab("Time in sec from onset of trial") +
-  geom_vline(xintercept = mean(d$noun_onset_seconds), linetype = "dashed") +
-  geom_vline(xintercept = mean(d$sentence_onset_seconds), linetype = "dashed") +
-  ylab("Proportion looking") +
-  geom_dl(aes(label = target_looking), method = "last.bumpup") +
-  #annotate("text", label = "Sentence Onset", x = mean(d$sentence_onset_seconds)-0.3, 
-  #y = 0.4, size = 4, colour = "dodgerblue") +
-  #annotate("text", label = "Noun Onset", x = mean(d$noun_onset_seconds)-0.3, 
-  #        y = 0.4, size = 4 , colour = "dodgerblue") +
-  theme_bw() +
-  theme(text = element_text(size = 18),
-        legend.position = "top") 
+library(gganimate)
+gganimate(p, interval = .1)
 ```
-
 
 ## Standard "window" accuracy analyses
 
@@ -179,16 +160,13 @@ Now we can plot the trial level summarized looking data. Here we use a boxplot t
 ```{r, fig.width=8}
 ggplot(aes(x= target_looking, y = m_prop_looking, fill = condition), 
        data = ss.d.tr) +
-  geom_boxplot(alpha = 0.8) +
-  geom_point(alpha = 0.6, 
-             position = position_jitterdodge(jitter.width = 0.1,
-                                             dodge.width = 0.75)) +
+  geom_boxplot(alpha = 0.8, notch = T) +
   labs(x = "Gaze Location",
        y = "Prop. Looking") +
-  theme(text = element_text(size = 16))
+  theme(legend.position = "top")
 ```
 
-KM: STOPPED HERE
+KM note: stopped analysis here. code below is from another experiment. 
 
 ### Analyze looking behavior prior to central fixation onset 
 
