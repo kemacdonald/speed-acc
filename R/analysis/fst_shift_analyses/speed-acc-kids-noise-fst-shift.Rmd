@@ -146,10 +146,19 @@ Make RT boxplot.
 ```{r}
 rt_boxplot <- ss.rt %>% 
   filter(block == "block_1") %>% 
-  ggplot(aes(x = noise_condition, y = m_rt)) + 
-  geom_boxplot(width = 0.2, fill = "darkorange", notch = T) +
-  ylim(0,1) +
-  labs(x = "Condition", y = "RT (sec)")  
+  ggplot(aes(x = noise_condition, y = m_rt, fill = shift_accuracy_clean)) + 
+  geom_boxplot(width = 0.2, notch = F, outlier.colour = "white") +
+  ylim(0, 1) +
+  scale_x_discrete(expand = c(0,1)) +
+  scale_fill_manual(values = c("darkorange", "dodgerblue")) +
+  theme_classic() +
+  theme(legend.position=c(0.35,0.9),
+        legend.direction="horizontal", 
+        legend.background = element_rect(fill=alpha('white', 0.4))) +
+  labs(x = "Condition", y = "RT (sec)", fill = NULL)  
+   
+
+rt_boxplot
 ```
 
 Make plot for RT block effects
@@ -170,7 +179,7 @@ rt_block <- ss.rt %>%
 ```{r}
 ss.acc <- d.analysis %>% 
   filter(shift_start_location == "center") %>% 
-  group_by(noise_condition, subid_short, shift_accuracy_clean, block) %>% 
+  group_by(noise_condition, subid_short, shift_accuracy_clean) %>% 
   summarise(n = n()) %>% 
   group_by(subid_short, noise_condition) %>% 
   mutate(total_trials = sum(n),
@@ -185,11 +194,15 @@ acc_boxplot <- ss.acc %>%
   ggplot() + 
   geom_boxplot(mapping = aes(x = noise_condition, y = prop), 
                width = 0.2,
-               fill = "dodgerblue",
-               notch = T) +
-  scale_y_continuous(limits=c(0,1)) + 
+               fill = "darkgrey",
+               notch = F) +
+  scale_x_discrete(expand = c(0,1)) +
   geom_hline(yintercept = 0.5, linetype = "dashed") +
-  labs(x = "Condition", y = "Prop. Correct") 
+  labs(x = "Condition", y = "Prop. Correct") +
+  ylim(0.2,1) +
+  theme_classic() 
+
+acc_boxplot
 ```
 
 
@@ -209,7 +222,7 @@ acc_block <- ss.acc %>%
 ### Plot Acc and RT together
 
 ```{r}
-cowplot::plot_grid(rt_boxplot, acc_boxplot)
+cowplot::plot_grid(rt_boxplot, acc_boxplot, rel_widths = c(1.5,1))
 ```
 
 ### Plot Block effects
@@ -247,14 +260,14 @@ d.analysis %>%
 
 ```{r}
 d.model <- d.analysis %>% 
-  filter(shift_start_location == "center") %>% 
+  filter(block == "block_2") %>% 
   mutate(correct = ifelse(shift_accuracy_clean == "correct", 1, 0))
 ```
 
 Accuracy model
 
 ```{r}
-m1.acc <- glmer(correct ~ noise_condition * block + (noise_condition|subid_short) + (1|target_image),
+m1.acc <- glmer(correct ~ noise_condition + (noise_condition|subid_short) + (1|target_image),
                 data = d.model,
                 family = "binomial")
 

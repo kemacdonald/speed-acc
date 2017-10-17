@@ -109,21 +109,22 @@ ss.acc <- d.filt %>%
   mutate(prop = round(n / total_trials, 2)) 
 ```
 
-Now make a boxplot of the accuracy data for each condition. Note that we have to first filter out the proprotion "incorrect" rows, so we are only seeing the proprotion correct data.
+Now make a boxplot of the accuracy data for each condition. Note that we have to first filter out the prop "incorrect" rows, so we are only seeing the proprotion correct data.
 
 ```{r}
-acc_boxplot <- ss.acc %>% 
-  filter(shift_accuracy == "correct") %>% 
-  ggplot(aes(x = gaze_condition, y = prop)) +
-  geom_boxplot(aes(fill = noise_condition), width = 0.2,
-               notch = T, outlier.alpha = 0) +
+acc_boxplot_noise <- ss.acc %>% 
+  filter(shift_accuracy == "correct", gaze_condition == "straight_ahead") %>% 
+  ggplot(aes(x = noise_condition, y = prop)) +
+  geom_boxplot(fill = "darkgrey", width = 0.2,
+               notch = F, outlier.alpha = 0) +
   guides(fill = F) +
-  scale_fill_manual(values = c("darkorange", "dodgerblue")) +
+  scale_x_discrete(expand = c(0,1)) +
   geom_hline(yintercept = 0.5, linetype = "dashed") +
-  labs(x = "Gaze condition", y = "Prop. Correct") +
-  ylim(0.3,1)
+  labs(x = "Condition", y = "Prop. Correct") +
+  ylim(0.3,1) +
+  theme_classic() 
 
-acc_boxplot
+acc_boxplot_noise
 ```
 
 ### Visualize Reaction Time
@@ -133,31 +134,35 @@ RT Boxplot
 ```{r}
 ss.rt <- d.filt %>% 
   filter(!is.na(rt)) %>% 
-  select(subid, condition_long, rt, gaze_condition, noise_condition) %>% 
-  group_by(condition_long, subid, gaze_condition, noise_condition) %>% 
+  select(subid, condition_long, rt, gaze_condition, noise_condition, shift_accuracy) %>% 
+  group_by(condition_long, subid, gaze_condition, noise_condition, shift_accuracy) %>% 
   mutate(n_trials = n()) %>% 
   filter(n_trials >= 8) %>% 
   summarise(m_rt = median(rt))
 ```
 
 ```{r}
-rt_boxplot <- ss.rt %>% 
-  ggplot(aes(x = fct_reorder(gaze_condition, m_rt, fun = "mean"), y = m_rt,
-             fill = noise_condition)) +
-  geom_boxplot(width = 0.2, notch = T, outlier.alpha = 0) +
-  labs(x = "Gaze condition", y = "RT (sec)") +
-  ylim(0.2, 1) +
-  geom_quantile() +
-  guides(fill=F) +
+rt_boxplot_noise <- ss.rt %>% 
+  filter(gaze_condition == "straight_ahead") %>% 
+  ggplot(aes(x = fct_reorder(noise_condition, m_rt, fun = "mean"), y = m_rt,
+             fill = shift_accuracy)) +
+  geom_boxplot(width = 0.2, notch = F, outlier.alpha = 0) +
+  labs(x = "Condition", y = "RT (sec)") +
+  ylim(0, 1.1) +
+  scale_x_discrete(expand = c(0,1)) +
   scale_fill_manual(values = c("darkorange", "dodgerblue")) +
-  theme(legend.position = "top") +
-  labs(fill = "noise condition:")
+  theme_classic() +
+  theme(legend.position=c(0.35,0.9),
+        legend.direction="horizontal", 
+        legend.background = element_rect(fill=alpha('white', 0.4))) +
+  labs(fill = NULL) 
+  
 
-rt_boxplot
+rt_boxplot_noise
 ```
 
 ```{r}
-cowplot::plot_grid(rt_boxplot, acc_boxplot)
+cowplot::plot_grid(rt_boxplot_noise, acc_boxplot_noise, rel_widths = c(1.5,1))
 ```
 
 ## RT Distributions
@@ -177,4 +182,52 @@ p <- d %>%
   theme(legend.position = "top") 
 
 p
+```
+
+
+## Gaze manipulation
+
+Now make a boxplot of the accuracy data for each condition. Note that we have to first filter out the prop "incorrect" rows, so we are only seeing the proprotion correct data.
+
+```{r}
+acc_boxplot_gaze <- ss.acc %>% 
+  filter(shift_accuracy == "correct", noise_condition == "clear") %>% 
+  ggplot(aes(x = gaze_condition, y = prop)) +
+  geom_boxplot(fill = "darkgrey", width = 0.2,
+               notch = F, outlier.alpha = 0) +
+  guides(fill = F) +
+  scale_x_discrete(expand = c(0,1)) +
+  geom_hline(yintercept = 0.5, linetype = "dashed") +
+  labs(x = "Condition", y = "Prop. Correct") +
+  ylim(0.3,1) +
+  theme_classic() 
+
+acc_boxplot_gaze
+```
+
+### Visualize Reaction Time
+
+RT Boxplot
+
+```{r}
+rt_boxplot_gaze <- ss.rt %>% 
+  filter(noise_condition == "clear") %>% 
+  ggplot(aes(x = fct_reorder(gaze_condition, m_rt, fun = "mean"), y = m_rt,
+             fill = shift_accuracy)) +
+  geom_boxplot(width = 0.2, notch = F, outlier.alpha = 0) +
+  labs(x = "Gaze condition", y = "RT (sec)") +
+  ylim(0, 1.1) +
+  scale_x_discrete(expand = c(0,1)) +
+  scale_fill_manual(values = c("darkorange", "dodgerblue")) +
+  theme_classic() +
+  theme(legend.position=c(0.35,0.9),
+        legend.direction="horizontal", 
+        legend.background = element_rect(fill=alpha('white', 0.4))) +
+  labs(fill = NULL) 
+
+rt_boxplot_gaze
+```
+
+```{r}
+cowplot::plot_grid(rt_boxplot_gaze, acc_boxplot_gaze, rel_widths = c(1.5,1))
 ```

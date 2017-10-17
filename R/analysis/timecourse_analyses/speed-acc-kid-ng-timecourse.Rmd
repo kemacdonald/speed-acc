@@ -143,15 +143,16 @@ ms.means.timeslice %>%
   #facet_wrap(~noise_noise_condition, ncol = 1) +
   guides(color = F) +
   xlab("Time in sec from onset of trial") +
-  geom_vline(xintercept = mean(d$noun_onset_seconds), linetype = "dashed") +
-  geom_vline(xintercept = mean(d$sentence_onset_seconds), linetype = "dashed") +
+  geom_vline(xintercept = min(d$noun_onset_seconds), linetype = "dashed") +
+  geom_vline(xintercept = min(d$sentence_onset_seconds), linetype = "dashed") +
   ylab("Proportion looking") +
   geom_dl(aes(label = target_looking), method = "last.bumpup") +
-  #annotate("text", label = "Sentence Onset", x = mean(d$sentence_onset_seconds)-0.3, 
-           #y = 0.4, size = 4, colour = "dodgerblue") +
-  #annotate("text", label = "Noun Onset", x = mean(d$noun_onset_seconds)-0.3, 
-   #        y = 0.4, size = 4 , colour = "dodgerblue") +
+  annotate("text", label = "Sentence Onset", x = min(d$sentence_onset_seconds)-1.2, 
+           y = 1, size = 4, colour = "black") +
+  annotate("text", label = "Noun Onset", x = min(d$noun_onset_seconds)+1, 
+           y = 1, size = 4 , colour = "black") +
   theme_bw() +
-  theme(text = element_text(size = 18),
-        legend.position = "top") 
+  labs(linetype = "noise condition: ") +
+  theme(legend.position = "top") +
+  scale_color_manual(values = c("dodgerblue", "red", "forestgreen"))
 ```

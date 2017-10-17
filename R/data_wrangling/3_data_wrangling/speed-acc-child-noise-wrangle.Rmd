@@ -337,6 +337,12 @@ d %<>%
   )
 ```
 
+Extract short subid
+
+```{r}
+d %<>% mutate(subid_short = as.numeric(str_extract(subid, "[:digit:]+")))
+```
+
 ### Write tidy data to .csv file
 
 Before writing to .csv, we split the data into the timecourse information and first shift information. This will make analysis more efficient since we won't have to load large datasets into working memory.
@@ -345,9 +351,9 @@ Before writing to .csv, we split the data into the timecourse information and fi
 # timecourse
 d.timecourse <- d %>%
   filter(response_onset_type == "noun") %>% 
-  select(subid, subid_short, t.stim, gaze_condition, noise_condition, target_image,
-         tr.num, noun_onset_sec, gaze_target:shift_accuracy, shift_accuracy_clean, shift_start_location,
-         block, keep_runsheet, keep_et, resp_onset_type_fact)
+  select(subid, subid_short, x, y, t.stim, gaze_condition, noise_condition, target_image,
+         tr.num, noun_onset_sec, gaze_target:shift_accuracy, shift_accuracy_clean, 
+         shift_start_location, block, keep_runsheet, keep_et, resp_onset_type_fact)
 
 # first shift
 d.fs <- d %>% 

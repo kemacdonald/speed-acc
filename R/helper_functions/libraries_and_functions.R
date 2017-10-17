@@ -364,9 +364,20 @@ preprocess.data <- function(d,
   
   ## average the eyes
   if (avg.eyes) {
-    # round to the nearest pixel
-    d$x <- round(rowMeans(d[,c("lx","rx")], na.rm=TRUE))
-    d$y <- round(rowMeans(d[,c("ly","ry")], na.rm=TRUE))
+    # if we have both eyes, then round to the nearest pixel
+    # if one of the eyes is missing, then just use the other eye's coordinate
+    d %<>%
+      mutate(x = ifelse(!is.na(rx) & !is.na(lx), (lx+rx) / 2,
+                        ifelse(is.na(rx) & !is.na(lx), lx, 
+                               ifelse(is.na(lx) & !is.na(rx), rx, 
+                                      NA))),
+             y = ifelse(!is.na(ry) & !is.na(ly), (ly+ry) / 2,
+                        ifelse(is.na(ry), ly, 
+                               ifelse(is.na(ly), ry, 
+                                      NA)))
+             )
+    
+    # remove the l/r eye variable names
     d <- d[, !(names(d) %in% c("lx","rx","ly","ry"))]
   }
   

@@ -95,23 +95,24 @@ Now make the Tanenhaus style curves for each condition
 
 ```{r}
 p <- ms.means.timeslice %>% 
-  ungroup() %>% 
+  ungroup() %>%
+  filter(gaze_condition == "straight_ahead") %>% 
   mutate(t.stim = as.numeric(t.stim)) %>% 
   ggplot(aes(x = t.stim, y = mean, frame = t.stim, 
-             color = target_looking, linetype = gaze_condition)) + 
+             color = target_looking, linetype = noise_condition)) + 
   ylim(0,1) +
   xlim(0,10.5) +
   geom_path(aes(cumulative = TRUE), size = 1) +
-  facet_wrap(~noise_condition, ncol = 2) +
+  #facet_wrap(~noise_condition, ncol = 2) +
   guides(color = F) +
   xlab("Time (sec) from onset of trial") +
-  geom_vline(xintercept = mean(d$noun_onset_seconds), linetype = "dashed") +
-  geom_vline(xintercept = mean(d$sentence_onset_seconds), linetype = "dashed") +
+  geom_vline(xintercept = min(d$noun_onset_seconds), linetype = "dashed") +
+  geom_vline(xintercept = min(d$sentence_onset_seconds), linetype = "dashed") +
   ylab("Prop. looking") +
   geom_dl(aes(label = target_looking), method = "last.bumpup") +
-  annotate("text", label = "Sentence Onset", x = mean(d$sentence_onset_seconds)-1.8, 
+  annotate("text", label = "Sentence Onset", x = min(d$sentence_onset_seconds)-1.8, 
            y = 1, size = 4, colour = "black") +
-  annotate("text", label = "Noun Onset", x = mean(d$noun_onset_seconds)+1.5, 
+  annotate("text", label = "Noun Onset", x = min(d$noun_onset_seconds)+1.5, 
           y = 1, size = 4 , colour = "black") +
   theme(legend.position = "top") +
   scale_color_manual(values = c("dodgerblue", "red", "forestgreen"))

@@ -1,0 +1,209 @@
+---
+title: "Gaze-xsit Looking Animation"
+author: "Kyle MacDonald"
+output: html_document
+---
+
+```{r chunk opts}
+rm(list = ls())
+knitr::opts_chunk$set(echo=T, warning=F, cache=F, message=F, sanitize = T)
+source("../../helper_functions/libraries_and_functions.R")
+```
+
+Read data.
+
+```{r}
+d_time <- read_csv("../../../data/3_final_merged_data/timecourse/speed_acc_child_noise_timecourse_tidy.csv.gz")
+```
+
+```{r}
+d_time %>% 
+  filter(subid == subid[8], t.rel.noun >= -2, t.rel.noun <= 2) %>% 
+  ggplot(aes(x = t.rel.noun, y = x)) + 
+  geom_line() + 
+  geom_point(alpha = .3, aes(color = shift_accuracy)) + 
+  facet_wrap(~tr.num) + 
+  ylim(c(0,1920)) + 
+  geom_hline(yintercept = 1920/2, lty =2 )
+```
+
+Filter to get a single participant
+
+```{r}
+d_plot <- d_time %>% 
+  filter(t.rel.noun >= -2, t.rel.noun <= 2,
+         subid == subid[6],
+         !is.na(x)) %>% 
+  filter(tr.num == 18)
+```
+
+## Make the animation of looking behavior unfolding over time
+
+```{r}
+library(gganimate)
+library(png)
+library(grid)
+
+black_theme <- ggthemes::theme_few() + 
+  theme(axis.line=element_blank(), axis.text.x=element_blank(),
+        axis.text.y=element_blank(), axis.ticks=element_blank(),
+        axis.title.x=element_blank(),
+        axis.title.y=element_blank(), legend.position="bottom",
+        panel.border=element_blank(),
+        panel.grid.major=element_blank(),
+        panel.grid.minor=element_blank(),plot.background=element_blank(),
+        panel.background = element_rect(fill = "black", color  =  NA))
+```
+
+```{r}
+speaker_img <- readPNG("speaker.png")
+left_img <- readPNG("left_stim.png")
+right_img <- readPNG("right_stim.png")
+```
+
+```{r}
+speaker_g <- rasterGrob(speaker_img, interpolate=TRUE, 
+                x = unit(0.5, "npc"), y = unit(0.65, "npc"),
+                width = unit(0.3,"npc"), 
+                height = unit(0.4,"npc"))
+
+left_g <- rasterGrob(left_img, interpolate=TRUE, 
+                x = unit(0.2, "npc"), y = unit(0.2, "npc"),
+                width = unit(0.25,"npc"), 
+                height = unit(0.35,"npc"))
+
+right_g <- rasterGrob(right_img, interpolate=TRUE, 
+                x = unit(0.8, "npc"), y = unit(0.2, "npc"),
+                width = unit(0.25,"npc"), 
+                height = unit(0.35,"npc"))
+```
+
+```{r}
+p <- d_plot %>% 
+  ggplot(aes(x = x, y = y, frame = t.rel.noun)) +
+  annotation_custom(speaker_g, xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf) +
+  annotation_custom(left_g, xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf) +
+  annotation_custom(right_g, xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf) +
+  geom_path(aes(cumulative = TRUE), color = "darkgrey") +
+  geom_point(aes(cumulative = TRUE), size = 5, shape = 21, 
+             color = "white", fill = "darkorange", stroke = 1,
+             alpha = 0.5) +
+  guides(color = F) + 
+  xlim(0,1980) +
+  ylim(0, 1080) +
+  labs(x="", y = "") +
+  black_theme
+p
+```
+
+Save the gif. 
+
+```{r, eval = F}
+gganimate(p, interval = .1, "one_shift_slow.mp4", title_frame = F)
+```
+
+
+## Now make one for an incorrect shift
+
+Filter to get a single participant
+
+```{r}
+d_plot2 <- d_time %>% 
+  filter(t.rel.noun >= -2, t.rel.noun <= 2,
+         subid == subid[6],
+         !is.na(x)) %>% 
+  filter(tr.num == 20)
+```
+
+
+```{r}
+p2 <- d_plot2 %>% 
+  ggplot(aes(x = x, y = y, frame = t.rel.noun)) +
+  annotation_custom(speaker_g, xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf) +
+  annotation_custom(left_g, xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf) +
+  annotation_custom(right_g, xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf) +
+  geom_path(aes(cumulative = TRUE), color = "darkgrey") +
+  geom_point(aes(cumulative = TRUE), size = 5, shape = 21, 
+             color = "white", fill = "darkorange", stroke = 1,
+             alpha = 0.5) +
+  guides(color = F) + 
+  xlim(0,1980) +
+  ylim(0, 1080) +
+  labs(x="", y = "") +
+  black_theme
+p2
+```
+
+Save the gif. 
+
+```{r, eval = F}
+gganimate(p2, interval = .1, "one_shift_fast_wrong.mp4", title_frame = F)
+```
+
+
+## Make a timecourse plot animation
+
+```{r}
+d.filt <- d_time %>% filter(t.rel.noun >= -4.5, t.rel.noun <= 4)
+```
+
+
+```{r}
+# get number of trials looking at each gaze target for each time slice
+ss.d <- d.filt %>% 
+  group_by(subid, t.stim, gaze_condition, noise_condition) %>% 
+  summarise(count = n()) %>% 
+  ungroup() %>% 
+  complete(nesting(subid, t.stim), gaze_condition, noise_condition,
+           fill = list(count = 0)) %>% 
+  mutate(subid = as.character(subid))
+
+# get proportion looking by dividing the freq looking at each target by the total looking 
+# derived in step 1 of this chunk
+ss.d <- as.data.frame(xtabs(~ subid + t.stim + target_looking + gaze_condition + 
+                              noise_condition, 
+                            data = d.filt),
+                      stringsAsFactors = F) %>% 
+  mutate(t.stim = as.numeric(t.stim)) %>% 
+  left_join(x = ss.d, y = ., by = c("subid", "t.stim", "gaze_condition", 
+                                    "noise_condition")) %>% 
+  mutate(proportion_looking = Freq / count)
+```
+ 
+```{r}
+ms.means.timeslice <- ss.d %>% 
+  group_by(t.stim, gaze_condition, noise_condition, target_looking) %>% 
+  summarise(mean = mean(proportion_looking, na.rm = T))
+```
+
+```{r}
+p.time <- ms.means.timeslice %>% 
+  ungroup() %>%
+  filter(gaze_condition == "no_gaze", noise_condition == "clear") %>% 
+  mutate(t.stim = as.numeric(t.stim)) %>% 
+  ggplot(aes(x = t.stim, y = mean, frame = t.stim, 
+             color = target_looking, linetype = noise_condition)) + 
+  ylim(0,1) +
+  xlim(0,10.5) +
+  geom_path(aes(cumulative = TRUE), size = 1) +
+  #facet_wrap(~noise_condition, ncol = 2) +
+  guides(color = F) +
+  xlab("Time (sec) from onset of trial") +
+  geom_vline(xintercept = min(d.filt$noun_onset_seconds), linetype = "dashed") +
+  geom_vline(xintercept = min(d.filt$sentence_onset_seconds), linetype = "dashed") +
+  ylab("Prop. looking") +
+  geom_dl(aes(label = target_looking), method = "last.bumpup") +
+  annotate("text", label = "Sentence Onset", x = min(d.filt$sentence_onset_seconds)-1.3, 
+           y = 1, size = 4, colour = "black") +
+  annotate("text", label = "Noun Onset", x = min(d.filt$noun_onset_seconds)+1.2, 
+          y = 1, size = 4 , colour = "black") +
+  theme(legend.position = "top") +
+  guides(linetype = F) + 
+  scale_color_manual(values = c("dodgerblue", "red", "forestgreen"))
+p.time
+```
+
+```{r, eval = F}
+gganimate(p.time, interval = .05, "timecourse.mp4", title_frame = F)
+```
+

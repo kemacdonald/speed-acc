@@ -66,7 +66,13 @@ cowplot::plot_grid(ewma_control_charts$noise, ewma_control_charts$gaze,
 ### Experiment 3: Noise and Gaze (adults)
 
 ```{r}
-ewma_control_charts$noise_gaze
+emwa_ng <- d %>% 
+  filter(rt <= 1, experiment == "noise_gaze") %>% 
+  mutate(gaze_condition = str_detect(condition,))
+  aggregate_ewma() %>% 
+  plot_ewma_chart()
+
+ewma_ng$noise_gaze
 ```
 
 Save control charts.
@@ -136,7 +142,7 @@ ewma_boxplots$text
 ### Experiment 3: Noise and Gaze (kids)
 
 ```{r, fig.height = 4}
-cowplot::plot_grid(ewma_boxplots$noise, ewma_boxplots$gaze, ncol = 2)
+cowplot::plot_grid(ewma_boxplots$noise, ewma_boxplots$gaze, ncol = 2) 
 ```
 
 ### Experiment 3: Noise and Gaze (adults)

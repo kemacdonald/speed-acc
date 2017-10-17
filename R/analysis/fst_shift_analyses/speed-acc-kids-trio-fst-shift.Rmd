@@ -169,7 +169,7 @@ ggplot(aes(x = stimuli, y = mean_rt, fill = language_modality),
   ggtitle("Reaction Time")
 ```
 
-Plot RTs for correct/incorrect tirals
+Plot RTs for correct/incorrect trials
 
 ```{r}
 ss_prop$stimuli <- factor(ss_prop$stimuli, 

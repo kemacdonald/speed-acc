@@ -91,6 +91,11 @@ cowplot::plot_grid(plotlist = hddm_plots_kids, ncol = 1,
                    labels = names(hddm_plots_kids))
 ```
 
+```{r}
+hddm_plots_kids$noise
+```
+
+
 #### Adult experiments
 
 Now do the same thing but for the adult experiments
@@ -104,6 +109,36 @@ hddm_plots_adults <- d %>%
 cowplot::plot_grid(plotlist = hddm_plots_adults, ncol = 1, 
                    labels = names(hddm_plots_adults))
 ```
+
+```{r}
+ng_plot_df <- d %>% 
+  filter(age_code == "adult", experiment == "noise_gaze") %>% 
+  mutate(gaze_condition = ifelse(str_detect(condition, "gaze"), "gaze", 
+                                 "straight_ahead"),
+         noise_condition = ifelse(str_detect(condition, "noise"), "noise", "clear")) 
+```
+
+```{r}
+ng_plot_df %>% 
+  filter(noise_condition == "clear") %>% 
+  mutate(condition = gaze_condition) %>% 
+  plot_hddm()
+```
+
+
+```{r}
+ng_plot_df %>% 
+  filter(condition != "straight_ahead_noise") %>% 
+  #filter(gaze_condition == "straight_ahead") %>% 
+  mutate(condition = noise_condition) %>% 
+  plot_hddm()
+```
+
+
+```{r}
+hddm_plots_adults$noise_gaze
+```
+
 
 Save plot
 

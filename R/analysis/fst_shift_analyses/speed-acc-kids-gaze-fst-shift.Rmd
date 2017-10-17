@@ -103,10 +103,12 @@ Now make a boxplot of the accuracy data for each condition. Note that we have to
 acc_boxplot <- ss %>% 
   filter(shift_accuracy_clean == "correct") %>% 
   ggplot(aes(x = gaze_condition, y = prop)) +
-  geom_boxplot(width = 0.2, fill = "dodgerblue", notch = T) +
-  #geom_jitter(width = 0.05, alpha = 0.3) + 
+  geom_boxplot(width = 0.2, fill = "darkgrey", notch = F, outlier.colour = "white") +
+  scale_x_discrete(expand = c(0,1)) +
   geom_hline(yintercept = 0.5, linetype = "dashed") +
-  labs(x = "Condition", y = "Prop. Correct") 
+  labs(x = "Condition", y = "Prop. Correct") +
+  ylim(0.2,1) +
+  theme_classic() 
 ```
 
 Make accuracy by block plot.
@@ -131,12 +133,20 @@ rt_boxplot <- d.filt %>%
   filter(!is.na(shift_accuracy_clean), 
          shift_type %in% c("C_T", "C_D"),
          rt <= 1.5) %>% 
-  group_by(subid, gaze_condition) %>% 
+  group_by(subid, gaze_condition, shift_accuracy_clean) %>% 
   summarise(m_rt = median(rt)) %>% 
-  ggplot(aes(x = gaze_condition, y = m_rt)) + 
-  geom_boxplot(width = 0.2, fill = "darkorange", notch = T) +
-  ylim(0,1) +
-  labs(x = "Condition", y = "RT (sec)") 
+  ggplot(aes(x = gaze_condition, y = m_rt, fill = shift_accuracy_clean)) + 
+  geom_boxplot(width = 0.2, notch = F, outlier.colour = "white") +
+  ylim(0, 1) +
+  scale_x_discrete(expand = c(0,1)) +
+  scale_fill_manual(values = c("darkorange", "dodgerblue")) +
+  theme_classic() +
+  theme(legend.position=c(0.35,0.9),
+        legend.direction="horizontal", 
+        legend.background = element_rect(fill=alpha('white', 0.4))) +
+  labs(x = "Condition", y = "RT (sec)", fill = NULL)   
+
+rt_boxplot
 ```
 
 Make RT by block plot.
@@ -159,7 +169,7 @@ rt_block <- d.filt %>%
 ### Plot RT and Accuracy together
 
 ```{r}
-cowplot::plot_grid(rt_boxplot, acc_boxplot)
+cowplot::plot_grid(rt_boxplot, acc_boxplot, rel_widths = c(1.5, 1))
 ```
 
 ### Plot RT and Accurcy block effects
