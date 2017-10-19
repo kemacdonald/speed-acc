@@ -122,23 +122,40 @@ ng_plot_df <- d %>%
 ng_plot_df %>% 
   filter(noise_condition == "clear") %>% 
   mutate(condition = gaze_condition) %>% 
-  plot_hddm()
+  plot_hddm() 
 ```
 
 
 ```{r}
-ng_plot_df %>% 
-  filter(condition != "straight_ahead_noise") %>% 
-  #filter(gaze_condition == "straight_ahead") %>% 
+noise_adult_bound <- ng_plot_df %>% 
+  filter(condition %in% c("straight_ahead_clear", "gaze_noise"),
+         param_name == "boundary") %>% 
   mutate(condition = noise_condition) %>% 
-  plot_hddm()
-```
+  plot_hddm(x_lims = c(0.5, 2.5)) +
+  guides(color = F)
 
+noise_kid_bound <- d %>% 
+  filter(experiment %in% c("noise"), param_name == "boundary") %>%
+  plot_hddm(x_lims = c(0.5,2.5)) +
+  guides(color = F)
+```
 
 ```{r}
-hddm_plots_adults$noise_gaze
+noise_adult_drift <- ng_plot_df %>% 
+  filter(condition %in% c("straight_ahead_clear", "gaze_noise"),
+         param_name == "drift") %>% 
+  mutate(condition = noise_condition) %>% 
+  plot_hddm(x_lims = c(0, 2.5)) +
+  guides(color = F)
+
+noise_kid_drift <- d %>% 
+  filter(experiment %in% c("noise"), param_name == "drift") %>%
+  plot_hddm(x_lims = c(0,2.5))
 ```
 
+```{r}
+plot_grid(noise_kid_bound, noise_kid_drift, noise_adult_bound, noise_adult_drift)
+```
 
 Save plot
 

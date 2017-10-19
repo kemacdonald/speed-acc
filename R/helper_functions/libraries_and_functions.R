@@ -47,7 +47,7 @@ read_hddm_file <- function(file_name, path, condition_list, param_list) {
 
 ## Plot HDDM parameter values
 
-plot_hddm <- function(d) {
+plot_hddm <- function(d, x_lims = c(0, 3)) {
   ggplot(aes(x = param_value, color = condition), data = d) +
     geom_line(stat="density", size = 1.5) + 
     langcog::scale_color_solarized() +
@@ -55,6 +55,7 @@ plot_hddm <- function(d) {
     labs(x = "Parameter value", y = "Density", color = "") +
     guides(color=guide_legend(nrow=2,byrow=TRUE)) +
     ggthemes::theme_few() +
+    lims(x = x_lims) +
     theme(text = element_text(size=10),
           legend.position=c(0.75,0.75),
           legend.direction="horizontal",

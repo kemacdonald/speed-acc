@@ -21,7 +21,7 @@ Read 5 datasets with first shift accuracy and RTs:
   1. Speed-acc-trio (4 datasets)
     - ASL (27 kids: 18-54m, median age = 27 months; 16 adults): human signing
     - Face (22 kids: 26m): human face talking
-    - Trio (18 kids at 26m and 22 kids at 36m): static images of real world objects, e.g., cats
+    - Object (18 kids at 26m and 22 kids at 36m): static images of real world objects, e.g., cats
     - Bull (22 kids at 26m): different static "bullseyes"
   2. Speed-acc-child-noise
   3. Speed-acc-child-gaze
