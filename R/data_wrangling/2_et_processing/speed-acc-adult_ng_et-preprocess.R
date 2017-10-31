@@ -17,7 +17,7 @@ processed.data.path <- "../../../data/2_cleaned_data/"
 all.data <- data.frame()
 files <- dir(raw.data.path,pattern="*.txt")
 
-for (file.name in files) {
+for (file.name in files[10]) {
   ## print file name, so if loop breaks, we know where
   print(file.name)
   

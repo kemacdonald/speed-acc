@@ -18,7 +18,7 @@ d_time <- read_csv("../../../data/3_final_merged_data/timecourse/speed_acc_child
 
 ```{r}
 d_time %>% 
-  filter(subid == subid[8], t.rel.noun >= -2, t.rel.noun <= 2) %>% 
+  filter(subid == subid[10], t.rel.noun >= -4, t.rel.noun <= 2) %>% 
   ggplot(aes(x = t.rel.noun, y = x)) + 
   geom_line() + 
   geom_point(alpha = .3, aes(color = shift_accuracy)) + 
@@ -53,9 +53,7 @@ black_theme <- ggthemes::theme_few() +
         panel.grid.major=element_blank(),
         panel.grid.minor=element_blank(),plot.background=element_blank(),
         panel.background = element_rect(fill = "black", color  =  NA))
-```
 
-```{r}
 speaker_img <- readPNG("speaker.png")
 left_img <- readPNG("left_stim.png")
 right_img <- readPNG("right_stim.png")
@@ -101,7 +99,6 @@ Save the gif.
 ```{r, eval = F}
 gganimate(p, interval = .1, "one_shift_slow.mp4", title_frame = F)
 ```
-
 
 ## Now make one for an incorrect shift
 
@@ -207,3 +204,32 @@ p.time
 gganimate(p.time, interval = .05, "timecourse.mp4", title_frame = F)
 ```
 
+### Make animation for shifty kid
+
+```{r}
+d_shifty <- d_time %>% 
+  filter(subid == subid[10], t.rel.noun >= -4, t.rel.noun <= 0,
+         !is.na(x),
+         tr.num == 23)
+```
+
+```{r}
+p_shifty <- d_shifty %>% 
+  ggplot(aes(x = x, y = y, frame = t.rel.noun)) +
+  annotation_custom(speaker_g, xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf) +
+  annotation_custom(left_g, xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf) +
+  annotation_custom(right_g, xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf) +
+  geom_path(aes(cumulative = TRUE), color = "darkgrey") +
+  geom_point(aes(cumulative = TRUE), size = 5, shape = 21, 
+             color = "white", fill = "darkorange", stroke = 1,
+             alpha = 0.5) +
+  guides(color = F) + 
+  xlim(0,1980) +
+  ylim(0, 1080) +
+  labs(x="", y = "") +
+  black_theme
+```
+
+```{r}
+gganimate(p_shifty, interval = .1, "shifty_kid.mp4", title_frame = F)
+```

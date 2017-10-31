@@ -272,6 +272,8 @@ to.n <- function (x) {
 
 read.smi.idf <- function (file.name, suffix.len = 4) {
   
+  file.name <- paste(raw.data.path,files[10],sep="")
+  
   ## read the header from the file to paste back into the new file
   tmp.header <- scan(file.name, what = character(), sep="\n", 
                      nlines = 40, quiet=TRUE)
@@ -293,12 +295,10 @@ read.smi.idf <- function (file.name, suffix.len = 4) {
   
   ## DATA CLEANING 
   # read in data and get rid of header rows
-  all.d <- read_tsv(file.name, skip = header.rows, 
-                    col_types = cols(Time = "c"))
+  all.d <- read_tsv(file.name, skip = header.rows, col_types = cols(Time = "c"))
   
   ## split data into messages and data
   ## First get data:
-  
   d <- all.d %>% filter(all.d$Type=="SMP")
   
   # convert to numeric here
