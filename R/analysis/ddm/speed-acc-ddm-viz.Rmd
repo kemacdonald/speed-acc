@@ -46,7 +46,7 @@ d.kids <- files.kids %>%
                 param_list = c("boundary", "drift")) 
 ```
 
-Some minor clean up of variable names and merging adult and kid data.
+Some minor clean up of variable names to merge adult and kid data.
 
 ```{r}
 # adult data
@@ -95,6 +95,9 @@ cowplot::plot_grid(plotlist = hddm_plots_kids, ncol = 1,
 hddm_plots_kids$noise
 ```
 
+```{r}
+hddm_plots_kids$trio
+```
 
 #### Adult experiments
 

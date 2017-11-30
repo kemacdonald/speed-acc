@@ -365,7 +365,7 @@ preprocess.data <- function(d,
   
   ## average the eyes
   if (avg.eyes) {
-    # if we have both eyes, then round to the nearest pixel
+    # if we have both eyes, then average to the nearest pixel
     # if one of the eyes is missing, then just use the other eye's coordinate
     d %<>%
       mutate(x = ifelse(!is.na(rx) & !is.na(lx), (lx+rx) / 2,

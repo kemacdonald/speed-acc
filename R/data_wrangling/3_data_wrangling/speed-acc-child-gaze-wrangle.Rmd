@@ -41,10 +41,10 @@ subinfo_df <- readxl::read_xlsx("../../../data/0a_demographics/speed_acc_child_g
 subinfo_df %<>% mutate(subid = str_to_lower(subid),
                        subid = str_replace_all(subid, pattern = "-", "_"),
                        subid = ifelse(str_detect(subid, pattern = "gaze"), 
-                             subid,
-                             str_replace(subid, pattern = "_child",
-                                         "_child_gaze"))
-                       )
+                                      subid,
+                                      str_replace(subid, pattern = "_child",
+                                                  "_child_gaze"))
+)
 
 # clean up subid in data file
 # if "child" is already in the subid, then we do not need to add it
@@ -54,7 +54,7 @@ d %<>% mutate(subid = str_to_lower(subid),
                              subid,
                              str_replace(subid, pattern = "_child",
                                          "_child_gaze"))
-              )
+)
 
 d %<>% left_join(subinfo_df, by = "subid")
 ```
@@ -329,7 +329,7 @@ d %<>%
                                        "incorrect"),
          block = ifelse(tr.num <= 16, "block_1", "block_2"),
          gaze_condition = ifelse(gaze_condition == "no_gaze", 
-                                  "straight_ahead", gaze_condition),
+                                 "straight_ahead", gaze_condition),
          resp_onset_type_fact = factor(response_onset_type, 
                                        levels = c('center.fixation', 
                                                   'sentence', 'noun'))
@@ -348,7 +348,7 @@ d.timecourse <- d %>%
   select(subid, subid_short, t.stim, gaze_condition, noise_condition, tr.num, 
          noun_onset_sec, gaze_target:shift_accuracy, shift_accuracy_clean, shift_start_location,
          block, keep_et, keep_runsheet)
-  
+
 # first shift
 d.fs <- d %>% 
   select(subid, subid_short, tr.num, gaze_condition, noise_condition, target_image, 
@@ -361,7 +361,8 @@ Write data to zipped csv:
 
 ```{r}
 write.path.time <- "../../../data/3_final_merged_data/timecourse/"
-write_csv(d.timecourse, path = paste0(write.path.time, "speed_acc_child_gaze_timecourse_tidy.csv.gz"))
+write_csv(d.timecourse, path = paste0(write.path.time,
+                                      "speed_acc_child_gaze_timecourse_tidy.csv.gz"))
 
 write.path.fst <- "../../../data/3_final_merged_data/first_shifts/"
 write_csv(d.fs, path = paste0(write.path.fst, "speed_acc_child_gaze_fstshift_tidy.csv"))

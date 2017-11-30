@@ -35,7 +35,7 @@ d_plot <- all.data %>%
   mutate(x = ifelse(x < 1 | x > 1919, NA, x), 
          y = ifelse(y < 1 | y > 1079, NA, y))
 
-stimulus_test_idx <- 10
+stimulus_test_idx <- 20
 
 d_plot %>% 
   filter(stimulus == stimulus[stimulus_test_idx]) %>% 

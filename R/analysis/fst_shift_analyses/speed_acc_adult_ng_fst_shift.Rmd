@@ -122,7 +122,8 @@ acc_boxplot_noise <- ss.acc %>%
   geom_hline(yintercept = 0.5, linetype = "dashed") +
   labs(x = "Condition", y = "Prop. Correct") +
   ylim(0.3,1) +
-  theme_classic() 
+  theme_classic() +
+  theme(text = element_text(size = 12))
 
 acc_boxplot_noise
 ```
@@ -155,14 +156,15 @@ rt_boxplot_noise <- ss.rt %>%
   theme(legend.position=c(0.35,0.9),
         legend.direction="horizontal", 
         legend.background = element_rect(fill=alpha('white', 0.4))) +
-  labs(fill = NULL) 
+  labs(fill = NULL) +
+  theme(text = element_text(size = 12))
   
 
 rt_boxplot_noise
 ```
 
 ```{r}
-cowplot::plot_grid(rt_boxplot_noise, acc_boxplot_noise, rel_widths = c(1.5,1))
+cowplot::plot_grid(rt_boxplot_noise, acc_boxplot_noise, ncol = 1)
 ```
 
 ## RT Distributions

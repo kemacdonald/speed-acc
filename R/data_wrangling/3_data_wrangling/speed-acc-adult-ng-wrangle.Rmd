@@ -181,9 +181,9 @@ Filter out "away" looks and create some useful variables: condition, target side
 
 And for our RT analyses, we need to mark the critical onset for each trial. Here we mark three time points of interest. Time relative to the:
 
-1. center fixation appearing on the screen
-2. sentence onset
-3. target noun onset
+  1. center fixation appearing on the screen
+  2. sentence onset
+  3. target noun onset
 
 First, we need to convert the trial measurement information from frames to milliseconds and seconds.
 
