@@ -9,10 +9,10 @@ author-information: >
     \\ $^1$ Department of Psychology Stanford University}
 
 abstract: 
-  "Language comprehension in grounded contexts involves integrating visual and linguistic information with the goal of establishing reference. But how do we decide to best allocate our limited attentional resources. Here, we report the results of two, novel experiments, which support the hypothesis that listeners adapt their gaze patterns to seek higher value visual information, but only when it is useful. First, we show that adults and children delayed their gaze shifts away from a language source, were more accurate with these shifts, and produced a smaller proportion of nonlanguage-driven shifts when processig language in a noisy auditory context (E1). Next, we present results showing that adults and children do not delay eye movements to wait for a speaker's gaze cue if the auditory signal is sufficient to establish reference (E2). Together, these results provide converging evidence that the dynamics of eye movements during language comprehension are quite flexible, and listeners will adapt gaze patterns to seek higher value visual information, but only when it is useful for rapid and accurate language understanding."
+  "Skilled language comprehension in grounded contexts involves integrating visual and linguistic information. But the value of fixating on a location in the visual world depends on its usefulness for the listener's goal -- rapid language understanding. Here, we report the results of two experiments that support the hypothesis that listeners flexibly delay the timing of gaze shifts away from a language source in order to seek higher value visual information, but only when this behavior is useful. First, we show that adults (n=50) and children (n = 50, 3-5 y.o.) delayed their eye movements away from a language source while processing familiar nouns in a noisy context. Intrestingly, this decision to delay resulted in more accurate gaze shifts, fewer nonlanguage-driven or random shifts (E1). Next, we present results showing that adults (n=50) and children (n=54, 3-5 y.o.) do not delay eye movements to wait for a post-nominal social cue (eye gaze) when the auditory signal was sufficient to establish reference (E2). Together, these results provide converging evidence that the dynamics of eye movements during language comprehension are flexible, and listeners seek higher value visual information when it is useful for language understanding."
 
 keywords:
-  "eye movements; language processing; information-seeking; n"
+  "eye movements; language processing; information-seeking; speech in noise; social cues"
 
 output: cogsci2016::cogsci_paper
 ---
@@ -92,9 +92,8 @@ Since our results are complex, we preview them here: when the center stimulus wa
 -->
 
 ```{r e1_stim, fig.env = "figure", fig.pos = "t", fig.width=3.3, fig.height=2, fig.align='center', fig.cap = "Stimuli for E1 and E2. Panel A shows the layout of the fixation locations for all tasks: the center stimulus, the target, and the distracter. Panel B shows the five center stimulus items: a static geometric shape (Bullseye), a static image of a familiar object (Object), a person speaking (Face), a person signing (ASL), and printed text (Text)."}
-grid::grid.raster(png::readPNG("figs/stimuli.png"))
+grid::grid.raster(png::readPNG(here::here("paper/cogsci2018/figs/stimuli_info.png")))
 ```
-
 
 ## Method
 
