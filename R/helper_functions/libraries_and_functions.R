@@ -15,7 +15,7 @@ library(scales); library(feather)
 library(stringr); library(pryr)
 
 # load tidyverse last, so no functions get masked
-library(tidyverse)
+library(tidyverse); library(here)
 
 # set ggplot theme
 theme_set(

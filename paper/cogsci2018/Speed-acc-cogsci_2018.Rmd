@@ -1,19 +1,18 @@
 ---
-title: "An information-seeking account of eye movements during spoken and signed language comprehension"
+title: "Children seek additional visual information to support language comprehension in noisy auditory environments"
 bibliography: library.bib
 csl: apa6.csl
 document-params: "10pt, letterpaper"
 
 author-information: > 
-  \author{ {\large \bf Kyle MacDonald}$^1$ (kylem4@stanford.edu), {\large \bf Aviva Blonder}$^2$ (aviva.blonder@oberlin.edu), \\ 
-    {\large \bf Virginia Marchman}$^1$ (marchman@stanford.edu), {\large \bf Anne Fernald}$^1$ (afernald@stanford.edu), \\ {\large \bf Michael C. Frank}$^1$ (mcfrank@stanford.edu) 
-    \\ $^1$ Department of Psychology Stanford University, $^2$ Department of Psychology Oberlin College}
+  \author{ {\large \bf Kyle MacDonald}$^1$ (kylem4@stanford.edu),{\large \bf Virginia Marchman}$^1$ (marchman@stanford.edu), {\large \bf Anne Fernald}$^1$ (afernald@stanford.edu), \\ {\large \bf Michael C. Frank}$^1$ (mcfrank@stanford.edu) 
+    \\ $^1$ Department of Psychology Stanford University}
 
 abstract: 
-  "Language comprehension in grounded contexts involves integrating visual and linguistic information through decisions about visual fixation. But when the visual signal also contains information about the language source -- as in the case of written text or sign language -- how do we decide where to look? Here, we hypothesize that eye movements during language comprehension represent an adaptive response. Using two case studies, we show that, compared to English-learners, young signers delayed their gaze shifts away from a language source, were more accurate with these shifts, and produced a smaller proportion of nonlanguage-driven shifts (E1). Next, we present a well-controlled, confirmatory experiment, showing that English-speaking adults produced fewer nonlanguage-driven shifts when processing printed text compared to spoken language (E2). Together, these data suggest that people adapt to the value of seeking different information in order to increase the chance of rapid and accurate language understanding."
+  "Language comprehension in grounded contexts involves integrating visual and linguistic information with the goal of establishing reference. But how do we decide to best allocate our limited attentional resources. Here, we report the results of two, novel experiments, which support the hypothesis that listeners adapt their gaze patterns to seek higher value visual information, but only when it is useful. First, we show that adults and children delayed their gaze shifts away from a language source, were more accurate with these shifts, and produced a smaller proportion of nonlanguage-driven shifts when processig language in a noisy auditory context (E1). Next, we present results showing that adults and children do not delay eye movements to wait for a speaker's gaze cue if the auditory signal is sufficient to establish reference (E2). Together, these results provide converging evidence that the dynamics of eye movements during language comprehension are quite flexible, and listeners will adapt gaze patterns to seek higher value visual information, but only when it is useful for rapid and accurate language understanding."
 
 keywords:
-  "eye movements; language processing; information-seeking; American Sign Language"
+  "eye movements; language processing; information-seeking; n"
 
 output: cogsci2016::cogsci_paper
 ---
@@ -22,25 +21,21 @@ output: cogsci2016::cogsci_paper
 knitr::opts_chunk$set(fig.width=3, fig.height=3, fig.crop = F, fig.pos = "tb",
                       fig.path='figs/',echo=F, warning=F, cache=T, message=F, 
                       sanitize = T)
-
-source("../R/helper_functions/libraries_and_functions.R")
+library(here)
+source(here::here("R/helper_functions/libraries_and_functions.R"))
+data_path <- "data/3_final_merged_data/first_shifts/"
 ```
 
-```{r read e1 data}
-df_e1 <- read.csv("../data/3_final_merged_data/first_shifts/speed-acc-child-trio-fst-shift.csv", 
-                  check.names=F, stringsAsFactors=F) 
-
-df_e1 %<>% 
-  mutate(stimuli = ifelse(stimuli == "V1" | stimuli == "V2", "ASL", 
-                          ifelse(stimuli == "Trio", "Object", 
-                                 ifelse(stimuli == "Bull", "Bullseye",
-                                        stimuli))),
-         stimuli = factor(stimuli, levels = c("ASL", "Face", "Object", "Bullseye")))
+```{r read data}
+d_kids_noise <- read_csv(here::here(data_path, "speed_acc_child_noise_fstshift_tidy.csv")) 
+d_kids_gaze <- read_csv(here::here(data_path, "speed_acc_child_gaze_fstshift_tidy.csv")) 
+d_adults <- read_csv(here::here(data_path, "speed_acc_adult_ng_fstshift_tidy.csv")) 
 ```
 
-```{r e1 read stimuli information}
-d.words.length <- read_csv("../data/0b_trial_information/speed-acc-adult-text-trial-info-final.csv")
-d.signs.length <- read_csv("../data/0b_trial_information/sol_target_sign_lengths_all.csv")
+```{r read stimuli information}
+d_gaze_stim <- read_csv(here::here("data/0b_trial_information/speed-acc-child-gaze-trial-info.csv"))
+d_noise_stim <- read_csv(here::here("data/0b_trial_information/speed-acc-child-noise-trial-info.csv"))
+d_adult_ng_stim <- read_csv(here::here("data/0b_trial_information/speed-acc-adult-ng-trial-info.csv"))
 ```
 
 # Introduction 
