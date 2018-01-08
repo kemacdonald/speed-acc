@@ -1,6 +1,3 @@
-# clear workspace
-rm(list = ls())
-
 # load libraries
 library(reshape); library(plyr); library(grid)
 library(lme4); library(knitr)
@@ -13,9 +10,10 @@ library(GGally); library(lsr)
 library(effsize); library(cowplot)
 library(scales); library(feather) 
 library(stringr); library(pryr)
+library(rstanarm);
 
 # load tidyverse last, so no functions get masked
-library(tidyverse); library(here)
+library(tidyverse); 
 
 # set ggplot theme
 theme_set(
@@ -23,6 +21,12 @@ theme_set(
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
 )
 
+
+# make function to convert logit back to probability 
+logit_to_prob <- function(logit) {
+  odds <- exp(logit)
+  odds / (1 + odds)
+}
 
 ## Read HDDM file
 
@@ -462,3 +466,5 @@ roi.image <- function (rois,y.max=1050,x.max=1680) {
          names(rois)[i])
   }
 }
+
+
