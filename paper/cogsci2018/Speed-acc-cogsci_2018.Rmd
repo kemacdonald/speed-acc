@@ -1,5 +1,5 @@
 ---
-title: "Seeking visual information to support spoken language comprehension in noisy environments"
+title: "Seeking visual information to support spoken language comprehension"
 bibliography: library.bib
 csl: apa6.csl
 document-params: "10pt, letterpaper"
@@ -55,6 +55,10 @@ d <- bind_rows(mutate(d_kids_noise, experiment = "kids_noise", age_category = "c
 
 # uncomment below to test that we have the right number of rows after the merge (result should be TRUE)
 # nrow(d_kids_gaze) + nrow(d_kids_noise) + nrow(d_adults) == nrow(d)
+```
+
+```{r read model output}
+d_models <- readRDS(here::here("data/3_final_merged_data/first_shifts", "speed-acc-posterior-samples.rds"))
 ```
 
 ```{r read stimuli information}
@@ -168,13 +172,13 @@ Finally, we use Drift-diffusion models (DDMs) [@ratcliff2015individual] to quant
 We chose to implement a hierarchical Bayesian version of the DDM using the HDDM Python package [@wiecki2013hddm] because we were dealing with relatively few trials from child participants and recent simulation studies have shown that the HDDM approach was better than other DDM fitting methods when the number of observations was small [@ratcliff2015individual].  
 -->
 
-First, we present behavioral analyses of First shift accuracy and Reaction Time (RT). RT corresponds to the latency to shift away from the central stimulus to either picture measured from target-noun onset. Accuracy was the mean proportion of first gaze shifts that landed on the target picture out of the total number of shifts. We log transformed all RTs and used the `lme4` R package [@bates2013lme4] to fit mixed-effects regression models that included a random intercept for each participant and item. Since children's age varied across conditions, we included age in months as a covariate in all models. All analysis code can be found in the online repository for this project: https://github.com/kemacdonald/speed-acc/R/analysis.  
+First, we present behavioral analyses of First shift accuracy and Reaction Time (RT). RT corresponds to the latency to shift away from the central stimulus to either picture measured from target-noun onset. Accuracy was the mean proportion of first gaze shifts that landed on the target picture out of the total number of shifts. We log transformed all RTs and used the `rstanarm` [@gabry2016rstanarm] package to fit Bayesian mixed-effects regression models. The mixed-effects approach allowed us to model the nested structure in our data by including random intercepts for each participant and item and a random slope for each item and noise condition. We used Bayesian estimation to quantify the uncertainty in our estimates of the condition means and grou differences. To communicate this uncertainty we report the 95% Highest Density Interval (HDI) around the point estimates, providing a range of credible parameter values given the data and the model. All analysis code can be found in the online repository for this project: https://github.com/kemacdonald/https://github.com/kemacdonald/speed-acc/R/analysis.  
 
-Next, we present two exploratory model-based analyses to quantify differences in eye movements across the four samples. First, we use an EWMA method to model changes in accuracy as a function of increases in RT. For each RT, the model generates two values: a "control statistic" (CS, which captures the running average accuracy of first shifts) and an "upper control limit" (UCL, which captures the pre-defined limit of when accuracy would be categorized as above chance level). Here, the CS is an expectation of random shifting to either the target or the distracter image (nonlanguage-driven shifts), or a Bernoulli process with probability of success 0.5. As the RTs get longer, we assume that participants have gathered more information and should become more accurate, or a Bernoulli process with probability success > 0.5. Using this model, we can quantify and compare: a) the cutoff point when the CS exceeds the UCL, indicating that participants started to generate language-driven shifts and b) the proportion of shifts that the model categorizes as language-driven vs. nonlanguage-driven.
+Next, we present two model-based analyses that map differences in eye movements to psychological variables of interest. First, we use an EWMA method to model changes in random shifting behavior as a function of delays in responding (i.e., RT). For each RT, the model generates two values: a "control statistic" (**CS**, which captures the running average accuracy of first shifts) and an "upper control limit" (**UCL**, which captures the pre-defined threshold when gaze shifts would be categorized as deviating from random responding). Here, the CS is an expectation of random shifting to either the target or the distracter image (nonlanguage-driven shifts), modeled a Bernoulli process with $P(success) = 0.5$. As participants delay their response, we assume that they have gathered more information and should become more accurate, which we model a Bernoulli process with $P(success) > 0.5$. Using this model, we can quantify and compare: a) the cutoff point when the CS exceeds the UCL in the RT distribution, indicating the processing time required before participants generated language-driven shifts and b) the proportion of all gaze shifts that the model categorizes as language-driven vs. nonlanguage-driven.
 
-Finally, we took the shifts that were categorized as language-driven by the EWMA and fit a hierarchical Bayesian drift-diffusion model (HDDM) to quantify differences in the speed and accuracy of language-driven eye movements. We chose to implement a hierarchical Bayesian version of the DDM using the HDDM Python package [@wiecki2013hddm] since we had relatively few trials from child participants and recent simulation studies have shown that the HDDM approach was better than other DDM fitting methods for small data sets [@ratcliff2015individual]. The model assumes that people accumulate noisy evidence in favor of one alternative with a response generated when the evidence crosses a pre-defined decision threshold. Here we focus on two parameters of interest that map onto meaningful psychological variables: *boundary separation*, which indexes the amount of evidence gathered before a response (higher values suggest more cautious responding) and *drift rate*, which indexes the amount of evidence accumulated per unit time (higher values suggest more efficient processing). 
+Finally, we took the shifts that were categorized as language-driven by the EWMA and fit a hierarchical Bayesian drift-diffusion model (HDDM) to quantify differences in the underlying decision process that led to different patterns of behavior. We chose to implement a hierarchical Bayesian version of the DDM using the HDDM Python package [@wiecki2013hddm] since we had relatively few trials from the child participants and recent simulation studies have shown that the HDDM approach was better than other DDM fitting methods for small data sets [@ratcliff2015individual]. The model assumes that people accumulate noisy evidence in favor of one alternative with a response generated when the evidence crosses a pre-defined decision threshold. Here, we focus on two parameters of interest that map onto meaningful decision variables that we hypothesized would vary across our conditions: *boundary separation*, which indexes the amount of evidence gathered before generating a response (higher values suggest more cautious responding) and *drift rate*, which indexes the amount of evidence accumulated per unit time (higher values suggest more efficient processing of the stimulus). 
 
-```{r e1_filter}
+```{r noise filter}
 d_e1_analysis <- d_e1 %>% 
   filter(rt <= 1.5,
          response_onset_type == "noun", 
@@ -183,7 +187,7 @@ d_e1_analysis <- d_e1 %>%
          log_rt = log(rt))
 ```
 
-```{r e1_aggregate accuracy and rt}
+```{r noise summarize accuracy and rt}
 ss_acc_e1 <- d_e1_analysis %>% 
   filter(!is.na(shift_accuracy_clean)) %>% 
   group_by(subid, shift_accuracy_clean, noise_condition, age_category) %>% 
@@ -197,76 +201,11 @@ ss_rt_e1 <- d_e1_analysis %>%
   group_by(subid, noise_condition, age_category) %>% 
   summarise(m_rt = median(rt))
 
-ss_final <- left_join(ss_acc_e1, ss_rt_e1)
+ss_final <- left_join(ss_acc_e1, ss_rt_e1) %>% ungroup()
 ```
 
-```{r e1 glmms}
-m_bglm_acc_e1 <- stan_glmer(
-  shift_acc_num ~ noise_condition + age_category + (noise_condition + target_image | subid), 
-  data = d_e1_analysis,
-  family = binomial(link = "logit"), 
-  prior = normal(0, 2),
-  prior_intercept = normal(0, 1),
-  prior_covariance = decov(regularization = 2), # prior on Covariance matrices for mixed effects model
-  chains = 4
-)
-
-m_bglm_rt_e1 <- stan_glmer(
-  log_rt ~ noise_condition + age_category + (noise_condition + target_image | subid), 
-  family = gaussian(),
-  data = d_e1_analysis,
-  prior = normal(0, 2), 
-  prior_intercept = normal(0, 5),
-  prior_covariance = decov(regularization = 2), # prior on Covariance matrices for mixed effects model
-  chains = 4
-)
-
-#beepr::beep(sound = 3)
-```
-
-```{r e1 extract posterior samples}
-# get posterior samples
-samples_e1_acc <- m_bglm_acc_e1 %>% 
-  as.data.frame() %>% 
-  as_tibble() %>% 
-  dplyr::rename(clear_children = `(Intercept)`,
-                noise_beta = noise_conditionnoise,
-                age_beta = age_categoryadults) %>% 
-  select(clear_children, noise_beta, age_beta)
-
-samples_e1_rt <- m_bglm_rt_e1 %>% 
-  as.data.frame() %>% 
-  as_tibble() %>% 
-  dplyr::rename(clear_children = `(Intercept)`,
-                noise_beta = noise_conditionnoise,
-                age_beta = age_categoryadults) %>% 
-  select(clear_children, noise_beta, age_beta)
-
-# tidy up accuracy
-samples_e1_acc_tidy <- samples_e1_acc %>% 
-  mutate(noise_children = clear_children + noise_beta,
-         clear_adults = clear_children + age_beta, 
-         noise_adults = clear_children + noise_beta + age_beta,
-         sample_id = 1:n()) %>% 
-  gather(key = condition, value = param_est, -sample_id, -noise_beta, -age_beta) %>% 
-  mutate(acc_prob_scale = logit_to_prob(param_est)) %>% 
-  separate(condition, into = c("noise_condition", "age_category")) %>% 
-  select(sample_id:acc_prob_scale)
-
-# tidy up rt samples
-samples_e1_rt_tidy <- samples_e1_rt %>% 
-  mutate(noise_children = clear_children + noise_beta,
-         clear_adults = clear_children + age_beta, 
-         noise_adults = clear_children + noise_beta + age_beta,
-         sample_id = 1:n()) %>% 
-  gather(key = condition, value = param_est, -sample_id, -noise_beta, -age_beta) %>% 
-  mutate(rt_ms_scale = exp(param_est)) %>% 
-  separate(condition, into = c("noise_condition", "age_category")) %>% 
-  select(sample_id:rt_ms_scale)
-```
-
-```{r summarize model output}
-ms_acc_e1 <- samples_e1_acc_tidy %>% 
+```{r noise summarize model output}
+ms_acc_e1 <- d_models$acc_noise %>% 
   group_by(noise_condition, age_category) %>% 
   summarise(prop = mean(acc_prob_scale),
             hdi_lower = quantile(acc_prob_scale, probs = 0.025),
@@ -274,7 +213,7 @@ ms_acc_e1 <- samples_e1_acc_tidy %>%
   mutate_if(.predicate = is.numeric, .funs = round, digits = 2) %>% 
   mutate(age_category = factor(age_category) %>% fct_rev()) 
 
-ms_rt_e1 <- samples_e1_rt_tidy %>% 
+ms_rt_e1 <- d_models$rt_noise %>% 
   group_by(noise_condition, age_category) %>% 
   summarise(m_rt = mean(rt_ms_scale),
             hdi_lower = quantile(rt_ms_scale, probs = 0.025),
@@ -283,15 +222,151 @@ ms_rt_e1 <- samples_e1_rt_tidy %>%
   mutate(age_category = factor(age_category) %>% fct_rev()) 
 ```
 
-```{r make plots}
+```{r noise create contrasts}
+noise_contrast <- d_models$acc_noise %>% 
+  select(sample_id:acc_prob_scale, -param_est) %>% 
+  spread(noise_condition, acc_prob_scale) %>% 
+  mutate(noise_contrast = noise - clear) %>% 
+  select(sample_id, noise_contrast, age_category)
+
+noise_contrast_rt <- d_models$rt_noise %>% 
+  select(sample_id:rt_ms_scale, -param_est) %>% 
+  spread(noise_condition, rt_ms_scale) %>% 
+  mutate(noise_contrast = noise - clear) %>% 
+  select(sample_id, noise_contrast, age_category)
+```
+
+```{r}
+line_size <- 1.5
+```
+
+
+```{r rt_insets}
+p <- noise_contrast_rt %>% 
+  filter(age_category == "children") %>% 
+  ggplot(aes(x = noise_contrast)) +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "black", alpha = 0.8) +
+  geom_line(stat = "density", size = line_size, color = "black") +
+  labs(x = "RT (sec)", y = NULL) +
+  scale_x_continuous(breaks=c(0, .05, .1)) +
+  theme_classic() +
+  theme(axis.ticks = element_blank(), 
+        axis.text.y = element_blank(),
+        text = element_text(size = 10)) 
+
+# extract the x and y values for the density line
+build_p <- ggplot_build(p)
+plot_xy <- build_p$data[[2]] %>% 
+  select(x:y) %>% 
+  rename(noise_contrast = x)
+
+# add the red and green ribbons based on those values
+rt_child_inset <- p + 
+  geom_ribbon(aes(ymin = 0, ymax = y - 0.15, x = noise_contrast), fill = "darkred", alpha = 0.5,
+              inherit.aes = F, 
+              data = filter(plot_xy, noise_contrast <= 0)) + 
+  geom_ribbon(aes(ymin = 0, ymax = y - 0.15, x = noise_contrast), fill = "darkgreen", alpha = 0.5,
+              inherit.aes = F, 
+              data = filter(plot_xy, noise_contrast >= 0)) 
+
+## adults 
+p_adult <- noise_contrast_rt %>% 
+  filter(age_category == "adults") %>% 
+  ggplot(aes(x = noise_contrast)) +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "black", alpha = 0.8) +
+  geom_line(stat = "density", size = line_size, color = "black") +
+  labs(x = "RT (sec)", y = NULL) +
+  scale_x_continuous(breaks=c(0, .05, .1)) +
+  theme_classic() +
+  theme(axis.ticks = element_blank(), 
+        axis.text.y = element_blank(),
+        text = element_text(size = 10)) 
+
+# extract the x and y values for the density line
+build_p_adult <- ggplot_build(p_adult)
+plot_xy_adult <- build_p_adult$data[[2]] %>% 
+  select(x:y) %>% 
+  rename(noise_contrast = x)
+
+# add the red and green ribbons based on those values
+rt_adult_inset <- p_adult + 
+  geom_ribbon(aes(ymin = 0, ymax = y - 0.15, x = noise_contrast), fill = "darkred", alpha = 0.5,
+              inherit.aes = F, 
+              data = filter(plot_xy_adult, noise_contrast <= 0)) + 
+  geom_ribbon(aes(ymin = 0, ymax = y - 0.15, x = noise_contrast), fill = "darkgreen", alpha = 0.5,
+              inherit.aes = F, 
+              data = filter(plot_xy_adult, noise_contrast >= 0)) 
+```
+
+
+```{r acc_insets}
+p <- noise_contrast %>% 
+  filter(age_category == "children") %>% 
+  ggplot(aes(x = noise_contrast)) +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "black", alpha = 0.8) +
+  geom_line(stat = "density", size = 1.5, color = "black") +
+  labs(x = "Accuracy", y = NULL) +
+  theme_classic() +
+  theme(axis.ticks = element_blank(), 
+        axis.text.y = element_blank(),
+        text = element_text(size = 10)) 
+
+# extract the x and y values for the density line
+build_p <- ggplot_build(p)
+plot_xy <- build_p$data[[2]] %>% 
+  select(x:y) %>% 
+  rename(noise_contrast = x)
+
+# add the red and green ribbons based on those values
+acc_child_inset <- p + 
+  geom_ribbon(aes(ymin = 0, ymax = y - 0.15, x = noise_contrast), fill = "darkred", alpha = 0.5,
+              inherit.aes = F, 
+              data = filter(plot_xy, noise_contrast <= 0)) + 
+  geom_ribbon(aes(ymin = 0, ymax = y - 0.15, x = noise_contrast), fill = "darkgreen", alpha = 0.5,
+              inherit.aes = F, 
+              data = filter(plot_xy, noise_contrast >= 0)) 
+
+## adults 
+p_adult <- noise_contrast %>% 
+  filter(age_category == "adults") %>% 
+  ggplot(aes(x = noise_contrast)) +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "black", alpha = 0.8) +
+  geom_line(stat = "density", size = 1.5, color = "black") +
+  labs(x = "Accuracy", y = NULL) +
+  scale_x_continuous(breaks=c(0, .05, .1)) +
+  theme_classic() +
+  theme(axis.ticks = element_blank(), 
+        axis.text.y = element_blank(),
+        text = element_text(size = 10)) 
+
+# extract the x and y values for the density line
+build_p_adult <- ggplot_build(p_adult)
+plot_xy_adult <- build_p_adult$data[[2]] %>% 
+  select(x:y) %>% 
+  rename(noise_contrast = x)
+
+# add the red and green ribbons based on those values
+acc_adult_inset <- p_adult + 
+  geom_ribbon(aes(ymin = 0, ymax = y - 0.15, x = noise_contrast), fill = "darkred", alpha = 0.5,
+              inherit.aes = F, 
+              data = filter(plot_xy_adult, noise_contrast <= 0)) + 
+  geom_ribbon(aes(ymin = 0, ymax = y - 0.15, x = noise_contrast), fill = "darkgreen", alpha = 0.5,
+              inherit.aes = F, 
+              data = filter(plot_xy_adult, noise_contrast >= 0)) 
+```
+
+```{r noise behavioral results plots}
 nudge_x <- 0.4
 means_color <- "darkred"
 
+# add blank level to leave room for the inset
+ss_final %<>% mutate(noise_condition = factor(noise_condition))
+levels(ss_final$noise_condition) <- c(levels(ss_final$noise_condition),'') 
+
 acc_plot_e1 <- ss_final %>% 
-  ungroup() %>% 
   filter(shift_accuracy_clean == "correct") %>% 
   ggplot(aes(x = noise_condition, y = prop)) +
-  geom_line(aes(group = subid), color = "grey", alpha = 0.5) +
+  #geom_line(aes(group = subid), color = "grey", alpha = 0.5) +
   geom_jitter(width = 0.07, alpha = 0.8, shape = 21, color = "black") +
   geom_violin(draw_quantiles = 0.5, trim = T, width = 0.5, size = 0.5, 
               color = "grey50",
@@ -306,19 +381,27 @@ acc_plot_e1 <- ss_final %>%
              color = means_color, size = 1.5,
              position = position_nudge(x = nudge_x)) +
   guides(fill = F) +
-  scale_x_discrete(expand = c(0,1)) +
+  scale_x_discrete(expand = c(0,0.8), drop=FALSE) +
   geom_hline(yintercept = 0.5, linetype = "dashed") +
-  labs(x = "Condition", y = "Prop. Correct") +
+  labs(x = "Condition", y = "Accuracy") +
   ylim(0.2, 1.05) +
   theme(text = element_text(size = 12)) +
   facet_wrap(~age_category, ncol = 1)
 
+# here is where we add the condition difference inset plots of the posterior distributions
+acc_plot_final <- ggdraw() +
+  draw_plot(acc_plot_e1) +
+  draw_plot(acc_child_inset, x = 0.52, y = .62, width = .6, height = .4, scale = 0.45) +
+  draw_plot(acc_adult_inset, x = 0.52, y = .15, width = .6, height = .4, scale = 0.45) 
+```
+
+```{r}
 ## first shift RTs
 rt_plot_e1 <- ss_final %>% 
   ungroup() %>% 
   filter(shift_accuracy_clean == "correct") %>% 
   ggplot(aes(x = noise_condition, y = m_rt)) +
-  geom_line(aes(group = subid), color = "grey", alpha = 0.5) +
+  #geom_line(aes(group = subid), color = "grey", alpha = 0.5) +
   geom_jitter(width = 0.07, alpha = 0.8, shape = 21, color = "black") +
   geom_violin(draw_quantiles = 0.5, trim = T, width = 0.5, size = 0.5, 
               color = "grey50",
@@ -333,15 +416,20 @@ rt_plot_e1 <- ss_final %>%
              color = means_color, size = 1.5,
              position = position_nudge(x = nudge_x)) +
   guides(fill = F) +
-  scale_x_discrete(expand = c(0,1)) +
+  scale_x_discrete(expand = c(0,0.8), drop = FALSE) +
   labs(x = "Condition", y = "RT (sec)") +
   ylim(0, 1.2) +
   theme(text = element_text(size = 12)) +
   facet_wrap(~age_category, ncol = 1)
+
+rt_plot_final <- ggdraw() +
+  draw_plot(rt_plot_e1) +
+  draw_plot(rt_child_inset, x = 0.52, y = .62, width = .6, height = .4, scale = 0.45) +
+  draw_plot(rt_adult_inset, x = 0.52, y = .15, width = .6, height = .4, scale = 0.45) 
 ```
 
-```{r e1_acc_rt, include = T, fig.env = "figure*", fig.pos = "t", fig.width=6, fig.height=5, fig.align='center', fig.cap = "First shift accuracy and RTs from E1. Panel A shows a boxplot representing the distribution of RTs for correct (orange) and incorrect (blue) shifts for each center stimulus type. Panel B shows the distribution of mean first shift accuracy scores for each center stimulus type. The solid lines represent median values, the boundaries of the box show the upper and lower quartiles, and the whiskers show the full range of the data excluding outliers."}
-cowplot::plot_grid(rt_plot_e1, acc_plot_e1, labels = c("A", "B"))
+```{r noise_acc_rt, include = T, fig.env = "figure*", fig.pos = "t", fig.width=8, fig.asp = 0.6, out.width= "80%", fig.align='center', fig.cap = "First shift accuracy and RTs from E1. Panel A shows a boxplot representing the distribution of RTs for correct (orange) and incorrect (blue) shifts for each center stimulus type. Panel B shows the distribution of mean first shift accuracy scores for each center stimulus type. The solid lines represent median values, the boundaries of the box show the upper and lower quartiles, and the whiskers show the full range of the data excluding outliers."}
+cowplot::plot_grid(rt_plot_final, acc_plot_final, labels = c("A", "B"))
 ```
 
 ### Behavioral analyses
@@ -356,22 +444,16 @@ cowplot::plot_grid(rt_plot_e1, acc_plot_e1, labels = c("A", "B"))
 
 *HDDM.* 
 
-```{r e1_model_results, fig.env = "figure", fig.pos = "t", fig.width=3., fig.height=3, fig.align='center', fig.cap = "Output for the EWMA guessing model in E1. The black curve represents the evolution of the control statistic (CS) as a function of reaction time. The grey curve represents the upper control limit (UCL). The vertical dashed line is the median cutoff value (point when the control process shifts out of a guessing state). The grey shaded area represents the 95\\% confidence interval around the estimate of the median cutoff point. And the shaded areas represents the proprotion of responses that were flagged as guesses (red) and language-driven (green)."}
-```
-
 # Experiment 2
 
-```{r e2_behavioral_reults, fig.env = "figure", fig.pos = "t",fig.width=2.8, fig.height=2.8, fig.align='center', fig.cap = "Behavioral results from E2. All plotting conventions are the same as in Figure 2."}
-```
-
-```{r e2_model_results, fig.env = "figure", fig.pos = "t",fig.width=3, fig.height=3, fig.align='center', fig.cap = "EWMA model output for E2. All plotting conventions are the same as Figure 3."}
+```{r gaze_behavioral_results, fig.env = "figure", fig.pos = "t",fig.width=2.8, fig.height=2.8, fig.align='center', fig.cap = "Behavioral results from E2. All plotting conventions are the same as in Figure 2."}
 ```
 
 ## Method
 
 ### Participants
 
-25 Stanford undergraduates participated (5 male, 20 females) for course credit. All participants were monolingual, native English speakers and had normal vision.
+XX Stanford undergraduates participated (XX male, XX females) for course credit. All participants were monolingual, native English speakers and had normal vision.
 
 ### Stimuli
 

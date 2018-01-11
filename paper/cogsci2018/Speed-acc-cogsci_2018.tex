@@ -49,8 +49,7 @@
 % \textwidth 16cm
 % \textheight 21cm
 
-\title{Seeking visual information to support spoken language comprehension in
-noisy environments}
+\title{Seeking visual information to support spoken language comprehension}
 
 
 \author{ {\large \bf Kyle MacDonald}$^1$ (kylem4@stanford.edu), {\large \bf Virginia Marchman}$^1$ (marchman@stanford.edu),  \\ {\large \bf Anne Fernald}$^1$ (afernald@stanford.edu), {\large \bf Michael C. Frank}$^1$ (mcfrank@stanford.edu) 
@@ -218,56 +217,64 @@ Reaction Time (RT). RT corresponds to the latency to shift away from the
 central stimulus to either picture measured from target-noun onset.
 Accuracy was the mean proportion of first gaze shifts that landed on the
 target picture out of the total number of shifts. We log transformed all
-RTs and used the \texttt{lme4} R package (Bates, Maechler, Bolker, \&
-Walker, 2013) to fit mixed-effects regression models that included a
-random intercept for each participant and item. Since children's age
-varied across conditions, we included age in months as a covariate in
-all models. All analysis code can be found in the online repository for
-this project: \url{https://github.com/kemacdonald/speed-acc/R/analysis}.
+RTs and used the \texttt{rstanarm} ({\textbf{???}}) package to fit
+Bayesian mixed-effects regression models. The mixed-effects approach
+allowed us to model the nested structure in our data by including random
+intercepts for each participant and item and a random slope for each
+item and noise condition. We used Bayesian estimation to quantify the
+uncertainty in our estimates of the condition means and grou
+differences. To communicate this uncertainty we report the 95\% Highest
+Density Interval (HDI) around the point estimates, providing a range of
+credible parameter values given the data and the model. All analysis
+code can be found in the online repository for this project:
+\url{https://github.com/kemacdonald/https://github.com/kemacdonald/speed-acc/R/analysis}.
 
-Next, we present two exploratory model-based analyses to quantify
-differences in eye movements across the four samples. First, we use an
-EWMA method to model changes in accuracy as a function of increases in
-RT. For each RT, the model generates two values: a ``control statistic''
-(CS, which captures the running average accuracy of first shifts) and an
-``upper control limit'' (UCL, which captures the pre-defined limit of
-when accuracy would be categorized as above chance level). Here, the CS
+Next, we present two model-based analyses that map differences in eye
+movements to psychological variables of interest. First, we use an EWMA
+method to model changes in random shifting behavior as a function of
+delays in responding (i.e., RT). For each RT, the model generates two
+values: a ``control statistic'' (\textbf{CS}, which captures the running
+average accuracy of first shifts) and an ``upper control limit''
+(\textbf{UCL}, which captures the pre-defined threshold when gaze shifts
+would be categorized as deviating from random responding). Here, the CS
 is an expectation of random shifting to either the target or the
-distracter image (nonlanguage-driven shifts), or a Bernoulli process
-with probability of success 0.5. As the RTs get longer, we assume that
-participants have gathered more information and should become more
-accurate, or a Bernoulli process with probability success \textgreater{}
-0.5. Using this model, we can quantify and compare: a) the cutoff point
-when the CS exceeds the UCL, indicating that participants started to
-generate language-driven shifts and b) the proportion of shifts that the
+distracter image (nonlanguage-driven shifts), modeled a Bernoulli
+process with \(P(success) = 0.5\). As participants delay their response,
+we assume that they have gathered more information and should become
+more accurate, which we model a Bernoulli process with
+\(P(success) > 0.5\). Using this model, we can quantify and compare: a)
+the cutoff point when the CS exceeds the UCL in the RT distribution,
+indicating the processing time required before participants generated
+language-driven shifts and b) the proportion of all gaze shifts that the
 model categorizes as language-driven vs.~nonlanguage-driven.
 
 Finally, we took the shifts that were categorized as language-driven by
 the EWMA and fit a hierarchical Bayesian drift-diffusion model (HDDM) to
-quantify differences in the speed and accuracy of language-driven eye
-movements. We chose to implement a hierarchical Bayesian version of the
-DDM using the HDDM Python package (Wiecki, Sofer, \& Frank, 2013) since
-we had relatively few trials from child participants and recent
-simulation studies have shown that the HDDM approach was better than
-other DDM fitting methods for small data sets (Ratcliff \& Childers,
-2015). The model assumes that people accumulate noisy evidence in favor
-of one alternative with a response generated when the evidence crosses a
-pre-defined decision threshold. Here we focus on two parameters of
-interest that map onto meaningful psychological variables:
+quantify differences in the underlying decision process that led to
+different patterns of behavior. We chose to implement a hierarchical
+Bayesian version of the DDM using the HDDM Python package (Wiecki,
+Sofer, \& Frank, 2013) since we had relatively few trials from the child
+participants and recent simulation studies have shown that the HDDM
+approach was better than other DDM fitting methods for small data sets
+(Ratcliff \& Childers, 2015). The model assumes that people accumulate
+noisy evidence in favor of one alternative with a response generated
+when the evidence crosses a pre-defined decision threshold. Here, we
+focus on two parameters of interest that map onto meaningful decision
+variables that we hypothesized would vary across our conditions:
 \emph{boundary separation}, which indexes the amount of evidence
-gathered before a response (higher values suggest more cautious
-responding) and \emph{drift rate}, which indexes the amount of evidence
-accumulated per unit time (higher values suggest more efficient
-processing).
+gathered before generating a response (higher values suggest more
+cautious responding) and \emph{drift rate}, which indexes the amount of
+evidence accumulated per unit time (higher values suggest more efficient
+processing of the stimulus).
 
 \begin{CodeChunk}
 \begin{figure*}[t]
 
-{\centering \includegraphics{figs/e1_acc_rt-1} 
+{\centering \includegraphics[width=0.8\linewidth]{figs/noise_acc_rt-1} 
 
 }
 
-\caption[First shift accuracy and RTs from E1]{First shift accuracy and RTs from E1. Panel A shows a boxplot representing the distribution of RTs for correct (orange) and incorrect (blue) shifts for each center stimulus type. Panel B shows the distribution of mean first shift accuracy scores for each center stimulus type. The solid lines represent median values, the boundaries of the box show the upper and lower quartiles, and the whiskers show the full range of the data excluding outliers.}\label{fig:e1_acc_rt}
+\caption[First shift accuracy and RTs from E1]{First shift accuracy and RTs from E1. Panel A shows a boxplot representing the distribution of RTs for correct (orange) and incorrect (blue) shifts for each center stimulus type. Panel B shows the distribution of mean first shift accuracy scores for each center stimulus type. The solid lines represent median values, the boundaries of the box show the upper and lower quartiles, and the whiskers show the full range of the data excluding outliers.}\label{fig:noise_acc_rt}
 \end{figure*}
 \end{CodeChunk}
 
@@ -289,7 +296,7 @@ processing).
 
 \subsubsection{Participants}\label{participants-1}
 
-25 Stanford undergraduates participated (5 male, 20 females) for course
+XX Stanford undergraduates participated (XX male, XX females) for course
 credit. All participants were monolingual, native English speakers and
 had normal vision.
 
@@ -394,10 +401,6 @@ Altmann, G., \& Kamide, Y. (2007). The real-time mediation of visual
 attention by language and world knowledge: Linking anticipatory (and
 other) eye movements to linguistic processing. \emph{Journal of Memory
 and Language}, \emph{57}(4), 502--518.
-
-\hypertarget{ref-bates2013lme4}{}
-Bates, D., Maechler, M., Bolker, B., \& Walker, S. (2013). Lme4: Linear
-mixed-effects models using eigen and s4. r package version 1.0-5.
 
 \hypertarget{ref-hayhoe2005eye}{}
 Hayhoe, M., \& Ballard, D. (2005). Eye movements in natural behavior.
