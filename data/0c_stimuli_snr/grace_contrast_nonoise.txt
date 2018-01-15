@@ -1,0 +1,22 @@
+===================================
+WCAG 2.0 Success Criteria 1.4.7 Contrast Results
+
+Filename = /Users/langcogRA/Desktop/km_temp/grace_raw.aup.
+
+Foreground
+Time started =  0 hour(s),  0 minute(s), 16.86 seconds.
+Time ended =  0 hour(s),  0 minute(s), 18.56 seconds.
+Average RMS = -24.47 dB.
+
+Background
+Time started =  0 hour(s),  0 minute(s), 16.41 seconds.
+Time ended =  0 hour(s),  0 minute(s), 16.64 seconds.
+Average RMS = -59.51 dB.
+
+Results
+Difference = 35.05 Average RMS dB.
+Success Criteria 1.4.7 of WCAG 2.0: Pass
+
+Data gathered
+5 May 2017 11h 33m 56s
+===================================

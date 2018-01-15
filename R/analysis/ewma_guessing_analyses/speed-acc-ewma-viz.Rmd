@@ -4,15 +4,18 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-rm(list=ls())
 knitr::opts_chunk$set(echo=F, warning=F, cache=F, message=F, sanitize = T, fig.height=6, fig.width=6)
 ```
 
 ```{r}
-source("../../helper_functions/libraries_and_functions.R")
-source("../../helper_functions/ewma_helper_funs.R")
-ewma.path <- "../../../data/3_final_merged_data/ewma_output/"
-plot.save.path <- "../../../paper/figs/"
+library(here)
+ewma.path <- "data/3_final_merged_data/ewma_output/"
+plot.save.path <- "paper/figs/"
+```
+
+```{r}
+source(here::here("R/helper_functions/libraries_and_functions.R"))
+source(here::here("R/helper_functions/ewma_helper_funs.R"))
 ```
 
 ## Read data
@@ -139,8 +142,6 @@ d_guess %>%
          signal_ratio = 1-guess_ratio)
 ```
 
-
-
 ### Experiment 2: Text (Adults)
 
 ```{r}
@@ -209,28 +210,7 @@ ggsave(plot = ewma_control_charts$trio,
 
 ## Visualize EWMA results: Proportion guessing boxplots 
 
-```{r}
-make_ewma_boxplot <- function(d) {
-  # aggregate prop guessing for each participant
-  ss <- d %>% 
-    group_by(subid, condition, guess) %>% 
-    summarise(count = n()) %>% 
-    mutate(prop.responding = round(count / sum(count), 2))
-  
-  # make plot
-  ss %>% 
-    filter(guess == "response") %>% 
-    ggplot(aes(x = fct_reorder(condition, prop.responding), y = prop.responding)) +
-    geom_boxplot(fill = "dodgerblue", width = 0.2, alpha = 0.9, outlier.color = "white",
-                 notch = F) +
-    lims(y = c(0,1)) +
-    labs(x = "Condition", y = "Prop. Language Driven")  +
-    scale_x_discrete(expand = c(0,1)) 
-  
-}
-```
-
-Make all the boxplots for each experiment. 
+Make all the boxplots for each experiment using my own EWMA helper function. 
 
 ```{r}
 ewma_boxplots <- d %>% 

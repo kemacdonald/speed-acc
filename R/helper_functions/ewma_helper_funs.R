@@ -168,3 +168,23 @@ plot_ewma_chart <- function(model_vals) {
     ggthemes::theme_few() +
     theme(text = element_text(size = 10))
 }
+
+
+make_ewma_boxplot <- function(d) {
+  # aggregate prop guessing for each participant
+  ss <- d %>% 
+    group_by(subid, condition, guess) %>% 
+    summarise(count = n()) %>% 
+    mutate(prop.responding = round(count / sum(count), 2))
+  
+  # make plot
+  ss %>% 
+    filter(guess == "response") %>% 
+    ggplot(aes(x = fct_reorder(condition, prop.responding), y = prop.responding)) +
+    geom_boxplot(fill = "dodgerblue", width = 0.2, alpha = 0.9, outlier.color = "white",
+                 notch = F) +
+    lims(y = c(0,1)) +
+    labs(x = "Condition", y = "Prop. Language Driven")  +
+    scale_x_discrete(expand = c(0,1)) 
+  
+}

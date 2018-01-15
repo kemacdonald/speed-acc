@@ -42,7 +42,6 @@ d <- bind_rows(mutate(d_kids_noise, experiment = "kids_noise", age_category = "c
 # nrow(d_kids_gaze) + nrow(d_kids_noise) + nrow(d_adults) == nrow(d)
 ```
 
-
 ## Noise experiment (Rt and Accuracy models)
 
 ```{r e1_filter}
@@ -129,5 +128,87 @@ posteriors <- list(rt_noise = samples_e1_rt_tidy,
                    acc_noise = samples_e1_acc_tidy)
 
 saveRDS(posteriors, file = here::here("data/3_final_merged_data/first_shifts", "speed-acc-posterior-samples.rds"))
+```
+
+## EWMA analysis models
+
+```{r}
+noise_ewma_files <- c("speed_acc_kids_noise_ewma_results.csv",
+                      "speed_acc_adult_ng_ewma_results.csv")
+
+d_ewma_noise <- noise_ewma_files %>% purrr::map_df(read_ewma, path = ewma_path) 
+```
+
+
+```{r aggregate cutpoints ewma noise}
+ss_cutoffs_noise <- d_ewma_noise %>% 
+  filter(guess == "response") %>% 
+  group_by(subid, noise_condition, age_category) %>% 
+  summarise_(cutoff = interp(~ min(x), x = as.name("rt"))) %>% 
+  mutate(log_cut = log(cutoff))
+
+m_cutoffs <- stan_lm(cutoff ~ noise_condition + age_category, 
+                     data = ss_cutoffs_noise,
+                     prior = R2(0.75, what = "mean"))
+
+# get posterior samples
+samples_ewma <- m_cutoffs %>% 
+  as.data.frame() %>% 
+  as_tibble() %>% 
+  dplyr::rename(clear_adults = `(Intercept)`,
+                noise_beta = noise_conditionnoise,
+                age_beta = age_categorychildren) %>% 
+  select(clear_adults, noise_beta, age_beta) %>% 
+  mutate(clear_children = clear_adults + noise_beta,
+         noise_children = clear_adults + age_beta + noise_beta, 
+         noise_adults = clear_adults + noise_beta,
+         sample_id = 1:n()) %>% 
+  gather(key = condition, value = param_est, -sample_id, -noise_beta, -age_beta) %>% 
+  separate(condition, into = c("noise_condition", "age_category"))
+```
+
+```{r aggregate prop guessing ewma}
+m_guessing_noise <- stan_glm(
+  guess_num ~ noise_condition + age_category,
+  data = d_ewma_noise,
+  prior = normal(0, 2),
+  prior_intercept = normal(0, 1))
+
+# get posterior samples
+samples_ewma_guess_noise <- m_guessing_noise %>% 
+  as.data.frame() %>% 
+  as_tibble() %>% 
+  dplyr::rename(clear_adults = `(Intercept)`,
+                noise_beta = noise_conditionnoise,
+                age_beta = age_categorychildren) %>% 
+  select(clear_adults, noise_beta, age_beta) %>% 
+  mutate(clear_children = clear_adults + age_beta,
+         noise_children = clear_adults + age_beta + noise_beta, 
+         noise_adults = clear_adults + noise_beta,
+         sample_id = 1:n()) %>% 
+  gather(key = condition, value = param_est, -sample_id, -noise_beta, -age_beta) %>% 
+  separate(condition, into = c("noise_condition", "age_category"))
+```
+
+```{r}
+# summarise
+ms_cuts_noise <- samples_ewma %>% 
+  group_by(age_category, noise_condition) %>% 
+  summarise(MAP = mean(param_est),
+            hdi_lower = quantile(param_est, probs = 0.025),
+            hdi_upper = quantile(param_est, probs = 0.975)) %>% 
+  mutate_if(.predicate = is.numeric, .funs = round, digits = 2) %>% 
+  mutate(model = "EWMA", parameter = "cut point") %>% 
+  select(model, parameter, everything())
+
+# summarise group means
+ms_guess_noise <- samples_ewma_guess_noise %>% 
+  group_by(age_category, noise_condition) %>% 
+  summarise(MAP = mean(param_est),
+            hdi_lower = quantile(param_est, probs = 0.025),
+            hdi_upper = quantile(param_est, probs = 0.975)) %>% 
+  mutate(model = "EWMA", parameter = "prob. guessing") %>% 
+  mutate_if(.predicate = is.numeric, .funs = round, digits = 2) %>% 
+  select(model, parameter, everything())
 ```
 

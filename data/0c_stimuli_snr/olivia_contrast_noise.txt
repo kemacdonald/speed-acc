@@ -1,0 +1,22 @@
+===================================
+WCAG 2.0 Success Criteria 1.4.7 Contrast Results
+
+Filename = /Users/langcogRA/Desktop/km_temp/olivia_raw.aup.
+
+Foreground
+Time started =  0 hour(s),  4 minute(s), 27.14 seconds.
+Time ended =  0 hour(s),  4 minute(s), 28.62 seconds.
+Average RMS = -18.70 dB.
+
+Background
+Time started =  0 hour(s),  4 minute(s), 26.28 seconds.
+Time ended =  0 hour(s),  4 minute(s), 27.06 seconds.
+Average RMS = -21.47 dB.
+
+Results
+Difference = 2.77 Average RMS dB.
+Success Criteria 1.4.7 of WCAG 2.0: Fail
+
+Data gathered
+5 May 2017 11h 22m 25s
+===================================
