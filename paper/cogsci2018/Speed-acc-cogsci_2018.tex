@@ -143,17 +143,6 @@ inform the generalizability of our account by testing predictions in a
 wider variety of contexts, and contexts that are not typically studied
 in work on early language processing.
 
-\begin{CodeChunk}
-\begin{figure*}[tb]
-
-{\centering \includegraphics[width=0.7\linewidth]{figs/stimuli-1} 
-
-}
-
-\caption[Stimuli for E1 and E2]{Stimuli for E1 and E2. Panel A shows the layout of the three fixation locations (speaker, target, and distracter), and the timecourse of a single trial. Panel B shows a visual representation of the clear and noisy waveforms used in E1. Panel C shows the social cue manipulation used in E2.}\label{fig:stimuli}
-\end{figure*}
-\end{CodeChunk}
-
 And third, this work brings together ideas from several rich research
 programs and theoretical accounts of language comprehension and vision.
 For example, work on language-mediated visual attention shows that
@@ -206,6 +195,17 @@ whether the behavioral differences in Accuracy and RT are driven by a
 more cautious responding strategy or by more efficient information
 processing -- a critical distinction for our theoretical account.
 
+\begin{CodeChunk}
+\begin{figure}[tb]
+
+{\centering \includegraphics[width=0.9\linewidth]{figs/stimuli_plot-1} 
+
+}
+
+\caption[Stimuli for E1 and E2]{Stimuli for E1 and E2. Panel A shows the layout of the three fixation locations (speaker, target, and distracter), and the timecourse of a single trial. Panel B shows a visual representation of the clear and noisy waveforms used in E1. Panel C shows the social cue manipulation used in E2.}\label{fig:stimuli_plot}
+\end{figure}
+\end{CodeChunk}
+
 \subsection{Method}\label{method}
 
 \subsubsection{Participants}\label{participants}
@@ -256,6 +256,17 @@ maintain interest. Adult participants saw 64 trials (32 noise; 32
 clear).
 
 \subsection{Results and Discussion}\label{results-and-discussion}
+
+\begin{CodeChunk}
+\begin{figure*}[t]
+
+{\centering \includegraphics[width=0.7\linewidth]{figs/noise_acc_rt_e1_plot-1} 
+
+}
+
+\caption[Behavioral results from E1]{Behavioral results from E1. Panel A shows violin plots representing the distribution of median RTs for each participant in each condition. The dark red points represent the most likely estimate of the group mean with the error bars showing the 95\% Highest Density Interval. The grey inset plot shows the full posterior distribution of plausible RT differences across conditions with the vertical dashed line representing the null value of zero condition difference. The green shading represents estimates above the null value and the red shading represents estimates below the null value. Panel B shows the same information but for First Shift Accuracy.}\label{fig:noise_acc_rt_e1_plot}
+\end{figure*}
+\end{CodeChunk}
 
 \subsubsection{Analysis plan}\label{analysis-plan}
 
@@ -318,17 +329,6 @@ cautious responding) and \textbf{drift rate}, which indexes the amount
 of evidence accumulated per unit time (higher values suggest more
 efficient processing of the stimulus).
 
-\begin{CodeChunk}
-\begin{figure*}[tb]
-
-{\centering \includegraphics[width=0.9\linewidth]{figs/noise_acc_rt_e1_plot-1} 
-
-}
-
-\caption[Behavioral results from E1]{Behavioral results from E1. Panel A shows violin plots representing the distribution of median RTs for each participant in each condition. The dark red points represent the most likely estimate of the group mean with the error bars showing the 95\% Highest Density Interval. The grey inset plot shows the full posterior distribution of plausible RT differences across conditions with the vertical dashed line representing the null value of zero condition difference. The green shading represents estimates above the null value and the red shading represents estimates below the null value. Panel B shows the same information but for First Shift Accuracy.}\label{fig:noise_acc_rt_e1_plot}
-\end{figure*}
-\end{CodeChunk}
-
 \subsubsection{Behavioral analyses}\label{behavioral-analyses}
 
 \emph{RT.} To make RTs more suitable for modeling on a linear scale, we
@@ -342,8 +342,8 @@ conditions. Both children and adults were slower to identify the target
 in the noise condition (Children \(M_{noise}\) = 0.5 ms; Adult
 \(M_{noise}\) = 0.6 ms), as compared to the clear condition (Children
 \(M_{clear}\) = 0.46 ms; Adult \(M_{clear}\) = 0.55 ms). RTs in the
-noise condition were 42.17 ms slower on average, with a 95\% HDI from
-1.58 ms to 82.97 ms that did not include the null value of zero
+noise condition were 42.62 ms slower on average, with a 95\% HDI from
+4.16 ms to 82.96 ms that did not include the null value of zero
 condition difference.
 
 \emph{Accuracy.} Next, we modeled adults' and children's first shift
@@ -366,22 +366,33 @@ challenging noise condition.
 
 \begin{table}[b]
 \centering
-\begin{tabular}{lllrrr}
+\begin{tabular}{llll}
   \hline
-model & parameter & contrast & MAP & hdi\_lower & hdi\_upper \\ 
+Experiment & Parameter & Contrast & Estimate \\ 
   \hline
-EWMA & Cut point & age\_group & 0.21 & 0.18 & 0.24 \\ 
-  EWMA & Cut point & noise\_condition & 0.04 & 0.01 & 0.06 \\ 
-  EWMA & Prop. language-driven & age\_group & -0.47 & -0.49 & -0.44 \\ 
-  EWMA & Prop. language-driven & noise\_condition & 0.12 & 0.09 & 0.15 \\ 
+E1 & Cut point & age & 0.21 (0.19, 0.24) \\ 
+  E1 & Cut point & noise & 0.04 (0.01, 0.06) \\ 
+  E1 & Guessing & age & -0.47 (-0.5, -0.44) \\ 
+  E1 & Guessing & noise & 0.12 (0.09, 0.15) \\ 
    \hline
 \end{tabular}
-\caption{EWMA and HDDM results for E1.} 
+\caption{EWMA results for E1 and E2.} 
 \end{table}
 
 \emph{EWMA.}
 
 \emph{HDDM.}
+
+\begin{CodeChunk}
+\begin{figure}[t]
+
+{\centering \includegraphics[width=0.8\linewidth]{figs/hddm_plot_noise-1} 
+
+}
+
+\caption[HDDM results E1]{HDDM results E1.}\label{fig:hddm_plot_noise}
+\end{figure}
+\end{CodeChunk}
 
 \section{Experiment 2}\label{experiment-2}
 
