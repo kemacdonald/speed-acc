@@ -28,7 +28,7 @@ source(here::here("R/helper_functions/libraries_and_functions.R"))
 source(here::here("R/helper_functions/ewma_helper_funs.R"))
 ```
 
-```{r data path}
+```{r data paths}
 data_path <- "data/3_final_merged_data/first_shifts/"
 ewma_path <- here::here("data/3_final_merged_data/ewma_output/")
 hddm_path <- "data/3_final_merged_data/hddm_output/"
@@ -48,59 +48,12 @@ d_ewma_noise <- noise_ewma_files %>%
   purrr::map_df(read_ewma, path = ewma_path) 
 ```
 
-```{r read bda output}
-d_models <- readRDS(here::here("data/3_final_merged_data/first_shifts", "speed-acc-posterior-samples.rds"))
+```{r read hddm output}
+d_hddm <- read_csv(here::here(hddm_path, "hddm_tidy.csv"))
 ```
 
-```{r read hddm output}
-## adults
-hddm.adults.path <- here::here("data/3_final_merged_data/hddm_output/adults/")
-hddm.kids.path <- here::here("/data/3_final_merged_data/hddm_output/kids/")
-
-# get a vector of file names
-files.adults <- dir(path = hddm.adults.path, pattern = "*.csv") 
-
-# map my custom read_hddm function over all the file names using using purrr
-d.adults <- files.adults %>% 
-  purrr::map_df(read_hddm_file, path = hddm.adults.path, 
-                condition_list = c("bull", "face", "text_no_audio", "text",
-                                   "straight_ahead_clear", "straight_ahead_noise", "gaze_clear",
-                                   "gaze_noise"), 
-                param_list = c("boundary", "drift")) 
-
-## kids
-files.kids <- dir(path = hddm.kids.path, pattern = "*.csv") 
-
-# map my custom read_hddm function over all the file names using using purrr
-d.kids <- files.kids %>% 
-  purrr::map_df(read_hddm_file, path = hddm.kids.path, 
-                condition_list = c("asl", "clear", "straightahead", "face", "gaze", "noise"), 
-                param_list = c("boundary", "drift")) 
-
-# adult data
-d.adults %<>% 
-  mutate(age_code = "adult", 
-         experiment = case_when(
-           condition %in% c("bull", "face", "text_no_audio", "text") ~ "text",
-           condition %in% c("straight_ahead_clear", "straight_ahead_noise", 
-                            "gaze_clear", "gaze_noise") ~ "noise_gaze",
-           TRUE ~ "NA"
-         )
-  )
-
-# kid data
-d.kids %<>% 
-  mutate(age_code = "kid", 
-         experiment = case_when(
-           condition %in% c("asl", "face") ~ "trio",
-           condition %in% c("clear", "noise") ~ "noise",
-           condition %in% c("straightahead", "gaze") ~ "gaze",
-           TRUE ~ "NA"
-         )
-  )
-
-# bind together
-d_hddm <- bind_rows(d.adults, d.kids)
+```{r read bda output}
+d_models <- readRDS(here::here("data/3_final_merged_data/first_shifts", "speed-acc-posterior-samples.rds"))
 ```
 
 ```{r clean datasets for merge}
@@ -143,15 +96,13 @@ d_stim <- bind_rows(mutate(d_noise_stim, experiment = "kids_noise"),
 
 # Introduction 
 
-Lanuguage comprehension is fundamentally a multimodal process where listeners integrate visual and linguistic information to reach a candidate interpretation. One classic empirical demonstration is the "McGurk effect" where a speaker's mouth movement suggests one sound while their acoustic output suggests another, resulting in the listener perceiving a third, intermediate sound [@macdonald1978visual]. Moreover, theories of speech perception [@mcclelland2006there] and lexical processing [@macdonald2006constraint; @smith2017multimodal] have argued that *interactive* processes are a defining feature of human language comprehension.  
+Real-time language comprehension is a multimodal phenomenon. As listeners, we integrate information from both the visual and the linguistic signal to reach a final interpretation. One classic demonstration of this integration process is the "McGurk effect" where a speaker's mouth movements suggest one sound while their acoustic output suggests another, resulting in the listener perceiving a third, intermediate sound [@macdonald1978visual]. Moreover, prominent theories of speech perception [@mcclelland2006there] and lexical processing [@macdonald2006constraint; @smith2017multimodal] have argued that *interactive* processes -- where information is combined from multple sources in parallel -- are a defining feature of human language. And recent work on effortful listening shows that people will allocate additional cognitive resources to compensate for degraded information in the auditory modality [@van2014listening].
 
-However, the usefulness of different sources of information can vary depending on features of the listener and features of the surrounding context. For example, in our prior work, we compared patterns of eye movements during real-time signed and spoken language comprehension -- a case where we hypothesized that the value of allocating visual fixations to the language source being much higher in a visual-manual language. We found that fluent adults and native ASL learners showed behavioral signatures of prioritizing information accumuation and accuracy over and above speed of responding when deciding to look away from a speaker and to the rest of the visual world [@macdonald2017info]. We proposed an information-maximization account: that signers' respones were adaptive since responding too quickly could result in loss of information that would be useful for sign recognition.
+However, the usefulness of different kinds of information varies depending on features of the listener **and** on features of the context. Consider the case of processing a visual-manual language like American Sign Language (ASL). Here, the value of allocating visual fixations to the language source (i.e., the signer) is high since all of the language-relevant information is in that fixation location. In our prior work, we showed that, compared to spoken language learners, young ASL-learners prioritize information accumulation and accuracy over and above speed when deciding to seek a named referent during real-time ASL comprehension [@macdonald2017info].  We proposed an information-maximization account inspired by goal-based theories of vision [@hayhoe2005eye]: that signers are sensitive to the higher value of a certain fixation behavior and adapted the dynamics of gaze to avoid shifting away too quickly and miss information that could be used for comprehension.
 
-In the work reported here, we aim to test predictions of our information-maximization account and ask whether features of the language processing context that modulate the value of visual information for langauge understanding  also change the dynamics of listeners' *decisions* about visual fixation. We use two manipulations of context: (1) speech in noise and (2) speech accompanied with a visual cue to reference (a speaker's eye gaze). We chose the case of processing speech in noisy environments because we hypothesized that adding background noise would the auditory signal less reliable, and in turn make the visual signal more useful. In fact, classic empirical work on speech perception shows that adults were better able to "recover" linguistic information in noisy contexts when they had visual access to a speaker's face [@erber1969interaction]. We chose social cue processing because a speaker who uses a gaze cue provides visual information that completely disambiguates reference. Moreover, processing social cues are argued to be a core component of early language acquition and empirical work shows that gaze following behvaior emerges early in development [@brooks2008infant]. 
+In the work reported here, we aim to test predictions of our information-maximization account in two novel domains wherefeatures of the context modulate the value of seeking visual information: (1) processing speech in noise and (2) processing speech accompanied with a visual cue to reference (eye gaze). We chose the case of processing speech in noisy environments because we hypothesized that adding background noise would make the auditory signal less reliable, and in turn make the visual signal more useful. In fact, classic empirical work on speech perception shows that adults are better able to "recover" linguistic information in noisy contexts when they have visual access to a speaker's face [@erber1969interaction]. We chose social cue processing because a speaker who gazes at on object is more informative, providing visual information that completely disambiguates reference. Moreover, social-pragmatic theories of language acquisition emphasize the role of processing social cues for early language acquition [@clark2009first] and empirical work shows that gaze following emerges in the first year of development [@brooks2008infant]. 
 
-We think these experiments are important for three reasons. First, they offer a confirmatory test of our explanation for the findings reported in @macdonald2017info, controlling for population-level differences between signers and spoken language learners. Second, they inform the generalizability of our account by testing predictions in a wider variety of contexts, and contexts that are not typically studied in work on early language processing. 
-
-And third, this work brings together ideas from several rich research programs and theoretical accounts of language comprehension and vision. For example, work on language-mediated visual attention shows that adults and children rapidly shift visual attention upon hearing the name of an object in the visual scene, with a high proportion of shifts occurring prior to the offset of the word [@allopenna1998tracking; @tanenhaus1995integration]. These findings have led to debates about whether language-mediated shifts in eye gaze are automatic as opposed to under the control of the listener. Empirical work on vision during natural tasks shows that people overwhelmingly prefer to allocate visual fixations towards *goal-relevant* aspects of the visual world -- e.g., an upcoming obstacle while walking [@hayhoe2005eye]. These accounts make the prediction that gaze patterns during language comprehension should adapt to seek higher value visual information to achieve the goal of rapid language processing. Finally, work on effortful listening shows that listeners generate compensatory responses (e.g., increases in attention and working memory) during more "challenging" comprehension contexts such as processing noisy or accented speech [@van2014listening]. These accounts predict that listeners might compensate for the reduced quality of the auditory signal by allocating more attentional resources to gathering higher quality visual information.
+We think these experiments are important for three reasons. First, they provide a confirmatory test of our information-maximization account of the findings reported in @macdonald2017info while providing an important control for the multitude of other population-level differences between ASL- and English-learners. Second, they inform the generalizability of the account by testing predictions across a wider variety of processing contexts that are not typically studied in work on early language comprehension. And third, this work brings together ideas from several rich research programs and theoretical accounts. For example, work on language-mediated visual attention shows that adults and children rapidly shift visual attention upon hearing the name of an object in the visual scene [@allopenna1998tracking; @tanenhaus1995integration]. These findings have led to debates about whether language-mediated gaze shifts are automatic as opposed to under the control of the listener. Empirical work on vision during natural tasks shows that people overwhelmingly prefer to look at *goal-relevant* locations -- e.g., an upcoming obstacle while walking [@hayhoe2005eye]. These accounts make the prediction that gaze patterns during language comprehension should adapt to the value of fixation locations with respect to the goal of rapid language processing. Finally, work on effortful listening shows that listeners generate compensatory responses (e.g., increases in attention and working memory) within "challenging" comprehension contexts such as processing noisy or accented speech [@van2014listening]. These accounts predict that our young listeners might compensate for the reduced quality of the auditory signal by allocating gathering additional visual information.
 
 <!-- The study of eye movements during language comprehension has provided fundamental insights into the interaction between conceptual representations of the world and the incoming linguistic signal. For example, research shows that adults and children will rapidly shift visual attention upon hearing the name of an object in the visual scene, with a high proportion of shifts occurring prior to the offset of the word [@allopenna1998tracking; @tanenhaus1995integration]. Moreover, researchers have found that conceptual representations activated by fixations to the visual world can modulate subsequent eye movements during language processing [@altmann2007real].  -->
 
@@ -419,11 +370,11 @@ ms_guess_noise <- d_models$ewma_guess_noise %>%
   select(model, parameter, everything())
 ```
 
-```{r noise ewma cond difference summary}
-## cut point model
-ms_cond_diff_cuts <- d_models$ewma_cuts_noise  %>% 
+```{r ewma cond difference summary}
+## cut point model noise
+ms_cond_diff_cuts <- d_models$ewma_cuts_noise %>% 
   select(sample_id, noise_beta, age_beta) %>%
-  rename(age = age_beta, noise = noise_beta) %>% 
+  rename(`age group` = age_beta, noise = noise_beta) %>% 
   unique() %>% 
   gather(key = Contrast, value = param_est, -sample_id) %>% 
   group_by(Contrast) %>% 
@@ -433,14 +384,14 @@ ms_cond_diff_cuts <- d_models$ewma_cuts_noise  %>%
   mutate_if(.predicate = is.numeric, .funs = round, digits = 2) %>% 
   mutate_all(as.character) %>%
   mutate(Parameter = "Cut point",
-         Estimate = paste0(MAP, " (", hdi_lower, ", ", hdi_upper, ")"),
+         `Estimate (95% HDI)` = paste0(MAP, " [", hdi_lower, ", ", hdi_upper, "]"),
          Experiment = "E1") %>%
-  select(Experiment, Parameter, Contrast, Estimate)
+  select(Experiment, Parameter, Contrast, `Estimate (95% HDI)`)
 
-## prop guessing model
+## prop guessing model noise
 ms_cond_diff_guessing <- d_models$ewma_guess_noise %>% 
   select(sample_id, noise_beta, age_beta) %>%
-  rename(age = age_beta, noise = noise_beta) %>% 
+  rename(`age group` = age_beta, noise = noise_beta) %>% 
   unique() %>% 
   gather(key = Contrast, value = param_est, -sample_id) %>% 
   group_by(Contrast) %>% 
@@ -450,17 +401,59 @@ ms_cond_diff_guessing <- d_models$ewma_guess_noise %>%
   mutate_if(.predicate = is.numeric, .funs = round, digits = 2) %>% 
   mutate_all(as.character) %>% 
   mutate(Parameter = "Guessing",
-         Estimate = paste0(MAP, " (", hdi_lower, ", ", hdi_upper, ")"),
+         `Estimate (95% HDI)` = paste0(MAP, " [", hdi_lower, ", ", hdi_upper, "]"),
          Experiment = "E1") %>%
-  select(Experiment, Parameter, Contrast, Estimate)
+  select(Experiment, Parameter, Contrast, `Estimate (95% HDI)`)
+
+## cut point model gaze
+ms_cond_diff_cuts_gaze <- d_models$ewma_cuts_gaze %>% 
+  select(sample_id, straightahead_beta, age_beta) %>%
+  rename(`age group` = age_beta, gaze = straightahead_beta) %>% 
+  unique() %>% 
+  gather(key = Contrast, value = param_est, -sample_id) %>% 
+  group_by(Contrast) %>% 
+  summarise(MAP = mean(param_est),
+            hdi_lower = quantile(param_est, probs = 0.025),
+            hdi_upper = quantile(param_est, probs = 0.975)) %>% 
+  mutate_if(.predicate = is.numeric, .funs = round, digits = 2) %>% 
+  mutate_all(as.character) %>%
+  mutate(Parameter = "Cut point",
+         `Estimate (95% HDI)` = paste0(MAP, " [", hdi_lower, ", ", hdi_upper, "]"),
+         Experiment = "E2") %>%
+  select(Experiment, Parameter, Contrast, `Estimate (95% HDI)`)
+
+## prop guessing model noise
+ms_cond_diff_guessing_gaze <- d_models$ewma_guess_gaze %>% 
+  select(sample_id, straightahead_beta, age_beta) %>%
+  rename(`age group` = age_beta, gaze = straightahead_beta) %>% 
+  unique() %>% 
+  gather(key = Contrast, value = param_est, -sample_id) %>% 
+  group_by(Contrast) %>% 
+  summarise(MAP = mean(param_est),
+            hdi_lower = quantile(param_est, probs = 0.025),
+            hdi_upper = quantile(param_est, probs = 0.975)) %>% 
+  mutate_if(.predicate = is.numeric, .funs = round, digits = 2) %>% 
+  mutate_all(as.character) %>% 
+  mutate(Parameter = "Guessing",
+         `Estimate (95% HDI)` = paste0(MAP, " [", hdi_lower, ", ", hdi_upper, "]"),
+         Experiment = "E2") %>%
+  select(Experiment, Parameter, Contrast, `Estimate (95% HDI)`)
 ```
 
-```{r noise model results table, results="asis", include = T}
-noise_table <- bind_rows(ms_cond_diff_cuts, ms_cond_diff_guessing)
-noise_table <- xtable::xtable(noise_table, caption = "EWMA results for E1 and E2.")
+```{r ewma results table, results="asis", include = T}
+ewma_table <- bind_rows(ms_cond_diff_cuts, ms_cond_diff_guessing,
+                        ms_cond_diff_cuts_gaze, ms_cond_diff_guessing_gaze)
 
-print(noise_table, type="latex", comment = F, table.placement = "b",
-      floating.environment = "table", include.rownames=FALSE)
+ewma_table <- xtable::xtable(ewma_table, 
+                             caption = "EWMA results for E1 and E2. Cut point refers to the response time in the RT distribution when gaze shifts reliably deviated from random. Guessing refers to the proportion of gaze shifts categorized as random vs. language-driven. Estimate refers to the average difference between condition or age group.",
+                             align = "llllr")
+
+hlines <- c(-1, 0, 4, nrow(ewma_table))
+
+xtable::print.xtable(ewma_table, type="latex", comment = F, table.placement = "b",
+      hline.after = hlines,
+      floating.environment = "table", 
+      include.rownames=FALSE)
 ```
 
 *EWMA.*
@@ -488,14 +481,15 @@ print(hddm_table, type="latex", comment = F, table.placement = "b",
       floating.environment = "table", include.rownames=FALSE)
 ```
 
-```{r hddm_plot_noise, include = T, fig.env = "figure", fig.pos = "t", fig.width=4, fig.asp = "0.7", out.width = "80%", fig.align='center', fig.cap = "HDDM results E1."}
+```{r hddm_plot_noise, include = T, fig.env = "figure", fig.pos = "t", fig.width=4, fig.asp = "0.7", out.width = "85%", fig.align='center', fig.cap = "HDDM results E1."}
 
 d_hddm %>% 
   filter(experiment %in% c("noise_gaze", "noise"),
          condition %in% c("gaze_noise", "straight_ahead_clear",
                           "clear", "noise")) %>%
   mutate(condition = ifelse(str_detect(condition, "noise"), "noise", "clear"),
-         age_code = ifelse(age_code == "kid", "children", "adults")) %>% 
+         age_code = ifelse(age_code == "kid", "children", "adults"),
+         age_code = factor(age_code, levels = c("children", "adults"))) %>% 
   ggplot(aes(x = param_value, color = condition)) +
   geom_line(stat = "density", size = 1) +
   ggthemes::scale_color_ptol() +
@@ -507,10 +501,9 @@ d_hddm %>%
         legend.position = "top",
         axis.ticks = element_blank(), 
         axis.text.y = element_blank(),
-        text = element_text(size = 12),
+        text = element_text(size = 10),
         legend.title = element_text(size =10)) 
 ```
-
 
 # Experiment 2
 
@@ -532,7 +525,7 @@ Audio and visual stimuli were identical to the Face and Bullseye tasks in E1. We
 
 ### Design and procedure
 
-The design was identical to E1, with the exception of a change to a within-subjects manipulation where each participant completed all four tasks (Bullseye, Face, Text, and Text-no-audio). In the Text condition, spoken language accompanied the printed text. In the Text-no-audio condition, the spoken language stimulus was removed. Participants saw a total of 128 trials while their eye movements were tracked using automated eye-tracking software.
+The design was identical to E1.  Participants saw a total of 128 trials while their eye movements were tracked using automated eye-tracking software.
 
 ## Results and Discussion
 
@@ -547,6 +540,32 @@ The design was identical to E1, with the exception of a change to a within-subje
 *EWMA.*
 
 *HDDM.* 
+
+```{r hddm_plot_gaze, include = T, fig.env = "figure", fig.pos = "t", fig.width=4, fig.asp = "0.7", out.width = "85%", fig.align='center', fig.cap = "HDDM results E1."}
+
+d_hddm %>% 
+  filter(experiment %in% c("noise_gaze", "gaze"),
+         condition %in% c("gaze_clear",
+                          "straight_ahead_clear",
+                          "gaze",
+                          "straightahead")) %>%
+  mutate(condition = ifelse(str_detect(condition, "gaze"), "gaze", "straight_ahead"),
+         age_code = ifelse(age_code == "kid", "children", "adults"),
+         age_code = factor(age_code, levels = c("children", "adults"))) %>%
+  ggplot(aes(x = param_value, color = condition)) +
+  geom_line(stat = "density", size = 1) +
+  ggthemes::scale_color_ptol() +
+  facet_grid(age_code~param_name, scales = "free_y") +
+  labs(x = "Parameter Estimate", y = NULL) +
+  theme_minimal() +
+  theme(panel.grid.minor = element_line(colour = "grey"),
+        panel.border = element_rect(fill = NA, color = "grey80"),
+        legend.position = "top",
+        axis.ticks = element_blank(), 
+        axis.text.y = element_blank(),
+        text = element_text(size = 10),
+        legend.title = element_text(size =10)) 
+```
 
 # General Discussion
 

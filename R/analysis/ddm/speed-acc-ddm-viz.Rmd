@@ -8,72 +8,19 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo=F, warning=F, cache=F, message=F, sanitize = T)
-source("../../helper_functions/libraries_and_functions.R")
+source(here::here("R/helper_functions/libraries_and_functions.R"))
 ```
 
 ```{r}
-hddm.adults.path <- "../../../data/3_final_merged_data/hddm_output/adults/"
-hddm.kids.path <- "../../../data/3_final_merged_data/hddm_output/kids/"
-plot.save.path <- "../../../paper/figs/"
+hddm_path <- "data/3_final_merged_data/hddm_output/"
 ```
 
 ## Read data
 
-Read adult data.
-
-```{r read data}
-# get a vector of file names
-files.adults <- dir(path = hddm.adults.path, pattern = "*.csv") 
-
-# map my custom read_hddm function over all the file names using using purrr
-d.adults <- files.adults %>% 
-  purrr::map_df(read_hddm_file, path = hddm.adults.path, 
-                condition_list = c("bull", "face", "text_no_audio", "text",
-                                   "straight_ahead_clear", "straight_ahead_noise", "gaze_clear",
-                                   "gaze_noise"), 
-                param_list = c("boundary", "drift")) 
-```
-
-Read kid data
-
 ```{r}
-files.kids <- dir(path = hddm.kids.path, pattern = "*.csv") 
-
-# map my custom read_hddm function over all the file names using using purrr
-d.kids <- files.kids %>% 
-  purrr::map_df(read_hddm_file, path = hddm.kids.path, 
-                condition_list = c("asl", "clear", "straightahead", "face", "gaze", "noise"), 
-                param_list = c("boundary", "drift")) 
+d <- read_csv(here::here(hddm_path, "hddm_tidy.csv"))
 ```
 
-Some minor clean up of variable names to merge adult and kid data.
-
-```{r}
-# adult data
-d.adults %<>% 
-  mutate(age_code = "adult", 
-         experiment = case_when(
-           condition %in% c("bull", "face", "text_no_audio", "text") ~ "text",
-           condition %in% c("straight_ahead_clear", "straight_ahead_noise", 
-                            "gaze_clear", "gaze_noise") ~ "noise_gaze",
-           TRUE ~ "NA"
-         )
-  )
-
-# kid data
-d.kids %<>% 
-  mutate(age_code = "kid", 
-         experiment = case_when(
-           condition %in% c("asl", "face") ~ "trio",
-           condition %in% c("clear", "noise") ~ "noise",
-           condition %in% c("straightahead", "gaze") ~ "gaze",
-           TRUE ~ "NA"
-         )
-  )
-
-# bind together
-d <- bind_rows(d.adults, d.kids)
-```
 
 ## Plots
 
@@ -97,6 +44,10 @@ hddm_plots_kids$noise
 
 ```{r}
 hddm_plots_kids$trio
+```
+
+```{r}
+hddm_plots_kids$gaze
 ```
 
 #### Adult experiments

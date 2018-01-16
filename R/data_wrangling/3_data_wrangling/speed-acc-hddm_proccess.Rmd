@@ -1,0 +1,78 @@
+---
+title: "HDDM munging"
+output: html_document
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.width=3, fig.height=3, fig.crop = F, fig.pos = "tb",
+                      fig.path='figs/',echo=F, warning=F, cache=T, message=F, include =F,
+                      sanitize = T)
+
+library(here); library(kableExtra)
+source(here::here("R/helper_functions/libraries_and_functions.R"))
+source(here::here("R/helper_functions/ewma_helper_funs.R"))
+```
+
+```{r data path}
+data_path <- "data/3_final_merged_data/first_shifts/"
+ewma_path <- here::here("data/3_final_merged_data/ewma_output/")
+hddm_path <- "data/3_final_merged_data/hddm_output/"
+```
+
+```{r read hddm output}
+## adults
+hddm.adults.path <- here::here("data/3_final_merged_data/hddm_output/adults/")
+hddm.kids.path <- here::here("/data/3_final_merged_data/hddm_output/kids/")
+
+# get a vector of file names
+files.adults <- dir(path = hddm.adults.path, pattern = "*.csv") 
+
+# map my custom read_hddm function over all the file names using using purrr
+d.adults <- files.adults %>% 
+  purrr::map_df(read_hddm_file, path = hddm.adults.path, 
+                condition_list = c("bull", "face", "text_no_audio", "text",
+                                   "straight_ahead_clear", "straight_ahead_noise", "gaze_clear",
+                                   "gaze_noise"), 
+                param_list = c("boundary", "drift")) 
+
+## kids
+files.kids <- dir(path = hddm.kids.path, pattern = "*.csv") 
+
+# map my custom read_hddm function over all the file names using using purrr
+d.kids <- files.kids %>% 
+  purrr::map_df(read_hddm_file, path = hddm.kids.path, 
+                condition_list = c("asl", "clear", "straightahead", "face", "gaze", "noise"), 
+                param_list = c("boundary", "drift")) 
+
+# adult data
+d.adults %<>% 
+  mutate(age_code = "adult", 
+         experiment = case_when(
+           condition %in% c("bull", "face", "text_no_audio", "text") ~ "text",
+           condition %in% c("straight_ahead_clear", "straight_ahead_noise", 
+                            "gaze_clear", "gaze_noise") ~ "noise_gaze",
+           TRUE ~ "NA"
+         )
+  )
+
+# kid data
+d.kids %<>% 
+  mutate(age_code = "kid", 
+         experiment = case_when(
+           condition %in% c("asl", "face") ~ "trio",
+           condition %in% c("clear", "noise") ~ "noise",
+           condition %in% c("straightahead", "gaze") ~ "gaze",
+           TRUE ~ "NA"
+         )
+  )
+
+# bind together
+d_hddm <- bind_rows(d.adults, d.kids)
+```
+
+Write to disk.
+
+```{r}
+write_csv(d_hddm, here::here("data/3_final_merged_data/hddm_output/hddm_tidy.csv"))
+```
+
