@@ -349,7 +349,7 @@ ggsave(here::here("paper/cogsci2018/figs/e1_behav_results.png"),
 
 ```{r get gaze experiment}
 d_e2 <- d %>% 
-  filter(experiment != "kids_gaze",
+  filter(experiment != "kids_noise",
          keep_runsheet %in% c("yes", "keep"), 
          keep_et == "include",
          noise_condition == "clear")
@@ -383,6 +383,8 @@ ss_final_e2 <- left_join(ss_acc_e2, ss_rt_e2) %>% ungroup()
 
 ```{r gaze summarize model output}
 ms_acc_e2 <- d_models$acc_gaze %>% 
+  mutate(gaze_condition = ifelse(gaze_condition == "gaze", 
+                                 gaze_condition, "straight_ahead")) %>% 
   group_by(gaze_condition, age_category) %>% 
   summarise(prop = mean(acc_prob_scale),
             hdi_lower = quantile(acc_prob_scale, probs = 0.025),
@@ -391,6 +393,8 @@ ms_acc_e2 <- d_models$acc_gaze %>%
   mutate(age_category = factor(age_category) %>% fct_rev()) 
 
 ms_rt_e2 <- d_models$rt_gaze %>% 
+  mutate(gaze_condition = ifelse(gaze_condition == "gaze", 
+                                 gaze_condition, "straight_ahead")) %>% 
   group_by(gaze_condition, age_category) %>% 
   summarise(m_rt = mean(rt_ms_scale),
             hdi_lower = quantile(rt_ms_scale, probs = 0.025),
@@ -403,13 +407,13 @@ ms_rt_e2 <- d_models$rt_gaze %>%
 gaze_contrast <- d_models$acc_gaze %>% 
   select(sample_id:acc_prob_scale, -param_est) %>% 
   spread(gaze_condition, acc_prob_scale) %>% 
-  mutate(gaze_contrast = gaze - straight_ahead) %>% 
+  mutate(gaze_contrast = gaze - straightahead) %>% 
   select(sample_id, gaze_contrast, age_category)
 
 gaze_contrast_rt <- d_models$rt_gaze %>% 
   select(sample_id:rt_ms_scale, -param_est) %>% 
   spread(gaze_condition, rt_ms_scale) %>% 
-  mutate(gaze_contrast = gaze - straight_ahead) %>% 
+  mutate(gaze_contrast = gaze - straightahead) %>% 
   select(sample_id, gaze_contrast, age_category)
 ```
 
@@ -441,7 +445,7 @@ rt_child_inset_gaze <- p +
   geom_ribbon(aes(ymin = 0, ymax = y - 0.15, x = gaze_contrast), 
               fill = "darkred", alpha = 0.5,
               inherit.aes = F, 
-              data = filter(plot_xy, noise_contrast <= 0)) + 
+              data = filter(plot_xy, gaze_contrast <= 0)) + 
   geom_ribbon(aes(ymin = 0, ymax = y - 0.15, x = gaze_contrast), 
               fill = "darkgreen", alpha = 0.5,
               inherit.aes = F, 
@@ -469,7 +473,7 @@ plot_xy_adult <- build_p_adult$data[[2]] %>%
   rename(gaze_contrast = x)
 
 # add the red and green ribbons based on those values
-rt_adult_inset <- p_adult + 
+rt_adult_inset_gaze <- p_adult + 
   geom_ribbon(aes(ymin = 0, ymax = y - 0.15, x = gaze_contrast), 
               fill = "darkred", alpha = 0.5,
               inherit.aes = F, 
@@ -501,7 +505,7 @@ plot_xy <- build_p$data[[2]] %>%
   rename(gaze_contrast = x)
 
 # add the red and green ribbons based on those values
-acc_child_inset <- p + 
+acc_child_inset_gaze <- p + 
   geom_ribbon(aes(ymin = 0, ymax = y - 0.15, x = gaze_contrast), 
               fill = "darkred", alpha = 0.5,
               inherit.aes = F, 
@@ -533,7 +537,7 @@ plot_xy_adult <- build_p_adult$data[[2]] %>%
   rename(gaze_contrast = x)
 
 # add the red and green ribbons based on those values
-acc_adult_inset <- p_adult + 
+acc_adult_inset_gaze <- p_adult + 
   geom_ribbon(aes(ymin = 0, ymax = y - 0.15, x = gaze_contrast), 
               fill = "darkred", alpha = 0.5,
               inherit.aes = F, 
@@ -549,10 +553,10 @@ nudge_x <- 0.35
 means_color <- "#de2d26"
 
 # add blank level to leave room for the inset
-ss_final %<>% mutate(gaze_condition = factor(gaze_condition))
-levels(ss_final$gaze_condition) <- c(levels(ss_final$gaze_condition),'') 
+ss_final_e2 %<>% mutate(gaze_condition = factor(gaze_condition))
+levels(ss_final_e2$gaze_condition) <- c(levels(ss_final_e2$gaze_condition),'') 
 
-acc_plot_e2 <- ss_final %>% 
+acc_plot_e2 <- ss_final_e2 %>% 
   filter(shift_accuracy_clean == "correct") %>% 
   ggplot(aes(x = gaze_condition, y = prop)) +
   #geom_line(aes(group = subid), color = "grey", alpha = 0.5) +
@@ -573,14 +577,14 @@ acc_plot_e2 <- ss_final %>%
   scale_x_discrete(expand = c(0,0.8), drop=FALSE) +
   geom_hline(yintercept = 0.5, linetype = "dashed") +
   labs(x = NULL, y = "Accuracy") +
-  ylim(0.2, 1.05) +
+  ylim(0, 1.05) +
   theme(text = element_text(size = 12)) +
   facet_wrap(~age_category, ncol = 1, scale = "free_x")
 ```
 
 ```{r rt plot}
 ## first shift RTs
-rt_plot_e2 <- ss_final %>% 
+rt_plot_e2 <- ss_final_e2 %>% 
   ungroup() %>% 
   filter(shift_accuracy_clean == "correct") %>% 
   ggplot(aes(x = gaze_condition, y = m_rt)) +
@@ -617,16 +621,16 @@ sca <- 0.5
 
 acc_plot_final_gaze <- ggdraw() +
   draw_plot(acc_plot_e2) +
-  draw_plot(acc_child_inset, x = x_val, y = y_val_kids, 
+  draw_plot(acc_child_inset_gaze, x = x_val, y = y_val_kids, 
             width = wid, height = hei, scale = sca) +
-  draw_plot(acc_adult_inset, x = x_val, y = y_val_aduls, 
+  draw_plot(acc_adult_inset_gaze, x = x_val, y = y_val_aduls, 
             width = wid, height = hei, scale = sca) 
 
 rt_plot_final_gaze <- ggdraw() +
   draw_plot(rt_plot_e2) +
-  draw_plot(rt_child_inset, x = x_val, y = y_val_kids, 
+  draw_plot(rt_child_inset_gaze, x = x_val, y = y_val_kids, 
             width = wid, height = hei, scale = sca) +
-  draw_plot(rt_adult_inset, x = x_val, y = y_val_aduls, 
+  draw_plot(rt_adult_inset_gaze, x = x_val, y = y_val_aduls, 
             width = wid, height = hei, scale = sca)  
 ```
 

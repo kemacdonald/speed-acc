@@ -514,7 +514,10 @@ d_hddm %>%
 
 # Experiment 2
 
-```{r gaze_behavioral_results, fig.env = "figure", fig.pos = "t",fig.width=2.8, fig.height=2.8, fig.align='center', fig.cap = "Behavioral results from E2. All plotting conventions are the same as in Figure 2."}
+```{r gaze_acc_rt_e2_plot, include = T, fig.env = "figure*", fig.pos = "t", fig.width=8, fig.asp = 0.5, out.width= "80%", fig.align='center', fig.cap = "Behavioral results from E2. All plotting conventions are the same as in Figure 2."}
+
+png::readPNG(here::here("paper/cogsci2018/figs/e2_behav_results_gaze.png")) %>% 
+  grid::grid.raster()
 ```
 
 ## Method
@@ -529,7 +532,7 @@ Audio and visual stimuli were identical to the Face and Bullseye tasks in E1. We
 
 ### Design and procedure
 
-The design was nearly identical to E1, with the exception of a change to a within-subjects manipulation where each participant completed all four tasks (Bullseye, Face, Text, and Text-no-audio). In the Text condition, spoken language accompanied the printed text. In the Text-no-audio condition, the spoken language stimulus was removed. Participants saw a total of 128 trials while their eye movements were tracked using automated eye-tracking software.
+The design was identical to E1, with the exception of a change to a within-subjects manipulation where each participant completed all four tasks (Bullseye, Face, Text, and Text-no-audio). In the Text condition, spoken language accompanied the printed text. In the Text-no-audio condition, the spoken language stimulus was removed. Participants saw a total of 128 trials while their eye movements were tracked using automated eye-tracking software.
 
 ## Results and Discussion
 
