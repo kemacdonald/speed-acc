@@ -45,7 +45,8 @@ d <- bind_rows(mutate(d_kids_noise, experiment = "kids_noise", age_category = "c
                mutate(d_kids_gaze, experiment = "kids_gaze", age_category = "children"),
                mutate(d_adults, experiment = "adults_ng", age_category = "adults")) %>% 
   select(-resp_onset_type_fact, -subid_short) %>% 
-  mutate(age_category = factor(age_category) %>% fct_rev()) 
+  mutate(age_category = factor(age_category) %>% fct_rev(),
+         gaze_condition = factor(gaze_condition) %>% fct_rev()) 
 
 # uncomment below to test that we have the right number of rows after the merge (result should be TRUE)
 # nrow(d_kids_gaze) + nrow(d_kids_noise) + nrow(d_adults) == nrow(d)
@@ -63,7 +64,7 @@ d_e1 <- d %>%
 
 ```{r filter participants}
 d_e1_analysis <- d_e1 %>% 
-  filter(rt <= 2,
+  filter(rt <= 1.5,
          response_onset_type == "noun",
          shift_start_location == "center") %>% 
   mutate(shift_acc_num = ifelse(shift_accuracy_clean == "correct", 1, 0),
@@ -357,7 +358,7 @@ d_e2 <- d %>%
 
 ```{r filter gaze participants}
 d_e2_analysis <- d_e2 %>% 
-  filter(rt <= 2,
+  filter(rt <= 1.5,
          response_onset_type == "noun",
          shift_start_location == "center") %>% 
   mutate(shift_acc_num = ifelse(shift_accuracy_clean == "correct", 1, 0),
@@ -426,7 +427,7 @@ p <- gaze_contrast_rt %>%
   geom_vline(xintercept = 0, linetype = "dashed", color = "black", size = 0.8) +
   geom_line(stat = "density", size = line_size, color = "black") +
   labs(x = "RT (sec)", y = NULL) +
-  scale_x_continuous(breaks=c(0, .1)) +
+  scale_x_continuous(breaks=c(-0.1, 0, 0.1), limits = c(-0.1, 0.1)) +
   theme_minimal() +
   theme(panel.grid.minor = element_line(colour = "grey"),
         plot.background = element_rect(fill = "grey90", color = NA),
@@ -458,7 +459,7 @@ p_adult <- gaze_contrast_rt %>%
   geom_vline(xintercept = 0, linetype = "dashed", color = "black", size = 0.8) +
   geom_line(stat = "density", size = line_size, color = "black") +
   labs(x = "RT (sec)", y = NULL) +
-  scale_x_continuous(breaks=c(0,.1)) +
+  scale_x_continuous(breaks=c(-0.1, 0, 0.1), limits = c(-0.1, 0.1)) +
   theme_minimal() +
   theme(panel.grid.minor = element_line(colour = "grey"),
         plot.background = element_rect(fill = "grey90", color = NA),
@@ -492,6 +493,7 @@ p <- gaze_contrast %>%
   geom_line(stat = "density", size = line_size, color = "black") +
   labs(x = "Accuracy", y = NULL) +
   theme_minimal() +
+  scale_x_continuous(breaks=c(-0.1, 0, 0.1), limits = c(-0.15, 0.15)) +
   theme(panel.grid.minor = element_line(colour = "grey"),
         plot.background = element_rect(fill = "grey90", color = NA),
         axis.ticks = element_blank(), 
@@ -522,7 +524,7 @@ p_adult <- gaze_contrast %>%
   geom_vline(xintercept = 0, linetype = "dashed", color = "black", size = 0.8) +
   geom_line(stat = "density", size = line_size, color = "black") +
   labs(x = "Accuracy", y = NULL) +
-  scale_x_continuous(breaks=c(0, .05, .1)) +
+  scale_x_continuous(breaks=c(-0.1, 0, 0.1), limits = c(-0.1, 0.1)) +
   theme_minimal() +
   theme(panel.grid.minor = element_line(colour = "grey"),
         plot.background = element_rect(fill = "grey90", color = NA),

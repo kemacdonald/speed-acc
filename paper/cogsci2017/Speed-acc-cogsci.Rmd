@@ -100,7 +100,6 @@ Since our results are complex, we preview them here: when the center stimulus wa
 grid::grid.raster(png::readPNG("figs/stimuli.png"))
 ```
 
-
 ## Method
 
 ### Participants

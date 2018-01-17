@@ -130,9 +130,9 @@ samples_e1_rt_tidy <- samples_e1_rt %>%
 
 ```{r get gaze experiment}
 d_e2 <- d %>% 
-  filter(experiment != "kids_gaze",
+  filter(experiment != "kids_noise",
          keep_runsheet %in% c("yes", "keep"), 
-         keep_et == "include",
+         #keep_et == "include",
          noise_condition == "clear")
 ```
 
@@ -275,13 +275,20 @@ samples_ewma_cuts_noise <- m_cutoffs %>%
                 noise_beta = noise_conditionnoise,
                 age_beta = age_categorychildren) %>% 
   select(clear_adults, noise_beta, age_beta) %>% 
-  mutate(clear_children = clear_adults + noise_beta,
+  mutate(clear_children = clear_adults + age_beta,
          noise_children = clear_adults + age_beta + noise_beta, 
          noise_adults = clear_adults + noise_beta,
          sample_id = 1:n()) %>% 
   gather(key = condition, value = param_est, -sample_id, -noise_beta, -age_beta) %>% 
   separate(condition, into = c("noise_condition", "age_category"))
 ```
+
+```{r}
+samples_ewma_cuts_noise %>% ggplot(aes(x=param_est, color = noise_condition, 
+                                       linetype = age_category)) +
+  geom_line(stat = "density") 
+```
+
 
 ### EWMA guessing model (Noise)
 
@@ -358,7 +365,7 @@ samples_ewma_cuts_gaze <- m_cutoffs_gaze %>%
                 age_beta = age_categorychildren) %>% 
   select(gaze_adults, straightahead_beta, age_beta) %>% 
   mutate(gaze_children = gaze_adults + age_beta,
-         straightahead_children = gaze_children + age_beta + straightahead_beta, 
+         straightahead_children = gaze_children + straightahead_beta, 
          straightahead_adults = gaze_adults + straightahead_beta,
          sample_id = 1:n()) %>% 
   gather(key = condition, value = param_est, -sample_id, -straightahead_beta, -age_beta)
@@ -404,15 +411,13 @@ samples_ewma_guess_gaze %>% ggplot(aes(x=param_est, color = condition)) +
 
 ## Save the posterior samples 
 
-For later analysis and visualization.
-
 ```{r}
 posteriors <- list(rt_noise = samples_e1_rt_tidy,
                    acc_noise = samples_e1_acc_tidy,
-                   rt_gaze = samples_e2_rt_tidy,
-                   acc_gaze = samples_e2_acc_tidy,
                    ewma_cuts_noise = samples_ewma_cuts_noise,
                    ewma_guess_noise = samples_ewma_guess_noise,
+                   rt_gaze = samples_e2_rt_tidy,
+                   acc_gaze = samples_e2_acc_tidy,
                    ewma_cuts_gaze = samples_ewma_cuts_gaze,
                    ewma_guess_gaze = samples_ewma_guess_gaze)
 
