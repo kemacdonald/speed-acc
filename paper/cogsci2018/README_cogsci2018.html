@@ -121,34 +121,16 @@ $(document).ready(function () {
 </div>
 
 
-<div id="an-information-seeking-account-of-eye-movements-in-signed-and-spoken-language-comprehension" class="section level1">
-<h1>An information-seeking account of eye movements in signed and spoken language comprehension</h1>
-<p>This repository contains all of the data processing, analysis, and modelling code for a set of studies that test an information seeking account of eye movements in different language processing contexts (signed vs. spoken, written text vs. speech, clear speech vs. noisy speech, speech with eye gaze vs. speech without eye gaze).</p>
-<p>The file naming conventions are:</p>
+<div id="speed-acc-cogsci-2018" class="section level2">
+<h2>Speed-Acc CogSci 2018</h2>
+<p>There are two key RMarkdown files in the paper repository for “Adults and preschoolers seek visual information to support language comprehension in noisy environments”</p>
 <ul>
-<li>Signed vs. spoken language (children): <strong>speed_acc_child_asl</strong></li>
-<li>Written text vs. spoken language (adults): <strong>speed_acc_adult_text</strong></li>
-<li>Clear speech vs. noisy speech &amp; Gaze vs. No-Gaze (adults): <strong>speed_acc_adult_ng</strong></li>
-<li>Clear speech vs. noisy speech (children): <strong>speed_acc_child_noise</strong></li>
-<li>Gaze vs. No-Gaze (children): <strong>speed_acc_child_gaze</strong></li>
+<li><p>The first file is: <code>speed-acc-cogsci2018-viz.Rmd</code>. It contains the R code for generating the behavioral results figure (Figure 2). The code pulls data and model summaries from the data directory and outputs a .png image file (e1_behav_results.png) to the “figs” directory.</p></li>
+<li><p>The second file is: <code>Speed-acc-cogsci_2018.Rmd</code>. It contains the paper writeup along with the R code for generating plots of the model-based analyses.</p></li>
 </ul>
-<p>You can find the raw data, data processing, and tidy data files here:</p>
+<p>All statisical models reported in the paper can be found here:</p>
 <ul>
-<li><a href="https://github.com/kemacdonald/speed-acc/tree/master/R/data_wrangling">Data processing scripts</a></li>
-<li><a href="https://github.com/kemacdonald/speed-acc/tree/master/data/1_raw_data">Raw data files</a></li>
-<li><a href="https://github.com/kemacdonald/speed-acc/tree/master/data/3_final_merged_data">Tidy data files</a></li>
-</ul>
-<p>You can find the paper writeups here (note that you should be able to build these RMarkdown files from sratch):</p>
-<ul>
-<li><a href="paper/cogsci2017/Speed-acc-cogsci.Rmd">RMarkdown manuscript for CogSci 2017</a>, which also contains all statistical models.</li>
-<li><a href="paper/cogsci2018/Speed-acc-cogsci_2018.Rmd">RMarkdown manuscript for CogSci 2018</a>, which also contains all statistical models.</li>
-</ul>
-<p>For more details about the analyses reported in the papers, see the following analysis files:</p>
-<ul>
-<li><a href="https://github.com/kemacdonald/speed-acc/tree/master/R/analysis/fst_shift_analyses">First shift Accuracy and RT viz</a></li>
-<li><a href="https://github.com/kemacdonald/speed-acc/tree/master/R/analysis/ddm">DDM fit and viz</a></li>
-<li><a href="https://github.com/kemacdonald/speed-acc/tree/master/R/analysis/ewma_guessing_analyses">EWMA fit and viz</a></li>
-<li><a href="https://github.com/kemacdonald/speed-acc/tree/master/R/analysis/bda_models">Bayesian Data Analysis</a></li>
+<li><a href="R/bda_models/speed-acc-bda-models.Rmd">Speed-Acc CogSci 2018 BDA</a></li>
 </ul>
 </div>
 

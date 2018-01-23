@@ -128,8 +128,6 @@ To test the predictions of our account, we present two case studies where inform
 We assume that the goal is to maximize the chance of making a correct future response (in the context of our task, resolving reference rapidly and accurately by looking at the object that is being talked about).
 -->
 
-\label{}
-
 ```{r stimuli_plot, include = T, fig.env = "figure*", fig.pos = "tb", fig.width=6, fig.asp = 0.4, out.width= "80%", fig.align='center', fig.cap = "Stimuli for E1 and E2. Panel A shows the layout of the three fixation locations (speaker, target, and distracter), and the timecourse of a single trial. Panel B shows a visual representation of the clear and noisy waveforms used in E1. Panel C shows the gaze manipulation used in E2."}
 grid::grid.raster(png::readPNG(here::here("paper/cogsci2018/figs/stimuli_info.png")))
 ```

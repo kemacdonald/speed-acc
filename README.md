@@ -5,11 +5,11 @@ This repository contains all of the data processing, analysis, and modelling cod
 
 The file naming conventions are:
 
-* Signed vs. spoken language (children): **speed_acc_child_asl**
-* Written text vs. spoken language (adults): **speed_acc_adult_text**
-* Clear speech vs. noisy speech & Gaze vs. No-Gaze (adults): **speed_acc_adult_ng**
-* Clear speech vs. noisy speech (children): **speed_acc_child_noise**
-* Gaze vs. No-Gaze (children): **speed_acc_child_gaze**
+* Signed vs. spoken language (children): `speed_acc_child_asl`
+* Written text vs. spoken language (adults): `speed_acc_adult_text`
+* Clear speech vs. noisy speech & Gaze vs. No-Gaze (adults): `speed_acc_adult_ng`
+* Clear speech vs. noisy speech (children): `speed_acc_child_noise`
+* Gaze vs. No-Gaze (children): `speed_acc_child_gaze`
 
 You can find the raw data, data processing, and tidy data files here:
 
