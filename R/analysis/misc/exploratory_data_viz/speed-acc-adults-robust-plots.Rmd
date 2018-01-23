@@ -11,7 +11,9 @@ Load libraries and read in tidy data.
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo=F, warning=F, cache=F, message=F, sanitize = T)
-library(here); library(rogme) # key package for making visualizations
+#install.packages("devtools")
+#devtools::install_github("GRousselet/rogme")
+library(rogme); library(here) 
 source(here::here("R/helper_functions/libraries_and_functions.R"))
 data_path <- "data/3_final_merged_data/first_shifts/"
 theme_set(ggthemes::theme_few())
