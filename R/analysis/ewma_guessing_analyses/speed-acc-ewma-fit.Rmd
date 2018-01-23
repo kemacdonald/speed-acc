@@ -10,10 +10,12 @@ This script analyzes first shift accuracy and RT using an EWMA guesssing model. 
 
 Load libraries and read in tidy data.
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo=F, warning=F, cache=F, message=F, sanitize = T)
-source("../../helper_functions/libraries_and_functions.R")
-source("../../helper_functions/ewma_helper_funs.R")
+```{r}
+library(here)
+ewma.path <- "data/3_final_merged_data/ewma_output/"
+plot.save.path <- "paper/figs/"
+source(here::here("R/helper_functions/libraries_and_functions.R"))
+source(here::here("R/helper_functions/ewma_helper_funs.R"))
 ```
 
 Read 5 datasets with first shift accuracy and RTs:

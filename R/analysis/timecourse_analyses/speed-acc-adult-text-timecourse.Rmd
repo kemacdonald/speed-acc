@@ -12,13 +12,16 @@ Load libraries and read in tidy data.
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo=F, warning=F, cache=F, message=F, sanitize = T, results = 'asis')
-source("../../helper_functions/libraries_and_functions.R")
+library(here)
+source(here::here("R/helper_functions/libraries_and_functions.R"))
+data_path <- "data/3_final_merged_data/timecourse/"
+theme_set(ggthemes::theme_few())
 ```
 
 Read data. 
 
 ```{r read data}
-d <- read_csv("../../../data/3_final_merged_data/speed_acc_adult_text_timecourse_tidy.csv.gz")
+d <- read_csv(here::here(data_path, "speed_acc_adult_text_timecourse_tidy.csv.gz"))
 ```
 
 ## Visualize looking behavior 

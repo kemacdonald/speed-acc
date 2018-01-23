@@ -1,19 +1,21 @@
 ---
-title: "Speed-Accuracy Timecourse Plots"
+title: "Speed-Accuracy Trio Timecourse Plots"
 author: "Kyle MacDonald"
 output: html_document
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo=F, warning=F, cache=F, message=F, sanitize = T)
-source("../../helper_functions/libraries_and_functions.R")
+library(here)
+source(here::here("R/helper_functions/libraries_and_functions.R"))
+data_path <- "data/3_final_merged_data/timecourse/"
+theme_set(ggthemes::theme_few())
 ```
 
 ## Load data
 
 ```{r load and clean up data}
-d <- read.csv("../../../data/3_final_merged_data/speed-acc-cleaned-iChart.csv", 
-              stringsAsFactors = F)
+d <- read_csv(here::here(data_path, "speed-acc-child-timecourse.csv"))
 
 d %<>% mutate(stimuli = ifelse(stimuli %in% c("V1", "V2"), "ASL", 
                                ifelse(stimuli == "Trio", "Object", 

@@ -14,19 +14,18 @@ There are 4 different types of center fixations in this dataset:
 4. Bull (22 kids at 26m): different static "bullseyes"
 
 ```{r chunk_options, echo = F}
-rm(list=ls()) # code to clear workspace
-
 knitr::opts_chunk$set(warning=F, message=F, sanitize = T, 
                       fig.height=5, fig.width=8, echo=T, cache = F)
 
-source("../../helper_functions/libraries_and_functions.R")
+library(here)
+source(here::here("R/helper_functions/libraries_and_functions.R"))
+data_path <- "data/3_final_merged_data/first_shifts/"
 ```
 
 Load data and do some minor clean up of condition names.
 
 ```{r}
-df <- read.csv("../../../data/3_final_merged_data/speed-acc-participant-level-df.csv", 
-               check.names=F, stringsAsFactors=F) 
+df <- read_csv(here::here(data_path, "speed-acc-child-trio-fst-shift.csv"))
 
 df %<>% 
   mutate(stimuli = ifelse(stimuli == "V1" | stimuli == "V2", "ASL", 
