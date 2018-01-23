@@ -9,4 +9,4 @@ There are two key RMarkdown files in the paper repository for "Adults and presch
 
 All statisical models reported in the paper can be found here:
 
-* [Speed-Acc CogSci 2018 BDA](R/bda_models/speed-acc-bda-models.Rmd)
+* [Speed-Acc CogSci 2018 BDA](https://github.com/kemacdonald/speed-acc/tree/master/R/analysis/bda_models)
