@@ -5,22 +5,20 @@ editor_options:
   chunk_output_type: inline
 ---
 
-
 ## Setup
 
 Load libraries and read in tidy data.
 
 ```{r setup, include=FALSE}
-rm(list=ls())
 knitr::opts_chunk$set(echo=F, warning=F, cache=F, message=F, sanitize = T)
-source("../../helper_functions/libraries_and_functions.R")
-library(tidyverse); library(lme4)
-library(rogme) # key package for making visualizations
+library(here); library(rogme) # key package for making visualizations
+source(here::here("R/helper_functions/libraries_and_functions.R"))
+data_path <- "data/3_final_merged_data/first_shifts/"
+theme_set(ggthemes::theme_few())
 ```
 
 ```{r read data}
-read.path <- "../../../data/3_final_merged_data/"
-d <- read_csv(paste0(read.path, "speed-acc-participant-level-df.csv"))
+df <- read_csv(here::here(data_path, "speed-acc-child-trio-fst-shift.csv"))
 ```
 
 Clean the spoken English and sign language datasets, so we can merge them.
