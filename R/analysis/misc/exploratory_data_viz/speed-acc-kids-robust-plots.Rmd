@@ -18,7 +18,7 @@ theme_set(ggthemes::theme_few())
 ```
 
 ```{r read data}
-df <- read_csv(here::here(data_path, "speed-acc-child-trio-fst-shift.csv"))
+d <- read_csv(here::here(data_path, "speed-acc-child-trio-fst-shift.csv"))
 ```
 
 Clean the spoken English and sign language datasets, so we can merge them.
@@ -87,8 +87,8 @@ Next let's zoom in on some comparisons of interest. ASL compared to Face.
 # make tibble
 library(rogme)
 
-df <- d.fs %>% 
-  filter(condition %in% c('ASL', 'face'),
+df <- d %>% 
+  filter(condition %in% c('ASL', 'Face'),
          response_onset_type == "noun",
          is.na(rt) == F) %>% 
   select(condition, rt) %>%
