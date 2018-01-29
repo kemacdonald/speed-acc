@@ -539,7 +539,6 @@ grid::grid.raster(png::readPNG("figs/e1_control_chart.png"))
 grid::grid.raster(png::readPNG("figs/hddm_plot_final.png"))
 ```
 
-
 # Experiment 2
 
 ```{r e2 read data}
