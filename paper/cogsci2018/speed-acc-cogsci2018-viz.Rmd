@@ -197,6 +197,7 @@ p <- noise_contrast %>%
   ggplot(aes(x = noise_contrast)) +
   geom_vline(xintercept = 0, linetype = "dashed", color = "black", size = 0.8) +
   geom_line(stat = "density", size = line_size, color = "black") +
+  scale_x_continuous(breaks=c(0, .1), limits = c(-0.1, 0.15)) +
   labs(x = "Accuracy", y = NULL) +
   theme_minimal() +
   theme(panel.grid.minor = element_line(colour = "grey"),
@@ -229,7 +230,7 @@ p_adult <- noise_contrast %>%
   geom_vline(xintercept = 0, linetype = "dashed", color = "black", size = 0.8) +
   geom_line(stat = "density", size = line_size, color = "black") +
   labs(x = "Accuracy", y = NULL) +
-  scale_x_continuous(breaks=c(0, .05, .1)) +
+  scale_x_continuous(breaks=c(0, .1), limits = c(-0.1, 0.15)) +
   theme_minimal() +
   theme(panel.grid.minor = element_line(colour = "grey"),
         plot.background = element_rect(fill = "grey90", color = NA),
@@ -343,7 +344,7 @@ rt_plot_final <- ggdraw() +
 e1_plot <- cowplot::plot_grid(rt_plot_final, acc_plot_final, labels = c("A", "B"))
 ```
 
-```{r save noise rt and cc plot}
+```{r save noise rt and acc plot}
 ggsave(here::here("paper/cogsci2018/figs/e1_behav_results.png"), 
        e1_plot, width = 8, height = 6)
 ```
