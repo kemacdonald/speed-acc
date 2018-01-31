@@ -65,7 +65,7 @@ d_e1_analysis <- d %>%
          log_rt = log(rt))
 ```
 
-### Accuracy (Noise)
+### Accuracy (categorical)
 
 ```{r acc noise model}
 m_bglm_acc_e1 <- stan_glmer(
@@ -75,11 +75,41 @@ m_bglm_acc_e1 <- stan_glmer(
   prior = normal(0, 2),
   prior_intercept = normal(0, 1),
   prior_covariance = decov(regularization = 2), # prior on Covariance matrices for mixed effects model
-  chains = 4
-)
+  chains = 4)
+
+# ACC age-categorical
+samples_e1_acc <- m_bglm_acc_e1 %>% 
+  as.data.frame() %>% 
+  as_tibble() %>% 
+  dplyr::rename(clear_children = `(Intercept)`,
+                noise_beta = noise_conditionnoise,
+                age_beta = age_categoryadults) %>% 
+  select(clear_children, noise_beta, age_beta)
 ```
 
-### Accuracy-Age Continuous 
+### Accuracy age (categorical) interaction
+
+```{r acc noise model interaction}
+m_bglm_acc_e1_int <- stan_glmer(
+  shift_acc_num ~ noise_condition * age_category + (noise_condition + target_image | subid), 
+  data = d_e1_analysis,
+  family = binomial(link = "logit"), 
+  prior = normal(0, 2),
+  prior_intercept = normal(0, 1),
+  prior_covariance = decov(regularization = 2), # prior on Covariance matrices for mixed effects model
+  chains = 4)
+
+samples_e1_acc_int <- m_bglm_acc_e1_int %>% 
+  as.data.frame() %>% 
+  as_tibble() %>% 
+  dplyr::rename(clear_children = `(Intercept)`,
+                noise_beta = noise_conditionnoise,
+                age_beta = age_categoryadults,
+                int_beta = `noise_conditionnoise:age_categoryadults`) %>% 
+  select(clear_children, noise_beta, age_beta, int_beta)
+```
+
+### Accuracy Age (continuous)
 
 ```{r acc noise model continous age}
 m_bglm_acc_contAge_e1 <- stan_glmer(
@@ -89,13 +119,44 @@ m_bglm_acc_contAge_e1 <- stan_glmer(
   prior = normal(0, 2),
   prior_intercept = normal(0, 1),
   prior_covariance = decov(regularization = 2), # prior on Covariance matrices for mixed effects model
-  chains = 4
-)
+  chains = 4)
+
+# ACC age-continous
+samples_e1_acc_age_cont <- m_bglm_acc_contAge_e1 %>% 
+  as.data.frame() %>% 
+  as_tibble() %>% 
+  dplyr::rename(clear_children = `(Intercept)`,
+                noise_beta = noise_conditionnoise,
+                age_beta = age) %>% 
+  select(clear_children, noise_beta, age_beta)
 ```
 
-### RT (Noise)
+### Accuracy Age (continuous) Interaction
 
-```{r rt noise model}
+```{r acc noise age continuous interaction}
+m_bglm_acc_int_e1 <- stan_glmer(
+  shift_acc_num ~ noise_condition * age + (noise_condition + target_image | subid), 
+  data = filter(d_e1_analysis, age_category == "children"),
+  family = binomial(link = "logit"), 
+  prior = normal(0, 2),
+  prior_intercept = normal(0, 1),
+  prior_covariance = decov(regularization = 2), # prior on Covariance matrices for mixed effects model
+  chains = 4)
+
+# ACC age-interaction
+samples_e1_acc_age_int <- m_bglm_acc_int_e1 %>% 
+  as.data.frame() %>% 
+  as_tibble() %>% 
+  dplyr::rename(clear_children = `(Intercept)`,
+                noise_beta = noise_conditionnoise,
+                age_beta = age,
+                int_beta = `noise_conditionnoise:age`) %>% 
+  select(clear_children, noise_beta, age_beta, int_beta)
+```
+
+### RT age (categorical)
+
+```{r rt noise model age categorical}
 m_bglm_rt_e1 <- stan_glmer(
   log_rt ~ noise_condition + age_category + (noise_condition + target_image | subid), 
   family = gaussian(),
@@ -103,11 +164,42 @@ m_bglm_rt_e1 <- stan_glmer(
   prior = normal(0, 2), 
   prior_intercept = normal(0, 5),
   prior_covariance = decov(regularization = 2), # prior on Covariance matrices for mixed effects model
-  chains = 4
-)
+  chains = 4)
+
+## RT age-categorical
+samples_e1_rt <- m_bglm_rt_e1 %>% 
+  as.data.frame() %>% 
+  as_tibble() %>% 
+  dplyr::rename(clear_children = `(Intercept)`,
+                noise_beta = noise_conditionnoise,
+                age_beta = age_categoryadults) %>% 
+  select(clear_children, noise_beta, age_beta)
 ```
 
-### RT-Age Continous
+### RT Age (categorical) interaction
+
+```{r rt noise model interaction}
+m_bglm_rt_e1_int <- stan_glmer(
+  log_rt ~ noise_condition * age_category + (noise_condition + target_image | subid), 
+  family = gaussian(),
+  data = d_e1_analysis,
+  prior = normal(0, 2), 
+  prior_intercept = normal(0, 5),
+  prior_covariance = decov(regularization = 2), # prior on Covariance matrices for mixed effects model
+  chains = 4)
+
+## RT age-continous interaction
+samples_e1_rt_age_cont_int <- m_bglm_rt_e1_int %>% 
+  as.data.frame() %>% 
+  as_tibble() %>% 
+  dplyr::rename(clear_children = `(Intercept)`,
+                noise_beta = noise_conditionnoise,
+                age_beta = age_categoryadults,
+                int_beta = `noise_conditionnoise:age_categoryadults`) %>% 
+  select(clear_children, noise_beta, age_beta, int_beta)
+```
+
+### RT Age (continous)
 
 ```{r rt noise age continous}
 m_bglm_rt_contAge_e1 <- stan_glmer(
@@ -118,49 +210,41 @@ m_bglm_rt_contAge_e1 <- stan_glmer(
   prior_intercept = normal(0, 5),
   prior_covariance = decov(regularization = 2), # prior on Covariance matrices for mixed effects model
   chains = 4)
-```
 
-### Extract posterior samples from both models
-
-```{r e1 extract posterior samples}
-# ACC age-categorical
-samples_e1_acc <- m_bglm_acc_e1 %>% 
-  as.data.frame() %>% 
-  as_tibble() %>% 
-  dplyr::rename(clear_children = `(Intercept)`,
-                noise_beta = noise_conditionnoise,
-                age_beta = age_categoryadults) %>% 
-  select(clear_children, noise_beta, age_beta)
-
-# ACC age-continous
-samples_e1_acc_age_cont <- m_bglm_acc_contAge_e1 %>% 
+## RT age-continuous
+samples_e1_rt_age_cont <- m_bglm_rt_contAge_e1 %>% 
   as.data.frame() %>% 
   as_tibble() %>% 
   dplyr::rename(clear_children = `(Intercept)`,
                 noise_beta = noise_conditionnoise,
                 age_beta = age) %>% 
   select(clear_children, noise_beta, age_beta)
-
-## RT age-categorical
-samples_e1_rt_age_cont <- m_bglm_rt_e1 %>% 
-  as.data.frame() %>% 
-  as_tibble() %>% 
-  dplyr::rename(clear_children = `(Intercept)`,
-                noise_beta = noise_conditionnoise,
-                age_beta = age) %>% 
-  select(clear_children, noise_beta, age_beta)
-
-## RT age-continous
-samples_e1_rt <- m_bglm_rt_e1 %>% 
-  as.data.frame() %>% 
-  as_tibble() %>% 
-  dplyr::rename(clear_children = `(Intercept)`,
-                noise_beta = noise_conditionnoise,
-                age_beta = age_categoryadults) %>% 
-  select(clear_children, noise_beta, age_beta)
 ```
 
-Tidy posterior samples
+### RT Age (continuous) Interaction
+
+```{r rt age interaction}
+m_bglm_rt_contAge_int_e1 <- stan_glmer(
+  log_rt ~ noise_condition * age + (noise_condition + target_image | subid), 
+  family = gaussian(),
+  data = filter(d_e1_analysis, age_category == "children"),
+  prior = normal(0, 2), 
+  prior_intercept = normal(0, 5),
+  prior_covariance = decov(regularization = 2), # prior on Covariance matrices for mixed effects model
+  chains = 4)
+
+## RT age-interaction
+samples_e1_rt_age_int <- m_bglm_rt_contAge_int_e1 %>% 
+  as.data.frame() %>% 
+  as_tibble() %>% 
+  dplyr::rename(clear_children = `(Intercept)`,
+                noise_beta = noise_conditionnoise,
+                age_beta = age,
+                int_beta = `noise_conditionnoise:age`) %>% 
+  select(clear_children, noise_beta, age_beta, int_beta)
+```
+
+Tidy up the posterior samples.
 
 ```{r tidy samples noise}
 # tidy up accuracy
@@ -292,12 +376,13 @@ samples_e2_rt_tidy %>% ggplot(aes(x=exp(param_est), color = gaze_condition)) +
 Read in EWMA output. 
 
 ```{r read ewma output}
-noise_ewma_files <- c("speed_acc_kids_noise_ewma_results.csv",
-                      "speed_acc_adult_ng_ewma_results.csv")
+noise_ewma_files <- c("speed_acc_kids_noise_ewma_results.csv", "speed_acc_adult_ng_ewma_results.csv")
 
 d_ewma_noise <- noise_ewma_files %>% 
   purrr::map_df(read_ewma, path = ewma_path) 
 ```
+
+### Noise experiment
 
 Filter to select just the noise and clear conditions.
 
@@ -310,9 +395,18 @@ d_ewma_noise %<>%
                           "straight_ahead_clear")) %>% 
   mutate(noise_condition = ifelse(str_detect(condition, "noise"), "noise", "clear"),
          age_category = ifelse(age_code == "child", "children", "adults")) 
+
+# create data frame with age for kids as continous predictor
+d_age_cont_ewma <- d_kids_noise %>% 
+  select(subid_short, age) %>%
+  rename(subid = subid_short) %>% 
+  unique() %>% 
+  mutate(subid = as.character(subid)) %>% 
+  left_join(select(d_ewma_noise, -age), ., by = "subid") %>% 
+  filter(age_category == "children")
 ```
 
-### EWMA cut point model (Noise)
+#### EWMA cut point 
 
 ```{r aggregate cutpoints ewma noise}
 ss_cutoffs_noise <- d_ewma_noise %>% 
@@ -342,7 +436,7 @@ samples_ewma_cuts_noise <- m_cutoffs %>%
   separate(condition, into = c("noise_condition", "age_category"))
 ```
 
-### EWMA guessing model (Noise)
+#### EWMA guessing 
 
 ```{r aggregate prop guessing ewma}
 # fit model
@@ -370,6 +464,53 @@ samples_ewma_guess_noise <- m_guessing_noise %>%
          sample_id = 1:n()) %>% 
   gather(key = condition, value = param_est, -sample_id, -noise_beta, -age_beta, -int_beta) %>% 
   separate(condition, into = c("noise_condition", "age_category"))
+```
+
+Fit a model with age as continous predictor just within the child sample.
+
+```{r prop guessing ewma age continous}
+# fit model
+m_guessing_noise_ageCont <- stan_glmer(
+  guess_num ~ noise_condition + age + (noise_condition | subid),
+  data = d_age_cont_ewma,
+  prior = normal(0, 2),
+  prior_intercept = normal(0, 1),
+  prior_covariance = decov(regularization = 2), 
+  chains = 4
+)
+
+# get posterior samples
+samples_ewma_guess_noise_ageCont <- m_guessing_noise_ageCont %>% 
+  as.data.frame() %>% 
+  as_tibble() %>% 
+  dplyr::rename(clear_children = `(Intercept)`,
+                noise_beta = noise_conditionnoise,
+                age_beta = age) %>% 
+  select(clear_children, noise_beta, age_beta)
+```
+
+Fit the same model with an interaction term
+
+```{r}
+# fit model
+m_guessing_noise_ageInt <- stan_glmer(
+  guess_num ~ noise_condition * age + (noise_condition | subid),
+  data = d_age_cont_ewma,
+  prior = normal(0, 2),
+  prior_intercept = normal(0, 1),
+  prior_covariance = decov(regularization = 2), 
+  chains = 4
+)
+
+# get posterior samples
+samples_ewma_guess_noise_ageInt <- m_guessing_noise_ageInt %>% 
+  as.data.frame() %>% 
+  as_tibble() %>% 
+  dplyr::rename(clear_children = `(Intercept)`,
+                noise_beta = noise_conditionnoise,
+                age_beta = age,
+                int_beta = `noise_conditionnoise:age`) %>% 
+  select(clear_children, noise_beta, age_beta, int_beta)
 ```
 
 ### EWMA cut point model (Gaze)
@@ -470,13 +611,15 @@ TODO
 
 ```{r save samples}
 posteriors <- list(rt_noise = samples_e1_rt_tidy,
+                   rt_noise_age = samples_e1_acc_age_cont,
                    acc_noise = samples_e1_acc_tidy,
+                   acc_noise_age = samples_e1_acc_age_cont,
                    ewma_cuts_noise = samples_ewma_cuts_noise,
-                   ewma_guess_noise = samples_ewma_guess_noise,
-                   rt_gaze = samples_e2_rt_tidy,
-                   acc_gaze = samples_e2_acc_tidy,
-                   ewma_cuts_gaze = samples_ewma_cuts_gaze,
-                   ewma_guess_gaze = samples_ewma_guess_gaze)
+                   ewma_guess_noise = samples_ewma_guess_noise)
+                   #rt_gaze = samples_e2_rt_tidy,
+                   #acc_gaze = samples_e2_acc_tidy,
+                   #ewma_cuts_gaze = samples_ewma_cuts_gaze,
+                   #ewma_guess_gaze = samples_ewma_guess_gaze)
 
 saveRDS(posteriors, file = here::here("data/3_final_merged_data/first_shifts",
                                       "speed-acc-posterior-samples.rds"))
