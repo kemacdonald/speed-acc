@@ -6,7 +6,11 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo=T, warning=F, cache=F, message=F, sanitize = T)
-source("../../helper_functions/libraries_and_functions.R")
+```
+
+```{r}
+library(here)
+source(here::here("R/helper_functions/libraries_and_functions.R"))
 ```
 
 This script munges eye-tracking data for an experiment comparing speed-accuracy tradeoffs when establishing reference in real-time. We vary the information value and saliency of the center fixation and measure the effects on accuracy and RT.
@@ -15,7 +19,7 @@ Load data and join with trial information (timing, left/right/center images, tar
 
 ```{r load data}
 #### read in processed data
-d <- read_csv("../../../data/2_cleaned_data/speed_acc_processed_child_noise.csv.gz")
+d <- read_csv(here::here("data/2_cleaned_data/speed_acc_processed_child_noise.csv.gz"))
 
 #### strip .avi and .jpg from stimulus
 d$stimulus <- gsub(pattern = ".jpg", "", x = d$stimulus)
@@ -28,14 +32,14 @@ d %<>% filter(stimulus != "Validation")
 Join trial info
 
 ```{r}
-trialinfo_d <- read_csv("../../../data/0b_trial_information/speed-acc-child-noise-trial-info.csv")
+trialinfo_d <- read_csv(here::here("data/0b_trial_information/speed-acc-child-noise-trial-info.csv"))
 d %<>% left_join(., trialinfo_d, by = "stimulus")
 ```
 
 Join subject info
 
 ```{r}
-subinfo_df <- readxl::read_xlsx("../../../data/0a_demographics/speed_acc_child_noise_Runsheet_Bing.xlsx")
+subinfo_df <- readxl::read_xlsx(here::here("data/0a_demographics/speed_acc_child_noise_Runsheet_Bing.xlsx"))
 
 # clean up subid to join
 subinfo_df %<>% mutate(subid = str_to_lower(subid),
@@ -43,17 +47,15 @@ subinfo_df %<>% mutate(subid = str_to_lower(subid),
                        subid = ifelse(str_detect(subid, pattern = "child"), 
                                       subid,
                                       str_replace(subid, pattern = "_noise",
-                                                             "_child_noise"))
-                       )
+                                                  "_child_noise")))
 # clean up subid in data file
 # if "child" is already in the subid, then we do not need to add it
 d %<>% mutate(subid = str_to_lower(subid),
-                       subid = str_replace_all(subid, pattern = "-", "_"),
-                       subid = ifelse(str_detect(subid, pattern = "child"), 
-                                      subid,
-                                      str_replace(subid, pattern = "_noise",
-                                                             "_child_noise"))
-              )
+              subid = str_replace_all(subid, pattern = "-", "_"),
+              subid = ifelse(str_detect(subid, pattern = "child"), 
+                             subid,
+                             str_replace(subid, pattern = "_noise",
+                                         "_child_noise")))
 
 d %<>% left_join(subinfo_df, by = "subid")
 ```
@@ -127,7 +129,6 @@ ggplot(aes(x = x, y = y), data = d.rois) +
 ```{r}
 d %<>% filter(!(is.na(target_image)))
 ```
-
 
 ### Add trial numbers
 
@@ -306,7 +307,6 @@ check <- d %>%
          shift_accuracy)
 ```
 
-
 Now we have an RT, a shift type, and a correct/incorrect value for each trial based on three different critical onset points in the trial (i.e., center fixation, sentence, and noun onset).
 
 Compute child's age at test.
@@ -333,8 +333,7 @@ d %<>%
                                   "clear", noise_condition),
          resp_onset_type_fact = factor(response_onset_type, 
                                        levels = c('center.fixation', 
-                                                  'sentence', 'noun'))
-  )
+                                                  'sentence', 'noun')))
 ```
 
 Extract short subid
@@ -366,11 +365,11 @@ d.fs <- d %>%
 Write data to zipped csv: 
 
 ```{r}
-write.path.time <- "../../../data/3_final_merged_data/timecourse/"
-write_csv(d.timecourse, path = paste0(write.path.time,
-                                      "speed_acc_child_noise_timecourse_tidy.csv.gz"))
+write.path.time <- "data/3_final_merged_data/timecourse/"
+write_csv(d.timecourse, path = here::here(write.path.time,
+                                          "speed_acc_child_noise_timecourse_tidy.csv.gz"))
 
-write.path.fst <- "../../../data/3_final_merged_data/first_shifts/"
-write_csv(d.fs, path = paste0(write.path.fst, 
+write.path.fst <- "data/3_final_merged_data/first_shifts/"
+write_csv(d.fs, path = here::here(write.path.fst, 
                               "speed_acc_child_noise_fstshift_tidy.csv"))
 ```

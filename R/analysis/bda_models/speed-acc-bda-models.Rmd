@@ -8,7 +8,14 @@ output: html_document
 ```{r set global_options, include=FALSE}
 library(here)
 source(here::here("R/helper_functions/libraries_and_functions.R"))
+source(here::here("R/helper_functions/ewma_helper_funs.R"))
+
 data_path <- "data/3_final_merged_data/first_shifts/"
+ewma_path <- "data/3_final_merged_data/ewma_output/"
+hddm_path <- "data/3_final_merged_data/hddm_output/"
+
+options(mc.cores=parallel::detectCores())
+set.seed (3875)
 ```
 
 ```{r read data}
@@ -19,7 +26,7 @@ d_adults <- read_csv(here::here(data_path, "speed_acc_adult_ng_fstshift_tidy.csv
 
 ## Merge datasets
 
-```{r clean datasets for merge}
+```{r clean datasets and merge}
 d_adults %<>% select(-age)
 
 d_kids_noise %<>% mutate(gaze_condition = ifelse(gaze_condition == "no_gaze", 
@@ -29,17 +36,15 @@ d_kids_noise %<>% mutate(gaze_condition = ifelse(gaze_condition == "no_gaze",
 d_kids_gaze %<>% mutate(noise_condition = ifelse(noise_condition == "no_noise", 
                                                  "clear", 
                                                  noise_condition))
-```
 
-```{r merge datasets}
 d <- bind_rows(mutate(d_kids_noise, experiment = "kids_noise", age_category = "children"),
                mutate(d_kids_gaze, experiment = "kids_gaze", age_category = "children"),
                mutate(d_adults, experiment = "adults_ng", age_category = "adults")) %>% 
   select(-resp_onset_type_fact, -subid_short) %>% 
   mutate(age_category = factor(age_category) %>% fct_rev()) 
 
-# uncomment below to test that we have the right number of rows after the merge (result should be TRUE)
-# nrow(d_kids_gaze) + nrow(d_kids_noise) + nrow(d_adults) == nrow(d)
+# test that we have the right number of rows after the merge (result should be TRUE)
+ nrow(d_kids_gaze) + nrow(d_kids_noise) + nrow(d_adults) == nrow(d)
 ```
 
 ## Noise experiment (RT and Accuracy models)
@@ -48,9 +53,12 @@ d <- bind_rows(mutate(d_kids_noise, experiment = "kids_noise", age_category = "c
 d_e1_analysis <- d %>% 
   filter(experiment != "kids_gaze",
          keep_runsheet %in% c("yes", "keep"), 
-         keep_et == "include",
-         gaze_condition == "straight_ahead") %>% 
-  filter(rt <= 1.5,
+         #keep_et == "include",
+         gaze_condition == "straight_ahead",
+         !is.na(rt)) %>% 
+  filter(rt <= mean(rt) + 3*sd(rt),
+         rt >= mean(rt) - 3*sd(rt),
+         rt <= 1.5,
          response_onset_type == "noun", 
          shift_start_location == "center") %>% 
   mutate(shift_acc_num = ifelse(shift_accuracy_clean == "correct", 1, 0),
@@ -63,6 +71,20 @@ d_e1_analysis <- d %>%
 m_bglm_acc_e1 <- stan_glmer(
   shift_acc_num ~ noise_condition + age_category + (noise_condition + target_image | subid), 
   data = d_e1_analysis,
+  family = binomial(link = "logit"), 
+  prior = normal(0, 2),
+  prior_intercept = normal(0, 1),
+  prior_covariance = decov(regularization = 2), # prior on Covariance matrices for mixed effects model
+  chains = 4
+)
+```
+
+### Accuracy-Age Continuous 
+
+```{r acc noise model continous age}
+m_bglm_acc_contAge_e1 <- stan_glmer(
+  shift_acc_num ~ noise_condition + age + (noise_condition + target_image | subid), 
+  data = filter(d_e1_analysis, age_category == "children"),
   family = binomial(link = "logit"), 
   prior = normal(0, 2),
   prior_intercept = normal(0, 1),
@@ -85,10 +107,23 @@ m_bglm_rt_e1 <- stan_glmer(
 )
 ```
 
-Extract posterior samples from both models.
+### RT-Age Continous
+
+```{r rt noise age continous}
+m_bglm_rt_contAge_e1 <- stan_glmer(
+  log_rt ~ noise_condition + age + (noise_condition + target_image | subid), 
+  family = gaussian(),
+  data = filter(d_e1_analysis, age_category == "children"),
+  prior = normal(0, 2), 
+  prior_intercept = normal(0, 5),
+  prior_covariance = decov(regularization = 2), # prior on Covariance matrices for mixed effects model
+  chains = 4)
+```
+
+### Extract posterior samples from both models
 
 ```{r e1 extract posterior samples}
-# get posterior samples
+# ACC age-categorical
 samples_e1_acc <- m_bglm_acc_e1 %>% 
   as.data.frame() %>% 
   as_tibble() %>% 
@@ -97,6 +132,25 @@ samples_e1_acc <- m_bglm_acc_e1 %>%
                 age_beta = age_categoryadults) %>% 
   select(clear_children, noise_beta, age_beta)
 
+# ACC age-continous
+samples_e1_acc_age_cont <- m_bglm_acc_contAge_e1 %>% 
+  as.data.frame() %>% 
+  as_tibble() %>% 
+  dplyr::rename(clear_children = `(Intercept)`,
+                noise_beta = noise_conditionnoise,
+                age_beta = age) %>% 
+  select(clear_children, noise_beta, age_beta)
+
+## RT age-categorical
+samples_e1_rt_age_cont <- m_bglm_rt_e1 %>% 
+  as.data.frame() %>% 
+  as_tibble() %>% 
+  dplyr::rename(clear_children = `(Intercept)`,
+                noise_beta = noise_conditionnoise,
+                age_beta = age) %>% 
+  select(clear_children, noise_beta, age_beta)
+
+## RT age-continous
 samples_e1_rt <- m_bglm_rt_e1 %>% 
   as.data.frame() %>% 
   as_tibble() %>% 
@@ -104,7 +158,11 @@ samples_e1_rt <- m_bglm_rt_e1 %>%
                 noise_beta = noise_conditionnoise,
                 age_beta = age_categoryadults) %>% 
   select(clear_children, noise_beta, age_beta)
+```
 
+Tidy posterior samples
+
+```{r tidy samples noise}
 # tidy up accuracy
 samples_e1_acc_tidy <- samples_e1_acc %>% 
   mutate(noise_children = clear_children + noise_beta,
@@ -128,7 +186,7 @@ samples_e1_rt_tidy <- samples_e1_rt %>%
 
 ## Gaze experiment (RT and Accuracy models)
 
-```{r get gaze experiment}
+```{r get gaze experiment, eval = F}
 d_e2 <- d %>% 
   filter(experiment != "kids_noise",
          keep_runsheet %in% c("yes", "keep"), 
@@ -136,7 +194,7 @@ d_e2 <- d %>%
          noise_condition == "clear")
 ```
 
-```{r filter gaze participants}
+```{r filter gaze participants, eval = F}
 d_e2_analysis <- d_e2 %>% 
   filter(rt <= 2,
          response_onset_type == "noun",
@@ -147,7 +205,7 @@ d_e2_analysis <- d_e2 %>%
 
 ### Accuracy (Gaze)
 
-```{r acc gaze model}
+```{r acc gaze model, eval = F}
 m_bglm_acc_e2 <- stan_glmer(
   shift_acc_num ~ gaze_condition + age_category + (gaze_condition + target_image | subid), 
   data = d_e2_analysis,
@@ -161,7 +219,7 @@ m_bglm_acc_e2 <- stan_glmer(
 
 ### RT (Gaze)
 
-```{r rt gaze model}
+```{r rt gaze model, eval = F}
 m_bglm_rt_e2 <- stan_glmer(
   log_rt ~ gaze_condition + age_category + (gaze_condition + target_image | subid), 
   family = gaussian(),
@@ -175,7 +233,7 @@ m_bglm_rt_e2 <- stan_glmer(
 
 ### Extract posterior samples gaze experiment
 
-```{r gaze model extract posterior samples}
+```{r gaze model extract posterior samples, eval = F}
 # get posterior samples
 samples_e2_acc <- m_bglm_acc_e2 %>% 
   as.data.frame() %>% 
@@ -216,17 +274,18 @@ samples_e2_rt_tidy <- samples_e2_rt %>%
 
 Plot parameter estimates
 
-```{r}
+```{r, eval = F}
 samples_e2_acc_tidy %>% ggplot(aes(x=logit_to_prob(param_est), color = gaze_condition)) +
   geom_line(stat = "density") +
   facet_wrap(~age_category)
 ```
 
-```{r}
+```{r, eval = F}
 samples_e2_rt_tidy %>% ggplot(aes(x=exp(param_est), color = gaze_condition)) +
   geom_line(stat = "density") +
   facet_wrap(~age_category)
 ```
+
 
 ## EWMA analysis models
 
@@ -283,19 +342,12 @@ samples_ewma_cuts_noise <- m_cutoffs %>%
   separate(condition, into = c("noise_condition", "age_category"))
 ```
 
-```{r}
-samples_ewma_cuts_noise %>% ggplot(aes(x=param_est, color = noise_condition, 
-                                       linetype = age_category)) +
-  geom_line(stat = "density") 
-```
-
-
 ### EWMA guessing model (Noise)
 
 ```{r aggregate prop guessing ewma}
 # fit model
 m_guessing_noise <- stan_glmer(
-  guess_num ~ noise_condition + age_category + (noise_condition | subid),
+  guess_num ~ noise_condition * age_category + (noise_condition | subid),
   data = d_ewma_noise,
   prior = normal(0, 2),
   prior_intercept = normal(0, 1),
@@ -309,13 +361,14 @@ samples_ewma_guess_noise <- m_guessing_noise %>%
   as_tibble() %>% 
   dplyr::rename(clear_adults = `(Intercept)`,
                 noise_beta = noise_conditionnoise,
-                age_beta = age_categorychildren) %>% 
-  select(clear_adults, noise_beta, age_beta) %>% 
+                age_beta = age_categorychildren,
+                int_beta = `noise_conditionnoise:age_categorychildren`) %>% 
+  select(clear_adults, noise_beta, age_beta, int_beta) %>% 
   mutate(clear_children = clear_adults + age_beta,
-         noise_children = clear_adults + age_beta + noise_beta, 
+         noise_children = clear_adults + age_beta + noise_beta*int_beta, 
          noise_adults = clear_adults + noise_beta,
          sample_id = 1:n()) %>% 
-  gather(key = condition, value = param_est, -sample_id, -noise_beta, -age_beta) %>% 
+  gather(key = condition, value = param_est, -sample_id, -noise_beta, -age_beta, -int_beta) %>% 
   separate(condition, into = c("noise_condition", "age_category"))
 ```
 
@@ -323,7 +376,7 @@ samples_ewma_guess_noise <- m_guessing_noise %>%
 
 Read in EWMA output. 
 
-```{r read ewma output}
+```{r read ewma output gaze, eval = F}
 gaze_ewma_files <- c("speed_acc_kids_gaze_ewma_results.csv",
                       "speed_acc_adult_ng_ewma_results.csv")
 
@@ -333,7 +386,7 @@ d_ewma_gaze <- gaze_ewma_files %>%
 
 Filter to select just the noise and clear conditions.
 
-```{r filter ewma results noise}
+```{r filter ewma results gaze, eval = F}
 d_ewma_gaze %<>% 
   filter(experiment %in% c("gaze", "noise_gaze"),
          condition %in% c("gaze", 
@@ -344,7 +397,7 @@ d_ewma_gaze %<>%
          age_category = ifelse(age_code == "child", "children", "adults")) 
 ```
 
-```{r cutpoints model gaze}
+```{r cutpoints model gaze, eval = F}
 ss_cutoffs_gaze <- d_ewma_gaze %>% 
   filter(guess == "response") %>% 
   group_by(subid, gaze_condition, age_category) %>% 
@@ -371,14 +424,14 @@ samples_ewma_cuts_gaze <- m_cutoffs_gaze %>%
   gather(key = condition, value = param_est, -sample_id, -straightahead_beta, -age_beta)
 ```
 
-```{r}
+```{r, eval = F}
 samples_ewma_cuts_gaze %>% ggplot(aes(x=param_est, color = condition)) +
   geom_line(stat = "density") 
 ```
 
 ### EWMA guessing model (Gaze)
 
-```{r}
+```{r, eval = F}
 # fit model
 m_guessing_gaze <- stan_glmer(
   guess_num ~ gaze_condition + age_category + (gaze_condition | subid),
@@ -404,14 +457,18 @@ samples_ewma_guess_gaze <- m_guessing_gaze %>%
   gather(key = condition, value = param_est, -sample_id, -straightahead_beta, -age_beta)
 ```
 
-```{r}
+```{r, eval = F}
 samples_ewma_guess_gaze %>% ggplot(aes(x=param_est, color = condition)) +
   geom_line(stat = "density") 
 ```
 
+## DDM analysis models
+
+TODO
+
 ## Save the posterior samples 
 
-```{r}
+```{r save samples}
 posteriors <- list(rt_noise = samples_e1_rt_tidy,
                    acc_noise = samples_e1_acc_tidy,
                    ewma_cuts_noise = samples_ewma_cuts_noise,
