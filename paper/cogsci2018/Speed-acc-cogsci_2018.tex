@@ -101,11 +101,11 @@ speaker's face (Erber, 1969).
 But how should listeners prioritize different sources of information?
 And can young listeners flexibly shift to use a more reliable visual cue
 when the auditory signal becomes unreliable? These questions highlight
-how integrating visual information becomes more or less ueful depending
-on features of the listener and the processing context. Consider the
-example of a friend who asks you to ``Pass the salt'' in a noisy
-restaurant, making it difficult to understand her request. Here, you
-could facilitate comprehension by looking to the speaker to read her
+the fact that integrating visual information becomes more or less useful
+depending on features of the listener and the processing context.
+Consider the example of a friend who asks you to ``Pass the salt'' in a
+noisy restaurant, making it difficult to understand her request. Here,
+you could facilitate comprehension by looking to the speaker to read her
 lips or the direction of her gaze. A second case is comprehension of a
 visual-manual language, e.g., American Sign Language (ASL). Here, the
 value of allocating visual fixations to the language source is high
@@ -126,21 +126,18 @@ Our account was inspired by ideas from several research programs. First,
 work on language-mediated visual attention shows that adults and
 children rapidly shift gaze upon hearing the name of an object in the
 visual scene (Allopenna, Magnuson, \& Tanenhaus, 1998; Tanenhaus,
-Spivey-Knowlton, Eberhard, \& Sedivy, 1995). The speed and consistency
-of this behavior has led to debates about whether language-mediated gaze
-shifts are automatic as opposed to under the control of the listener.
-Second, empirical work on visual attention during everyday tasks shows
-that people overwhelmingly prefer to look at \emph{goal-relevant}
-locations -- e.g., an upcoming obstacle while walking (Hayhoe \&
-Ballard, 2005). These accounts predict that gaze dynamics during
-language comprehension should adapt to support the listener's goal of
-rapid language comprehension. Finally, work on ``effortful listening''
-shows that people will generate compensatory responses (e.g., increases
-in attention and working memory) within ``challenging'' language
-contexts such as processing noisy or accented speech (Van Engen \&
-Peelle, 2014). This work predicts that listeners might compensate for
-the reduced quality of the auditory signal by gathering additional
-visual information.
+Spivey-Knowlton, Eberhard, \& Sedivy, 1995). Second, empirical work on
+visual attention during everyday tasks shows that people overwhelmingly
+prefer to look at \emph{goal-relevant} locations -- e.g., an upcoming
+obstacle while walking (Hayhoe \& Ballard, 2005). These accounts predict
+that gaze dynamics during language comprehension should adapt to support
+the listener's goal of rapid language comprehension. Finally, work on
+``effortful listening'' shows that people will generate compensatory
+responses (e.g., increases in attention and working memory) within
+``challenging'' language contexts such as processing noisy or accented
+speech (Van Engen \& Peelle, 2014). This work predicts that listeners
+might compensate for the reduced quality of the auditory signal by
+gathering additional visual information.
 
 \begin{CodeChunk}
 \begin{figure*}[tb]
@@ -179,15 +176,20 @@ increases the value of fixating a speaker to gather visual information
 that supports comprehension. Our critical behavioral prediction is that
 listeners in noisy contexts will delay generating an eye movement away
 from a speaker until they have accumulated additional visual information
-about the identity of the named referent. We also predicted that
-preschoolers would show a parallel pattern of adaptation to noisy
-contexts and allocate more fixations to a speaker's face when it became
-more useful for accurate language comprehension. To quantify evidence
-for our predictions, we analyze the accuracy and reaction times (RTs) of
-listeners' first gaze shifts after hearing the name of an object in the
-visual scene. We focus on first shifts because they provide a window
-onto changes in the underlying dynamics of decision processes that
-generate eye movements.
+about the identity of the named referent. This delay, in turn, will lead
+to fewer random gaze shfits to the rest of the visual world. A plausible
+alternative hypothesis is that the effects of language on visual
+attention are so well-practiced that we would not see listeners adapt
+their gaze patterns. Moreover, we predicted that preschoolers would show
+a parallel pattern of adaptation to noisy contexts and allocate more
+fixations to a speaker's face when it became more useful for accurate
+language comprehension.
+
+To quantify evidence for our predictions, we analyze the accuracy and
+reaction times (RTs) of listeners' first gaze shifts after hearing the
+name of an object in the visual scene. We focus on first shifts because
+they provide a window onto changes in the underlying dynamics of
+decision processes that generate eye movements.
 
 \section{Experiment}\label{experiment}
 
@@ -319,16 +321,24 @@ Reaction Time (RT).\footnote{See \url{https://osf.io/g8h9r/} for a
 to shift away from the central stimulus to either picture measured from
 the onset of the target noun. (all RTs were analyzed in log space).
 Accuracy corresponds to whether participants' first gaze shift landed on
-the target or the distracter picture. We used the \texttt{rstanarm}
-(Gabry \& Goodrich, 2016) package to fit Bayesian mixed-effects
-regression models. The mixed-effects approach allowed us to model the
-nested structure of our data -- multiple trials for each participant and
-item, and a within-participants manipulation -- by including random
-intercepts for each participant and item, and a random slope for each
-item and noise condition. We used Bayesian estimation to quantify
-uncertainty in our point estimates, which we communicate using a 95\%
-Highest Density Interval (HDI). The HDI provides a range of credible
-values given the data and model.
+the target or the distracter picture. However, it is important topoint
+out that when we analyze differences in accuracy, weare not making
+claims about the overall amount of time spentlooking at the target
+vs.~the distractor image -- a measure typically used in analyses of the
+Visual World Paradigm.
+
+We used the \texttt{rstanarm} (Gabry \& Goodrich, 2016) package to fit
+Bayesian mixed-effects regression models. The mixed-effects approach
+allowed us to model the nested structure of our data -- multiple trials
+for each participant and item, and a within-participants manipulation --
+by including random intercepts for each participant and item, and a
+random slope for each item and noise condition. We used Bayesian
+estimation to quantify uncertainty in our point estimates, which we
+communicate using a 95\% Highest Density Interval (HDI). The HDI
+provides a range of credible values given the data and model. Finally,
+to estimate age-related differences, we fit two types of models: (1) age
+group (adults vs.~children) as a categorical predictor and (2) age (in
+days) as a continous predictor within the child sample.
 
 Next, we present the two model-based analyses -- the EWMA and DDM. The
 goal of these models is to move beyond a description of the data and map
