@@ -49,7 +49,7 @@ nrow(d_kids_gaze) + nrow(d_kids_noise) + nrow(d_adults) == nrow(d)
 
 ## Noise experiment (RT and Accuracy models)
 
-```{r e1_filter}
+```{r filter e1 data}
 d_e1_analysis <- d %>% 
   filter(experiment != "kids_gaze",
          keep_runsheet %in% c("yes", "keep"), 
@@ -67,14 +67,15 @@ d_e1_analysis <- d %>%
 
 ### Accuracy (categorical)
 
-```{r acc noise model}
+```{r fit acc noise model}
 m_bglm_acc_e1 <- stan_glmer(
-  shift_acc_num ~ noise_condition + age_category + (noise_condition + target_image | subid), 
+  shift_acc_num ~ noise_condition + age_category + (noise_condition | subid) + (noise_condition | target_image), 
   data = d_e1_analysis,
   family = binomial(link = "logit"), 
   prior = normal(0, 2),
   prior_intercept = normal(0, 1),
   prior_covariance = decov(regularization = 2), 
+  adapt_delta = 0.99,
   chains = 4)
 
 # ACC age-categorical
@@ -89,13 +90,14 @@ samples_e1_acc <- m_bglm_acc_e1 %>%
 
 ### Accuracy age (categorical) interaction
 
-```{r acc noise model interaction}
+```{r fit acc noise model interaction}
 m_bglm_acc_e1_int <- stan_glmer(
-  shift_acc_num ~ noise_condition * age_category + (noise_condition + target_image | subid), 
+  shift_acc_num ~ noise_condition * age_category + (noise_condition | subid) + (noise_condition | target_image), 
   data = d_e1_analysis,
   family = binomial(link = "logit"), 
   prior = normal(0, 2),
   prior_intercept = normal(0, 1),
+  adapt_delta = 0.99,
   prior_covariance = decov(regularization = 2), # prior on Covariance matrices for mixed effects model
   chains = 4)
 
@@ -111,12 +113,13 @@ samples_e1_acc_int <- m_bglm_acc_e1_int %>%
 
 ### Accuracy Age (continuous)
 
-```{r acc noise model continous age}
+```{r fit acc noise model continous age}
 m_bglm_acc_contAge_e1 <- stan_glmer(
-  shift_acc_num ~ noise_condition + age + (noise_condition + target_image | subid), 
+  shift_acc_num ~ noise_condition + age + (noise_condition | subid) + (noise_condition | target_image), 
   data = filter(d_e1_analysis, age_category == "children"),
   family = binomial(link = "logit"), 
   prior = normal(0, 2),
+  adapt_delta = 0.99,
   prior_intercept = normal(0, 1),
   prior_covariance = decov(regularization = 2), # prior on Covariance matrices for mixed effects model
   chains = 4)
@@ -133,9 +136,9 @@ samples_e1_acc_age_cont <- m_bglm_acc_contAge_e1 %>%
 
 ### Accuracy Age (continuous) Interaction
 
-```{r acc noise age continuous interaction}
+```{r fit acc noise age continuous interaction}
 m_bglm_acc_int_e1 <- stan_glmer(
-  shift_acc_num ~ noise_condition * age + (noise_condition + target_image | subid), 
+  shift_acc_num ~ noise_condition * age + (noise_condition | subid) + (noise_condition | target_image), 
   data = filter(d_e1_analysis, age_category == "children"),
   family = binomial(link = "logit"), 
   prior = normal(0, 2),
@@ -156,9 +159,9 @@ samples_e1_acc_age_int <- m_bglm_acc_int_e1 %>%
 
 ### RT age (categorical)
 
-```{r rt noise model age categorical}
+```{r fit rt noise model age categorical}
 m_bglm_rt_e1 <- stan_glmer(
-  log_rt ~ noise_condition + age_category + (noise_condition + target_image | subid), 
+  log_rt ~ noise_condition + age_category + (noise_condition | subid) + (noise_condition | target_image), 
   family = gaussian(),
   data = d_e1_analysis,
   prior = normal(0, 2), 
@@ -178,9 +181,9 @@ samples_e1_rt <- m_bglm_rt_e1 %>%
 
 ### RT Age (categorical) interaction
 
-```{r rt noise model interaction}
+```{r fit rt noise model interaction}
 m_bglm_rt_e1_int <- stan_glmer(
-  log_rt ~ noise_condition * age_category + (noise_condition + target_image | subid), 
+  log_rt ~ noise_condition * age_category + (noise_condition | subid) + (noise_condition | target_image), 
   family = gaussian(),
   data = d_e1_analysis,
   prior = normal(0, 2), 
@@ -201,9 +204,9 @@ samples_e1_rt_age_cont_int <- m_bglm_rt_e1_int %>%
 
 ### RT Age (continous)
 
-```{r rt noise age continous}
+```{r fit rt noise age continous}
 m_bglm_rt_contAge_e1 <- stan_glmer(
-  log_rt ~ noise_condition + age + (noise_condition + target_image | subid), 
+  log_rt ~ noise_condition + age + (noise_condition | subid) + (noise_condition | target_image), 
   family = gaussian(),
   data = filter(d_e1_analysis, age_category == "children"),
   prior = normal(0, 2), 
@@ -223,9 +226,9 @@ samples_e1_rt_age_cont <- m_bglm_rt_contAge_e1 %>%
 
 ### RT Age (continuous) Interaction
 
-```{r rt age interaction}
+```{r fit rt age interaction noise}
 m_bglm_rt_contAge_int_e1 <- stan_glmer(
-  log_rt ~ noise_condition * age + (noise_condition + target_image | subid), 
+  log_rt ~ noise_condition * age + (noise_condition | subid) + (noise_condition | target_image), 
   family = gaussian(),
   data = filter(d_e1_analysis, age_category == "children"),
   prior = normal(0, 2), 
@@ -246,7 +249,7 @@ samples_e1_rt_age_int <- m_bglm_rt_contAge_int_e1 %>%
 
 Tidy up the posterior samples.
 
-```{r tidy samples noise}
+```{r tidy up the samples noise}
 # tidy up accuracy
 samples_e1_acc_tidy <- samples_e1_acc %>% 
   mutate(noise_children = clear_children + noise_beta,
@@ -270,7 +273,7 @@ samples_e1_rt_tidy <- samples_e1_rt %>%
 
 ## Gaze experiment (RT and Accuracy models)
 
-```{r get gaze experiment, eval = F}
+```{r filter gaze experiment, eval = F}
 d_e2 <- d %>% 
   filter(experiment != "kids_noise",
          keep_runsheet %in% c("yes", "keep"), 
@@ -289,9 +292,9 @@ d_e2_analysis <- d_e2 %>%
 
 ### Accuracy (Gaze)
 
-```{r acc gaze model, eval = F}
+```{r fit acc gaze model, eval = F}
 m_bglm_acc_e2 <- stan_glmer(
-  shift_acc_num ~ gaze_condition + age_category + (gaze_condition + target_image | subid), 
+  shift_acc_num ~ gaze_condition + age_category + (gaze_condition | subid) + (gaze_condition | target_image), 
   data = d_e2_analysis,
   family = binomial(link = "logit"), 
   prior = normal(0, 2),
@@ -303,9 +306,9 @@ m_bglm_acc_e2 <- stan_glmer(
 
 ### RT (Gaze)
 
-```{r rt gaze model, eval = F}
+```{r fit rt gaze model, eval = F}
 m_bglm_rt_e2 <- stan_glmer(
-  log_rt ~ gaze_condition + age_category + (gaze_condition + target_image | subid), 
+  log_rt ~ gaze_condition + age_category + (gaze_condition | subid) + (gaze_condition | target_image), 
   family = gaussian(),
   data = d_e2_analysis,
   prior = normal(0, 2), 
@@ -317,7 +320,7 @@ m_bglm_rt_e2 <- stan_glmer(
 
 ### Extract posterior samples gaze experiment
 
-```{r gaze model extract posterior samples, eval = F}
+```{r extract posterior samples gaze model, eval = F}
 # get posterior samples
 samples_e2_acc <- m_bglm_acc_e2 %>% 
   as.data.frame() %>% 
@@ -356,26 +359,11 @@ samples_e2_rt_tidy <- samples_e2_rt %>%
   separate(condition, into = c("gaze_condition", "age_category"))
 ```
 
-Plot parameter estimates
-
-```{r, eval = F}
-samples_e2_acc_tidy %>% ggplot(aes(x=logit_to_prob(param_est), color = gaze_condition)) +
-  geom_line(stat = "density") +
-  facet_wrap(~age_category)
-```
-
-```{r, eval = F}
-samples_e2_rt_tidy %>% ggplot(aes(x=exp(param_est), color = gaze_condition)) +
-  geom_line(stat = "density") +
-  facet_wrap(~age_category)
-```
-
-
 ## EWMA analysis models
 
 Read in EWMA output. 
 
-```{r read ewma output}
+```{r read ewma output noise}
 noise_ewma_files <- c("speed_acc_kids_noise_ewma_results.csv", "speed_acc_adult_ng_ewma_results.csv")
 
 d_ewma_noise <- noise_ewma_files %>% 
@@ -408,7 +396,7 @@ d_age_cont_ewma <- d_kids_noise %>%
 
 #### EWMA cut point 
 
-```{r aggregate cutpoints ewma noise}
+```{r fit cutpoints model ewma noise}
 ss_cutoffs_noise <- d_ewma_noise %>% 
   filter(guess == "response") %>% 
   group_by(subid, noise_condition, age_category) %>% 
@@ -438,7 +426,7 @@ samples_ewma_cuts_noise <- m_cutoffs %>%
 
 #### EWMA guessing 
 
-```{r aggregate prop guessing ewma}
+```{r fit aggregate prop guessing ewma nosie}
 # fit model
 m_guessing_noise <- stan_glmer(
   guess_num ~ noise_condition * age_category + (noise_condition | subid),
@@ -446,8 +434,7 @@ m_guessing_noise <- stan_glmer(
   prior = normal(0, 2),
   prior_intercept = normal(0, 1),
   prior_covariance = decov(regularization = 2), 
-  chains = 4
-)
+  chains = 4)
 
 # get posterior samples
 samples_ewma_guess_noise <- m_guessing_noise %>% 
@@ -468,7 +455,7 @@ samples_ewma_guess_noise <- m_guessing_noise %>%
 
 Fit a model with age as continous predictor just within the child sample.
 
-```{r prop guessing ewma age continous}
+```{r fit prop guessing ewma age continous noise}
 # fit model
 m_guessing_noise_ageCont <- stan_glmer(
   guess_num ~ noise_condition + age + (noise_condition | subid),
@@ -476,8 +463,7 @@ m_guessing_noise_ageCont <- stan_glmer(
   prior = normal(0, 2),
   prior_intercept = normal(0, 1),
   prior_covariance = decov(regularization = 2), 
-  chains = 4
-)
+  chains = 4)
 
 # get posterior samples
 samples_ewma_guess_noise_ageCont <- m_guessing_noise_ageCont %>% 
@@ -491,7 +477,7 @@ samples_ewma_guess_noise_ageCont <- m_guessing_noise_ageCont %>%
 
 Fit the same model with an interaction term
 
-```{r}
+```{r fit ewma guessing age interaction model noise}
 # fit model
 m_guessing_noise_ageInt <- stan_glmer(
   guess_num ~ noise_condition * age + (noise_condition | subid),
@@ -525,7 +511,7 @@ d_ewma_gaze <- gaze_ewma_files %>%
   purrr::map_df(read_ewma, path = ewma_path) 
 ```
 
-Filter to select just the noise and clear conditions.
+Filter to select just the gaze conditions.
 
 ```{r filter ewma results gaze, eval = F}
 d_ewma_gaze %<>% 
@@ -538,7 +524,7 @@ d_ewma_gaze %<>%
          age_category = ifelse(age_code == "child", "children", "adults")) 
 ```
 
-```{r cutpoints model gaze, eval = F}
+```{r fit cutpoints model gaze, eval = F}
 ss_cutoffs_gaze <- d_ewma_gaze %>% 
   filter(guess == "response") %>% 
   group_by(subid, gaze_condition, age_category) %>% 
@@ -565,14 +551,9 @@ samples_ewma_cuts_gaze <- m_cutoffs_gaze %>%
   gather(key = condition, value = param_est, -sample_id, -straightahead_beta, -age_beta)
 ```
 
-```{r, eval = F}
-samples_ewma_cuts_gaze %>% ggplot(aes(x=param_est, color = condition)) +
-  geom_line(stat = "density") 
-```
-
 ### EWMA guessing model (Gaze)
 
-```{r, eval = F}
+```{r fit ewma guessing model gaze, eval = F}
 # fit model
 m_guessing_gaze <- stan_glmer(
   guess_num ~ gaze_condition + age_category + (gaze_condition | subid),
@@ -580,8 +561,7 @@ m_guessing_gaze <- stan_glmer(
   prior = normal(0, 2),
   prior_intercept = normal(0, 1),
   prior_covariance = decov(regularization = 2), 
-  chains = 4
-)
+  chains = 4)
 
 # get posterior samples
 samples_ewma_guess_gaze <- m_guessing_gaze %>% 
@@ -598,14 +578,9 @@ samples_ewma_guess_gaze <- m_guessing_gaze %>%
   gather(key = condition, value = param_est, -sample_id, -straightahead_beta, -age_beta)
 ```
 
-```{r, eval = F}
-samples_ewma_guess_gaze %>% ggplot(aes(x=param_est, color = condition)) +
-  geom_line(stat = "density") 
-```
-
 ## Save the posterior samples 
 
-```{r save samples}
+```{r save samples from all models}
 posteriors <- list(rt_noise = samples_e1_rt_tidy,
                    rt_noise_age = samples_e1_rt_age_cont,
                    acc_noise = samples_e1_acc_tidy,
