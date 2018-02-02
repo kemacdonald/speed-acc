@@ -374,18 +374,18 @@ more efficient processing).
 
 \textbf{RT.} To make RTs more suitable for modeling on a linear scale,
 we analyzed responses in log space with the final model specified as:
-\texttt{$log(RT) \sim noise\_condition + age\_group + (sub\_id + noise\_condition \mid item)$}.
+\texttt{$log(RT) \sim noise\_condition + age\_group + (noise\_condition \mid sub\_id ) + (noise\_condition \mid target\_item)$}.
 Panel A of Fig.~\ref{fig:noise_acc_rt_e1_plot} shows the full RT data
 distribution and the full posterior distribution of the estimated RT
 difference between the noise and clear conditions. Both children and
 adults were slower to identify the target in the noise condition
-(Children \(M_{noise}\) = 499.9 ms; Adult \(M_{noise}\) = 595.23 ms), as
-compared to the clear condition (Children \(M_{clear}\) = 462.66 ms;
-Adult \(M_{clear}\) = 549.71 ms). RTs in the noise condition were 41.25
-ms slower on average, with a 95\% HDI ranging from 2.78 ms to 81.62 ms,
+(Children \(M_{noise}\) = 500.19 ms; Adult \(M_{noise}\) = 595.23 ms),
+as compared to the clear condition (Children \(M_{clear}\) = 455.72 ms;
+Adult \(M_{clear}\) = 542.45 ms). RTs in the noise condition were 48.82
+ms slower on average, with a 95\% HDI ranging from 3.72 ms to 96.26 ms,
 and not including the null value of zero condition difference. Older
-children responded faster than younger children (\(M_{age}\) = -0.45,
-{[}-0.75, -0.75{]}), with little evidence for an interaction between age
+children responded faster than younger children (\(M_{age}\) = -0.44,
+{[}-0.74, -0.16{]}), with little evidence for an interaction between age
 and condition.
 
 \textbf{Accuracy.} Next, we modeled adults and children's first shift
@@ -394,13 +394,13 @@ specifications (see Panel B of Fig.~\ref{fig:noise_acc_rt_e1_plot}).
 Both groups were more accurate than a model of random responding (null
 value of \(0.5\) falling well outside the lower bound of the 95\% HDI
 for all group means). Adults were more accurate (\(M_{adults} =\) 90\%)
-than children (\(M_{children} =\) 62\%). The key result is that both
+than children (\(M_{children} =\) 61\%). The key result is that both
 groups showed evidence of higher accuracy in the noise condition:
-children (\(M_{noise}\) = 68\%; \(M_{clear}\) = 62\%) and adults
+children (\(M_{noise}\) = 67\%; \(M_{clear}\) = 61\%) and adults
 (\(M_{noise}\) = 92\%; \(M_{clear}\) = 90\%). Accuracy in the noise
-condition was on average 4\% higher, with a 95\% HDI from 0\% to 11\%.
+condition was on average 4\% higher, with a 95\% HDI from -1\% to 12\%.
 Note that the null value of zero difference falls at the very edge of
-the HDI such that 97\% of the credible values are greater than the null,
+the HDI such that 95\% of the credible values are greater than the null,
 providing evidence for higher accuracy in the noise condition. Within
 the child sample, there was no evidence of a main effect of age or an
 interaction between age and noise condition.
@@ -409,21 +409,20 @@ interaction between age and noise condition.
 
 \textbf{EWMA.} Fig.~\ref{fig:ewma_violin_plot} shows the proportion of
 shifts that the model classified as random vs.~language-driven for each
-age group and processing context. On average, 32\% (95\% HDI: 27\%,
-36\%) of children's shifts were categorized as language-driven, which
-was significantly fewer than adults, 87\% (95\% HDI: 82\%, 92\%).
+age group and processing context. On average, 41\% (95\% HDI: 32\%,
+50\%) of children's shifts were categorized as language-driven, which
+was significantly fewer than adults, 87\% (95\% HDI: 78\%, 96\%).
 Critically, processing speech in a noisy context caused both adults and
 children to generate a higher proportion of language-driven shifts
 (i.e., fewer random, exploratory shifts away from the speaker), with the
 95\% HDI excluding the null value of zero condition difference
-(\(\beta_{noise}\) = 1\%, {[}-5\%, 7\%{]}). Within the child sample,
+(\(\beta_{noise}\) = 11\%, {[}7\%, 17\%{]}). Within the child sample,
 older children generated fewer random, early shifts (\(M_{age}\) =
--0.2109, {[}-0.3442, -0.0756{]}). There was no eivdence of an
-interaction between age and condition. This pattern of results suggests
-that the noise condition caused participants to increase visual
-fixations to the language source, leading them to generate fewer
-exploratory, random shifts before accumulating sufficient information to
-respond accurately.
+-0.21, {[}-0.34, -0.08{]}). There was no eivdence of an interaction
+between age and condition. This pattern of results suggests that the
+noise condition caused participants to increase visual fixations to the
+language source, leading them to generate fewer exploratory, random
+shifts before accumulating sufficient information to respond accurately.
 
 \textbf{HDDM.} Fig.~\ref{fig:hddm_plot_noise} shows the full posterior
 distributions for the HDDM output. Children had lower drift rates

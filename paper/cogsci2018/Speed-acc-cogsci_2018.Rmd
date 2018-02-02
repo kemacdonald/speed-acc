@@ -51,7 +51,8 @@ d_hddm <- read_csv(here::here(hddm_path, "hddm_tidy.csv"))
 ```
 
 ```{r read bda output}
-d_models <- readRDS(here::here("data/3_final_merged_data/first_shifts", "speed-acc-posterior-samples.rds"))
+d_models <- readRDS(here::here(data_path, "speed-acc-posterior-samples.rds"))
+d_ewma_models <- readRDS(here::here(data_path, "ewma-posterior-samples.rds"))
 ```
 
 ```{r clean datasets for merge}
@@ -236,7 +237,6 @@ d_ewma_noise %>%
 
 Participants viewed the task on a screen while their gaze was tracked using an SMI RED corneal-reflection eye-tracker mounted on an LCD monitor, sampling at 60 Hz. The eye-tracker was first calibrated for each participant using a 6-point calibration. On each trial, participants saw two images of familiar objects on the screen for two seconds before the center stimulus appeared (see Fig.\ \ref{fig:stimuli_plot}). Next, they processed the target sentence -- which consisted of a carrier phrase, a target noun, and a question -- followed by two seconds without language to allow for a response. Child participants saw 32 trials (16 noise trials; 16 clear trials) with several filler trials interspersed to maintain interest. Adult participants saw 64 trials (32 noise; 32 clear). The noise manipulation was presented in a blocked design with the order of block counterbalanced across participants.
 
-
 ## Analysis plan
 
 First, we present behavioral analyses of First Shift Accuracy and Reaction Time (RT) ^[See https://osf.io/g8h9r/ for a pre-registration of the analysis plan.]. RT corresponds to the latency to shift away from the central stimulus to either picture measured from the onset of the target noun. Accuracy corresponds to whether participants' first gaze shift landed on the target or the distracter picture. However, it is important to point out that when we analyze differences in accuracy, we are not making claims about the overall amount of time spent looking at the target vs. the distractor image – a measure typically used in analyses of the Visual World Paradigm.
@@ -269,7 +269,6 @@ d_hddm %>%
         text = element_text(size = 10),
         legend.title = element_text(size =9)) 
 ```
-
 
 ## Results and Discussion
 
@@ -335,7 +334,7 @@ ms_noise_age_rt <- d_models$rt_noise_age %>%
   mutate_if(.predicate = is.numeric, .funs = round, digits = 2) 
 ```
 
-**RT.** To make RTs more suitable for modeling on a linear scale, we analyzed responses in log space with the final model specified as: \texttt{$log(RT) \sim noise\_condition + age\_group + (sub\_id + noise\_condition \mid item)$}. Panel A of Fig.\ \ref{fig:noise_acc_rt_e1_plot} shows the full RT data distribution and the full posterior distribution of the estimated RT difference between the noise and clear conditions. Both children and adults were slower to identify the target in the noise condition (Children $M_{noise}$ = `r ms_rt_e1$m_rt[4]` ms; Adult $M_{noise}$ = `r ms_rt_e1$m_rt[3]` ms), as compared to the clear condition (Children $M_{clear}$ = `r ms_rt_e1$m_rt[2]` ms; Adult $M_{clear}$ = `r ms_rt_e1$m_rt[1]` ms). RTs in the noise condition were `r ms_noise_con_rt$m_rt[1]` ms slower on average, with a 95% HDI ranging from `r ms_noise_con_rt$hdi_lower[1]` ms to `r ms_noise_con_rt$hdi_upper[1]` ms, and not including the null value of zero condition difference. Older children responded faster than younger children ($M_{age}$ = `r ms_noise_age_rt$m_rt`, [`r ms_noise_age_rt$hdi_lower`, `r ms_noise_age_rt$hdi_lower`]), with little evidence for an interaction between age and condition. 
+**RT.** To make RTs more suitable for modeling on a linear scale, we analyzed responses in log space with the final model specified as: \texttt{$log(RT) \sim noise\_condition + age\_group + (noise\_condition \mid sub\_id ) + (noise\_condition \mid target\_item)$}. Panel A of Fig.\ \ref{fig:noise_acc_rt_e1_plot} shows the full RT data distribution and the full posterior distribution of the estimated RT difference between the noise and clear conditions. Both children and adults were slower to identify the target in the noise condition (Children $M_{noise}$ = `r ms_rt_e1$m_rt[4]` ms; Adult $M_{noise}$ = `r ms_rt_e1$m_rt[3]` ms), as compared to the clear condition (Children $M_{clear}$ = `r ms_rt_e1$m_rt[2]` ms; Adult $M_{clear}$ = `r ms_rt_e1$m_rt[1]` ms). RTs in the noise condition were `r ms_noise_con_rt$m_rt[1]` ms slower on average, with a 95% HDI ranging from `r ms_noise_con_rt$hdi_lower[1]` ms to `r ms_noise_con_rt$hdi_upper[1]` ms, and not including the null value of zero condition difference. Older children responded faster than younger children ($M_{age}$ = `r ms_noise_age_rt$m_rt`, [`r ms_noise_age_rt$hdi_lower`, `r ms_noise_age_rt$hdi_upper`]), with little evidence for an interaction between age and condition. 
 
 ```{r ms contrast noise acc}
 ms_noise_con_acc <- noise_contrast %>%
@@ -366,7 +365,7 @@ ms_cuts_noise <- d_models$ewma_cuts_noise %>%
   select(model, parameter, everything())
 
 # summarise group means for prop guessing parameter
-ms_guess_noise <- d_models$ewma_guess_noise %>% 
+ms_guess_noise <- d_ewma_models$ewma_guess_noise %>% 
   group_by(age_category, noise_condition) %>% 
   summarise(MAP = mean(param_est),
             hdi_lower = quantile(param_est, probs = 0.025),
@@ -375,7 +374,7 @@ ms_guess_noise <- d_models$ewma_guess_noise %>%
   mutate_if(.predicate = is.numeric, .funs = round, digits = 2) %>% 
   select(model, parameter, everything())
 
-ms_guess_noise_age <- d_models$ewma_guess_noise %>% 
+ms_guess_noise_age <- d_ewma_models$ewma_guess_noise %>% 
   group_by(age_category) %>% 
   summarise(MAP = mean(param_est),
             hdi_lower = quantile(param_est, probs = 0.025),
@@ -384,7 +383,7 @@ ms_guess_noise_age <- d_models$ewma_guess_noise %>%
   mutate_if(.predicate = is.numeric, .funs = round, digits = 2) %>% 
   select(model, parameter, everything())
 
-ms_cond_diff_guessing_m <- d_models$ewma_guess_noise %>% 
+ms_cond_diff_guessing_m <- d_ewma_models$ewma_guess_noise %>% 
   select(sample_id, noise_beta, age_beta) %>%
   mutate(age_beta = age_beta * -1) %>% 
   rename(`adults-children` = age_beta, 
@@ -494,7 +493,7 @@ ms_ewma_age_kids <- d_models$ewma_guess_noise_age %>%
   summarise(MAP = mean(age_beta),
             hdi_lower = quantile(age_beta, probs = 0.025),
             hdi_upper = quantile(age_beta, probs = 0.975)) %>% 
-  mutate_if(.predicate = is.numeric, .funs = round, digits = 4)
+  mutate_if(.predicate = is.numeric, .funs = round, digits = 2)
 ```
 
 **EWMA.** Fig.\ \ref{fig:ewma_violin_plot} shows the proportion of shifts that the model classified as random vs. language-driven for each age group and processing context. On average, `r ms_guess_noise_age$MAP[2] * 100`% (95% HDI: `r ms_guess_noise_age$hdi_lower[2] * 100`%, `r ms_guess_noise_age$hdi_upper[2] * 100`%) of children's shifts were categorized as language-driven, which was significantly fewer than adults, `r ms_guess_noise_age$MAP[1] * 100`% (95% HDI: `r ms_guess_noise_age$hdi_lower[1] * 100`%, `r ms_guess_noise_age$hdi_upper[1] * 100`%). Critically, processing speech in a noisy context caused both adults and children to generate a higher proportion of language-driven shifts (i.e., fewer random, exploratory shifts away from the speaker), with the 95% HDI excluding the null value of zero condition difference ($\beta_{noise}$ = `r ms_cond_diff_guessing_m$MAP[2] * 100`%, [`r ms_cond_diff_guessing_m$hdi_lower[2] * 100`%, `r ms_cond_diff_guessing_m$hdi_upper[2] * 100`%]). Within the child sample, older children generated fewer random, early shifts ($M_{age}$ = `r ms_ewma_age_kids$MAP`, [`r ms_ewma_age_kids$hdi_lower`, `r ms_ewma_age_kids$hdi_upper`]). There was no eivdence of an interaction between age and condition. This pattern of results suggests that the noise condition caused participants to increase visual fixations to the language source, leading them to generate fewer exploratory, random shifts before accumulating sufficient information to respond accurately.
@@ -576,7 +575,7 @@ xtable::print.xtable(hddm_table, type="latex", comment = F, table.placement = "t
       include.rownames=FALSE)
 ```
 
-**HDDM.** Fig.\ \ref{fig:hddm_plot_noise} shows the full posterior distributions for the HDDM output. Children had lower drift rates (children $M_{drift}$ = `r hddm_table_age$MAP[4]`; adults $M_{drift}$ = `r hddm_table_age$MAP[3]`) and boundary separation estimates (children $M_{boundary}$ = `r hddm_table_age$MAP[2]`; adults $M_{boundary}$ = `r hddm_table_age$MAP[1]`) as compared to adults, suggesting that children were less efficient and less cautious in their responding. The noise manipulation selectively affected the boundary separation parameter, with higher estimates in the noise condition for both age groups ($\beta_{noise}$ = `r hddm_table_contrast$MAP[1]` [`r hddm_table_contrast$HDI_lower[1]`, `r hddm_table_contrast$HDI_upper[1]`]). This result suggests that participants' in the noise condition prioritized information accumulation over speed when generating an eye movement in response to the incoming language. This increased decision threshold led to higher accuracy. Moreover, the high overlap in estimates of drift rate suggests that participants were able to integrate the visual and auditory signals such that they could achieve a level of processing efficiency comparable to the clear processing context.
+**HDDM.** Fig.\ \ref{fig:hddm_plot_noise} shows the full posterior distributions for the HDDM output. Children had lower drift rates (children $M_{drift}$ = `r hddm_table_age$MAP[4]`; adults $M_{drift}$ = `r hddm_table_age$MAP[3]`) and boundary separation estimates (children $M_{boundary}$ = `r hddm_table_age$MAP[2]`; adults $M_{boundary}$ = `r hddm_table_age$MAP[1]`) as compared to adults, suggesting that children were less efficient and less cautious in their responding. The noise manipulation selectively affected the boundary separation parameter, with higher estimates in the noise condition for both age groups ($\beta_{noise}$ = `r hddm_table_contrast$MAP[1]`, [`r hddm_table_contrast$HDI_lower[1]`, `r hddm_table_contrast$HDI_upper[1]`]). This result suggests that participants' in the noise condition prioritized information accumulation over speed when generating an eye movement in response to the incoming language. This increased decision threshold led to higher accuracy. Moreover, the high overlap in estimates of drift rate suggests that participants were able to integrate the visual and auditory signals such that they could achieve a level of processing efficiency comparable to the clear processing context.
 
 Taken together, the behavioral and EWMA/HDDM results provide converging support for the predictions of our information-seeking account. Processing speech in noise caused listeners to seek additional visual information to support language comprehension. Moreover, we observed a very similar pattern of behavior in children and adults, with both groups producing more language-driven shifts and prioritizing accuracy over speed in the more challenging, noisy environment. 
 
