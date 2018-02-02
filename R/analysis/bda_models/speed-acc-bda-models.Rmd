@@ -53,7 +53,7 @@ nrow(d_kids_gaze) + nrow(d_kids_noise) + nrow(d_adults) == nrow(d)
 d_e1_analysis <- d %>% 
   filter(experiment != "kids_gaze",
          keep_runsheet %in% c("yes", "keep"), 
-         #keep_et == "include",
+         keep_et == "include",
          gaze_condition == "straight_ahead",
          !is.na(rt)) %>% 
   filter(rt <= mean(rt) + 3*sd(rt),

@@ -349,20 +349,20 @@ prob_diff0 <- noise_contrast %>%
   mutate_if(.predicate = is.numeric, .funs = round, digits = 2)
 ```
 
-**Accuracy.** Next, we modeled adults and children's first shift accuracy using a mixed-effects logistic regression with the same specifications (see Panel B of Fig.\ \ref{fig:noise_acc_rt_e1_plot}). Both groups were more accurate than a model of random responding (null value of $0.5$ falling well outside the lower bound of the 95% HDI for all group means). Adults were more accurate ($M_{adults} =$ `r ms_acc_e1$prop[1] * 100`%) than children ($M_{children} =$ `r ms_acc_e1$prop[2] * 100`%). The key result is that both groups showed evidence of higher accuracy in the noise condition: children ($M_{noise}$ = `r ms_acc_e1$prop[4]* 100`%; $M_{clear}$ = `r ms_acc_e1$prop[2]* 100`%) and adults ($M_{noise}$ = `r ms_acc_e1$prop[3]* 100`%; $M_{clear}$ = `r ms_acc_e1$prop[1]* 100`%). Accuracy in the noise condition was on average `r ms_noise_con_acc$m_acc[1] * 100`%  higher, with a 95% HDI from `r ms_noise_con_acc$hdi_lower[1]* 100`% to `r ms_noise_con_acc$hdi_upper[1] * 100`%. Note that the null value of zero difference falls at the very edge of the HDI such that `r prob_diff0$prob[1] * 100`% of the credible values are greater than the null, providing evidence for higher accuracy in the noise condition. Within the child sample, there was no evidence of a main effect of age or an interaction between age and noise condition.
+**Accuracy.** Next, we modeled adults and children's first shift accuracy using a mixed-effects logistic regression with the same specifications (see Panel B of Fig.\ \ref{fig:noise_acc_rt_e1_plot}). Both groups were more accurate than a model of random responding (null value of $0.5$ falling well outside the lower bound of the 95% HDI for all group means). Adults were more accurate ($M_{adults} =$ `r ms_acc_e1$prop[1] * 100`%) than children ($M_{children} =$ `r ms_acc_e1$prop[2] * 100`%). The key result is that both groups showed evidence of higher accuracy in the noise condition: children ($M_{noise}$ = `r ms_acc_e1$prop[4]* 100`%; $M_{clear}$ = `r ms_acc_e1$prop[2]* 100`%) and adults ($M_{noise}$ = `r ms_acc_e1$prop[3]* 100`%; $M_{clear}$ = `r ms_acc_e1$prop[1]* 100`%). Accuracy in the noise condition was on average `r ms_noise_con_acc$m_acc[1] * 100`%  higher, with a 95% HDI from `r ms_noise_con_acc$hdi_lower[1]* 100`% to `r ms_noise_con_acc$hdi_upper[1] * 100`%. Note that the null value of zero difference falls at the very edge of the HDI. But  `r prob_diff0$prob[1] * 100`% of the credible values are greater than zero, providing evidence for higher accuracy in the noise condition. Within the child sample, there was no evidence of a main effect of age or an interaction between age and noise condition.
 
 ### Model-based analyses:
 
 ```{r noise ewma group means summary}
 # summarise group means for cutoffs
-ms_cuts_noise <- d_models$ewma_cuts_noise %>% 
-  group_by(age_category, noise_condition) %>% 
-  summarise(MAP = mean(param_est),
-            hdi_lower = quantile(param_est, probs = 0.025),
-            hdi_upper = quantile(param_est, probs = 0.975)) %>% 
-  mutate_if(.predicate = is.numeric, .funs = round, digits = 2) %>% 
-  mutate(model = "EWMA", parameter = "cut point") %>% 
-  select(model, parameter, everything())
+# ms_cuts_noise <- d_models$ewma_cuts_noise %>% 
+#   group_by(age_category, noise_condition) %>% 
+#   summarise(MAP = mean(param_est),
+#             hdi_lower = quantile(param_est, probs = 0.025),
+#             hdi_upper = quantile(param_est, probs = 0.975)) %>% 
+#   mutate_if(.predicate = is.numeric, .funs = round, digits = 2) %>% 
+#   mutate(model = "EWMA", parameter = "cut point") %>% 
+#   select(model, parameter, everything())
 
 # summarise group means for prop guessing parameter
 ms_guess_noise <- d_ewma_models$ewma_guess_noise %>% 
