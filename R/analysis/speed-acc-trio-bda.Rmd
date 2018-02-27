@@ -1,0 +1,135 @@
+---
+title: "Speed-Acc Trio BDA"
+author: "Kyle MacDonald"
+output: html_document
+---
+
+## Setup
+
+```{r set global_options, include=FALSE}
+library(here)
+source(here::here("R/helper_functions/libraries_and_functions.R"))
+source(here::here("R/helper_functions/ewma_helper_funs.R"))
+
+data_path <- "data/3_final_merged_data/first_shifts/"
+ewma_path <- "data/3_final_merged_data/ewma_output/"
+hddm_path <- "data/3_final_merged_data/hddm_output/"
+
+options(mc.cores=parallel::detectCores())
+set.seed (3875)
+```
+
+## Read data
+
+```{r read_data}
+df <- read_csv(here::here(data_path, "speed-acc-child-trio-fst-shift.csv"))
+
+df %<>% 
+  mutate(stimuli = ifelse(stimuli == "V1" | stimuli == "V2", "ASL", 
+                          ifelse(stimuli == "Trio", "Object", 
+                                 ifelse(stimuli == "Bull", "Bullseye",
+                                        stimuli))),
+         stimuli = factor(stimuli, levels = c("ASL", "Face", "Object", "Bullseye")))
+
+df %<>% mutate(log_rt = log(RT))
+```
+
+```{r set global analysis params}
+upper_bound_RT <- 2000
+```
+
+### Accuracy models
+
+First, we fit the model for child participants only, including age as a continous variable. 
+
+```{r fit continuous age acc model}
+m_acc_contin <- df %>% 
+  filter(age_code == "child") %>% 
+  stan_glmer(correct ~ stimuli + Months + (1 | Sub.Num) + (1 | clean_target_img), 
+  data = .,
+  family = binomial(link = "logit"), 
+  prior = normal(0, 2),
+  prior_intercept = normal(0, 1),
+  prior_covariance = decov(regularization = 2), 
+  adapt_delta = 0.99,
+  chains = 4)
+
+samples_trio_acc_contin <- m_acc_contin %>% 
+  as.data.frame() %>% as_tibble() %>% 
+  dplyr::rename(asl = `(Intercept)`,
+                face = stimuliFace,
+                object = stimuliObject,
+                bullseye = stimuliBullseye,
+                age_beta = Months) %>% 
+  select(asl:age_beta)
+```
+
+Next, we fit the age model including adults, treating age as a categorical variable. Note that we have adult data for just the bullseye and asl conditions in this dataset, but we could use the adult "face" condition from the text experiment. 
+
+```{r fit categorical age acc model}
+m_acc_cat <- df %>% 
+  filter(stimuli %in% c("ASL", "Bullseye")) %>% 
+  stan_glmer(correct ~ stimuli + age_code + (1 | Sub.Num) + (1 | clean_target_img), 
+  data = .,
+  family = binomial(link = "logit"), 
+  prior = normal(0, 2),
+  prior_intercept = normal(0, 1),
+  prior_covariance = decov(regularization = 2), 
+  adapt_delta = 0.99,
+  chains = 4)
+
+samples_trio_acc_cat <- m_acc_cat %>% 
+  as.data.frame() %>% as_tibble() %>% 
+  dplyr::rename(asl = `(Intercept)`,
+                bullseye = stimuliBullseye,
+                age_beta_child = age_codechild) %>% 
+  select(asl:age_beta_child)
+```
+
+### RT models
+
+```{r fit age continous rt model}
+m_rt_contin <-  df %>% 
+  filter(age_code == "child", correct == 1) %>% 
+  stan_glmer(log_rt ~ stimuli + Months + (1 | Sub.Num) + (1 | clean_target_img), 
+  family = gaussian(),
+  data = .,
+  prior = normal(0, 2), 
+  prior_intercept = normal(0, 5),
+  prior_covariance = decov(regularization = 2), # prior on Covariance matrices for mixed effects model
+  chains = 4)
+
+samples_trio_rt_contin <- m_rt_contin %>% 
+  as.data.frame() %>% as_tibble() %>% 
+  dplyr::rename(asl = `(Intercept)`,
+                face = stimuliFace,
+                object = stimuliObject,
+                bullseye = stimuliBullseye,
+                age_beta = Months) %>% 
+  select(asl:age_beta)
+```
+
+```{r}
+m_rt_cat <-  df %>% 
+  filter(stimuli %in% c("ASL", "Bullseye")) %>% 
+  stan_glmer(log_rt ~ stimuli + age_code + (1 | Sub.Num) + (1 | clean_target_img), 
+  family = gaussian(),
+  data = .,
+  prior = normal(0, 2), 
+  prior_intercept = normal(0, 5),
+  prior_covariance = decov(regularization = 2), # prior on Covariance matrices for mixed effects model
+  chains = 4)
+
+samples_trio_rt_cat <- m_rt_cat %>% 
+  as.data.frame() %>% as_tibble() %>% 
+  dplyr::rename(asl = `(Intercept)`,
+                bullseye = stimuliBullseye,
+                age_beta_child = age_codechild) %>% 
+  select(asl:age_beta_child)
+```
+
+### EWMA
+
+### HDDM
+
+## Save posterior samples

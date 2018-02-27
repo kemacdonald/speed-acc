@@ -80,8 +80,7 @@ m_bglm_acc_e1 <- stan_glmer(
 
 # ACC age-categorical
 samples_e1_acc <- m_bglm_acc_e1 %>% 
-  as.data.frame() %>% 
-  as_tibble() %>% 
+  as.data.frame() %>% as_tibble() %>% 
   dplyr::rename(clear_children = `(Intercept)`,
                 noise_beta = noise_conditionnoise,
                 age_beta = age_categoryadults) %>% 
