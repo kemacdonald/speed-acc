@@ -12,10 +12,11 @@ Load libraries and read in tidy data.
 
 ```{r}
 library(here)
-ewma.path <- "data/3_final_merged_data/ewma_output/"
-plot.save.path <- "paper/figs/"
 source(here::here("R/helper_functions/libraries_and_functions.R"))
 source(here::here("R/helper_functions/ewma_helper_funs.R"))
+
+read.path <- "../../../data/3_final_merged_data/first_shifts/"
+ewma.path <- "data/3_final_merged_data/ewma_output/"
 ```
 
 Read 5 datasets with first shift accuracy and RTs:
@@ -31,16 +32,11 @@ Read 5 datasets with first shift accuracy and RTs:
   5. Speed-acc-adult-text
 
 ```{r}
-read.path <- "../../../data/3_final_merged_data/first_shifts/"
-wr.path <- "../../../data/3_final_merged_data/ewma_output/"
-```
-
-```{r}
-df_trio_kid <- read_csv(paste0(read.path, "speed-acc-child-trio-fst-shift.csv"))
-df_noise_kid <- read_csv(paste0(read.path, "speed_acc_child_noise_fstshift_tidy.csv"))
-df_gaze_kid <- read_csv(paste0(read.path, "speed_acc_child_gaze_fstshift_tidy.csv"))
-df_ng_adult <- read_csv(paste0(read.path, "speed_acc_adult_ng_fstshift_tidy.csv"))
-df_text_adult <- read_csv(paste0(read.path, "speed_acc_adult_text_fstshift_tidy.csv"))
+df_trio_kid <- read_csv(here::here(read.path, "speed-acc-child-trio-fst-shift.csv"))
+df_noise_kid <- read_csv(here::here(read.path, "speed_acc_child_noise_fstshift_tidy.csv"))
+df_gaze_kid <- read_csv(here::here(read.path, "speed_acc_child_gaze_fstshift_tidy.csv"))
+df_ng_adult <- read_csv(here::here(read.path, "speed_acc_adult_ng_fstshift_tidy.csv"))
+df_text_adult <- read_csv(here::here(read.path, "speed_acc_adult_text_fstshift_tidy.csv"))
 ```
 
 Set the global EWMA model parameters. These parameters are taken from Vandekerckhove and Tuerlinckx, 2007. 
@@ -181,7 +177,7 @@ ss.ewma.text.adult <- df_text_adult  %>%
   gather(key = ewma_param, value = param_value, cs:ucl) 
 ```
 
-## Speed-acc adult Noise-Gaze
+### Speed-acc adult Noise-Gaze
 
 ```{r}
 df_ng_adult %<>% 
@@ -215,9 +211,9 @@ ss.ewma.ng.adult <- df_ng_adult %>%
 ## Write output to file
 
 ```{r write emwa output, eval = T}
-write_csv(ss.ewma.trio, paste0(wr.path, "speed_acc_kids_trio_ewma_results.csv"))
-write_csv(ss.ewma.gaze.kid, paste0(wr.path, "speed_acc_kids_gaze_ewma_results.csv"))
-write_csv(ss.ewma.noise.kid, paste0(wr.path, "speed_acc_kids_noise_ewma_results.csv"))
-write_csv(ss.ewma.text.adult, paste0(wr.path, "speed_acc_adult_text_ewma_results.csv"))
-write_csv(ss.ewma.ng.adult, paste0(wr.path, "speed_acc_adult_ng_ewma_results.csv"))
+write_csv(ss.ewma.trio, here::here(wr.path, "speed_acc_kids_trio_ewma_results.csv"))
+write_csv(ss.ewma.gaze.kid, here::here(wr.path, "speed_acc_kids_gaze_ewma_results.csv"))
+write_csv(ss.ewma.noise.kid, here::here(wr.path, "speed_acc_kids_noise_ewma_results.csv"))
+write_csv(ss.ewma.text.adult, here::here(wr.path, "speed_acc_adult_text_ewma_results.csv"))
+write_csv(ss.ewma.ng.adult, here::here(wr.path, "speed_acc_adult_ng_ewma_results.csv"))
 ```

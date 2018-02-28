@@ -1,12 +1,11 @@
 ---
 title: "Speed-Acc Trio BDA"
-author: "Kyle MacDonald"
 output: html_document
 ---
 
 ## Setup
 
-This document contains the codebase for the bayesian data analysis in Experiment 1 of the paper, "An information-seeking account of children's eye movements during grounded signed and spoken language comprehension."
+This document contains the codebase for the bayesian data analysis in Experiment 1 (Speed-acc-trio) of the paper, "An information-seeking account of children's eye movements during grounded signed and spoken language comprehension."
 
 ```{r set global_options, include=FALSE}
 library(here)
@@ -16,6 +15,7 @@ source(here::here("R/helper_functions/ewma_helper_funs.R"))
 data_path <- "data/3_final_merged_data/first_shifts/"
 ewma_path <- "data/3_final_merged_data/ewma_output/"
 hddm_path <- "data/3_final_merged_data/hddm_output/"
+write_path <- "data/3_final_merged_data/bda_posterior_samples/"
 
 options(mc.cores=parallel::detectCores())
 set.seed (3875)
@@ -44,7 +44,7 @@ upper_bound_RT <- 2000
 df %<>% filter(RT <= upper_bound_RT)
 ```
 
-### Accuracy models
+## Accuracy models
 
 First, we fit the model for child participants only, including age as a continous variable. 
 
@@ -92,7 +92,7 @@ samples_trio_acc_cat <- m_acc_cat %>%
   select(asl:age_beta_child)
 ```
 
-### RT models
+## RT models
 
 ```{r fit age continous rt model}
 m_rt_contin <-  df %>% 
@@ -134,14 +134,14 @@ samples_trio_rt_cat <- m_rt_cat %>%
   select(asl:age_beta_child)
 ```
 
-### EWMA
+## EWMA models
 
 ```{r read ewma output noise}
 trio_ewma <- c("speed_acc_kids_trio_ewma_results.csv")
 d_ewma_trio <- trio_ewma %>% purrr::map_df(read_ewma, path = ewma_path) 
 ```
 
-#### Cutoff points
+### Cutoff points
 
 ```{r}
 # Aggregate cutoffs for each participant
@@ -165,7 +165,7 @@ samples_trio_ewma_cuts <- m_ewma_trio %>%
   select(asl:face)
 ```
 
-#### Prop Guessing
+### Prop Guessing
 
 ```{r}
 m_ewma_trio_guess <- d_ewma_trio %>% 
@@ -197,6 +197,6 @@ posteriors <- list(rt_trio_contin = samples_trio_rt_contin,
                    ewma_guess_trio = samples_trio_ewma_guess,
                    ewma_cuts_trio = samples_trio_ewma_cuts)
 
-saveRDS(posteriors, file = here::here(data_path, "speed-acc-trio-posterior-samples.rds"))
+saveRDS(posteriors, file = here::here(write_path, "speed-acc-trio-posterior-samples.rds"))
 ```
 
