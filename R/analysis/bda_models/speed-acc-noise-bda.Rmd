@@ -5,6 +5,8 @@ output: html_document
 
 ## Setup
 
+This document contains the codebase for the bayesian data analysis in Experiment 3 of the paper, "An information-seeking account of children's eye movements during grounded signed and spoken language comprehension."
+
 ```{r set global_options, include=FALSE}
 library(here)
 source(here::here("R/helper_functions/libraries_and_functions.R"))

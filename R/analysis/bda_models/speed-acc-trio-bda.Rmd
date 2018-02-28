@@ -6,6 +6,8 @@ output: html_document
 
 ## Setup
 
+This document contains the codebase for the bayesian data analysis in Experiment 1 of the paper, "An information-seeking account of children's eye movements during grounded signed and spoken language comprehension."
+
 ```{r set global_options, include=FALSE}
 library(here)
 source(here::here("R/helper_functions/libraries_and_functions.R"))
@@ -36,6 +38,10 @@ df %<>% mutate(log_rt = log(RT))
 
 ```{r set global analysis params}
 upper_bound_RT <- 2000
+```
+
+```{r}
+df %<>% filter(RT <= upper_bound_RT)
 ```
 
 ### Accuracy models
@@ -130,6 +136,67 @@ samples_trio_rt_cat <- m_rt_cat %>%
 
 ### EWMA
 
-### HDDM
+```{r read ewma output noise}
+trio_ewma <- c("speed_acc_kids_trio_ewma_results.csv")
+d_ewma_trio <- trio_ewma %>% purrr::map_df(read_ewma, path = ewma_path) 
+```
+
+#### Cutoff points
+
+```{r}
+# Aggregate cutoffs for each participant
+ss_cutoffs <- d_ewma_trio %>% 
+  filter(guess == "response") %>% 
+  group_by(stimuli, subid, months) %>% 
+  summarise_(cutoff = interp(~ min(x), x = as.name("rt")))
+```
+
+```{r}
+m_ewma_trio <- ss_cutoffs %>% 
+  filter(stimuli %in% c("ASL", "Face")) %>% 
+  stan_lm(cutoff ~ stimuli, data = ., prior = R2(0.75, what = 'mean'),
+          chains = 4, 
+          adapt_delta = 0.99)
+
+samples_trio_ewma_cuts <- m_ewma_trio %>% 
+  as.data.frame() %>% as_tibble() %>% 
+  dplyr::rename(asl = `(Intercept)`,
+                face = stimuliFace) %>% 
+  select(asl:face)
+```
+
+#### Prop Guessing
+
+```{r}
+m_ewma_trio_guess <- d_ewma_trio %>% 
+  filter(age_code == "child", stimuli %in% c("ASL", "Face")) %>% 
+  stan_glmer(guess_num ~ stimuli + months + (1|subid),
+        data = .,
+        family = binomial(link = "logit"), 
+        prior = normal(0, 2),
+        prior_intercept = normal(0, 1),
+        prior_covariance = decov(regularization = 2), 
+        adapt_delta = 0.99,
+        chains = 4)
+
+samples_trio_ewma_guess <- m_ewma_trio_guess %>% 
+  as.data.frame() %>% as_tibble() %>% 
+  dplyr::rename(asl = `(Intercept)`,
+                face = stimuliFace,
+                age_beta = months) %>% 
+  select(asl:face, age_beta)
+```
 
 ## Save posterior samples
+
+```{r}
+posteriors <- list(rt_trio_contin = samples_trio_rt_contin,
+                   rt_trio_cat = samples_trio_rt_cat,
+                   acc_trio_contin = samples_trio_acc_contin,
+                   acc_trio_cat = samples_trio_acc_cat,
+                   ewma_guess_trio = samples_trio_ewma_guess,
+                   ewma_cuts_trio = samples_trio_ewma_cuts)
+
+saveRDS(posteriors, file = here::here(data_path, "speed-acc-trio-posterior-samples.rds"))
+```
+

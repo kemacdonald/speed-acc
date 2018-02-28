@@ -1,5 +1,5 @@
 ---
-title             : "An information-seeking account of children's eye movements during grounded language comprehension"
+title             : "An information-seeking account of children's eye movements during grounded signed and spoken language comprehension"
 shorttitle        : "Information-seeking eye movements"
 
 author: 
