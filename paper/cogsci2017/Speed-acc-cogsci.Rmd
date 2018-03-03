@@ -133,7 +133,7 @@ print(e1_tab, type="latex", comment = F, table.placement = "b",
       floating.environment = "table", include.rownames=FALSE)
 ```
 
-```{r}
+```{r get demo info for e1}
 kids_n <- df_e1 %>% 
   filter(age_code == "child") %>% 
   select(Sub.Num, stimuli, Months, hearing_status_participant) %>% 

@@ -16,7 +16,10 @@ data_path <- "data/3_final_merged_data/first_shifts/"
 ewma_path <- "data/3_final_merged_data/ewma_output/"
 hddm_path <- "data/3_final_merged_data/hddm_output/"
 write_path <- "data/3_final_merged_data/bda_posterior_samples/"
+```
 
+```{r set global analysis params}
+upper_bound_RT <- 2000
 options(mc.cores=parallel::detectCores())
 set.seed (3875)
 ```
@@ -24,34 +27,26 @@ set.seed (3875)
 ## Read data
 
 ```{r read_data}
-df <- read_csv(here::here(data_path, "speed-acc-child-trio-fst-shift.csv"))
+df <- read_csv(here::here(data_path, "speed_acc_child_trio_fstshift_tidy.csv"))
 
-df %<>% 
-  mutate(stimuli = ifelse(stimuli == "V1" | stimuli == "V2", "ASL", 
+df %<>% mutate(stimuli = ifelse(stimuli == "V1" | stimuli == "V2", "ASL", 
                           ifelse(stimuli == "Trio", "Object", 
                                  ifelse(stimuli == "Bull", "Bullseye",
                                         stimuli))),
          stimuli = factor(stimuli, levels = c("ASL", "Face", "Object", "Bullseye")))
 
-df %<>% mutate(log_rt = log(RT))
-```
-
-```{r set global analysis params}
-upper_bound_RT <- 2000
-```
-
-```{r}
-df %<>% filter(RT <= upper_bound_RT)
+df %<>% mutate(log_rt = log(RT)) %>% 
+  filter(RT <= upper_bound_RT)
 ```
 
 ## Accuracy models
 
-First, we fit the model for child participants only, including age as a continous variable. 
+First, we fit the model for child participants only, including age as a continous variable. Note that we use the `scale()` function to center the age predictor at the mean. This allows us to interpret the logit coefs at the mean of the age variable.
 
 ```{r fit continuous age acc model}
 m_acc_contin <- df %>% 
-  filter(age_code == "child") %>% 
-  stan_glmer(correct ~ stimuli + Months + (1 | Sub.Num) + (1 | clean_target_img), 
+  filter(age_code == "child", trial_type %in% c("C_T", "C_D")) %>% 
+  stan_glmer(correct ~ stimuli + scale(Months) + (1 | Sub.Num) + (1 | clean_target_img), 
   data = .,
   family = binomial(link = "logit"), 
   prior = normal(0, 2),
@@ -62,19 +57,28 @@ m_acc_contin <- df %>%
 
 samples_trio_acc_contin <- m_acc_contin %>% 
   as.data.frame() %>% as_tibble() %>% 
-  dplyr::rename(asl = `(Intercept)`,
-                face = stimuliFace,
-                object = stimuliObject,
-                bullseye = stimuliBullseye,
-                age_beta = Months) %>% 
-  select(asl:age_beta)
+  dplyr::mutate(asl = `(Intercept)`,
+                face_beta = stimuliFace,
+                object_beta = stimuliObject,
+                bullseye_beta = stimuliBullseye,
+                face = stimuliFace + asl,
+                object = stimuliObject + asl,
+                bullseye = stimuliBullseye + asl,
+                age_beta = `scale(Months)`,
+                asl_prob = logit_to_prob(asl),
+                face_prob = logit_to_prob(face),
+                object_prob = logit_to_prob(object),
+                bullseye_prob = logit_to_prob(bullseye),
+                age_beta_prob = logit_to_prob(age_beta),
+                sample_id = 1:n()) %>% 
+  select(sample_id, asl:age_beta_prob)
 ```
 
 Next, we fit the age model including adults, treating age as a categorical variable. Note that we have adult data for just the bullseye and asl conditions in this dataset, but we could use the adult "face" condition from the text experiment. 
 
 ```{r fit categorical age acc model}
 m_acc_cat <- df %>% 
-  filter(stimuli %in% c("ASL", "Bullseye")) %>% 
+  filter(stimuli %in% c("ASL", "Bullseye"), trial_type %in% c("C_T", "C_D")) %>% 
   stan_glmer(correct ~ stimuli + age_code + (1 | Sub.Num) + (1 | clean_target_img), 
   data = .,
   family = binomial(link = "logit"), 
@@ -86,10 +90,19 @@ m_acc_cat <- df %>%
 
 samples_trio_acc_cat <- m_acc_cat %>% 
   as.data.frame() %>% as_tibble() %>% 
-  dplyr::rename(asl = `(Intercept)`,
-                bullseye = stimuliBullseye,
-                age_beta_child = age_codechild) %>% 
-  select(asl:age_beta_child)
+  dplyr::mutate(asl_adult = `(Intercept)`,
+                bullseye_beta = stimuliBullseye,
+                age_beta_child = age_codechild,
+                asl_child = asl_adult + age_beta_child, 
+                bullseye_adult = stimuliBullseye,
+                bullseye_child = stimuliBullseye + age_beta_child,
+                asl_adult_prob = logit_to_prob(asl_adult),
+                age_beta_prob = logit_to_prob(age_beta_child),
+                asl_child_prob = logit_to_prob(asl_child), 
+                bullseye_adult_prob = logit_to_prob(bullseye_adult),
+                bullseye_child_prob = logit_to_prob(bullseye_child),
+                sample_id = 1:n()) %>% 
+  select(sample_id, asl_adult:bullseye_child_prob)
 ```
 
 ## RT models
@@ -97,7 +110,7 @@ samples_trio_acc_cat <- m_acc_cat %>%
 ```{r fit age continous rt model}
 m_rt_contin <-  df %>% 
   filter(age_code == "child", correct == 1) %>% 
-  stan_glmer(log_rt ~ stimuli + Months + (1 | Sub.Num) + (1 | clean_target_img), 
+  stan_glmer(log_rt ~ stimuli + scale(Months) + (1 | Sub.Num) + (1 | clean_target_img), 
   family = gaussian(),
   data = .,
   prior = normal(0, 2), 
@@ -107,12 +120,21 @@ m_rt_contin <-  df %>%
 
 samples_trio_rt_contin <- m_rt_contin %>% 
   as.data.frame() %>% as_tibble() %>% 
-  dplyr::rename(asl = `(Intercept)`,
-                face = stimuliFace,
-                object = stimuliObject,
-                bullseye = stimuliBullseye,
-                age_beta = Months) %>% 
-  select(asl:age_beta)
+  dplyr::mutate(asl = `(Intercept)`,
+                face_beta = stimuliFace,
+                object_beta = stimuliObject,
+                bullseye_beta = stimuliBullseye,
+                face = stimuliFace + asl,
+                object = stimuliObject + asl,
+                bullseye = stimuliBullseye + asl,
+                age_beta = `scale(Months)`,
+                asl_rt_scale = exp(asl),
+                face_rt_scale = exp(face),
+                object_rt_scale = exp(object),
+                bullseye_rt_scale = exp(bullseye),
+                age_beta_rt_scale = exp(age_beta),
+                sample_id = 1:n()) %>% 
+  select(sample_id, asl:age_beta_rt_scale)
 ```
 
 ```{r}
@@ -128,10 +150,19 @@ m_rt_cat <-  df %>%
 
 samples_trio_rt_cat <- m_rt_cat %>% 
   as.data.frame() %>% as_tibble() %>% 
-  dplyr::rename(asl = `(Intercept)`,
-                bullseye = stimuliBullseye,
-                age_beta_child = age_codechild) %>% 
-  select(asl:age_beta_child)
+  dplyr::mutate(asl_adult = `(Intercept)`,
+                bullseye_beta = stimuliBullseye,
+                age_beta_child = age_codechild,
+                asl_child = asl_adult + age_beta_child, 
+                bullseye_adult = stimuliBullseye,
+                bullseye_child = stimuliBullseye + age_beta_child,
+                asl_adult_rt_scale = exp(asl_adult),
+                age_beta_rt_scale = exp(age_beta_child),
+                asl_child_rt_scale = exp(asl_child), 
+                bullseye_adult_rt_scale = exp(bullseye_adult),
+                bullseye_child_rt_scale = exp(bullseye_child),
+                sample_id = 1:n()) %>% 
+  select(sample_id, asl_adult:bullseye_child_rt_scale)
 ```
 
 ## EWMA models
@@ -160,9 +191,11 @@ m_ewma_trio <- ss_cutoffs %>%
 
 samples_trio_ewma_cuts <- m_ewma_trio %>% 
   as.data.frame() %>% as_tibble() %>% 
-  dplyr::rename(asl = `(Intercept)`,
-                face = stimuliFace) %>% 
-  select(asl:face)
+  dplyr::mutate(asl = `(Intercept)`,
+                face_beta = stimuliFace,
+                face = stimuliFace + asl,
+                sample_id = 1:n()) %>% 
+  select(sample_id, asl:face)
 ```
 
 ### Prop Guessing
@@ -170,7 +203,7 @@ samples_trio_ewma_cuts <- m_ewma_trio %>%
 ```{r}
 m_ewma_trio_guess <- d_ewma_trio %>% 
   filter(age_code == "child", stimuli %in% c("ASL", "Face")) %>% 
-  stan_glmer(guess_num ~ stimuli + months + (1|subid),
+  stan_glmer(guess_num ~ stimuli + scale(months) + (1|subid),
         data = .,
         family = binomial(link = "logit"), 
         prior = normal(0, 2),
@@ -181,10 +214,12 @@ m_ewma_trio_guess <- d_ewma_trio %>%
 
 samples_trio_ewma_guess <- m_ewma_trio_guess %>% 
   as.data.frame() %>% as_tibble() %>% 
-  dplyr::rename(asl = `(Intercept)`,
-                face = stimuliFace,
-                age_beta = months) %>% 
-  select(asl:face, age_beta)
+  dplyr::mutate(asl = `(Intercept)`,
+                face_beta = stimuliFace,
+                face = stimuliFace + asl,
+                age_beta = `scale(months)`,
+                sample_id = 1:n()) %>% 
+  select(sample_id, asl:face, age_beta)
 ```
 
 ## Save posterior samples

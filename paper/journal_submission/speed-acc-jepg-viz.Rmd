@@ -1,5 +1,5 @@
 ---
-title: "Speed-Acc Cogsci 2018 Data Viz"
+title: "Speed-Acc JEP:G Visualization Code"
 output: html_document
 ---
 
@@ -13,14 +13,208 @@ knitr::opts_chunk$set(fig.width=3, fig.height=3, fig.crop = F, fig.pos = "tb",
                       sanitize = T)
 ```
 
-```{r}
-library(here); library(kableExtra)
+```{r load libraries}
+library(here); library(kableExtra); library(rogme)
 source(here::here("R/helper_functions/libraries_and_functions.R"))
 source(here::here("R/helper_functions/ewma_helper_funs.R"))
-
-#
 data_path <- "data/3_final_merged_data/first_shifts/"
+models_path <- "data/3_final_merged_data/bda_posterior_samples/"
 ```
+
+## Spoken/Sign Language 
+
+```{r get posterior samples trio}
+d_models_trio <- readRDS(here::here(models_path, "speed-acc-trio-posterior-samples.rds"))
+```
+
+```{r get trio data}
+upper_bound_RT <- 2000
+
+d_kids_trio <- read_csv(here::here(data_path, "speed_acc_child_trio_fstshift_tidy.csv")) 
+
+d_kids_trio %<>% 
+  mutate(stimuli = ifelse(stimuli == "V1" | stimuli == "V2", "ASL", 
+                          ifelse(stimuli == "Trio", "Object", 
+                                 ifelse(stimuli == "Bull", "Bullseye",
+                                        stimuli))),
+         stimuli = factor(stimuli, levels = c("ASL", "Face", "Object", "Bullseye"))) %>% 
+  filter(RT <= upper_bound_RT, trial_type != "no_shift", age_code == "child")
+```
+
+```{r get mean acc for each participant trio}
+ss_trio <- d_kids_trio %>% 
+  group_by(Sub.Num, age_code, Months, language_modality, 
+           stimuli, hearing_status_participant) %>% 
+  filter(trial_type != "no_shift") %>% 
+  summarise(mean_correct = mean(correct))
+```
+
+Make the Accuracy plot for trio data.
+
+```{r make trio acc plot}
+## global plot variables
+dec_width = 0.5
+dec_size = 1.5
+dec_color <- "red"
+connector_size = dec_size - 0.9
+connector_length <- 2.1
+connector_color <- "black"
+
+# how many quantiles do you want?
+q_seq <- c(0.5)
+
+p_acc_trio <- ss_trio %>% 
+  ggplot(aes(x = fct_rev(stimuli), y = mean_correct)) +
+  ggbeeswarm::geom_quasirandom(shape = 21, width = 0.1, color = "black", 
+                               size = 2,
+                               fill = "darkgrey",
+                               alpha = 0.6) + 
+  geom_hline(yintercept = 0.5, linetype = "dashed") +
+  labs(x = NULL, y = "Prop. Target Looking") +
+  lims(y = c(0, 1)) 
+
+# get model values
+d_model_vals <- d_models_trio$acc_trio_contin %>%
+  select(sample_id, contains("prob")) %>% 
+  select(-age_beta_prob) %>% 
+  dplyr::rename(ASL = asl_prob,
+                Bullseye = bullseye_prob,
+                Face = face_prob,
+                Object = object_prob) %>% 
+  gather(key = stimuli, value = mean_correct, -sample_id)
+
+d_quantiles <- d_model_vals %>% 
+  group_by(stimuli) %>% 
+  summarise(val = hd(mean_correct))
+
+## add MAP estimate
+for (qi in 1:length(q_seq)) {
+  p_acc_trio <- p_acc_trio + stat_summary(data = d_model_vals,
+                        geom = "errorbar", 
+                        fun.y = hd, fun.ymin = hd, fun.ymax = hd,
+                        width = dec_width - .02,
+                        size = dec_size,
+                        color = dec_color,
+                        fun.args = list(q = q_seq[[qi]]))
+}
+
+## add 95% HDI
+hdis <- c(0.025, 0.975)
+for (qi in 1:length(hdis)) {
+  p_acc_trio <- p_acc_trio + stat_summary(data = d_model_vals,
+                        geom = "errorbar", 
+                        fun.y = hd, fun.ymin = hd, fun.ymax = hd,
+                        width = dec_width - 0.2,
+                        size = dec_size - .3,
+                        color = dec_color,
+                        fun.args = list(q = hdis[[qi]]))
+}
+
+# add lines connecting medians
+p_acc_trio <- p_acc_trio +
+  geom_segment(data = filter(d_quantiles, stimuli %in% c("Bullseye", "Object")),
+               aes(x = 1 + dec_width/connector_length,
+                   xend = 2 - dec_width/connector_length,
+                   y = val[1], yend = val[2]),
+               color = connector_color,
+               size = connector_size,
+               alpha = 1) +
+  geom_segment(data = filter(d_quantiles, stimuli %in% c("Object", "Face")),
+               aes(x = 2 + dec_width/connector_length,
+                   xend = 3 - dec_width/connector_length,
+                   y = val[2], yend = val[1]),
+               color = connector_color,
+               size = connector_size,
+               alpha = 1) +
+  geom_segment(data = filter(d_quantiles, stimuli %in% c("Face", "ASL")),
+               aes(x = 3 + dec_width/connector_length,
+                   xend = 4 - dec_width/connector_length,
+                   y = val[2], yend = val[1]),
+               color = connector_color,
+               size = connector_size,
+               alpha = 1)
+
+p_acc_trio
+```
+
+Make RT plot.
+
+```{r make trio rt plot}
+p_rt_trio <- d_kids_trio %>% 
+  filter(trial_type %in% c("C_T"), age_code == "child") %>% 
+  ggplot(aes(x = fct_rev(stimuli), y = RT_sec)) +
+  ggbeeswarm::geom_quasirandom(shape = 21, width = 0.15, color = "black", 
+                               fill = "darkgrey",
+                               alpha = 0.5) + 
+  labs(y = "RT (sec)", x = NULL) 
+
+# get model values
+d_model_vals <- d_models_trio$rt_trio_contin %>%
+  select(sample_id, contains("scale")) %>% 
+  select(-age_beta_rt_scale) %>% 
+  dplyr::rename(ASL = asl_rt_scale,
+                Bullseye = bullseye_rt_scale,
+                Face = face_rt_scale,
+                Object = object_rt_scale) %>% 
+  gather(key = stimuli, value = rt_msec, -sample_id) %>% 
+  mutate(RT_sec = rt_msec / 1000)
+
+d_quantiles <- d_model_vals %>% 
+  group_by(stimuli) %>% 
+  summarise(val = hd(RT_sec))
+
+## add MAP estimate
+for (qi in 1:length(q_seq)) {
+  p_rt_trio <- p_rt_trio + stat_summary(data = d_model_vals,
+                        geom = "errorbar", 
+                        fun.y = hd, fun.ymin = hd, fun.ymax = hd,
+                        width = dec_width - .02,
+                        size = dec_size,
+                        color = dec_color,
+                        fun.args = list(q = q_seq[[qi]]))
+}
+
+## add 95% HDI
+hdis <- c(0.025, 0.975)
+for (qi in 1:length(hdis)) {
+  p_rt_trio <- p_rt_trio + stat_summary(data = d_model_vals,
+                        geom = "errorbar", 
+                        fun.y = hd, fun.ymin = hd, fun.ymax = hd,
+                        width = dec_width - 0.2,
+                        size = dec_size - .3,
+                        color = dec_color,
+                        fun.args = list(q = hdis[[qi]]))
+}
+
+p_rt_trio <- p_rt_trio +
+  geom_segment(data = filter(d_quantiles, stimuli %in% c("Bullseye", "Object")),
+               aes(x = 1 + dec_width/connector_length,
+                   xend = 2 - dec_width/connector_length,
+                   y = val[1], yend = val[2]),
+               color = connector_color,
+               size = connector_size,
+               alpha = 1) +
+  geom_segment(data = filter(d_quantiles, stimuli %in% c("Object", "Face")),
+               aes(x = 2 + dec_width/connector_length,
+                   xend = 3 - dec_width/connector_length,
+                   y = val[2], yend = val[1]),
+               color = connector_color,
+               size = connector_size,
+               alpha = 1) +
+  geom_segment(data = filter(d_quantiles, stimuli %in% c("Face", "ASL")),
+               aes(x = 3 + dec_width/connector_length,
+                   xend = 4 - dec_width/connector_length,
+                   y = val[2], yend = val[1]),
+               color = connector_color,
+               size = connector_size,
+               alpha = 1)
+
+p_rt_trio
+```
+
+## Text Processing
+
+## Speech in background noise
 
 ```{r read data}
 d_kids_noise <- read_csv(here::here(data_path, "speed_acc_child_noise_fstshift_tidy.csv")) %>% 
@@ -58,8 +252,6 @@ d <- bind_rows(mutate(d_kids_noise, experiment = "kids_noise", age_category = "c
 # uncomment below to test that we have the right number of rows after the merge (result should be TRUE)
 nrow(d_kids_gaze) + nrow(d_kids_noise) + nrow(d_adults) == nrow(d)
 ```
-
-## E3 (Noise) Behavioral Results 
 
 ```{r get noise experiment}
 d_e1 <- d %>% 
@@ -351,4 +543,3 @@ e1_plot <- cowplot::plot_grid(rt_plot_final, acc_plot_final, labels = c("A", "B"
 ggsave(here::here("paper/journal_submission/figs/e3_behav_results.png"), 
        e1_plot, width = 8, height = 6)
 ```
-

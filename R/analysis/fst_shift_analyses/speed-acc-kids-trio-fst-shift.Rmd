@@ -25,7 +25,7 @@ data_path <- "data/3_final_merged_data/first_shifts/"
 Load data and do some minor clean up of condition names.
 
 ```{r}
-df <- read_csv(here::here(data_path, "speed-acc-child-trio-fst-shift.csv"))
+df <- read_csv(here::here(data_path, "speed_acc_child_trio_fstshift_tidy.csv"))
 
 df %<>% 
   mutate(stimuli = ifelse(stimuli == "V1" | stimuli == "V2", "ASL", 
@@ -57,7 +57,6 @@ df %>%
   unique() %>%
   ggplot(aes(age_years, color = stimuli)) +
   geom_freqpoly() +
-  scale_fill_solarized() +
   facet_grid(.~language_modality)
 ```
 
@@ -93,7 +92,7 @@ ggplot(aes(x = stimuli, y = mean_correct, fill = language_modality),
   ylim(0,1) +
   xlab(NULL) +
   ylab("Mean Accuracy") +
-  scale_fill_solarized() +
+  langcog::scale_fill_solarized() +
   theme(text = element_text(size=16)) +
   guides(fill = F) +
   ggtitle("First shift accuracy")
