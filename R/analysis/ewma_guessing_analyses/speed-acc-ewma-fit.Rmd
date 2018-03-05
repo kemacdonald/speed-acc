@@ -14,8 +14,7 @@ Load libraries and read in tidy data.
 library(here)
 source(here::here("R/helper_functions/libraries_and_functions.R"))
 source(here::here("R/helper_functions/ewma_helper_funs.R"))
-
-read.path <- "../../../data/3_final_merged_data/first_shifts/"
+read.path <- "data/3_final_merged_data/first_shifts/"
 ewma.path <- "data/3_final_merged_data/ewma_output/"
 ```
 
@@ -32,7 +31,7 @@ Read 5 datasets with first shift accuracy and RTs:
   5. Speed-acc-adult-text
 
 ```{r}
-df_trio_kid <- read_csv(here::here(read.path, "speed-acc-child-trio-fst-shift.csv"))
+df_trio <- read_csv(here::here(read.path, "speed_acc_child_trio_fstshift_tidy.csv"))
 df_noise_kid <- read_csv(here::here(read.path, "speed_acc_child_noise_fstshift_tidy.csv"))
 df_gaze_kid <- read_csv(here::here(read.path, "speed_acc_child_gaze_fstshift_tidy.csv"))
 df_ng_adult <- read_csv(here::here(read.path, "speed_acc_adult_ng_fstshift_tidy.csv"))
@@ -55,14 +54,14 @@ sig <- 0.5
 Clean up condition variable.
 
 ```{r}
-df_trio_kid %<>% 
+df_trio %<>% 
   mutate(stimuli = ifelse(stimuli %in% c("V1", "V2"), "ASL", 
                           ifelse(stimuli == "Trio", "Object", 
                                  ifelse(stimuli == "Bull", "Bullseye",
                                         stimuli))),
          stimuli = factor(stimuli, levels = c("ASL", "Face", "Object", "Bullseye"))) %>%
-  dplyr::select(Sub.Num, Tr.Num, RT_sec, stimuli, age_code, correct, Months) %>% 
-  filter(is.na(RT_sec) == F, age_code != "adult") %>% 
+  dplyr::select(Sub.Num, Tr.Num, RT_sec, stimuli, age_code, correct, Months, clean_target_img) %>% 
+  filter(is.na(RT_sec) == F) %>% 
   mutate(RT = RT_sec, condition = as.character(stimuli)) %>% 
   select(-RT_sec)  
 ```
@@ -70,8 +69,8 @@ df_trio_kid %<>%
 Fit the model to the kid data.
 
 ```{r e1 fit ewma model}
-ss.ewma.trio <- df_trio_kid %>% 
-  group_by(condition) %>% 
+ss.ewma.trio <- df_trio %>% 
+  group_by(condition, age_code) %>% 
   do(fit_ewma(., rt_column = "RT", L = L, lambda = lambda, cs = cs, sigma = sig)) %>% 
   mutate(rt = round(as.numeric(RT), 2),
          cs = round(as.numeric(cs), 2),
@@ -93,7 +92,7 @@ df_noise_kid %<>%
          keep_runsheet == "keep",
          !(is.na(rt)), 
          response_onset_type == "noun") %>% 
-  dplyr::select(subid_short, tr.num, rt, noise_condition, correct, age, age_group) %>%
+  dplyr::select(subid_short, tr.num, rt, noise_condition, correct, age, age_group, target_image) %>%
   rename(subid = subid_short) %>% 
   mutate(RT = rt, condition = as.character(noise_condition)) %>% 
   select(-rt)
@@ -125,7 +124,7 @@ df_gaze_kid %<>%
          keep_runsheet == "keep",
          !(is.na(rt)), 
          response_onset_type == "noun") %>% 
-  dplyr::select(subid_short, tr.num, rt, gaze_condition, correct, age, age_group) %>% 
+  dplyr::select(subid_short, tr.num, rt, gaze_condition, correct, age, age_group, target_image) %>% 
   mutate(RT = rt, condition = as.character(gaze_condition)) %>% 
   rename(subid = subid_short) %>% 
   select(-rt)
@@ -157,7 +156,7 @@ df_text_adult %<>%
          keep_runsheet == "include",
          !(is.na(rt)), 
          response_onset_type == "noun") %>% 
-  dplyr::select(subid, tr.num, rt, condition, correct) %>% 
+  dplyr::select(subid, tr.num, rt, condition, correct, target_image) %>% 
   mutate(RT = rt, condition = as.character(condition)) %>% 
   select(-rt)
 ```
@@ -187,7 +186,7 @@ df_ng_adult %<>%
          keep_runsheet == "yes",
          !(is.na(rt)), 
          response_onset_type == "noun") %>% 
-  dplyr::select(subid_short, tr.num, rt, condition_long, correct) %>% 
+  dplyr::select(subid_short, tr.num, rt, condition_long, correct, target_image) %>% 
   mutate(RT = rt, condition = as.character(condition_long)) %>% 
   rename(subid = subid_short) %>% 
   select(-rt)
@@ -211,9 +210,9 @@ ss.ewma.ng.adult <- df_ng_adult %>%
 ## Write output to file
 
 ```{r write emwa output, eval = T}
-write_csv(ss.ewma.trio, here::here(wr.path, "speed_acc_kids_trio_ewma_results.csv"))
-write_csv(ss.ewma.gaze.kid, here::here(wr.path, "speed_acc_kids_gaze_ewma_results.csv"))
-write_csv(ss.ewma.noise.kid, here::here(wr.path, "speed_acc_kids_noise_ewma_results.csv"))
-write_csv(ss.ewma.text.adult, here::here(wr.path, "speed_acc_adult_text_ewma_results.csv"))
-write_csv(ss.ewma.ng.adult, here::here(wr.path, "speed_acc_adult_ng_ewma_results.csv"))
+write_csv(ss.ewma.trio, here::here(ewma.path, "speed_acc_kids_trio_ewma_results.csv"))
+write_csv(ss.ewma.gaze.kid, here::here(ewma.path, "speed_acc_kids_gaze_ewma_results.csv"))
+write_csv(ss.ewma.noise.kid, here::here(ewma.path, "speed_acc_kids_noise_ewma_results.csv"))
+write_csv(ss.ewma.text.adult, here::here(ewma.path, "speed_acc_adult_text_ewma_results.csv"))
+write_csv(ss.ewma.ng.adult, here::here(ewma.path, "speed_acc_adult_ng_ewma_results.csv"))
 ```
