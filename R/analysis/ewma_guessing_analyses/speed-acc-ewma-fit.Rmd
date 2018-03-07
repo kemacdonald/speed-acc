@@ -1,5 +1,5 @@
 ---
-title: "Speed-acc EWMA model fitting"
+title: "Speed-acc EWMA model fit"
 author: "Kyle MacDonald"
 output: html_document
 ---
