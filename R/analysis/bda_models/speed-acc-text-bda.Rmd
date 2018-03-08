@@ -21,11 +21,19 @@ options(mc.cores=parallel::detectCores())
 set.seed (3875)
 ```
 
+```{r set global analysis params}
+upper_bound_RT <- 2000
+n_samples <- 3000
+n_chains <- 4
+options(mc.cores=parallel::detectCores())
+set.seed (3875)
+```
+
 ## Read data
 
 ```{r read data}
 d <- read_csv(here::here(data_path, "speed_acc_adult_text_fstshift_tidy.csv"))
-d_asl <- read_csv(here::here(data_path, "speed-acc-child-trio-fst-shift.csv"))
+d_asl <- read_csv(here::here(data_path, "speed_acc_child_trio_fstshift_tidy.csv"))
 ```
 
 ```{r clean datasets to merge}
@@ -67,7 +75,8 @@ m_acc <- d %>%
   prior_intercept = normal(0, 1),
   prior_covariance = decov(regularization = 2), 
   adapt_delta = 0.99,
-  chains = 4)
+  chains = n_chains,
+  iter = n_samples)
 
 samples_text_acc <- m_acc %>% 
   as.data.frame() %>% as_tibble() %>% 
@@ -169,4 +178,6 @@ posteriors <- list(rt_text = samples_text_rt,
                    ewma_cuts_text = samples_text_ewma_cuts)
 
 saveRDS(posteriors, file = here::here(write_path, "speed-acc-text-posterior-samples.rds"))
+
+beepr::beep(sound = 3)
 ```

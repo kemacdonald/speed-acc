@@ -20,6 +20,8 @@ write_path <- "data/3_final_merged_data/bda_posterior_samples/"
 
 ```{r set global analysis params}
 upper_bound_RT <- 2000
+n_samples <- 3000
+n_chains <- 4
 options(mc.cores=parallel::detectCores())
 set.seed (3875)
 ```
@@ -53,7 +55,8 @@ m_acc_contin <- df %>%
   prior_intercept = normal(0, 1),
   prior_covariance = decov(regularization = 2), 
   adapt_delta = 0.99,
-  chains = 4)
+  chains = n_chains,
+  iter = n_samples)
 
 samples_trio_acc_contin <- m_acc_contin %>% 
   as.data.frame() %>% as_tibble() %>% 
@@ -86,7 +89,8 @@ m_acc_cat <- df %>%
   prior_intercept = normal(0, 1),
   prior_covariance = decov(regularization = 2), 
   adapt_delta = 0.99,
-  chains = 4)
+  chains = n_chains,
+  iter = n_samples)
 
 samples_trio_acc_cat <- m_acc_cat %>% 
   as.data.frame() %>% as_tibble() %>% 
@@ -116,7 +120,8 @@ m_rt_contin <-  df %>%
   prior = normal(0, 2), 
   prior_intercept = normal(0, 5),
   prior_covariance = decov(regularization = 2), # prior on Covariance matrices for mixed effects model
-  chains = 4)
+  chains = n_chains,
+  iter = n_samples)
 
 samples_trio_rt_contin <- m_rt_contin %>% 
   as.data.frame() %>% as_tibble() %>% 
@@ -146,7 +151,8 @@ m_rt_cat <-  df %>%
   prior = normal(0, 2), 
   prior_intercept = normal(0, 5),
   prior_covariance = decov(regularization = 2), # prior on Covariance matrices for mixed effects model
-  chains = 4)
+  chains = n_chains,
+  iter = n_samples)
 
 samples_trio_rt_cat <- m_rt_cat %>% 
   as.data.frame() %>% as_tibble() %>% 
@@ -186,7 +192,8 @@ ss_cutoffs <- d_ewma_trio %>%
 m_ewma_trio <- ss_cutoffs %>% 
   filter(stimuli %in% c("ASL", "Face")) %>% 
   stan_lm(cutoff ~ stimuli, data = ., prior = R2(0.75, what = 'mean'),
-          chains = 4, 
+          chains = n_chains,
+          iter = n_samples,
           adapt_delta = 0.99)
 
 samples_trio_ewma_cuts <- m_ewma_trio %>% 
@@ -203,14 +210,15 @@ samples_trio_ewma_cuts <- m_ewma_trio %>%
 ```{r}
 m_ewma_trio_guess <- d_ewma_trio %>% 
   filter(age_code == "child", stimuli %in% c("ASL", "Face")) %>% 
-  stan_glmer(guess_num ~ stimuli + scale(months) + (1|subid),
+  stan_glmer(guess_num ~ stimuli + scale(months) + (1|subid) + (1|clean_target_img),
         data = .,
         family = binomial(link = "logit"), 
         prior = normal(0, 2),
         prior_intercept = normal(0, 1),
         prior_covariance = decov(regularization = 2), 
         adapt_delta = 0.99,
-        chains = 4)
+        chains = n_chains,
+        iter = n_samples)
 
 samples_trio_ewma_guess <- m_ewma_trio_guess %>% 
   as.data.frame() %>% as_tibble() %>% 
@@ -233,5 +241,7 @@ posteriors <- list(rt_trio_contin = samples_trio_rt_contin,
                    ewma_cuts_trio = samples_trio_ewma_cuts)
 
 saveRDS(posteriors, file = here::here(write_path, "speed-acc-trio-posterior-samples.rds"))
+
+beepr::beep(sound = 3)
 ```
 
