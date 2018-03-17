@@ -13,10 +13,6 @@ source(here::here("R/helper_functions/ewma_helper_funs.R"))
 hddm_path <- "data/3_final_merged_data/hddm_output/"
 ```
 
-```{r}
-d <- read_tsv(here::here(hddm_path, "hddm_posterior_samples_trio.csv"))
-```
-
 Get list of hddm files that are the output of 
 
 ```{r}
@@ -46,8 +42,6 @@ tidy_hddm <- function(file_name, condition_list) {
                              "drift"))
   
 }
-
-  
 ```
 
 ```{r}

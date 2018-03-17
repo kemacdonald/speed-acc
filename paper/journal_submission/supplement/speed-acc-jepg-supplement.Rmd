@@ -1,0 +1,80 @@
+---
+title             : "Supplementary materials for the paper: An information-seeking account of children's eye movements during grounded signed and spoken language comprehension"
+shorttitle        : "Supplementary materials"
+
+author: 
+  - name          : "Kyle MacDonald"
+    affiliation   : "1"
+    corresponding : yes    # Define only one corresponding author
+    address       : "450 Serra Mall, Stanford, CA 94306"
+    email         : "kylem4@stanford.edu"
+  - name          : "Virginia Marchman"
+    affiliation   : "1"
+  - name          : "Anne Fernald"
+    affiliation   : "1"
+  - name          : "Michael C. Frank"
+    affiliation   : "1"
+
+affiliation:
+  - id            : "1"
+    institution   : "Stanford University"
+
+author_note: 
+
+abstract: |
+  In this document, we present four pieces of supplemental information. First, we present visualizations of the entire timecourse of looking behavior during the language comprehension task. Second, we provide additional details about the models (Bayesian, EWMA, and HDDM) used to analyze the first shift data. Third, we present a set of sensitivity analyses where we vary decisions about the analysis window and hyperparameter values in our models to provide evidence that our results are robust to these decisions. And fourth, we present exploratory analyses of the entropy of eye movements during the pre-sentence exploration of objects in the visual scence. Differences in entropy of eye movements prior to language comprehension provides additional evidence that listeners flexibly adapted gaze patterns in anticipation of how they would use fixations to gather visual information during subsequent sentence processing.
+  
+keywords          : "keywords"
+wordcount         : "X"
+
+bibliography      : ["r-references.bib"]
+
+figsintext        : yes
+figurelist        : no
+tablelist         : no
+footnotelist      : no
+lineno            : yes
+
+lang              : "english"
+class             : "man"
+output            : papaja::apa6_pdf
+---
+
+```{r load_packages, include = FALSE}
+library("papaja"); library(here); library(lme4); library(directlabels); library(lazyeval)
+source(here::here("R/helper_functions/paper_helpers.R"))
+source(here::here("R/helper_functions/ewma_helper_funs.R"))
+```
+
+```{r analysis_preferences}
+knitr::opts_chunk$set(fig.pos = 'tb', out.width = "80%", cache = T, fig.path='figs/',
+                      echo=F, warning=F, cache=T, message=F, sanitize = T, fig.align = 'center')
+set.seed(42)
+upper_bound_RT <- 2000
+uppter_bound_RT_sec <- upper_bound_RT / 1000
+```
+
+```{r data paths}
+data_path <- "data/3_final_merged_data/first_shifts/"
+ewma_path <- "data/3_final_merged_data/ewma_output/"
+```
+
+
+## Time course of looking 
+
+## Model details
+
+## Sensitivity analyses
+
+## Analyses of pre-sentence exploratory looking
+
+
+\newpage
+
+# References
+```{r create_r-references}
+r_refs(file = "r-references.bib")
+```
+
+\setlength{\parindent}{-0.5in}
+\setlength{\leftskip}{0.5in}

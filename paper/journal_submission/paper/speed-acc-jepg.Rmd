@@ -1,0 +1,1363 @@
+---
+title             : "An information-seeking account of children's eye movements during grounded signed and spoken language comprehension"
+shorttitle        : "Information-seeking eye movements"
+
+author: 
+  - name          : "Kyle MacDonald"
+    affiliation   : "1"
+    corresponding : yes    # Define only one corresponding author
+    address       : "450 Serra Mall, Stanford, CA 94306"
+    email         : "kylem4@stanford.edu"
+  - name          : "Virginia Marchman"
+    affiliation   : "1"
+  - name          : "Anne Fernald"
+    affiliation   : "1"
+  - name          : "Michael C. Frank"
+    affiliation   : "1"
+
+affiliation:
+  - id            : "1"
+    institution   : "Stanford University"
+
+author_note: |
+  Add complete departmental affiliations for each author here. Each new line herein must be indented, like this line.
+
+  Enter author note here.
+
+abstract: |
+  Language comprehension in grounded, social contexts involves integrating information from the visual and the linguistic signals. But gathering visual information presents a challenge since information is present at different fixation locations and listeners have limited time and cognitive resources. How do we decide where to look? Using three case studies, we test the hypothesis that even young listeners flexibly adapt the dynamics of their gaze in response to features of the language context, seeking higher value visual information to support language comprehension. We show that, compared to English-learners (n=80) and adults (n=25), young ASL-learners (n=30) and fluent adults (n= 16) delayed their gaze shifts away from a language source, gathering more information to produce more accurate with these shifts and a smaller proportion of random shifting behavior (E1). Next, we present a tightly-controlled, confirmatory experiment, showing that English-speaking adults produced fewer random gaze shifts when processing dynamic displays of printed text as compared to processing spoken language (Experiment 2). Finally, we report a confirmatory test of our account in children, showing that 3-5 year-olds (n=39) and adults (n=31) delayed the timing of gaze shifts away from a speaker's face when processing speech in a noisy environment. This delay resulted in listeners gathering more visual information from the language source, fewer random eye movements, and more accurate gaze shifts despite the more challenging processing context (E3). Together, these results provide evidence that even young listeners adjust to the demands of different processing environments by seeking out additinoal visual information to support their language comprehension.
+  
+keywords          : "eye movements; language comprehension; information-seeking; speech in background noise; American Sign Language"
+wordcount         : "X"
+
+bibliography      : ["speed-acc.bib", "r-references.bib"]
+
+figsintext        : no
+figurelist        : no
+tablelist         : no
+footnotelist      : no
+lineno            : yes
+
+lang              : "english"
+class             : "man"
+output            : papaja::apa6_pdf
+---
+
+```{r load_packages, include = FALSE}
+library("papaja"); library(here); library(lme4); library(directlabels); library(lazyeval)
+source(here::here("R/helper_functions/paper_helpers.R"))
+source(here::here("R/helper_functions/ewma_helper_funs.R"))
+```
+
+```{r analysis_preferences}
+knitr::opts_chunk$set(fig.pos = 'tb', out.width = "80%", cache = T, fig.path='figs/',
+                      echo=F, warning=F, cache=T, message=F, sanitize = T, fig.align = 'center')
+set.seed(42)
+upper_bound_RT <- 2000
+uppter_bound_RT_sec <- upper_bound_RT / 1000
+```
+
+```{r r-refs}
+#r_refs(file = "r-references.bib")
+my_citations <- cite_r(file = "r-references.bib", 
+                       pkgs = c("tidyverse", "rstanarm", "papaja", "here", "knitr"), 
+                       withhold = FALSE,
+                       footnote = TRUE)
+```
+
+```{r data paths}
+data_path <- "data/3_final_merged_data/first_shifts/"
+ewma_path <- "data/3_final_merged_data/ewma_output/"
+hddm_path <- "data/3_final_merged_data/hddm_output/"
+bda_path <- "data/3_final_merged_data/bda_posterior_samples/"
+```
+
+```{r read data}
+d_kids_noise <- read_csv(here::here(data_path, "speed_acc_child_noise_fstshift_tidy.csv")) 
+d_kids_gaze <- read_csv(here::here(data_path, "speed_acc_child_gaze_fstshift_tidy.csv")) 
+d_adults <- read_csv(here::here(data_path, "speed_acc_adult_ng_fstshift_tidy.csv")) 
+```
+
+```{r read ewma output}
+noise_ewma_files <- c("speed_acc_kids_noise_ewma_results.csv",
+                      "speed_acc_adult_ng_ewma_results.csv")
+
+d_ewma_noise <- noise_ewma_files %>% purrr::map_df(read_ewma, path = here::here(ewma_path))
+```
+
+```{r read hddm output}
+d_hddm <- read_csv(here::here(hddm_path, "hddm_tidy.csv"))
+```
+
+```{r read bda output}
+d_models <- readRDS(here::here(bda_path, "speed-acc-posterior-samples.rds"))
+d_ewma_models <- readRDS(here::here(bda_path, "ewma-posterior-samples.rds"))
+```
+
+```{r clean datasets for merge}
+d_adults %<>% select(-age)
+
+d_kids_noise %<>% mutate(gaze_condition = ifelse(gaze_condition == "no_gaze", 
+                                                 "straight_ahead", 
+                                                 gaze_condition))
+
+d_kids_gaze %<>% mutate(noise_condition = ifelse(noise_condition == "no_noise", 
+                                                 "clear", 
+                                                 noise_condition))
+```
+
+```{r merge datasets, include = F}
+d <- bind_rows(mutate(d_kids_noise, experiment = "kids_noise", age_category = "children"),
+               mutate(d_kids_gaze, experiment = "kids_gaze", age_category = "children"),
+               mutate(d_adults, experiment = "adults_ng", age_category = "adults")) %>% 
+  select(-resp_onset_type_fact, -subid_short) %>% 
+  mutate(age_category = factor(age_category) %>% fct_rev()) 
+
+# test that we have the right number of rows after the merge (result should be TRUE)
+ nrow(d_kids_gaze) + nrow(d_kids_noise) + nrow(d_adults) == nrow(d)
+```
+
+```{r read stimuli information}
+d_gaze_stim <- read_csv(here::here("data/0b_trial_information/speed-acc-child-gaze-trial-info.csv"),
+                        col_types = cols(.default = "c"))
+d_noise_stim <- read_csv(here::here("data/0b_trial_information/speed-acc-child-noise-trial-info.csv"),
+                         col_types = cols(.default = "c"))
+d_adult_ng_stim <- read_csv(here::here("data/0b_trial_information/speed-acc-adult-ng-trial-info.csv"),
+                            col_types = cols(.default = "c"))
+
+d_stim <- bind_rows(mutate(d_noise_stim, experiment = "kids_noise"),
+                    mutate(d_gaze_stim, experiment = "kids_gaze"),
+                    mutate(d_adult_ng_stim, experiment = "adults_ng"))
+```
+
+# Introduction 
+
+When processing language, we integrate information from the visual and linguistic signals to understand what others are saying. A classic demonstration of this integration is the "McGurk effect" where a speaker's mouth movements suggest one sound while their acoustic output indicates another. This conflict results in the listener perceiving a third, intermediate sound [@macdonald1978visual]. Findings such as these have inspired prominent theories of speech perception [@mcclelland2006there] and lexical processing [@macdonald2006constraint] that argue for the importance of *interactive* processes -- where listeners integrate information from multiple sources in parallel. Moreover, empirical work on speech perception shows that adults are better able to recover linguistic information in noisy contexts when they have visual access to a speaker's face [@erber1969interaction].
+
+But how should listeners prioritize different kinds of information? Consider that the value of integrating visual information can change depending on features of the listener and the processing context. For example, if a friend asks you to "Pass the salt" in a noisy restaurant, you could facilitate comprehension by looking to the speaker's face to read her lips or perhaps the direction of her gaze. A second case is the comprehension of a visual-manual language, e.g., American Sign Language (ASL). Here, the value of allocating visual fixations to the language source (the signer) is high since all of the language-relevant information is available in that location. 
+
+In prior work, we showed that, compared to spoken language learners, ASL-learners delay shifting gaze away from a language source until they have accumulated sufficient information to generate highly-accurate eye movements [@macdonald2017info]. In contrast, spoken language learners were more likely to produce early, random gaze shifts when seeking named referents. We explained these differences using an information-seeking account: that listeners flexibly adapted the dynamics of their gaze in response to contexts where the value of gathering visual information was high.
+
+Our account was inspired by ideas from several research programs. First, work on language-mediated visual attention shows that adults and children rapidly shift gaze upon hearing the name of an object in the visual scene [@allopenna1998tracking; @tanenhaus1995integration]. Second, empirical work on visual attention during everyday tasks shows that people overwhelmingly prefer to look at *goal-relevant* locations -- e.g., an upcoming obstacle while walking [@hayhoe2005eye]. Finally, work on "effortful listening" shows that people will generate compensatory responses (e.g., increases in attention and working memory) within "challenging" language contexts such as processing noisy or accented speech [@van2014listening]. Together, these accounts predict that gaze dynamics during language comprehension should adapt to compensate for the reduced quality of the auditory signal and to facilitate the listener's goal of comprehension.
+
+```{r stimuli-plot, fig.cap = "Experimental design and stimuli. Panel A shows the timecourse of the linguistic stimuli for a single trial. Panel B shows the layout of the three fixation locations (speaker, target, and distracter). Panel C shows a visual representation of the clear and noisy waveforms."}
+grid::grid.raster(png::readPNG(here::here("paper/journal_submission/figures/figs/stimuli_info.png")))
+```
+
+Here, we synthesize these ideas and test the generality of our information-seeking account of eye movements during grounded language comprehension. We ask whether listeners will adapt the timing of gaze shifts away from a speaker if the auditory signal is less reliable -- as is the case when processing speech in a noisy environment.  
+
+The second goal of this work is to test whether children show a similar pattern of behavior and flexibly adapt fixations in response to changes in the utility of gathering certain kinds of visual information. Recent developmental work shows that, like adults, preschoolers will flexibly adjust how they interpret ambiguous sentences (e.g., "I had carrots and *bees* for dinner.") by integrating information about the reliability of the incoming perceptual information with their expectations about the speaker [@yurovsky2017preschoolers]. While children's behavior paralleled adults, they relied more on top-down expectations about the speaker, perhaps because their developing perceptual representations were noisier compared with adults. These developmental differences provide insight into how children succeed in understanding language despite having partial knowledge of word-object links and without a fully-developed language model.
+
+In our experiment, we hypothesized that a noisy auditory environment increases the value of fixating a speaker to gather visual information that supports comprehension. Our key behavioral prediction is that listeners in noisy contexts will delay generating an eye movement away from a speaker until they have accumulated additional visual information about the identity of the named referent. This delay, in turn, will lead to fewer random gaze shifts to the rest of the visual world.  We also predicted that preschoolers would show a parallel pattern of adaptation to noisy contexts and allocate more fixations to a speaker's face when it became more useful for accurate language comprehension. A plausible alternative to our hypothesis is that the effects of language on visual attention are so well-practiced that we would not see listeners adapt their gaze patterns to the processing context.
+
+To quantify the evidence for our predictions, we analyze the accuracy and reaction times (RTs) of listeners' first gaze shifts after hearing the name of an object in the visual scene. We focus on first shifts because they provide a window onto changes in the underlying dynamics of decision processes that generate eye movements. 
+
+
+# Experiment 1
+
+```{r read trio data}
+df_trio <- read_csv(here::here(data_path, "speed_acc_child_trio_fstshift_tidy.csv")) 
+
+df_trio %<>% 
+  mutate(stimuli = ifelse(stimuli == "V1" | stimuli == "V2", "ASL", 
+                          ifelse(stimuli == "Trio", "Object", 
+                                 ifelse(stimuli == "Bull", "Bullseye",
+                                        stimuli))),
+         stimuli = factor(stimuli, levels = c("ASL", "Face", "Object", "Bullseye")))
+```
+
+```{r read trio stimuli information}
+d.words.length <- read_csv(here::here("data/0b_trial_information/speed-acc-adult-text-trial-info-final.csv"))
+d.signs.length <- read_csv(here::here("data/0b_trial_information/sol_target_sign_lengths_all.csv"))
+```
+
+Experiment 1 provides an initial test of our adaptive tradeoffs account. We compared eye movements of children learning ASL to children learning a spoken language using parallel real-time language comprehension tasks where children processed familiar sentences (e.g., "Where's the ball?") while looking at a simplified visual world with 3 fixation targets (a center stimulus that varied by condition, a target picture, and a distracter picture; see Fig 1). The spoken language data are a reanalysis of three unpublished data sets, and the ASL data are reported in MacDonald et al. (under review). We predicted that, compared to spoken language processing, processing ASL would increase the value of fixating on the language source and decrease the value of generating exploratory, nonlanguage-driven shifts even after the target linguistic item began unfolding in time. 
+
+To test this prediction, we present traditional behavioral analyses of first shift Accuracy and RT. We also present two model-based analyses. First, we use an exponentially weighted moving average (EWMA) method [@vandekerckhove2007fitting] to categorize participants' gaze shifts as language-driven or random. In contrast to the standard RT/Accuracy analysis, the EMWA allows us to quantify differences in the accuracy of gaze shifts as a function of *when* that shift occurred in time. Next, we use drift-diffusion models (DDMs) [@ratcliff2015individual] to quantify differences in the underlying psychological variables that might drive behavioral differences in Accuracy and RT. For example, the DDM uses the shape of *both* the correct and incorrect RT distributions to provide a quantiative estimate of whether higher accuracy is driven by more cautious responding or by more efficient information processing.
+
+
+## Analysis plan
+
+<!--
+First, we present behavioral analyses of accuracy and RT. Since RTs are not normally distributed, we log transformed all RTs for our statistical analyses. To quantify differences between groups, we used the `lme4` R package [@bates2013lme4] to fit mixed-effects regression models that included a by-subject random intercept to account for repeated measures from each participant. All data and analysis code can be found in the online repository for this project: https://github.com/kemacdonald/speed-acc.  
+
+Next, we present two model-based analyses that quantify different patterns of eye movements across the four language comprehension tasks. First, we use an Exponentially weighted moving average (EWMA) method [@vandekerckhove2007fitting] to model the proportion of nonlanguage-driven shifts away from the center stimulus to the visual world. The goal of  the EWMA is to identify whether a process has deviated from a pre-defined "control state" by taking into account the prior behavior of the process, weighing recent observations more heavily. The model generates two values: a "control statistic" (CS) and an "upper control limit" (UCL) for each point in the RT distribution. Once the CS becomes larger than the UCL, the process is determined to have exited the control state. ^[$c_s = \lambda x_s + (1-\lambda)c_{s-1}$ where the $\lambda$ parameter determines the number of prior RTs that are included in the moving average computation. $UCL_s = c_0 + L\sigma_0\sqrt{\frac{\lambda}{2-\lambda}[1-(1-\lambda)^{2s}]}$ where $L$ controls the width of the control limits with higher values leading to a more conservative test. We chose values for these parameters based on prior work using the EWMA approach with 2-AFC speeded decision tasks [@vandekerckhove2007fitting]]
+
+Here, we adapt the EWMA approach to model changes in the process that generate eye movements away from the center stimulus to the visual world. We define the control state as an expectation of nonlanguage-driven shifts and model this as a Bernoulli process with probability of success 0.5. As the sentence unfolds, we assume that participants gather more of the linguistic information prior to shifting and the underlying process should bias towards more accurate shifts or a Bernoulli process with probability success > 0.5. With this model, we can compare across our groups: a) the cutoff point when the CS exceeded the UCL indicating that participants started to generate language-driven shifts and b) the proportion of shifts that the model categorizes as language-driven vs. exploratory.
+
+Finally, we use Drift-diffusion models (DDMs) [@ratcliff2015individual] to quantify differences in the dynamics of speed and accuracy for eye movements generated in response to the incoming linguistic signal. DDMs form a class of sequential decision-making models designed specifically for rapid two-alternative forced choice tasks. The model assumes that people accumulate noisy evidence in favor of one alternative with a response generated when the evidence crosses a pre-defined decision threshold. The DDM approach is useful because it can account for all components of the behavioral response: correct and incorrect RT distributions. Moreover, the parameters of the DDM map onto meaningful psychological variables of interest. Here we focus on two of these parameters: **boundary separation**, which maps onto the amount of evidence gathered before generating a response (higher values suggest a prioritization of accuracy over speed) and **drift rate**, which maps onto the amount of evidence that is accumulated per unit time (higher values indicate more efficient processing). 
+
+We chose to implement a hierarchical Bayesian version of the DDM using the HDDM Python package [@wiecki2013hddm] because we were dealing with relatively few trials from child participants and recent simulation studies have shown that the HDDM approach was better than other DDM fitting methods when the number of observations was small [@ratcliff2015individual].  
+-->
+
+<!-- First, we present behavioral analyses of First shift accuracy and Reaction Time (RT). RT corresponds to the latency to shift away from the central stimulus to either picture measured from target-noun onset. Accuracy was the mean proportion of first gaze shifts that landed on the target picture out of the total number of shifts. We log transformed all RTs and used the `lme4` R package [@bates2013lme4] to fit mixed-effects regression models that included a random intercept for each participant and item. Since children's age varied across conditions, we included age in months as a covariate in all models. All analysis code can be found in the online repository for this project: https://github.com/kemacdonald/speed-acc.   -->
+
+<!-- Next, we present two exploratory model-based analyses to quantify differences in eye movements across the four samples. First, we use an EWMA method to model changes in accuracy as a function of increases in RT. For each RT, the model generates two values: a "control statistic" (CS, which captures the running average accuracy of first shifts) and an "upper control limit" (UCL, which captures the pre-defined limit of when accuracy would be categorized as above chance level). Here, the CS is an expectation of random shifting to either the target or the distracter image (nonlanguage-driven shifts), or a Bernoulli process with probability of success 0.5. As the RTs get longer, we assume that participants have gathered more information and should become more accurate, or a Bernoulli process with probability success > 0.5. Using this model, we can quantify and compare: a) the cutoff point when the CS exceeds the UCL, indicating that participants started to generate language-driven shifts and b) the proportion of shifts that the model categorizes as language-driven vs. nonlanguage-driven. -->
+
+<!-- Finally, we took the shifts that were categorized as language-driven by the EWMA and fit a hierarchical Bayesian drift-diffusion model (HDDM) to quantify differences in the speed and accuracy of language-driven eye movements. We chose to implement a hierarchical Bayesian version of the DDM using the HDDM Python package [@wiecki2013hddm] since we had relatively few trials from child participants and recent simulation studies have shown that the HDDM approach was better than other DDM fitting methods for small data sets [@ratcliff2015individual]. The model assumes that people accumulate noisy evidence in favor of one alternative with a response generated when the evidence crosses a pre-defined decision threshold. Here we focus on two parameters of interest that map onto meaningful psychological variables: *boundary separation*, which indexes the amount of evidence gathered before a response (higher values suggest more cautious responding) and *drift rate*, which indexes the amount of evidence accumulated per unit time (higher values suggest more efficient processing).  -->
+
+First, we present behavioral analyses of First Shift Accuracy and Reaction Time (RT) ^[See https://osf.io/g8h9r/ for a pre-registration of the analysis plan.]. RT corresponds to the latency to shift away from the central stimulus to either picture measured from the onset of the target noun. Accuracy corresponds to whether participants' first gaze shift landed on the target or the distracter picture. However, it is important to point out that when we analyze differences in accuracy, we are not making claims about the overall amount of time spent looking at the target vs. the distractor image – a measure typically used in analyses of the Visual World Paradigm.
+
+We used the `rstanarm` [@gabry2016rstanarm] package to fit Bayesian mixed-effects regression models. The mixed-effects approach allowed us to model the nested structure of our data -- multiple trials for each participant and item, and a within-participants manipulation -- by including random intercepts for each participant and item, and a random slope for each item and noise condition. We used Bayesian estimation to quantify uncertainty in our point estimates, which we communicate using a 95% Highest Density Interval (HDI). The HDI provides a range of credible values given the data and model. Finally, to estimate age-related differences, we fit two types of models: (1) age group (adults vs. children) as a categorical predictor and (2) age (in days) as a continuous predictor within the child sample.
+
+Next, we present the two model-based analyses -- the EWMA and DDM. The goal of these models is to move beyond a description of the data and map behavioral differences in eye movements to underlying psychological variables. The EWMA method models changes in random shifting behavior as a function of RT. For each RT, the model generates two values: a "control statistic" (CS, which captures the running average accuracy of first shifts) and an "upper control limit" (UCL, which captures the pre-defined limit of when accuracy would be categorized as above chance level). Here, the CS is an expectation of random shifting to either the target or the distracter image (nonlanguage-driven shifts), or a Bernoulli process with probability of success 0.5. As RTs get slower, we assume that participants have gathered more information and should become more accurate (language-driven), or a Bernoulli process with probability success > 0.5. Using this model, we can quantify the proportion of gaze shifts that were language-driven as opposed to random responding. 
+
+Following @vandekerckhove2007fitting, we selected shifts categorized as language-driven by the EWMA and fit a hierarchical Bayesian drift-diffusion model (HDDM). The DDM quantifies differences in the underlying decision process that lead to different patterns of behavior. The model assumes that people accumulate noisy evidence in favor of one alternative with a response generated when the evidence crosses a pre-defined decision threshold. Here, we focus on two parameters of interest: *boundary separation*, which indexes the amount of evidence gathered before generating a response (higher values suggest more cautious responding) and *drift rate*, which indexes the amount of evidence accumulated per unit time (higher values suggest more efficient processing). 
+
+Note [^papaja_pkg_citations]: `r my_citations$pkgs`
+
+## Methods
+
+### Participants
+
+```{r trio get participant info}
+trio_n <- df_trio %>% 
+  select(Sub.Num, stimuli, age_code) %>% 
+  unique() %>% 
+  mutate(Task = stimuli) %>% 
+  group_by(Task, age_code) %>%
+  tally()
+```
+
+```{r trio make participants table, results="asis"}
+trio_tab <- df_trio %>% 
+  filter(age_code == "child") %>% 
+  select(Sub.Num, stimuli, Months) %>% 
+  mutate(Task = stimuli) %>% 
+  unique() %>% 
+  group_by(Task) %>% 
+  summarise(Mean_Age = round(mean(Months), 1),
+            Min_Age = min(Months),
+            Max_Age = max(Months)) %>% 
+  left_join(., filter(trio_n, age_code == "child")) %>% 
+  select(-age_code)
+
+trio_tab <- xtable::xtable(trio_tab, caption = "Age distributions of children in Experiment 1. All ages are reported in months.")
+
+
+print(trio_tab, type="latex", comment = F, table.placement = "b",
+      floating.environment = "table", include.rownames=FALSE)
+```
+
+```{r trio get kid sample sizes}
+kids_n <- df_trio %>% 
+  filter(age_code == "child") %>% 
+  select(Sub.Num, stimuli, Months, hearing_status_participant) %>% 
+  unique() %>% 
+  group_by(stimuli, hearing_status_participant) %>% 
+  summarise(n = n())
+
+spoken_eng_n <- kids_n %>% filter(stimuli != "ASL") %>% .$n %>%  sum()
+asl_n <- kids_n %>% filter(stimuli == "ASL") %>% .$n %>%  sum()
+hearing_n <- kids_n %>% filter(stimuli == "ASL", hearing_status_participant == "hearing") %>% .$n
+deaf_n <- kids_n %>% filter(stimuli == "ASL", hearing_status_participant == "deaf") %>% .$n
+```
+
+Table 1 contains details about the age distributions of children in all of four samples. 
+
+*Spoken English samples.* Participants were `r spoken_eng_n` native, monolingual English-learning children divided across three samples. Participants had no reported history of developmental or language delay.
+
+*ASL sample.* Participants were `r asl_n` native, monolingual ASL-learning children (`r deaf_n` deaf, `r hearing_n` hearing). All children, regardless of hearing status, were exposed to ASL from birth through extensive interaction with at least one caregiver fluent in ASL and were reported to experience at least 80% ASL in their daily lives. The ASL sample included a wider age range compared to the spoken English samples because this is a rare population.
+
+### Stimuli 
+
+```{r trio word and sign lengths}
+ms_sign_len <- d.signs.length %>% 
+  summarise(m = mean(length_ms),
+            stdev = sd(length_ms),
+            min_l = min(length_ms),
+            max_l = max(length_ms)) %>% 
+  mutate_all(funs(. / 1000)) %>% 
+  mutate_all(round, digits = 2) %>% 
+  mutate(condition = "ASL")
+
+ms_word_len <- d.words.length %>% 
+  mutate(length = noun_offset_sec_1 - noun_onset_sec_1) %>% 
+  summarise(m = mean(length),
+            stdev = sd(length),
+            min_l = min(length),
+            max_l = max(length)) %>% 
+  mutate_all(round, digits = 2) %>% 
+  mutate(condition = "Face") 
+
+# hacky way to add condition information 
+ms_word_len %<>% bind_rows(., data.frame(ms_word_len[1,1:4], condition = "Object"))
+ms_word_len %<>% bind_rows(., data.frame(ms_word_len[1,1:4], condition = "Bullseye"))
+```
+
+*ASL linguistic stimuli.* We recorded two sets of ASL stimuli, using two valid ASL sentence structures for questions: 1) Sentence-initial wh-phrase: "HEY! WHERE [target noun]?" and 2) Sentence-final wh-phrase: "HEY! [target noun] WHERE?" Two female native ASL users recorded several tokens of each sentence in a child-directed register. Before each sentence, the signer produced a common attention-getting gesture. Mean sign length was `r ms_sign_len$m` sec, ranging from `r ms_sign_len$min_l` sec to `r ms_sign_len$max_l` sec.
+
+*English linguistic stimuli.* All three tasks (Object, Bullseye, and Face) featured the same female speaker who used natural child-directed speech and said: "Look! Where’s the (target word)?" The target words were: ball, banana, book, cookie, juice, and shoe. For the Face task, a female native English speaker was video-recorded as she looked straight ahead and said, "Look! Where’s the (target word)?" Mean word length was `r ms_word_len$m[1]` sec, ranging from `r ms_word_len$min_l[1]` sec to `r ms_word_len$max_l[1]` sec.
+
+<!---
+^[We would like to point out that even though there are significant differences between ASL and English question structures, all stimulus sets had the same trial structure: language to attract participants' attention followed by a sentence containing a target noun.]
+-->
+
+*ASL and English visual stimuli.* The image set consisted of colorful digitized pictures of objects presented in fixed pairs with no phonological overlap (ASL task: cat—bird, car—book, bear—doll, ball—shoe; English tasks: book-shoe, juice-banana, cookie-ball). Side of target picture was counterbalanced across trials.
+
+### Design and procedure
+
+<!---
+Participants viewed the ASL task on a 27" monitor. Children sat on their caregiver’s lap, and the child’s gaze was recorded using a digital camcorder set up behind the monitor. On each trial, pictures of two familiar objects appeared on the screen, a target object corresponding to the target noun, and a distracter object matched for visual salience. Between the two pictures was a central video of an adult female signing the name of one of the pictures. Participants saw 32 test trials with five filler trials (e.g. “YOU LIKE PICTURES? MORE WANT?”) interspersed to maintain children’s interest.
+
+Participants viewed the Face, Object, and Bullseye tasks on a large projector screen in a sound-treated testing booth. Similar to the ASL task, at the beginning of each test trial, pictures of two familiar objects appeared on the screen and then a center stimulus appeared between the two pictures. The center stimulus varied across the three tasks: Face, Object, and Bullseye (see Figure 1 for details). Participants saw approximately 32 test trials with several filler trials interspersed to maintain children’s interest.
+
+*Trial structure.* On each trial, the child saw two images of familiar objects on the screen for two seconds before the center stimulus appeared. This time allowed the child to visually explore both images. Next, the target sentence -- which consisted of a carrier phrase, target noun, and question sign -- was presented, followed by two seconds without language to allow the child to respond to the signer's sentence. The trial structure of the Face, Object, and Bullseye tasks were highly similar: children were given two seconds to visually explore the objects prior to the appearance of the center stimulus, then processed a target sentence, and finally were given two seconds of silence to generate a response to the target noun.
+
+*Coding.* Participants’ gaze patterns were videotaped and later coded frame-by-frame at 33-ms resolution by trained coders blind to target side.  On each trial, coders indicated whether the eyes were fixated on the central signer, one of the images, shifting between pictures, or away (off), yielding a high-resolution record of eye movements aligned with target noun onset. Prior to coding, all trials were pre-screened to exclude those few trials on which the participant was inattentive or there was external interference.
+-->
+
+Children sat on their caregiver’s lap and viewed the task on a screen while their gaze was recorded using a digital camcorder. On each trial, children saw two images of familiar objects on the screen for two seconds before the center stimulus appeared (see Fig 1). Then they processed the target sentence -- which consisted of a carrier phrase, a target noun, and a question -- followed by two seconds without language to allow for a response. Participants saw 32 test trials with several filler trials interspersed to maintain interest.
+
+*Coding.* Participants’ gaze patterns were coded (33-ms resolution) as being fixated on either the center stimulus, one of the images, shifting between pictures, or away. To assess inter-coder reliability, 25% of the videos were re-coded. Agreement was scored at the level of individual frames of video and averaged 98% on these reliability assessments. 
+
+<!--
+We excluded RTs longer than two seconds since these shifts are unlikely to be generated in response to the incoming language stimulus (see Ratcliff, 1993). 
+
+This measure reflects the accuracy of language-driven saccades to the visual world. Mean first shift accuracy scores were computed for each participant for both correct and incorrect shifts. Trials where the participants did not generate a shift were not included in the computation.
+-->
+
+## Results and discussion
+
+```{r trio get prop correct}
+ss_prop <- df_trio %>% 
+  filter(RT <= upper_bound_RT) %>% 
+  group_by(Sub.Num, age_code, Months, language_modality, 
+           stimuli, hearing_status_participant) %>% 
+  filter(trial_type != "no_shift") %>% 
+  summarise(mean_correct = mean(correct))
+
+ss_prop <- df_trio %>% 
+  filter(RT <= upper_bound_RT) %>% 
+  group_by(Sub.Num, age_code, Months, language_modality, stimuli, correct, 
+           hearing_status_participant) %>%
+  filter(trial_type != "no_shift") %>% 
+  summarise(mean_rt = median(RT)) %>% 
+  left_join(ss_prop)
+```
+
+## Results and Discussion
+
+```{r trio-plot-behav, fig.cap = "First shift accuracy and RTs from Experiment 1. Panel A shows a boxplot representing the distribution of RTs for correct (orange) and incorrect (blue) shifts for each center stimulus type. Panel B shows the distribution of mean first shift accuracy scores for each center stimulus type. The solid lines represent median values, the boundaries of the box show the upper and lower quartiles, and the whiskers show the full range of the data excluding outliers."}
+
+ss_prop$stimuli <- factor(ss_prop$stimuli, 
+                          levels = c("Bullseye", "Object", "Face", "ASL"))
+
+ss_prop %<>% mutate(correct_char = ifelse(correct == 1, "correct", "incorrect"))
+
+acc_plot <- ggplot(aes(x = stimuli, y = mean_correct), 
+                   data = filter(ss_prop, age_code == "child", correct == 1)) +
+  geom_boxplot(outlier.colour = "darkgrey", width = 0.2, fill = "darkgrey") +
+  #geom_jitter(width = 0.05, alpha = 0.4, size = 2) +
+  geom_hline(yintercept = 0.5, lty = "dashed") +
+  ylim(0,1) +
+  xlab(NULL) +
+  ylab("Accuracy") +
+  theme(text = element_text(size=10)) +
+  guides(fill = F) 
+
+
+rt_plot <- ggplot(aes(x = stimuli, y = mean_rt / 1000, 
+                      fill = as.factor(correct_char)), 
+                  data = filter(ss_prop, age_code == "child")) + 
+  geom_boxplot(outlier.colour = "darkgrey", width = 0.4) +
+  #geom_jitter(width = 0.2, alpha = 0.35) +
+  scale_fill_manual(values = c("darkorange", "dodgerblue")) +
+  theme(text = element_text(size=10)) +
+  labs(x =NULL, y = "RT (sec)", fill = "") +
+  theme(legend.justification=c(0,1), legend.position=c(0,1),
+        legend.direction="horizontal", 
+        legend.background = element_rect(fill=alpha('white', 0.4)))
+
+plot_grid(rt_plot, acc_plot, labels = c("A", "B"), nrow = 2, align = "v")
+```
+
+### Behavioral analyses
+
+```{r create trio contrasts}
+# define contrast weights for comparisons of interest
+asl_noasl <- c(-1 , 1/3, 1/3,  1/3) # ASL vs. No-ASL
+face_objBull <- c( 0,   -1,  1, 0 ) # Face vs. Object and Bullseye
+asl_face <- c( -1,   1,   0,   0 )
+
+# create temporary matrix of weights
+mat.temp <- rbind(constant=1/4, asl_noasl, face_objBull, asl_face)
+# invert it
+mat <- solve(mat.temp)
+# drop first column
+mat <- mat[ , -1]
+```
+
+```{r trio fit rt lmer}
+# model
+m.rt.trio <- df_trio %>% 
+  filter(correct == 1, age_code == "child") %>% 
+  lmer(log(RT_sec) ~ stimuli + Months +  (1|Sub.Num) + (1|clean_target_img),
+       contrasts=list(stimuli = mat),
+       data = .)
+
+# extract coefficients and compute p.vals using normal approximation
+m.rt.trio.coefs <- m.rt.trio %>% 
+  broom::tidy() %>% 
+  filter(group == "fixed") %>% 
+  mutate(p.val = 2 * (1 - pnorm(abs(statistic)))) %>% 
+  mutate(p.val.clean = ifelse(p.val < .001, "< .001", round(p.val, 3)),
+         statistic = round(statistic, 2),
+         estimate = round(estimate, 2))
+```
+
+*RT.* Visual inspection of the Fig 2, panel A suggests that there was a speed accuracy tradeoff in the ASL, Face, and Bullseye conditions, with incorrect shifts tending to be faster than correct shifts. To quantify differences across the groups, we fit a linear mixed-effects regression predicting first shift RT as a function of center stimulus type, controlling for age, and including user-defined contrasts to test specific comparisons of interest: \texttt{Log(RT) $\sim$ center stimulus type + age +  (1 | subject) + (1 | item)}. We found that (a) ASL learners generated slower RTs compared to all of the spoken English samples ($\beta$ = `r m.rt.trio.coefs$estimate[2]`, $p$ `r m.rt.trio.coefs$p.val.clean[2]`), (b) ASL learners' shifts were slower compared directly to participants in the Face task ($\beta$ = `r m.rt.trio.coefs$estimate[4]`, $p$ `r m.rt.trio.coefs$p.val.clean[4]`), and (c) participants in the Face task shifted slower compared to participants in the Object and Bullseye tasks ($\beta$ = `r m.rt.trio.coefs$estimate[3]`, $p$ `r m.rt.trio.coefs$p.val.clean[3]`).
+
+```{r fit trio acc glmer}
+# model
+m.acc.trio <- df_trio %>% 
+  filter(age_code == "child") %>% 
+  glmer(correct ~ stimuli + Months +  (1|Sub.Num) + (1|clean_target_img),
+        contrasts=list(stimuli = mat),
+        nAGQ = 1,
+        family = binomial,
+        control = glmerControl(optimizer = "bobyqa"),
+        data = .)
+
+# extract coefficients and compute p.vals using normal approximation
+m.acc.trio.coefs <- m.acc.trio %>% 
+  broom::tidy() %>% 
+  filter(group == "fixed") %>% 
+  mutate(p.val.clean = ifelse(p.value < .001, "< .001", round(p.value, 3)),
+         statistic = round(statistic, 2),
+         estimate = round(estimate, 2))
+```
+
+*Accuracy.* Next we compared the accuracy of first shifts across the different tasks by fitting a mixed-effects logistic regression with the same specifications and contrasts as the RT model. We found that (a) ASL learners were more accurate compared to all of the spoken English samples ($\beta$ = `r m.acc.trio.coefs$estimate[2]`, $p$ `r m.acc.trio.coefs$p.val.clean[2]`), (b) ASL learners were more accurate when directly compared to participants in the Face task ($\beta$ = `r m.acc.trio.coefs$estimate[4]`, $p$ = `r m.acc.trio.coefs$p.val.clean[4]`), and (c) participants in the Face task were numerically more accurate compared to participants in the Object and Bullseye tasks ($\beta$ = `r m.rt.trio.coefs$estimate[3]`) but this effect was not significant ($p$ = `r m.acc.trio.coefs$p.val.clean[3]`).
+
+### Model-based analyses
+
+```{r read trio ewma output}
+ss.ewma.results.trio <- read_csv(here::here(ewma_path, "speed_acc_kids_trio_ewma_results.csv"))
+```
+
+```{r trio aggregate ewma model}
+## aggregate ewma results to get average curve
+ms.ewma.trio <- ss.ewma.results.trio %>% 
+  group_by(ewma_param, Sub.Num, condition, rt) %>% 
+  summarise(mean_param_ss = mean(param_value)) %>% 
+  group_by(ewma_param, condition, rt) %>% 
+  summarise(mean_param = mean(mean_param_ss))
+
+# Aggregate cutoffs for each participant
+ss.cutoffs.trio <- ss.ewma.results.trio %>% 
+  filter(guess == "response") %>% 
+  group_by(condition, Sub.Num, Months) %>% 
+  summarise_(cutoff = lazyeval::interp(~ min(x), x = as.name("rt")))
+
+# Aggregate cutoffs for each condition.
+n <- 30
+
+ms.cutoffs.trio <- ss.cutoffs.trio %>% 
+  group_by(condition) %>% 
+  summarise(median_param = median(cutoff),
+            ci_lower = median_param - qnorm(0.975) * (sd(cutoff) / sqrt(n)),
+            ci_upper = median_param + qnorm(0.975) * (sd(cutoff) / sqrt(n))) 
+```
+
+```{r trio build data frame for ribbon in control chart}
+max_rt_object_cond <- 2.0
+max_rt_bullseye_cond <- 1.5
+
+trio_ribbon <- ms.ewma.trio %>% 
+  left_join(., ms.cutoffs.trio, by = "condition") %>% 
+  mutate(rt_cut_point = ifelse(condition %in% c("ASL", "Face"), median_param,
+                               ifelse(condition == "Object", max_rt_object_cond, 
+                                      max_rt_bullseye_cond))) %>% 
+  filter(rt <= rt_cut_point) %>% 
+  spread(key = ewma_param, value = mean_param)
+
+
+trio_ribbon_green <- ms.ewma.trio %>% 
+  left_join(., ms.cutoffs.trio, by = "condition") %>% 
+  mutate(rt_cut_point = ifelse(condition %in% c("ASL", "Face"), median_param,
+                               ifelse(condition == "Object", max_rt_object_cond, 
+                                      max_rt_bullseye_cond))) %>% 
+  filter(rt >= rt_cut_point) %>% 
+  spread(key = ewma_param, value = mean_param)
+```
+
+```{r trio-control-plot, fig.cap = "Output for the EWMA guessing model in E1. The black curve represents the evolution of the control statistic (CS) as a function of reaction time. The grey curve represents the upper control limit (UCL). The vertical dashed line is the median cutoff value (point when the control process shifts out of a guessing state). The grey shaded area represents the 95\\% confidence interval around the estimate of the median cutoff point. And the shaded areas represents the proprotion of responses that were flagged as guesses (red) and language-driven (green)."}
+# reorder factor levels for plot
+ms.ewma.trio$condition <- factor(ms.ewma.trio$condition,
+                               levels = c("ASL", "Face", "Object", "Bullseye")) 
+
+ms.cutoffs.trio$condition <- factor(ms.cutoffs.trio$condition,
+                                  levels = c("ASL", "Face", "Object", "Bullseye"))
+
+trio_ribbon$condition <- factor(trio_ribbon$condition,
+                              levels = c("ASL", "Face", "Object", "Bullseye"))
+
+trio_ribbon_green$condition <- factor(trio_ribbon_green$condition,
+                                    levels = c("ASL", "Face", "Object", "Bullseye"))
+
+sign_len_plot_info <- ms_sign_len %>% bind_rows(ms_word_len) 
+
+sign_len_plot_info$condition <- factor(sign_len_plot_info$condition,
+                                       levels = c("ASL", "Face", "Object", "Bullseye"))
+
+# make plot
+ms.ewma.trio %>% 
+  filter(rt <= 1.5) %>% 
+  ggplot(data = ., aes(x = rt, y = mean_param, color = ewma_param)) +
+  geom_segment(aes(x = ci_lower, y = 0.8, xend = ci_upper, yend = 0.8), 
+               color = "black", size = 150, alpha = 0.2,
+               data = filter(ms.cutoffs.trio, condition != "Bullseye")) +
+  geom_ribbon(aes(ymin = cs, ymax = ucl, x = rt), fill = "red", alpha = 0.3, 
+              data = filter(trio_ribbon, rt <= 1.5), inherit.aes = F)  +
+  geom_ribbon(aes(ymin = cs, ymax = ucl, x = rt), fill = "green", alpha = 0.3, 
+              data = filter(trio_ribbon_green, rt <= 1.5), inherit.aes = F)+
+  geom_line(size = 1) +
+  scale_y_continuous(breaks = c(0.4, 0.6, 0.8)) +
+  geom_vline(aes(xintercept = median_param), linetype = 2, 
+             data = filter(ms.cutoffs.trio, condition %in% c("ASL", "Face"))) +
+  geom_hline(yintercept = 0.5, linetype = "solid") +
+  labs(x = "RT (sec)", y = "EWMA statistic") +
+  guides(color=F) + 
+  xlim(0, 1.65) +
+  facet_grid(condition~.) +
+  scale_color_manual(values = c("black", "darkgrey")) +
+  geom_dl(aes(label = ewma_param), method = "last.bumpup") +
+  ggthemes::theme_few()
+```
+
+```{r trio fit ewma lmer}
+trio.ewma.m1 <- ss.cutoffs.trio %>% 
+  filter(condition %in% c("ASL", "Face")) %>% 
+  lm(cutoff ~ condition + Months, data = .)
+
+trio.ewma.m1.coefs <- trio.ewma.m1 %>% 
+  broom::tidy() %>% 
+  mutate(estimate = round(estimate, 2),
+         p.value = ifelse(p.value < .001, "< .001", round(p.value, 3)))
+```
+
+```{r trio fit ewma glmer}
+trio.ewma.m2 <-  ss.ewma.results.trio %>% 
+  filter(age_code == "child", stimuli %in% c("ASL", "Face")) %>% 
+  glmer(guess_num ~ stimuli + Months + (1|Sub.Num),
+        nAGQ = 1,
+        family = binomial,
+        control = glmerControl(optimizer = "bobyqa"),
+        data = .)
+
+trio.ewma.m2.coefs <- trio.ewma.m2 %>% 
+  broom::tidy() %>% 
+  filter(group == "fixed") %>% 
+  mutate(estimate = round(estimate, 2),
+         p.value = ifelse(p.value < .001, "< .001", round(p.value, 3)))
+```
+
+*EWMA.* Figure 3 shows changes in the control statistic (CS) and the upper control limit (UCL) as a function of participants' RTs. Each CS starts at chance performance and below the UCL. In the ASL and Face tasks, the CS value begins to increase with RTs around 0.7 seconds after noun onset and eventually crosses the UCL, indicating that responses > 0.7 sec were on average above chance levels. In contrast, the CS in the Object and Bullseye tasks never crossed the UCL, indicating that children's shifts were equally likely to land on the target or the distracter, regardless of when they were initiated. This result suggests that first shifts in the Bullseye/Object tasks were not language-driven and may instead have reflected a different process such as gathering more information about the referents in the visual world.
+
+Next, we compared the EWMA output for participants in the ASL and Face tasks. We found that ASL learners generated fewer shifts when the CS was below the UCL ($\beta$ = `r trio.ewma.m2.coefs$estimate[2]`, $p$ `r trio.ewma.m2.coefs$p.value[2]`), indicating that a larger proportion of their initial shifts away were language-driven (see the differences in the red shaded area in Fig 3). We did not find evidence for a difference in the timing of when the CS crossed the UCL ($\beta$ = `r trio.ewma.m1.coefs$estimate[2]`, $p$ = `r trio.ewma.m1.coefs$p.value[2]`), indicating that both groups began to generate language-driven shifts about the same time after noun onset.
+
+```{r trio read and munge hddm params}
+d_trio_hddm <- d_hddm %>% filter(experiment == "trio")
+```
+
+```{r trio hddm hypothesis test}
+boundary_asl <- d_trio_hddm %>% filter(param_name == "boundary", condition == "asl")
+boundary_face <- d_trio_hddm %>% filter(param_name == "boundary", condition == "face")
+p_hddm_boundary <- mean(boundary_face$param_value > boundary_asl$param_value)
+
+# drift
+drift_asl <- d_trio_hddm %>% filter(param_name == "drift", condition == "asl")
+drift_face <- d_trio_hddm %>% filter(param_name == "drift", condition == "face")
+p_hddm_drift <- mean(drift_face$param_value < drift_asl$param_value)
+
+# means and 95% HDI
+ms.hddm_trio <- d_trio_hddm %>% 
+  group_by(param_name, condition) %>% 
+  summarise(Mean = mean(param_value),
+            HDI_lower = quantile(param_value, probs = 0.025),
+            HDI_upper = quantile(param_value, probs = 0.975)) %>% 
+  rename(Parameter = param_name) %>% 
+  mutate_at(vars(Mean, HDI_lower, HDI_upper), round, digits = 2)
+```
+
+```{r trio-hddm-plot, fig.cap = "Posterior distributions for the boundary and drift rate parameters for children in Experiment 1."}
+trio_hddm_plot <- d_trio_hddm %>% 
+  ggplot(aes(x = param_value, color = condition), data = .) +
+  geom_line(stat="density", size = 1.5) + 
+  scale_color_manual(values = c("darkorange", "dodgerblue")) +
+  facet_grid(.~param_name, scales = "free") +
+  labs(x = "Parameter value", y = "Density", color = "") +
+  ggthemes::theme_few() +
+  theme(text = element_text(size=10),
+        legend.position=c(0.8,0.8),
+        legend.direction="horizontal",
+        legend.background = element_rect(fill=alpha('white', 0.4)))
+
+trio_hddm_plot
+```
+
+*HDDM.* Using the output of the EWMA, we compared the timing and accuracy of language-driven shifts for participants in the ASL and Face tasks. ^[We report the mean and the 95% highest density interval (HDI) of the posterior distributions for each parameter. The HDI represents the range of credible values given the model specification and the data. We chose not to interpret the DDM fits for the Bullseye/Face tasks since there was no suggestion of any non-guessing signal.] We found that ASL learners had a higher estimate for the boundary separation parameter compared to the Face participants (ASL boundary = `r ms.hddm_trio$Mean[1]`, HDI = [`r ms.hddm_trio$HDI_lower[1]`, `r ms.hddm_trio$HDI_upper[1]`]; Face boundary = `r ms.hddm_trio$Mean[2]`, HDI = [`r ms.hddm_trio$HDI_lower[2]`, `r ms.hddm_trio$HDI_upper[2]`]), with no overlap in the credible values (see Fig 4). This suggests that ASL learners accumulated more evidence about the linguistic signal before generating an eye movement. We found high overlap for estimates of the drift rate parameter, indicating that both groups processed the linguistic information with similar efficiency (ASL drift = `r ms.hddm_trio$Mean[3]`, HDI = [`r ms.hddm_trio$HDI_lower[3]`, `r ms.hddm_trio$HDI_upper[3]`]; Face drift = `r ms.hddm_trio$Mean[4]`, HDI = [`r ms.hddm_trio$HDI_lower[4]`, `r ms.hddm_trio$HDI_upper[4]`]).
+
+Taken together, the behavioral analyses and the EWMA/HDDM results provide converging support that ASL learners were sensitive to the value of eye movements, producing fewer nonlanguage-driven shifts and prioritizing accuracy over speed, but accumulating information at roughly the same rate. This behavior seems reasonable since the potential for missing subsequent linguistic information is high if ASL users shifted prior to gathering sufficient information. It is important to point out that these were exploratory findings and that there were several, potentially important differences between the stimuli, apparatus, and populations. In Experiment 2, we set out to perform a well-controlled, confirmatory test of our adaptive tradeoffs account.   
+
+# Experiment 2
+
+In Experiment 2, we attempt to replicate a key finding from Experiment 1: that increasing the competition between fixating the language source and the nonlinguistic visual world reduces nonlanguage-driven eye movements. Moreover, we conducted a confirmatory test of our hypothesis that also controlled for the population differences present in Experiment 1. We tested a sample of English-speaking adults using a within-participants manipulation of the center stimulus type. We used the Face and Bullseye stimulus sets from Experiment 1 and added two new conditions: Text, where the verbal language information was accompanied by a word-by-word display of printed text (see Fig 1), and Text-no-audio, where the spoken language stimulus was removed. We chose text processing since, like sign language comprehension, the linguistic information is gathered via fixations to the visual world.
+
+Our key behavioral prediction is that participants in the Text conditions should produce a higher proportion of language-driven shifts as indexed by the EWMA model output. We did not have strong predictions for the DDM parameter fits since the goal of the Text manipulation was to modulate participants' strategic allocation of visual attention and not the accuracy/efficiency of information processing.
+
+```{r text read data}
+d.fs <- read_csv(here::here(data_path, "speed_acc_adult_text_fstshift_tidy.csv"))
+d.asl <- read_csv(here::here(data_path, "speed_acc_child_trio_fstshift_tidy.csv"))
+```
+
+```{r text clean datasets and merge}
+d.asl %<>% 
+  filter(language_modality == "ASL" & age_code == "adult") %>% 
+  mutate(subid = as.character(Sub.Num),
+         tr.num = Tr.Num, 
+         rt = RT_sec,
+         shift_type = trial_type,
+         condition = language_modality, 
+         hearing_status = hearing_status_participant,
+         response_onset_type = "noun") %>% 
+  rename(target_image = clean_target_img) %>% 
+  select(subid, tr.num, rt, shift_type, hearing_status, condition, response_onset_type, target_image)
+
+d.fs %<>%
+  mutate(hearing_status = "hearing") %>% 
+  select(subid, tr.num, rt, shift_type, hearing_status, condition, response_onset_type, target_image)
+
+d.fs %<>% bind_rows(., d.asl) %>% 
+  mutate(shift_accuracy = ifelse(shift_type == "C_T", "correct", "incorrect"))
+```
+
+
+## Methods
+
+### Participants
+
+25 Stanford undergraduates participated (5 male) for course credit. All participants were monolingual, native English speakers and had normal vision.
+
+### Stimuli
+
+Audio and visual stimuli were identical to the Face and Bullseye tasks in Experiment 1. We included a new center fixation stimulus type: printed text. The text was displayed in a white font on a black background and was programmed such that only a single word appeared on the screen, with each word appearing for the same duration as the corresponding word in the spoken language stimuli.
+
+### Design and procedure
+
+The design was nearly identical to Experiment 1, with the exception of a change to a within-subjects manipulation where each participant completed all four tasks (Bullseye, Face, Text, and Text-no-audio). In the Text condition, spoken language accompanied the printed text. In the Text-no-audio condition, the spoken language stimulus was removed. Participants saw a total of 128 trials while their eye movements were tracked using automated eye-tracking software.
+
+## Results and Discussion
+
+```{r text summarize RT for correct and incorrect shifts}
+ss.d.rt <- d.fs %>% 
+  filter(shift_type %in% c("C_T", "C_D"), 
+         response_onset_type %in% c("noun", "sentence")) %>% 
+  dplyr::select(subid, tr.num, condition, shift_accuracy, rt, response_onset_type) %>% 
+  unique()
+
+ms.rt <- ss.d.rt %>% 
+  group_by(condition, shift_accuracy, response_onset_type) %>% 
+  summarise(med = median(rt))
+```
+
+```{r text aggregate behavioral data}
+ss.rt <- ss.d.rt %>% 
+  filter(response_onset_type == "noun") %>% 
+  group_by(condition, subid, shift_accuracy) %>% 
+  summarise(m_rt = mean(rt))
+
+ss.acc <- ss.d.rt %>% 
+  filter(response_onset_type == "noun") %>% 
+  mutate(correct_num = ifelse(shift_accuracy == "correct", 1, 0)) %>% 
+  group_by(condition, subid) %>% 
+  summarise(mean_acc = mean(correct_num))
+```
+
+```{r text remove outliers}
+ss.acc %<>% remove_extreme_vals(., sd_cut_val = 3, value_column = "mean_acc")
+ss.rt %<>% remove_extreme_vals(., sd_cut_val = 3, value_column = "m_rt")
+```
+
+```{r make text behav plots}
+text_rt_plot <- ss.rt %>% 
+  filter(condition != "ASL") %>% 
+  ggplot(aes(x = condition, y = m_rt, fill = shift_accuracy), data = .) +
+  geom_boxplot(width = 0.3, outlier.shape = NA) +
+  scale_fill_manual(values = c("darkorange", "dodgerblue")) +
+  labs(x = "Condition", 
+       y = "RT (sec)") +
+  labs(fill = "accuracy") +
+  ylim(0, 1.5) +
+  theme(text = element_text(size = 10),
+        legend.text = element_text(size = 7),
+        legend.title = element_text(size = 7),
+        legend.position=c(0.5,0.85),
+        legend.direction="horizontal", 
+        legend.background = element_rect(fill=alpha('white', 0.4)))
+
+text_acc_plot <- ss.acc %>% 
+  filter(condition != "ASL") %>%
+  ggplot(aes(x = condition, y = mean_acc), data = .) +
+  geom_boxplot(width = 0.2, fill = "darkgrey", alpha = 0.7) +
+  geom_hline(yintercept = 0.5, linetype = "dashed") +
+  ylim(0.4,1) +
+  labs(x = "Condition", 
+       y = "Accuracy") +
+  theme(text = element_text(size = 10)) 
+```
+
+```{r text-plot-print, fig.env = "figure", fig.pos = "t",fig.width=2.8, fig.height=2.8, fig.align='center', fig.cap = "Behavioral results for Experiment 2. All plotting conventions are the same as in Figure 2."}
+
+plot_grid(text_rt_plot, text_acc_plot, labels = c("A", "B"), nrow = 2, align = "v")
+```
+
+### Behavioral analyses
+
+```{r text create contrasts}
+# create new condition factor variable
+d.fs %<>% 
+  filter(condition != "ASL") %>% 
+  mutate(condition_fact = as.factor(condition))
+
+# define contrast weights for comparisons of interest
+textnoaudio_others <- c(1/3 , 1/3, 1/3,  -1) # Text-no-audio vs. all other conditions
+face_textnoaudio <- c( 0,   -1,  0, 1 ) # Face vs. text-no-audio
+text_textnoaudio <- c( 0,   0,   -1,   1 ) # text vs text-no-audio
+
+# create temporary matrix of weights
+mat.temp <- rbind(constant=1/4, textnoaudio_others, face_textnoaudio, text_textnoaudio)
+# invert it
+mat <- solve(mat.temp)
+# drop first column
+mat <- mat[ , -1]
+```
+
+```{r text fit rt lmer}
+# model
+m.rt.text <- d.fs %>% 
+  filter(shift_accuracy == "correct", response_onset_type == "noun") %>% 
+  lmer(log(rt) ~ condition + (condition|subid),
+       data = .)
+
+anova_m1.rt.text <- anova(m.rt.text)
+
+# extract coefficients and compute p.vals using normal approximation
+m.rt.text.coefs <- m.rt.text %>% 
+  broom::tidy() %>% 
+  filter(group == "fixed") %>% 
+  mutate(p.val = 2 * (1 - pnorm(abs(statistic)))) %>% 
+  mutate(p.val.clean = ifelse(p.val < .001, "< .001", round(p.val, 3)),
+         statistic = round(statistic, 2),
+         estimate = round(estimate, 2))
+```
+
+*RT.* Visual inspection of Figure 5, panel A suggests that there was a speed-accuracy tradeoff for all conditions: incorrect gaze shifts tended to be faster than correct shifts. We fit a linear mixed-effects regression with the same specification as in Experiment 1, but we added by-subject intercepts and slopes for each center stimulus type to account for our within-subjects manipulation. We did not find evidence that RTs were different across conditions (all $p$ > .05).  
+
+```{r text fit glmer}
+# model
+m.acc.text <- d.fs %>% 
+  filter(response_onset_type == "noun") %>% 
+  mutate(correct = ifelse(shift_accuracy == "correct", 1, 0)) %>%
+  glmer(correct ~ condition +  (condition|subid),
+        #contrasts=list(condition_fact = mat),
+        nAGQ = 0,
+        family = binomial,
+        data = .)
+
+anova_m1.acc.text <- anova(m.acc.text)
+
+m.acc.text.coefs <- m.acc.text %>% 
+  broom::tidy() %>% 
+  filter(group == "fixed") %>% 
+  mutate(p.val = 2 * (1 - pnorm(abs(statistic)))) %>% 
+  mutate(p.val.clean = ifelse(p.val < .001, "< .001", round(p.val, 3)),
+         statistic = round(statistic, 2),
+         estimate = round(estimate, 2))
+```
+
+*Accuracy.* Next, we modeled accuracy using a mixed-effects logistic regression with the same specifications (see Panel B of Fig 5). We found that adults' first shifts were highly accurate, and, in contrast to the children in Experiment 1, their responses were above chance level even in the Bullseye condition when the center stimulus was not salient or informative. We also found that participants tended to be less accurate in the Text conditions compared to conditions without text ($\beta$ = `r m.acc.text.coefs$estimate[2]`, $p$ = `r m.acc.text.coefs$p.val.clean[2]`). We did find not any other statistically significant differences. 
+
+### Model-based analyses
+
+```{r text munge ewma data}
+ss.ewma.results.text <- read_csv(here::here(ewma_path, "speed_acc_adult_text_ewma_results.csv"))
+```
+
+```{r text fit ewma model}
+## aggreate ewma results to get average curve for plot
+ms.ewma.text <- ss.ewma.results.text %>% 
+  group_by(ewma_param, subid, condition, rt) %>% 
+  summarise(mean_param_ss = mean(param_value)) %>% 
+  group_by(ewma_param, condition, rt) %>% 
+  summarise(mean_param = mean(mean_param_ss))
+
+# Aggregate cutoffs for each participant
+ss.cutoffs.text <- ss.ewma.results.text %>% 
+  filter(guess == "response") %>% 
+  group_by(condition, subid) %>% 
+  summarise_(cutoff = interp(~ min(x), x = as.name("rt"))) 
+
+# aggreate cutoffs by condition
+n_text <- 25
+
+ms.cutoffs.text <- ss.cutoffs.text %>% 
+  group_by(condition) %>% 
+  summarise(median_param = median(cutoff),
+            ci_lower = median_param - qnorm(0.975) * (sd(cutoff) / sqrt(n_text)),
+            ci_upper = median_param + qnorm(0.975) * (sd(cutoff) / sqrt(n_text))) 
+```
+
+```{r text make ribbon for ewma plot}
+text_ribbon <- ms.ewma.text %>% 
+  left_join(., ms.cutoffs.text, by = "condition") %>% 
+  mutate(rt_cut_point = median_param) %>% 
+  filter(rt <= rt_cut_point) %>% 
+  spread(key = ewma_param, value = mean_param)
+
+text_ribbon_green <- ms.ewma.text %>% 
+  left_join(., ms.cutoffs.text, by = "condition") %>% 
+  mutate(rt_cut_point = median_param) %>% 
+  filter(rt >= rt_cut_point) %>% 
+  spread(key = ewma_param, value = mean_param)
+```
+
+```{r text-ewma-plot, fig.cap = "EWMA model output for Experiment 2. All plotting conventions are the same as Figure 3."}
+text_control_chart <- ms.ewma.text %>% 
+  filter(condition != "ASL", rt <= 0.9) %>% 
+  ggplot(data = ., aes(x = rt, y = mean_param, color = ewma_param)) +
+  geom_segment(aes(x = ci_lower, y = 0.8, xend = ci_upper, yend = 0.8), 
+               color = "black", size = 100, alpha = 0.2,
+               data = filter(ms.cutoffs.text, condition != "ASL")) +
+  geom_ribbon(aes(ymin = cs, ymax = ucl, x = rt), fill = "red", alpha = 0.3, 
+              data = filter(text_ribbon, condition != "ASL"), inherit.aes = F)  +
+  geom_ribbon(aes(ymin = cs, ymax = ucl, x = rt), fill = "green", alpha = 0.3, 
+              data = filter(text_ribbon_green, condition != "ASL", rt <= 0.9), 
+              inherit.aes = F) +
+  geom_line(size = 1) +
+  geom_vline(aes(xintercept = median_param), linetype = 2, 
+             data = filter(ms.cutoffs.text, condition != "ASL")) +
+  geom_hline(yintercept = 0.5, linetype = "solid") +
+  labs(x = "RT (sec)", y = "EWMA statistic") +
+  guides(color=F) + 
+  xlim(0, 1) +
+  facet_grid(condition~.) +
+  scale_color_manual(values = c("black", "darkgrey")) +
+  geom_dl(aes(label = ewma_param), method = "last.bumpup") +
+  ggthemes::theme_few() +
+  theme(text = element_text(size = 10)) 
+
+text_control_chart
+```
+
+```{r text fit ewma lmer}
+text.ewma.m1 <- ss.cutoffs.text %>% 
+  filter(condition != "ASL") %>% 
+  mutate(condition_fact = as.factor(condition)) %>% 
+  lm(cutoff ~ condition_fact, data = .)
+
+# use lsmeans to test pairwise comparisons
+lsm_text_means <- summary(lsmeans::lsmeans(text.ewma.m1, 
+                                         pairwise~condition_fact, 
+                                         adjust="bon"))$lsmeans %>% 
+  mutate(mean = round(lsmean, 2))
+
+lsm_text_tests <- summary(lsmeans::lsmeans(text.ewma.m1, 
+                                         pairwise~condition_fact, 
+                                         adjust="bon"))$contrasts
+
+text.ewma.m1.coefs <- text.ewma.m1 %>% 
+  broom::tidy() %>% 
+  mutate(estimate = round(estimate, 2),
+         p.value = ifelse(p.value < .001, "< .001", round(p.value, 3)))
+```
+
+```{r text fit ewma glmer}
+text.ewma.m2 <-  ss.ewma.results.text %>% 
+  filter(condition != "ASL") %>% 
+  mutate(condition_fact = as.factor(condition)) %>% 
+  glmer(guess_num ~ condition_fact + (1|subid),
+        contrasts=list(condition_fact = mat),
+        nAGQ = 10,
+        family = binomial,
+        control = glmerControl(optimizer = "bobyqa"),
+        data = .)
+
+lsm_text_glmer <- summary(lsmeans::lsmeans(text.ewma.m2, 
+                                         pairwise~condition_fact, 
+                                         adjust="bon"))$lsmeans %>% 
+  mutate(mean = round(lsmean, 2))
+
+text.ewma.m2.coefs <- text.ewma.m2 %>% 
+  broom::tidy() %>% 
+  filter(group == "fixed") %>% 
+  mutate(estimate = round(estimate, 2),
+         p.value = ifelse(p.value < .001, "< .001", round(p.value, 3)))
+```
+
+*EWMA.* For all four conditions, the CS crossed the UCL (see Fig 6), suggesting that for all tasks some proportion of adults' shifts were language-driven. Interestingly, we found a graded effect of condition (see the shift in the vertical dashed lines in Fig 5) on the point when the CS crossed the UCL such that the Text-no-audio condition occurred earliest ($M_{text-no-audio}$ = `r lsm_text_means$mean[4]`), followed by the Text and Face conditions that were not different from one another ($M_{text}$ = `r lsm_text_means$mean[3]`, $M_{face}$ = `r lsm_text_means$mean[2]`, $p$ > .05), and finally the Bullseye condition ($M_{bullseye}$ = `r lsm_text_means$mean[1]`). We also found the same graded difference in the proportion of shifts that occurred while the CS was below the UCL (see the red vs. green shaded area in Fig 5), indicating a higher proportion of first shifts were language-driven in the Text conditions, with the highest proportion in the Text-no-audio condition when tested against the three other conditions ($M_{text-no-audio}$ = `r lsm_text_glmer$mean[4]`, $\beta$ = `r text.ewma.m2.coefs$estimate[4]`, $p$ `r text.ewma.m2.coefs$p.value[4]`). These results provide strong evidence for our key prediction: that increasing the value of fixating the language source reduces exploratory gaze shifts to the nonlinguistic visual world.
+
+```{r text read and munge hddm params}
+d_text_hddm <- d_hddm %>% filter(experiment == "text")
+```
+
+```{r text do ddm hypothesis test}
+boundary_face <- d_text_hddm %>% filter(param_name == "boundary", condition == "face")
+boundary_bull <- d_text_hddm %>% filter(param_name == "boundary", condition == "bull")
+p_hddm_boundary.text <- mean(boundary_face$param_value < boundary_bull$param_value)
+
+# drift
+drift_asl <- d_trio_hddm %>% filter(param_name == "drift", condition == "asl")
+drift_face <- d_trio_hddm %>% filter(param_name == "drift", condition == "face")
+p_hddm_drift <- mean(drift_face$param_value < drift_asl$param_value)
+
+# means and 95% HDI
+ms.hddm.text <- d_text_hddm %>% 
+  group_by(param_name, condition) %>% 
+  summarise(Mean = mean(param_value),
+            HDI_lower = quantile(param_value, probs = 0.025),
+            HDI_upper = quantile(param_value, probs = 0.975)) %>% 
+  rename(Parameter = param_name) %>% 
+  mutate_at(vars(Mean, HDI_lower, HDI_upper), round, digits = 2)
+```
+
+```{r text-hddm-plot, fig.cap = "Posterior distributions for the boundary and drift rate parameters for Experiment 2."}
+text.hddm.plot <- d_text_hddm %>% 
+  ggplot(aes(x = param_value, color = condition), data = .) +
+  geom_line(stat="density", size = 1.5) + 
+  langcog::scale_color_solarized() +
+  facet_grid(.~param_name, scales = "free") +
+  labs(x = "Parameter value", y = "Density", color = "") +
+  guides(color=guide_legend(nrow=2,byrow=TRUE)) +
+  ggthemes::theme_few() +
+  theme(text = element_text(size=10),
+        legend.position=c(0.75,0.75),
+        legend.direction="horizontal",
+        legend.background = element_rect(fill=alpha('white', 0.4)))
+text.hddm.plot
+```
+
+*HDDM.* Using the output of the EWMA, we fit the same HDDM as in Experiment 1. There was high overlap of the posterior distributions for the drift rate parameters (see Fig 4, panel B), suggesting that participants gathered the linguistic information with similar efficiency. We also found high overlap in the distribution of credible boundary separation estimates for the Bullseye, Text, and Text-no-audio conditions. Interestingly, we found some evidence for a higher boundary separation in the Face condition compared to the other three center stimulus types (Face boundary = `r ms.hddm.text$Mean[2]`, HDI = [`r ms.hddm.text$HDI_lower[2]`, `r ms.hddm.text$HDI_upper[2]`]; Bullseye boundary = `r ms.hddm.text$Mean[1]`, HDI = [`r ms.hddm.text$HDI_lower[1]`, `r ms.hddm.text$HDI_upper[1]`]; Text boundary = `r ms.hddm.text$Mean[3]`, HDI = [`r ms.hddm.text$HDI_lower[3]`, `r ms.hddm.text$HDI_upper[3]`]; Text-no-audio boundary = `r ms.hddm.text$Mean[4]`, HDI = [`r ms.hddm.text$HDI_lower[4]`, `r ms.hddm.text$HDI_upper[4]`]), suggesting that adults higher accuracy in this condition was driven by accumulating more information before generating a response. 
+
+Together, these results suggest that adults were sensitive to the tradeoff between gathering different kinds of information. When processing text, people generated fewer nonlanguage-driven shifts (EWMA results) but their processing efficiency of the linguistic signal itself did not change (HDDM results). Interestingly, we found a graded difference in the EWMA results between the Text and Text-no-audio conditions, with the lowest proportion of early, nonlanguage-driven shifts occurring while processing text without the verbal stimuli. This behavior makes sense; if the adults could rely on the auditory channel to gather the linguistic information, then the value of fixating the text display decreases. In contrast to the children in Experiment 1, adults were highly accurate in the Bullseye condition, perhaps because they construed the Bullseye as a center fixation that they *should* fixate, or perhaps they had better encoded the location/identity of the two referents prior to the start of the target sentence.
+
+# Experiment 3
+
+In this experiment, we recorded adults and children's eye movements during a real-time language comprehension task where participants processed familiar sentences (e.g., "Where's the ball?") while looking at a simplified visual world with three fixation targets (see Fig.\ \ref{fig:stimuli_plot}). Using a within-participants design, we manipulated the signal-to-noise ratio of the auditory signal by convolving the acoustic input with brown noise (random noise with greater energy at lower frequencies).
+
+First, we present standard behavioral analyses of reaction time (RT) and accuracy of listeners' first gaze shifts after target noun onset. Then, we present two model-based analyses that link observable behavior to underlying psychological constructs. We use an exponentially weighted moving average (EWMA) method [@vandekerckhove2007fitting] to classify participants' gaze shifts as language-driven or random. In contrast to the standard RT/accuracy analysis, the EMWA approach allows us to quantify participants' willingness to generate gaze shifts after noun onset but before collecting sufficient information to seek the named referent. Higher values indicate that participants were waiting to shift until they had accumulated enough of the linguistic signal to locate the named referent. Finally, we use drift-diffusion models (DDMs) [@ratcliff2015individual] to ask whether behavioral differences in accuracy and RT are driven by a more cautious responding strategy or by more efficient information processing.
+
+We predicted that processing speech in a noisy context would make participants less likely to shift before collecting sufficient information. This delay, in turn, would lead to a lower proportion of shifts flagged as random/exploratory in the EWMA analysis, and a pattern of DDM results indicating a prioritization of accuracy over and above speed of responding (see the Analysis Plan section below for more details on the models). We also predicted a developmental difference -- that children would produce a higher proportion of random shifts and accumulate information less efficiently compared to adults;  and a developmental parallel -- that children would show the same pattern of adapting gaze patterns to gather more visual information in the noisy processing context.
+
+## Methods
+
+### Participants
+
+```{r noise filter}
+d_noise <- d %>% 
+  filter(experiment != "kids_gaze",
+         keep_runsheet %in% c("yes", "keep"), 
+         keep_et == "include",
+         gaze_condition == "straight_ahead")
+```
+
+```{r noise participants}
+noise_adults <- d_noise %>% 
+  filter(age_category == "adults") %>% 
+  select(subid, gender) %>% 
+  unique() %>%
+  group_by(gender) %>% 
+  tally()
+
+noise_kids <- d_noise %>% 
+  filter(age_category == "children") %>% 
+  select(subid, age, gender) %>% 
+  unique() %>% 
+  group_by(gender) %>% 
+  tally()
+
+n_adults_run <- d %>% 
+  filter(age_category == "adults") %>% 
+  select(subid) %>% 
+  unique() %>%
+  tally() %>% 
+  pull(n)
+
+n_kids_run <- d %>% 
+  filter(age_category == "children", experiment == "kids_noise") %>% 
+  select(subid) %>% 
+  unique() %>%
+  tally() %>% 
+  pull(n)
+
+n_kids_filt <- n_kids_run - sum(noise_kids$n)
+n_adults_filt <- n_adults_run - sum(noise_adults$n)
+```
+
+Participants were native, monolingual English-learning children ($n=$ `r sum(noise_kids$n)`; `r noise_kids$n[1]` F) and adults ($n=$ `r sum(noise_adults$n)`; `r noise_adults$n[1]` F). All participants had no reported history of developmental or language delay and normal vision. `r n_kids_filt + n_adults_filt` participants (`r n_kids_filt` children, `r n_adults_filt` adults) were run but not included in the analysis because either the eye tracker falied to calibrate (2 children, 3 adults) or the participant did not complete the task (9 children). 
+
+### Stimuli 
+
+```{r linguistic stimuli length}
+d_word_lengths <- d_stim %>% 
+  filter(!is.na(noun)) %>% 
+  select(noun, carrier, noun_onset_sec:noun_offset_frames) %>% 
+  unique() %>% 
+  mutate_at(vars(starts_with("noun_")), as.numeric) %>% 
+  mutate(
+    length_frames =  ( (noun_offset_sec * 33) + noun_offset_frames ) - ( (noun_onset_sec * 33) + (noun_onset_frames) ),
+    length_ms = length_frames * 33
+  ) 
+
+ms_words_length <- d_word_lengths %>% 
+  group_by(carrier, noun) %>% 
+  summarise(m_length = mean(length_ms)) %>% 
+  group_by(noun) %>% 
+  summarise(m = mean(m_length) %>% round(digits = 2)) 
+```
+
+*Linguistic stimuli.* The video/audio stimuli were recorded in a sound-proof room and featured two female speakers who used natural child-directed speech and said one of two phrases: "Hey! Can you find the (target word)" or "Look! Where’s the (target word) -- see panel A of Fig.\ \ref{fig:stimuli_plot}. The target words were: ball, bunny, boat, bottle, cookie, juice, chicken, and shoe. The target words varied in length (shortest = `r min(ms_words_length$m)` ms, longest = `r max(ms_words_length$m)` ms) with an average length of `r mean(ms_words_length$m) %>% round(digits=2)` ms. 
+
+*Noise manipulation*. To create the stimuli in the noise condition, we convolved each recording with Brown noise using the Audacity audio editor. The average signal-to-noise ratio ^[The ratio of signal power to the noise power, with values greater than 0 dB indicating more signal than noise.] in the noise condition was 2.87 dB compared to the clear condition, which was 35.05 dB. 
+
+*Visual stimuli.* The image set consisted of colorful digitized pictures of objects presented in fixed pairs with no phonological overlap between the target and the distractor image (cookie-bottle, boat-juice, bunny-chicken, shoe-ball). The side of the target picture was counterbalanced across trials.
+
+### Design and procedure
+
+Participants viewed the task on a screen while their gaze was tracked using an SMI RED corneal-reflection eye-tracker mounted on an LCD monitor, sampling at 60 Hz. The eye-tracker was first calibrated for each participant using a 6-point calibration. On each trial, participants saw two images of familiar objects on the screen for two seconds before the center stimulus appeared (see Fig.\ \ref{fig:stimuli_plot}). Next, they processed the target sentence -- which consisted of a carrier phrase, a target noun, and a question -- followed by two seconds without language to allow for a response. Child participants saw 32 trials (16 noise trials; 16 clear trials) with several filler trials interspersed to maintain interest. Adult participants saw 64 trials (32 noise; 32 clear). The noise manipulation was presented in a blocked design with the order of block counterbalanced across participants.
+
+
+## Results and discussion
+
+```{r noise analysis filter}
+d_noise_analysis <- d_noise %>% 
+  filter(rt <= 2,
+         response_onset_type == "noun",
+         shift_start_location == "center") %>% 
+  mutate(shift_acc_num = ifelse(shift_accuracy_clean == "correct", 1, 0),
+         log_rt = log(rt))
+```
+
+```{r noise summarize model output}
+ms_acc_noise <- d_models$acc_noise %>% 
+  group_by(noise_condition, age_category) %>% 
+  summarise(prop = mean(acc_prob_scale),
+            hdi_lower = quantile(acc_prob_scale, probs = 0.025),
+            hdi_upper = quantile(acc_prob_scale, probs = 0.975)) %>% 
+  mutate_if(.predicate = is.numeric, .funs = round, digits = 2) %>% 
+  mutate(age_category = factor(age_category) %>% fct_rev()) 
+
+ms_rt_noise <- d_models$rt_noise %>% 
+  group_by(noise_condition, age_category) %>% 
+  mutate(rt_ms_scale = rt_ms_scale * 1000) %>% 
+  summarise(m_rt = median(rt_ms_scale),
+            hdi_lower = quantile(rt_ms_scale, probs = 0.025),
+            hdi_upper = quantile(rt_ms_scale, probs = 0.975)) %>% 
+  mutate_if(.predicate = is.numeric, .funs = round, digits = 2) %>% 
+  mutate(age_category = factor(age_category) %>% fct_rev()) 
+```
+
+```{r noise create contrasts}
+noise_contrast <- d_models$acc_noise %>% 
+  select(sample_id:acc_prob_scale, -param_est) %>% 
+  spread(noise_condition, acc_prob_scale) %>% 
+  mutate(noise_contrast = noise - clear) %>% 
+  select(sample_id, noise_contrast, age_category)
+
+noise_contrast_rt <- d_models$rt_noise %>% 
+  select(sample_id:rt_ms_scale, -param_est) %>% 
+  spread(noise_condition, rt_ms_scale) %>% 
+  mutate(noise_contrast = noise - clear) %>% 
+  select(sample_id, noise_contrast, age_category)
+```
+
+### Behavioral analyses:
+
+```{r noise-acc-rt, fig.cap = "Behavioral results for first shift Reaction Time (RT) and Accuracy. Panel A shows violin plots representing the distribution of RTs for each participant in each condition. Each point represents a participant's average RT. Color represents the processing context. The grey insets show the full posterior distribution of RT differences across conditions with the vertical dashed line representing the null value of zero condition difference. The green shading represents estimates in the predicted direction and above the null value while the red shading represents estimates below the null. Panel B shows the same information but for first shift accuracy."}
+png::readPNG(here::here("paper/journal_submission/figures/figs/noise_behav_results.png")) %>% 
+  grid::grid.raster()
+```
+
+```{r ms contrast noise rt}
+ms_noise_con_rt <- noise_contrast_rt %>%
+  mutate(noise_contrast = noise_contrast * 1000) %>% 
+  summarise(m_rt = mean(noise_contrast),
+            hdi_lower = quantile(noise_contrast, probs = 0.025),
+            hdi_upper = quantile(noise_contrast, probs = 0.975)) %>% 
+  mutate_if(.predicate = is.numeric, .funs = round, digits = 2) 
+```
+
+```{r ms noise age continuous rt}
+ms_noise_age_rt <- d_models$rt_noise_age %>% 
+  mutate(age_beta = age_beta * 1000) %>% 
+  summarise(m_rt = mean(age_beta),
+            hdi_lower = quantile(age_beta, probs = 0.025),
+            hdi_upper = quantile(age_beta, probs = 0.975)) %>% 
+  mutate_if(.predicate = is.numeric, .funs = round, digits = 2) 
+```
+
+**RT.** To make RTs more suitable for modeling on a linear scale, we analyzed responses in log space with the final model specified as: \texttt{$log(RT) \sim noise\_condition + age\_group + (noise\_condition \mid sub\_id ) + (noise\_condition \mid target\_item)$}. Panel A of Fig.\ \ref{fig:noise_acc_rt_noise_plot} shows the full RT data distribution and the full posterior distribution of the estimated RT difference between the noise and clear conditions. Both children and adults were slower to identify the target in the noise condition (Children $M_{noise}$ = `r ms_rt_noise$m_rt[4]` ms; Adult $M_{noise}$ = `r ms_rt_noise$m_rt[3]` ms), as compared to the clear condition (Children $M_{clear}$ = `r ms_rt_noise$m_rt[2]` ms; Adult $M_{clear}$ = `r ms_rt_noise$m_rt[1]` ms). RTs in the noise condition were `r ms_noise_con_rt$m_rt[1]` ms slower on average, with a 95% HDI ranging from `r ms_noise_con_rt$hdi_lower[1]` ms to `r ms_noise_con_rt$hdi_upper[1]` ms, and not including the null value of zero condition difference. Older children responded faster than younger children ($M_{age}$ = `r ms_noise_age_rt$m_rt`, [`r ms_noise_age_rt$hdi_lower`, `r ms_noise_age_rt$hdi_upper`]), with little evidence for an interaction between age and condition. 
+
+```{r ms contrast noise acc}
+ms_noise_con_acc <- noise_contrast %>%
+  summarise(m_acc = mean(noise_contrast),
+            hdi_lower = quantile(noise_contrast, probs = 0.025),
+            hdi_upper = quantile(noise_contrast, probs = 0.975)) %>% 
+  mutate_if(.predicate = is.numeric, .funs = round, digits = 2)
+
+## hypothesis test
+prob_diff0 <- noise_contrast %>% 
+  summarise(prob = mean(noise_contrast >= 0)) %>% 
+  mutate_if(.predicate = is.numeric, .funs = round, digits = 2)
+```
+
+**Accuracy.** Next, we modeled adults and children's first shift accuracy using a mixed-effects logistic regression with the same specifications (see Panel B of Fig.\ \ref{fig:noise_acc_rt_noise_plot}). Both groups were more accurate than a model of random responding (null value of $0.5$ falling well outside the lower bound of the 95% HDI for all group means). Adults were more accurate ($M_{adults} =$ `r ms_acc_noise$prop[1] * 100`%) than children ($M_{children} =$ `r ms_acc_noise$prop[2] * 100`%). The key result is that both groups showed evidence of higher accuracy in the noise condition: children ($M_{noise}$ = `r ms_acc_noise$prop[4]* 100`%; $M_{clear}$ = `r ms_acc_noise$prop[2]* 100`%) and adults ($M_{noise}$ = `r ms_acc_noise$prop[3]* 100`%; $M_{clear}$ = `r ms_acc_noise$prop[1]* 100`%). Accuracy in the noise condition was on average `r ms_noise_con_acc$m_acc[1] * 100`%  higher, with a 95% HDI from `r ms_noise_con_acc$hdi_lower[1]* 100`% to `r ms_noise_con_acc$hdi_upper[1] * 100`%. Note that the null value of zero difference falls at the very edge of the HDI. But  `r prob_diff0$prob[1] * 100`% of the credible values are greater than zero, providing evidence for higher accuracy in the noise condition. Within the child sample, there was no evidence of a main effect of age or an interaction between age and noise condition.
+
+### Model-based analyses:
+
+```{r noise-violin-ewma, fig.cap = "EWMA results for children and adults. Each point represents the proportion of shifts categorized as language-driven (as opposed to guessing) for a single participant. Color represents the processing context."}
+
+d_ewma_noise %>% 
+  mutate(age_code = ifelse(str_detect(age_code, "child"), "children", "adults"),
+         gaze_condition = ifelse(str_detect(condition, "gaze"), "gaze", 
+                                 "straight_ahead"),
+         noise_condition = ifelse(str_detect(condition, "noise"), "noise", "clear")) %>%
+  filter(gaze_condition == "straight_ahead", 
+         rt <= 2) %>% 
+  group_by(subid, noise_condition, age_code, guess) %>% 
+  summarise(count = n()) %>% 
+  mutate(prop.responding = round(count / sum(count), 2)) %>% 
+  filter(guess == "response") %>%
+  ggplot(aes(x = fct_rev(age_code), y = prop.responding, color = noise_condition)) +
+  geom_jitter(alpha = 0.8, shape = 21, 
+              position = position_jitterdodge(jitter.width = 0.1, 
+                                              dodge.width = 1)) +
+  geom_violin(draw_quantiles = 0.5, trim = T, width = 1, size = 0.8, 
+              adjust = 1, fill = NA) + 
+  guides(fill = F) +
+  lims(y = c(0,1)) +
+  ggthemes::scale_color_ptol() +
+  scale_x_discrete(expand = c(0,0.8), drop = FALSE) +
+  labs(x = NULL, y = "Prop. Language-Driven Shifts", color = "Processing context:") +
+  theme_minimal() +
+  theme(panel.border = element_rect(fill = NA, color = "grey80"),
+        legend.position = "top",
+        text = element_text(size = 10),
+        legend.title = element_text(size = 9)) 
+```
+
+
+```{r noise ewma group means summary}
+# summarise group means for cutoffs
+# ms_cuts_noise <- d_models$ewma_cuts_noise %>% 
+#   group_by(age_category, noise_condition) %>% 
+#   summarise(MAP = mean(param_est),
+#             hdi_lower = quantile(param_est, probs = 0.025),
+#             hdi_upper = quantile(param_est, probs = 0.975)) %>% 
+#   mutate_if(.predicate = is.numeric, .funs = round, digits = 2) %>% 
+#   mutate(model = "EWMA", parameter = "cut point") %>% 
+#   select(model, parameter, everything())
+
+# summarise group means for prop guessing parameter
+
+ms_guess_noise <- d_ewma_models$ewma_guess_noise %>% 
+  group_by(age_category, noise_condition) %>% 
+  summarise(MAP = mean(param_est),
+            hdi_lower = quantile(param_est, probs = 0.025),
+            hdi_upper = quantile(param_est, probs = 0.975)) %>% 
+  mutate(model = "EWMA", parameter = "prob. guessing") %>% 
+  mutate_if(.predicate = is.numeric, .funs = round, digits = 2) %>% 
+  select(model, parameter, everything())
+
+ms_guess_noise_age <- d_ewma_models$ewma_guess_noise %>% 
+  group_by(age_category) %>% 
+  summarise(MAP = mean(param_est),
+            hdi_lower = quantile(param_est, probs = 0.025),
+            hdi_upper = quantile(param_est, probs = 0.975)) %>% 
+  mutate(model = "EWMA", parameter = "prob. guessing") %>% 
+  mutate_if(.predicate = is.numeric, .funs = round, digits = 2) %>% 
+  select(model, parameter, everything())
+
+ms_cond_diff_guessing_m <- d_ewma_models$ewma_guess_noise %>% 
+  select(sample_id, noise_beta, age_beta) %>%
+  mutate(age_beta = age_beta * -1) %>% 
+  rename(`adults-children` = age_beta, 
+         `noise-clear` = noise_beta) %>% 
+  unique() %>% 
+  gather(key = Contrast, value = param_est, -sample_id) %>% 
+  group_by(Contrast) %>% 
+  summarise(MAP = mean(param_est),
+            hdi_lower = quantile(param_est, probs = 0.025),
+            hdi_upper = quantile(param_est, probs = 0.975)) %>% 
+  mutate_if(.predicate = is.numeric, .funs = round, digits = 2)
+```
+
+```{r ewma cond difference summary, eval = F, include = F}
+## cut point model noise
+ms_cond_diff_cuts <- d_models$ewma_cuts_noise %>% 
+  select(sample_id, noise_beta, age_beta) %>%
+  rename(`age group` = age_beta, noise = noise_beta) %>% 
+  unique() %>% 
+  gather(key = Contrast, value = param_est, -sample_id) %>% 
+  group_by(Contrast) %>% 
+  summarise(MAP = mean(param_est),
+            hdi_lower = quantile(param_est, probs = 0.025),
+            hdi_upper = quantile(param_est, probs = 0.975)) %>% 
+  mutate_if(.predicate = is.numeric, .funs = round, digits = 2) %>% 
+  mutate_all(as.character) %>%
+  mutate(Parameter = "Cut point",
+         `Estimate (95% HDI)` = paste0(MAP, " [", hdi_lower, ", ", hdi_upper, "]"),
+         `Exp.` = "noise") %>%
+  select(`Exp.`, Parameter, Contrast, `Estimate (95% HDI)`)
+
+## prop guessing model noise
+ms_cond_diff_guessing <- d_models$ewma_guess_noise %>% 
+  select(sample_id, noise_beta, age_beta) %>%
+  mutate(age_beta = age_beta * -1) %>% 
+  rename(`adults-children` = age_beta, 
+         `noise-clear` = noise_beta) %>% 
+  unique() %>% 
+  gather(key = Contrast, value = param_est, -sample_id) %>% 
+  group_by(Contrast) %>% 
+  summarise(MAP = mean(param_est),
+            hdi_lower = quantile(param_est, probs = 0.025),
+            hdi_upper = quantile(param_est, probs = 0.975)) %>% 
+  mutate_if(.predicate = is.numeric, .funs = round, digits = 2) %>% 
+  mutate_all(as.character) %>% 
+  mutate(Parameter = "Guessing",
+         `Estimate (95% HDI)` = paste0(MAP, " [", hdi_lower, ", ", hdi_upper, "]"),
+         `Exp.` = "noise") %>%
+  select(`Exp.`, Parameter, Contrast, `Estimate (95% HDI)`)
+
+## cut point model gaze
+ms_cond_diff_cuts_gaze <- d_models$ewma_cuts_gaze %>% 
+  select(sample_id, straightahead_beta, age_beta) %>%
+  rename(`age group` = age_beta, gaze = straightahead_beta) %>% 
+  unique() %>% 
+  gather(key = Contrast, value = param_est, -sample_id) %>% 
+  group_by(Contrast) %>% 
+  summarise(MAP = mean(param_est),
+            hdi_lower = quantile(param_est, probs = 0.025),
+            hdi_upper = quantile(param_est, probs = 0.975)) %>% 
+  mutate_if(.predicate = is.numeric, .funs = round, digits = 2) %>% 
+  mutate_all(as.character) %>%
+  mutate(Parameter = "Cut point",
+         `Estimate (95% HDI)` = paste0(MAP, " [", hdi_lower, ", ", hdi_upper, "]"),
+         `Exp.` = "Experiment 2") %>%
+  select(`Exp.`, Parameter, Contrast, `Estimate (95% HDI)`)
+
+## prop guessing model noise
+ms_cond_diff_guessing_gaze <- d_models$ewma_guess_gaze %>% 
+  select(sample_id, straightahead_beta, age_beta) %>%
+  mutate(age_beta = age_beta * -1) %>% 
+  rename(`gaze-straight_ahead` = straightahead_beta, 
+         `adults-children` = age_beta) %>% 
+  unique() %>% 
+  gather(key = Contrast, value = param_est, -sample_id) %>% 
+  group_by(Contrast) %>% 
+  summarise(MAP = mean(param_est),
+            hdi_lower = quantile(param_est, probs = 0.025),
+            hdi_upper = quantile(param_est, probs = 0.975)) %>% 
+  mutate_if(.predicate = is.numeric, .funs = round, digits = 2) %>% 
+  mutate_all(as.character) %>% 
+  mutate(Parameter = "Guessing",
+         `Estimate (95% HDI)` = paste0(MAP, " [", hdi_lower, ", ", hdi_upper, "]"),
+         `Exp.` = "Experiment 2") %>%
+  select(`Exp.`, Parameter, Contrast, `Estimate (95% HDI)`)
+```
+
+```{r ewma age continuous}
+ms_ewma_age_kids <- d_models$ewma_guess_noise_age %>% 
+  mutate(age_beta = age_beta * 1000) %>% 
+  summarise(MAP = mean(age_beta),
+            hdi_lower = quantile(age_beta, probs = 0.025),
+            hdi_upper = quantile(age_beta, probs = 0.975)) %>% 
+  mutate_if(.predicate = is.numeric, .funs = round, digits = 2)
+```
+
+**EWMA.** Fig.\ \ref{fig:noise_ewma_violin_plot} shows the proportion of shifts that the model classified as random vs. language-driven for each age group and processing context. On average, `r ms_guess_noise_age$MAP[2] * 100`% (95% HDI: `r ms_guess_noise_age$hdi_lower[2] * 100`%, `r ms_guess_noise_age$hdi_upper[2] * 100`%) of children's shifts were categorized as language-driven, which was significantly fewer than adults, `r ms_guess_noise_age$MAP[1] * 100`% (95% HDI: `r ms_guess_noise_age$hdi_lower[1] * 100`%, `r ms_guess_noise_age$hdi_upper[1] * 100`%). Critically, processing speech in a noisy context caused both adults and children to generate a higher proportion of language-driven shifts (i.e., fewer random, exploratory shifts away from the speaker), with the 95% HDI excluding the null value of zero condition difference ($\beta_{noise}$ = `r ms_cond_diff_guessing_m$MAP[2] * 100`%, [`r ms_cond_diff_guessing_m$hdi_lower[2] * 100`%, `r ms_cond_diff_guessing_m$hdi_upper[2] * 100`%]). Within the child sample, older children generated fewer random, early shifts ($M_{age}$ = `r ms_ewma_age_kids$MAP`, [`r ms_ewma_age_kids$hdi_lower`, `r ms_ewma_age_kids$hdi_upper`]). There was no eivdence of an interaction between age and condition. This pattern of results suggests that the noise condition caused participants to increase visual fixations to the language source, leading them to generate fewer exploratory, random shifts before accumulating sufficient information to respond accurately.
+
+```{r hddm-plot-noise, fig.cap = "HDDM results. Each panel shows the posterior distribution for either the boundary separation or drift rate parameters for children (top panels) and adults (bottom panels)."}
+
+d_hddm %>% 
+  filter(experiment %in% c("noise_gaze", "noise"),
+         condition %in% c("gaze_noise", "straight_ahead_clear",
+                          "clear", "noise")) %>%
+  mutate(condition = ifelse(str_detect(condition, "noise"), "noise", "clear"),
+         age_code = ifelse(age_code == "kid", "children", "adults"),
+         age_code = factor(age_code, levels = c("children", "adults"))) %>% 
+  ggplot(aes(x = param_value, color = condition)) +
+  geom_line(stat = "density", size = 1, position = position_dodge(width=0.1)) +
+  ggthemes::scale_color_ptol() +
+  facet_grid(age_code~param_name, scales = "free") +
+  labs(x = "Parameter Estimate", y = NULL, color = "Processing context:") +
+  theme_minimal() +
+  theme(panel.border = element_rect(fill = NA, color = "grey80"),
+        legend.position = "top",
+        axis.ticks = element_blank(), 
+        axis.text.y = element_blank(),
+        text = element_text(size = 10),
+        legend.title = element_text(size =9)) 
+```
+
+```{r hddm results noise}
+hddm_table_age <- d_hddm %>% 
+  filter(experiment %in% c("noise_gaze", "noise"),
+         condition %in% c("straight_ahead_noise", "straight_ahead_clear",
+                          "clear", "noise")) %>%
+  mutate(condition = ifelse(str_detect(condition, "noise"), "noise", "clear"),
+        age_code = ifelse(str_detect(age_code, "kid"), "children", "adults")) %>% 
+  group_by(param_name, age_code) %>% 
+  summarise(MAP = mean(param_value),
+            HDI_lower = quantile(param_value, probs = 0.025),
+            HDI_upper = quantile(param_value, probs = 0.975)) %>% 
+  mutate_at(vars(MAP, HDI_lower, HDI_upper), round, digits = 2)
+
+
+hddm_table_contrast <- d_hddm %>% 
+  filter(experiment %in% c("noise_gaze", "noise"),
+         condition %in% c("straight_ahead_noise", "straight_ahead_clear",
+                          "clear", "noise")) %>%
+  mutate(condition = ifelse(str_detect(condition, "noise"), "noise", "clear")) %>% 
+  filter(param_name == "boundary", age_code == "children") %>% 
+  group_by(condition) %>% 
+  select(param_value, condition, sample_id) %>% 
+  tidyr::spread(condition, param_value) %>%
+  mutate(cond_diff = noise - clear) %>% 
+  summarise(MAP = mean(cond_diff),
+            HDI_lower = quantile(cond_diff, probs = 0.025),
+            HDI_upper = quantile(cond_diff, probs = 0.975)) %>% 
+  mutate_at(vars(MAP, HDI_lower, HDI_upper), round, digits = 2)
+```
+
+**HDDM.** Fig.\ \ref{fig:hddm_plot_noise} shows the full posterior distributions for the HDDM output. Children had lower drift rates (children $M_{drift}$ = `r hddm_table_age$MAP[4]`; adults $M_{drift}$ = `r hddm_table_age$MAP[3]`) and boundary separation estimates (children $M_{boundary}$ = `r hddm_table_age$MAP[2]`; adults $M_{boundary}$ = `r hddm_table_age$MAP[1]`) as compared to adults, suggesting that children were less efficient and less cautious in their responding. The noise manipulation selectively affected the boundary separation parameter, with higher estimates in the noise condition for both age groups ($\beta_{noise}$ = `r hddm_table_contrast$MAP[1]`, [`r hddm_table_contrast$HDI_lower[1]`, `r hddm_table_contrast$HDI_upper[1]`]). This result suggests that participants' in the noise condition prioritized information accumulation over speed when generating an eye movement in response to the incoming language. This increased decision threshold led to higher accuracy. Moreover, the high overlap in estimates of drift rate suggests that participants were able to integrate the visual and auditory signals such that they could achieve a level of processing efficiency comparable to the clear processing context.
+
+Taken together, the behavioral and EWMA/HDDM results provide converging support for the predictions of our information-seeking account. Processing speech in noise caused listeners to seek additional visual information to support language comprehension. Moreover, we observed a very similar pattern of behavior in children and adults, with both groups producing more language-driven shifts and prioritizing accuracy over speed in the more challenging, noisy environment. 
+
+# General Discussion
+
+Language comprehension in grounded contexts involves integrating information from the visual and linguistic signals. But the value of integrating visual information depends on the processing context. Here, we presented a test of an information-seeking account of eye movements during language processing: that listeners flexibly adapt gaze patterns in response to the value of seeking visual information for accurate language understanding. We showed that children and adults generate slower but more accurate gaze shifts away from a speaker when processing speech in a noisy context. Both groups showed evidence of prioritizing information accumulation over speed (HDDM) while guessing less often (EWMA). Listeners were able to achieve higher accuracy in the more challenging, noisy context. Together, these results suggest that in settings with a degraded linguistic signal, listeners support language comprehension by seeking additional language-relevant information from the visual world.
+
+These results synthesize ideas from several research programs, including work on language-mediated visual attention [@tanenhaus1995integration], goal-based accounts of vision during everyday tasks [@hayhoe2005eye], and work on effortful listening [@van2014listening].  Moreover, our findings parallel recent work by @mcmurray2017waiting showing that individuals with Cochlear Implants, who are consistently processing degraded auditory input, are more likely to delay the process of lexical access as measured by slower gaze shifts to named referents and fewer incorrect gaze shifts to phonological onset competitors. @mcmurray2017waiting also found that they could replicate these changes to gaze patterns in adults with typical hearing by degrading the auditory stimuli so that it shared features with the output of a cochlear implant (noise-vocoded speech).
+
+The results reported here also dovetail with recent developmental work by @yurovsky2017preschoolers. In that study, preschoolers, like adults, were able to integrate top-down expectations about the kinds of things speakers are likely to talk about with bottom-up cues from auditory perception. @yurovsky2017preschoolers situated this finding within the framework of modeling language as a *noisy channel* where listeners combine expectations with perceptual data and weight each based on its reliability. Here, we found a similar developmental parallel in language processing: that 3-5 year-olds, like adults, adapted their gaze patterns to seek additional visual information when the auditory signal became less reliable. This adaptation allowed listeners to generate more accurate responses in the more challenging, noisy context.
+
+## Limitations
+
+This work has several important limitations that pave the way for future work. First, we chose to focus on a single decision about visual fixation to provide a window onto the dynamics of decision-making across different language processing contexts. But our analysis does not consider the rich information present in the gaze patterns that occur leading up to this decision. In our future work, we aim to measure how changes in the language environment might lead to shifts in the dynamics of gaze across a wider timescale. For example, perhaps listeners gather more information about the objects in the scene before the sentence in anticipation of allocating more attention to the speaker once they start to speak. Second, we chose one instantiation of a noisy processing context -- random background noise. But we think our findings should generalize to contexts where other kinds of noise -- e.g., uncertainty over a speaker's reliability or when processing accented speech -- make gathering visual information from the speaker more useful for language understanding.
+
+## Conclusion
+
+This experiment tested the generalizability of our information-seeking account of eye movements within the domain of grounded language comprehension. But the account could be applied to the language acquisition context. Consider that early in language learning, children are acquiring novel word-object links while also learning about visual object categories. Both of these tasks produce different goals that should, in turn, modulate children's decisions about where to allocate visual attention -- e.g., seeking nonlinguistic cues to reference such as eye gaze and pointing become critical when you are unfamiliar with the information in the linguistic signal. More generally, this work integrates goal-based models of eye-movements with language comprehension in grounded, social contexts. This approach presents a way forward for explaining fixation behaviors across a wider variety processing contexts and during different stages of language learning.
+
+\newpage
+
+```{r session info, include = F}
+sessionInfo() %>% pander::pander(compact = F)
+```
+
+# References
+
+\setlength{\parindent}{-0.5in}
+\setlength{\leftskip}{0.5in}

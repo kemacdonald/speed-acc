@@ -1,0 +1,545 @@
+---
+title: "Speed-Acc JEP:G Visualization Code"
+output: html_document
+---
+
+## Setup 
+
+This document contains the codebase for generating the plots in the paper, "An information-seeking account of children's eye movements during grounded signed and spoken language comprehension"
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.width=3, fig.height=3, fig.crop = F, fig.pos = "tb",
+                      fig.path='figs/',echo=F, warning=F, cache=T, message=F, include =F,
+                      sanitize = T)
+```
+
+```{r load libraries}
+library(here); library(kableExtra); library(rogme)
+source(here::here("R/helper_functions/libraries_and_functions.R"))
+source(here::here("R/helper_functions/ewma_helper_funs.R"))
+data_path <- "data/3_final_merged_data/first_shifts/"
+models_path <- "data/3_final_merged_data/bda_posterior_samples/"
+```
+
+## Spoken/Sign Language 
+
+```{r get posterior samples trio}
+d_models_trio <- readRDS(here::here(models_path, "speed-acc-trio-posterior-samples.rds"))
+```
+
+```{r get trio data}
+upper_bound_RT <- 2000
+
+d_kids_trio <- read_csv(here::here(data_path, "speed_acc_child_trio_fstshift_tidy.csv")) 
+
+d_kids_trio %<>% 
+  mutate(stimuli = ifelse(stimuli == "V1" | stimuli == "V2", "ASL", 
+                          ifelse(stimuli == "Trio", "Object", 
+                                 ifelse(stimuli == "Bull", "Bullseye",
+                                        stimuli))),
+         stimuli = factor(stimuli, levels = c("ASL", "Face", "Object", "Bullseye"))) %>% 
+  filter(RT <= upper_bound_RT, trial_type != "no_shift", age_code == "child")
+```
+
+```{r get mean acc for each participant trio}
+ss_trio <- d_kids_trio %>% 
+  group_by(Sub.Num, age_code, Months, language_modality, 
+           stimuli, hearing_status_participant) %>% 
+  filter(trial_type != "no_shift") %>% 
+  summarise(mean_correct = mean(correct))
+```
+
+Make the Accuracy plot for trio data.
+
+```{r make trio acc plot}
+## global plot variables
+dec_width = 0.5
+dec_size = 1.5
+dec_color <- "red"
+connector_size = dec_size - 0.9
+connector_length <- 2.1
+connector_color <- "black"
+
+# how many quantiles do you want?
+q_seq <- c(0.5)
+
+p_acc_trio <- ss_trio %>% 
+  ggplot(aes(x = fct_rev(stimuli), y = mean_correct)) +
+  ggbeeswarm::geom_quasirandom(shape = 21, width = 0.1, color = "black", 
+                               size = 2,
+                               fill = "darkgrey",
+                               alpha = 0.6) + 
+  geom_hline(yintercept = 0.5, linetype = "dashed") +
+  labs(x = NULL, y = "Prop. Target Looking") +
+  lims(y = c(0, 1)) 
+
+# get model values
+d_model_vals <- d_models_trio$acc_trio_contin %>%
+  select(sample_id, contains("prob")) %>% 
+  select(-age_beta_prob) %>% 
+  dplyr::rename(ASL = asl_prob,
+                Bullseye = bullseye_prob,
+                Face = face_prob,
+                Object = object_prob) %>% 
+  gather(key = stimuli, value = mean_correct, -sample_id)
+
+d_quantiles <- d_model_vals %>% 
+  group_by(stimuli) %>% 
+  summarise(val = hd(mean_correct))
+
+## add MAP estimate
+for (qi in 1:length(q_seq)) {
+  p_acc_trio <- p_acc_trio + stat_summary(data = d_model_vals,
+                        geom = "errorbar", 
+                        fun.y = hd, fun.ymin = hd, fun.ymax = hd,
+                        width = dec_width - .02,
+                        size = dec_size,
+                        color = dec_color,
+                        fun.args = list(q = q_seq[[qi]]))
+}
+
+## add 95% HDI
+hdis <- c(0.025, 0.975)
+for (qi in 1:length(hdis)) {
+  p_acc_trio <- p_acc_trio + stat_summary(data = d_model_vals,
+                        geom = "errorbar", 
+                        fun.y = hd, fun.ymin = hd, fun.ymax = hd,
+                        width = dec_width - 0.2,
+                        size = dec_size - .3,
+                        color = dec_color,
+                        fun.args = list(q = hdis[[qi]]))
+}
+
+# add lines connecting medians
+p_acc_trio <- p_acc_trio +
+  geom_segment(data = filter(d_quantiles, stimuli %in% c("Bullseye", "Object")),
+               aes(x = 1 + dec_width/connector_length,
+                   xend = 2 - dec_width/connector_length,
+                   y = val[1], yend = val[2]),
+               color = connector_color,
+               size = connector_size,
+               alpha = 1) +
+  geom_segment(data = filter(d_quantiles, stimuli %in% c("Object", "Face")),
+               aes(x = 2 + dec_width/connector_length,
+                   xend = 3 - dec_width/connector_length,
+                   y = val[2], yend = val[1]),
+               color = connector_color,
+               size = connector_size,
+               alpha = 1) +
+  geom_segment(data = filter(d_quantiles, stimuli %in% c("Face", "ASL")),
+               aes(x = 3 + dec_width/connector_length,
+                   xend = 4 - dec_width/connector_length,
+                   y = val[2], yend = val[1]),
+               color = connector_color,
+               size = connector_size,
+               alpha = 1)
+
+p_acc_trio
+```
+
+Make RT plot.
+
+```{r make trio rt plot}
+p_rt_trio <- d_kids_trio %>% 
+  filter(trial_type %in% c("C_T"), age_code == "child") %>% 
+  ggplot(aes(x = fct_rev(stimuli), y = RT_sec)) +
+  ggbeeswarm::geom_quasirandom(shape = 21, width = 0.15, color = "black", 
+                               fill = "darkgrey",
+                               alpha = 0.5) + 
+  labs(y = "RT (sec)", x = NULL) 
+
+# get model values
+d_model_vals <- d_models_trio$rt_trio_contin %>%
+  select(sample_id, contains("scale")) %>% 
+  select(-age_beta_rt_scale) %>% 
+  dplyr::rename(ASL = asl_rt_scale,
+                Bullseye = bullseye_rt_scale,
+                Face = face_rt_scale,
+                Object = object_rt_scale) %>% 
+  gather(key = stimuli, value = rt_msec, -sample_id) %>% 
+  mutate(RT_sec = rt_msec / 1000)
+
+d_quantiles <- d_model_vals %>% 
+  group_by(stimuli) %>% 
+  summarise(val = hd(RT_sec))
+
+## add MAP estimate
+for (qi in 1:length(q_seq)) {
+  p_rt_trio <- p_rt_trio + stat_summary(data = d_model_vals,
+                        geom = "errorbar", 
+                        fun.y = hd, fun.ymin = hd, fun.ymax = hd,
+                        width = dec_width - .02,
+                        size = dec_size,
+                        color = dec_color,
+                        fun.args = list(q = q_seq[[qi]]))
+}
+
+## add 95% HDI
+hdis <- c(0.025, 0.975)
+for (qi in 1:length(hdis)) {
+  p_rt_trio <- p_rt_trio + stat_summary(data = d_model_vals,
+                        geom = "errorbar", 
+                        fun.y = hd, fun.ymin = hd, fun.ymax = hd,
+                        width = dec_width - 0.2,
+                        size = dec_size - .3,
+                        color = dec_color,
+                        fun.args = list(q = hdis[[qi]]))
+}
+
+p_rt_trio <- p_rt_trio +
+  geom_segment(data = filter(d_quantiles, stimuli %in% c("Bullseye", "Object")),
+               aes(x = 1 + dec_width/connector_length,
+                   xend = 2 - dec_width/connector_length,
+                   y = val[1], yend = val[2]),
+               color = connector_color,
+               size = connector_size,
+               alpha = 1) +
+  geom_segment(data = filter(d_quantiles, stimuli %in% c("Object", "Face")),
+               aes(x = 2 + dec_width/connector_length,
+                   xend = 3 - dec_width/connector_length,
+                   y = val[2], yend = val[1]),
+               color = connector_color,
+               size = connector_size,
+               alpha = 1) +
+  geom_segment(data = filter(d_quantiles, stimuli %in% c("Face", "ASL")),
+               aes(x = 3 + dec_width/connector_length,
+                   xend = 4 - dec_width/connector_length,
+                   y = val[2], yend = val[1]),
+               color = connector_color,
+               size = connector_size,
+               alpha = 1)
+
+p_rt_trio
+```
+
+## Text Processing
+
+## Speech in background noise
+
+```{r read data}
+d_kids_noise <- read_csv(here::here(data_path, "speed_acc_child_noise_fstshift_tidy.csv")) %>% 
+  select(-age)
+
+d_kids_gaze <- read_csv(here::here(data_path, "speed_acc_child_gaze_fstshift_tidy.csv")) %>% 
+  select(-age)
+
+d_adults <- read_csv(here::here(data_path, "speed_acc_adult_ng_fstshift_tidy.csv")) %>% 
+  select(-age)
+```
+
+```{r read bda output}
+d_models <- readRDS(here::here(data_path, "speed-acc-posterior-samples.rds"))
+```
+
+```{r clean datasets for merge}
+d_kids_noise %<>% mutate(gaze_condition = ifelse(gaze_condition == "no_gaze", 
+                                                 "straight_ahead", 
+                                                 gaze_condition))
+
+d_kids_gaze %<>% mutate(noise_condition = ifelse(noise_condition == "no_noise", 
+                                                 "clear", 
+                                                 noise_condition))
+```
+
+```{r merge datasets}
+d <- bind_rows(mutate(d_kids_noise, experiment = "kids_noise", age_category = "children"),
+               mutate(d_kids_gaze, experiment = "kids_gaze", age_category = "children"),
+               mutate(d_adults, experiment = "adults_ng", age_category = "adults")) %>% 
+  select(-resp_onset_type_fact, -subid_short) %>% 
+  mutate(age_category = factor(age_category) %>% fct_rev(),
+         gaze_condition = factor(gaze_condition) %>% fct_rev()) 
+
+# uncomment below to test that we have the right number of rows after the merge (result should be TRUE)
+nrow(d_kids_gaze) + nrow(d_kids_noise) + nrow(d_adults) == nrow(d)
+```
+
+```{r get noise experiment}
+d_e1 <- d %>% 
+  filter(experiment != "kids_gaze",
+         keep_runsheet %in% c("yes", "keep"), 
+         keep_et == "include",
+         gaze_condition == "straight_ahead")
+```
+
+```{r filter participants}
+d_e1_analysis <- d_e1 %>% 
+  filter(rt <= 1.5,
+         response_onset_type == "noun",
+         shift_start_location == "center") %>% 
+  mutate(shift_acc_num = ifelse(shift_accuracy_clean == "correct", 1, 0),
+         log_rt = log(rt))
+```
+
+```{r noise summarize accuracy and rt}
+ss_acc_e1 <- d_e1_analysis %>% 
+  filter(!is.na(shift_accuracy_clean)) %>% 
+  group_by(subid, shift_accuracy_clean, noise_condition, age_category) %>% 
+  summarise(n = n()) %>% 
+  group_by(subid, noise_condition, age_category) %>% 
+  mutate(total_trials = sum(n)) %>% 
+  mutate(prop = round(n / total_trials, 2)) 
+
+ss_rt_e1 <- d_e1_analysis %>% 
+  filter(!is.na(rt)) %>% 
+  group_by(subid, noise_condition, age_category) %>% 
+  summarise(m_rt = median(rt))
+
+ss_final <- left_join(ss_acc_e1, ss_rt_e1) %>% ungroup()
+```
+
+```{r noise summarize model output}
+ms_acc_e1 <- d_models$acc_noise %>% 
+  group_by(noise_condition, age_category) %>% 
+  summarise(prop = mean(acc_prob_scale),
+            hdi_lower = quantile(acc_prob_scale, probs = 0.025),
+            hdi_upper = quantile(acc_prob_scale, probs = 0.975)) %>% 
+  mutate_if(.predicate = is.numeric, .funs = round, digits = 2) %>% 
+  mutate(age_category = factor(age_category) %>% fct_rev()) 
+
+ms_rt_e1 <- d_models$rt_noise %>% 
+  group_by(noise_condition, age_category) %>% 
+  summarise(m_rt = mean(rt_ms_scale),
+            hdi_lower = quantile(rt_ms_scale, probs = 0.025),
+            hdi_upper = quantile(rt_ms_scale, probs = 0.975)) %>% 
+  mutate_if(.predicate = is.numeric, .funs = round, digits = 2) %>% 
+  mutate(age_category = factor(age_category) %>% fct_rev()) 
+```
+
+```{r noise create contrasts}
+noise_contrast <- d_models$acc_noise %>% 
+  select(sample_id:acc_prob_scale, -param_est) %>% 
+  spread(noise_condition, acc_prob_scale) %>% 
+  mutate(noise_contrast = noise - clear) %>% 
+  select(sample_id, noise_contrast, age_category)
+
+noise_contrast_rt <- d_models$rt_noise %>% 
+  select(sample_id:rt_ms_scale, -param_est) %>% 
+  spread(noise_condition, rt_ms_scale) %>% 
+  mutate(noise_contrast = noise - clear) %>% 
+  select(sample_id, noise_contrast, age_category)
+```
+
+```{r rt_insets}
+line_size <- 1.2
+
+p <- noise_contrast_rt %>% 
+  filter(age_category == "children") %>% 
+  ggplot(aes(x = noise_contrast)) +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "black", size = 0.8) +
+  geom_line(stat = "density", size = line_size, color = "black") +
+  labs(x = "RT (sec)", y = NULL) +
+  scale_x_continuous(breaks=c(0, .1)) +
+  theme_minimal() +
+  theme(panel.grid.minor = element_line(colour = "grey"),
+        plot.background = element_rect(fill = "grey90", color = NA),
+        axis.ticks = element_blank(), 
+        axis.text.y = element_blank(),
+        text = element_text(size = 8)) 
+
+# extract the x and y values for the density line
+build_p <- ggplot_build(p)
+plot_xy <- build_p$data[[2]] %>% 
+  select(x:y) %>% 
+  rename(noise_contrast = x)
+
+# add the red and green ribbons based on those values
+rt_child_inset <- p + 
+  geom_ribbon(aes(ymin = 0, ymax = y - 0.15, x = noise_contrast), 
+              fill = "darkred", alpha = 0.5,
+              inherit.aes = F, 
+              data = filter(plot_xy, noise_contrast <= 0)) + 
+  geom_ribbon(aes(ymin = 0, ymax = y - 0.15, x = noise_contrast), 
+              fill = "darkgreen", alpha = 0.5,
+              inherit.aes = F, 
+              data = filter(plot_xy, noise_contrast >= 0)) 
+
+## adults 
+p_adult <- noise_contrast_rt %>% 
+  filter(age_category == "adults") %>% 
+  ggplot(aes(x = noise_contrast)) +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "black", size = 0.8) +
+  geom_line(stat = "density", size = line_size, color = "black") +
+  labs(x = "RT (sec)", y = NULL) +
+  scale_x_continuous(breaks=c(0,.1)) +
+  theme_minimal() +
+  theme(panel.grid.minor = element_line(colour = "grey"),
+        plot.background = element_rect(fill = "grey90", color = NA),
+        axis.ticks = element_blank(), 
+        axis.text.y = element_blank(),
+        text = element_text(size = 8)) 
+
+# extract the x and y values for the density line
+build_p_adult <- ggplot_build(p_adult)
+plot_xy_adult <- build_p_adult$data[[2]] %>% 
+  select(x:y) %>% 
+  rename(noise_contrast = x)
+
+# add the red and green ribbons based on those values
+rt_adult_inset <- p_adult + 
+  geom_ribbon(aes(ymin = 0, ymax = y - 0.15, x = noise_contrast), 
+              fill = "darkred", alpha = 0.5,
+              inherit.aes = F, 
+              data = filter(plot_xy_adult, noise_contrast <= 0)) + 
+  geom_ribbon(aes(ymin = 0, ymax = y - 0.15, x = noise_contrast), 
+              fill = "darkgreen", alpha = 0.5,
+              inherit.aes = F, 
+              data = filter(plot_xy_adult, noise_contrast >= 0)) 
+```
+
+```{r acc_insets}
+p <- noise_contrast %>% 
+  filter(age_category == "children") %>% 
+  ggplot(aes(x = noise_contrast)) +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "black", size = 0.8) +
+  geom_line(stat = "density", size = line_size, color = "black") +
+  scale_x_continuous(breaks=c(0, .1), limits = c(-0.1, 0.15)) +
+  labs(x = "Accuracy", y = NULL) +
+  theme_minimal() +
+  theme(panel.grid.minor = element_line(colour = "grey"),
+        plot.background = element_rect(fill = "grey90", color = NA),
+        axis.ticks = element_blank(), 
+        axis.text.y = element_blank(),
+        text = element_text(size = 8)) 
+
+# extract the x and y values for the density line
+build_p <- ggplot_build(p)
+plot_xy <- build_p$data[[2]] %>% 
+  select(x:y) %>% 
+  rename(noise_contrast = x)
+
+# add the red and green ribbons based on those values
+acc_child_inset <- p + 
+  geom_ribbon(aes(ymin = 0, ymax = y - 0.15, x = noise_contrast), 
+              fill = "darkred", alpha = 0.5,
+              inherit.aes = F, 
+              data = filter(plot_xy, noise_contrast <= 0)) + 
+  geom_ribbon(aes(ymin = 0, ymax = y - 0.15, x = noise_contrast), 
+              fill = "darkgreen", alpha = 0.5,
+              inherit.aes = F, 
+              data = filter(plot_xy, noise_contrast >= 0)) 
+
+## adults 
+p_adult <- noise_contrast %>% 
+  filter(age_category == "adults") %>% 
+  ggplot(aes(x = noise_contrast)) +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "black", size = 0.8) +
+  geom_line(stat = "density", size = line_size, color = "black") +
+  labs(x = "Accuracy", y = NULL) +
+  scale_x_continuous(breaks=c(0, .1), limits = c(-0.1, 0.15)) +
+  theme_minimal() +
+  theme(panel.grid.minor = element_line(colour = "grey"),
+        plot.background = element_rect(fill = "grey90", color = NA),
+        axis.ticks = element_blank(), 
+        axis.text.y = element_blank(),
+        text = element_text(size = 8)) 
+
+# extract the x and y values for the density line
+build_p_adult <- ggplot_build(p_adult)
+plot_xy_adult <- build_p_adult$data[[2]] %>% 
+  select(x:y) %>% 
+  rename(noise_contrast = x)
+
+# add the red and green ribbons based on those values
+acc_adult_inset <- p_adult + 
+  geom_ribbon(aes(ymin = 0, ymax = y - 0.15, x = noise_contrast), 
+              fill = "darkred", alpha = 0.5,
+              inherit.aes = F, 
+              data = filter(plot_xy_adult, noise_contrast <= 0)) + 
+  geom_ribbon(aes(ymin = 0, ymax = y - 0.15, x = noise_contrast), 
+              fill = "darkgreen", alpha = 0.5,
+              inherit.aes = F, 
+              data = filter(plot_xy_adult, noise_contrast >= 0)) 
+```
+
+```{r noise acc plot}
+nudge_x <- 0.35
+means_color <- "#de2d26"
+
+# add blank level to leave room for the inset
+ss_final %<>% mutate(noise_condition = factor(noise_condition))
+levels(ss_final$noise_condition) <- c(levels(ss_final$noise_condition),'') 
+
+acc_plot_e1 <- ss_final %>% 
+  filter(shift_accuracy_clean == "correct") %>% 
+  ggplot(aes(x = noise_condition, y = prop, color = noise_condition)) +
+  #geom_line(aes(group = subid), color = "grey", alpha = 0.5) +
+  geom_jitter(width = 0.04, alpha = 0.8, shape = 21) +
+  geom_violin(draw_quantiles = 0.5, trim = T, width = 0.5, size = 1, fill = NA) + 
+  # geom_linerange(data = ms_acc_e1, aes(ymin = hdi_lower, ymax = hdi_upper), 
+  #                color = means_color, size = 1,
+  #                position = position_nudge(x = nudge_x)) + 
+  # geom_line(data = ms_acc_e1, aes(group = 1), 
+  #           color = means_color, size = 0.8,
+  #           position = position_nudge(x = nudge_x)) + 
+  # geom_point(data = ms_acc_e1, aes(x = noise_condition, y = prop), 
+  #            color = means_color, size = 1.5,
+  #            position = position_nudge(x = nudge_x)) +
+  guides(fill = F, color = F) +
+  ggthemes::scale_color_ptol() +
+  scale_x_discrete(expand = c(0,0.8), drop=FALSE) +
+  geom_hline(yintercept = 0.5, linetype = "dashed") +
+  labs(x = NULL, y = "Accuracy") +
+  ylim(0.2, 1.05) +
+  theme(text = element_text(size = 12)) +
+  facet_wrap(~age_category, ncol = 1, scale = "free_x")
+```
+
+```{r rt plot}
+## first shift RTs
+rt_plot_e1 <- ss_final %>% 
+  ungroup() %>% 
+  filter(shift_accuracy_clean == "correct") %>% 
+  ggplot(aes(x = noise_condition, y = m_rt, color = noise_condition)) +
+  #geom_line(aes(group = subid), color = "grey", alpha = 0.5) +
+  geom_jitter(width = 0.04, alpha = 0.8, shape = 21) +
+  geom_violin(draw_quantiles = 0.5, trim = T, width = 0.5, size = 1, fill = NA) + 
+  # geom_linerange(data = ms_rt_e1, aes(ymin = hdi_lower, ymax = hdi_upper), 
+  #                color = means_color, size = 1,
+  #                position = position_nudge(x = nudge_x)) + 
+  # geom_line(data = ms_rt_e1, aes(group = 1), 
+  #           color = means_color, size = 0.8,
+  #           position = position_nudge(x = nudge_x)) + 
+  # geom_point(data = ms_rt_e1, aes(x = noise_condition, y = m_rt), 
+  #            color = means_color, size = 1.5,
+  #            position = position_nudge(x = nudge_x)) +
+  guides(fill = F, color = F) +
+  ggthemes::scale_color_ptol() +
+  scale_x_discrete(expand = c(0,0.8), drop = FALSE) +
+  labs(x = NULL, y = "RT (sec)") +
+  ylim(0, 1.2) +
+  theme(text = element_text(size = 12)) +
+  facet_wrap(~age_category, ncol = 1, scale = "free_x")
+```
+
+```{r draw insets noise}
+# here is where we add the condition difference inset plots of the posterior distributions
+x_val <- 0.58
+y_val_kids <- 0.67
+y_val_aduls <- 0.17
+wid <- 0.5
+hei <- 0.35
+sca <- 0.5
+
+acc_plot_final <- ggdraw() +
+  draw_plot(acc_plot_e1) +
+  draw_plot(acc_child_inset, x = x_val, y = y_val_kids, 
+            width = wid, height = hei, scale = sca) +
+  draw_plot(acc_adult_inset, x = x_val, y = y_val_aduls, 
+            width = wid, height = hei, scale = sca) 
+
+rt_plot_final <- ggdraw() +
+  draw_plot(rt_plot_e1) +
+  draw_plot(rt_child_inset, x = x_val, y = y_val_kids, 
+            width = wid, height = hei, scale = sca) +
+  draw_plot(rt_adult_inset, x = x_val, y = y_val_aduls, 
+            width = wid, height = hei, scale = sca)  
+```
+
+```{r put noise rt and acc plots together}
+e1_plot <- cowplot::plot_grid(rt_plot_final, acc_plot_final, labels = c("A", "B"))
+```
+
+```{r save noise rt and acc plot}
+ggsave(here::here("paper/journal_submission/figs/e3_behav_results.png"), 
+       e1_plot, width = 8, height = 6)
+```

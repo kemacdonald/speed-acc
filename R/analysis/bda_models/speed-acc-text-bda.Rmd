@@ -36,6 +36,8 @@ d <- read_csv(here::here(data_path, "speed_acc_adult_text_fstshift_tidy.csv"))
 d_asl <- read_csv(here::here(data_path, "speed_acc_child_trio_fstshift_tidy.csv"))
 ```
 
+Some minor data cleaning. 
+
 ```{r clean datasets to merge}
 d_asl %<>% 
   filter(language_modality == "ASL" & age_code == "adult") %>% 
@@ -99,7 +101,8 @@ m_rt <- d %>%
   prior_intercept = normal(0, 5),
   prior_covariance = decov(regularization = 2), 
   adapt_delta = 0.99,
-  chains = 4)
+  chains = n_chains,
+  iter = n_samples)
 
 samples_text_rt <- m_rt %>% 
   as.data.frame() %>% as_tibble() %>% 
@@ -135,7 +138,8 @@ m_ewma_cuts <- ss_cutoffs %>%
   prior_intercept = normal(0, 5),
   prior_covariance = decov(regularization = 2), 
   adapt_delta = 0.99,
-  chains = 4)
+  chains = n_chains,
+  iter = n_samples)
 
 # extract samples
 samples_text_ewma_cuts <- m_ewma_cuts %>% 
@@ -158,7 +162,8 @@ m_ewma_guess <- d_ewma_text %>%
         prior_intercept = normal(0, 1),
         prior_covariance = decov(regularization = 2), 
         adapt_delta = 0.99,
-        chains = 4)
+        chains = n_chains,
+        iter = n_samples)
 
 samples_text_ewma_guess <- m_ewma_guess %>% 
   as.data.frame() %>% as_tibble() %>% 

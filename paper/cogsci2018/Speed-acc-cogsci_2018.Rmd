@@ -595,7 +595,6 @@ This experiment tested the generalizability of our information-seeking account o
 sessionInfo() %>% pander::pander(compact = F)
 ```
 
-
 \vspace{1em} \fbox{\parbox[b][][c]{7.3cm}{\centering All data and code for this paper are available at\\\url{https://github.com/kemacdonald/speed-acc/tree/master/paper/cogsci2018}}} \vspace{1em}
 
 # Acknowledgements
