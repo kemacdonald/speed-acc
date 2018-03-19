@@ -69,7 +69,8 @@ d_guess <- ms$trio$ewma_summary %>%
 ```
 
 ```{r}
-curves_plot <- d_guess %>% ggplot(aes(x = rt, y = mean_param, color = ewma_param, linetype = condition)) +
+curves_plot <- d_guess %>% 
+  ggplot(aes(x = rt, y = mean_param, color = ewma_param, linetype = condition)) +
   geom_line() +
   ylim(0.3, 0.8)
 ```
@@ -242,7 +243,6 @@ cowplot::plot_grid(ewma_boxplots$noise, ewma_boxplots$gaze, ncol = 2)
 ```{r}
 kid_noise_box <- ewma_boxplots$noise
 ```
-
 
 ### Experiment 3: Noise and Gaze (adults)
 

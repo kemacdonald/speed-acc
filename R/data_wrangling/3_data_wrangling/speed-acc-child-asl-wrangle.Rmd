@@ -1,14 +1,11 @@
 ---
 title: "Speed-acc kids data processing"
-author: "Kyle MacDonald"
-date: "October 1, 2015"
 output: html_document
 ---
 
 ## Script to munge eye movement data
 
 ```{r libraries}
-rm(list=ls())
 source("../helper_functions/libraries_v_3.6.R")
 source("../helper_functions/libraries_and_functions.R")
 ```

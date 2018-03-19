@@ -88,7 +88,9 @@ aggregate_ewma <- function(d) {
     group_by(ewma_param, subid, condition, rt) %>% 
     summarise(mean_param_ss = mean(param_value)) %>% 
     group_by(ewma_param, condition, rt) %>% 
-    summarise(mean_param = mean(mean_param_ss))
+    summarise(mean_param = mean(mean_param_ss)) %>% 
+    ungroup %>% 
+    mutate(condition = as.factor(condition))
   
   cutoffs <- d %>% 
     group_by(condition, subid, guess) %>% 
@@ -149,10 +151,10 @@ plot_ewma_chart <- function(model_vals) {
     geom_segment(aes(x = ci_lower, y = 0.8, xend = ci_upper, yend = 0.8), 
                  color = "black", size = 100, alpha = 0.2,
                  data = cutoffs_df) +
-    geom_ribbon(aes(ymin = cs, ymax = ucl, x = rt), fill = "red", alpha = 0.3, 
+    geom_ribbon(aes(ymin = cs, ymax = ucl, x = rt), fill = "darkred", alpha = 0.5, 
                 data = ribbons$red, 
                 inherit.aes = F)  +
-    geom_ribbon(aes(ymin = cs, ymax = ucl, x = rt), fill = "green", alpha = 0.3, 
+    geom_ribbon(aes(ymin = cs, ymax = ucl, x = rt), fill = "darkgreen", alpha = 0.5, 
                 data = ribbons$green, 
                 inherit.aes = F) +
     geom_line(size = 1) +

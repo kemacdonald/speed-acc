@@ -1,9 +1,9 @@
 ---
-title: "Speed-Acc JEP:G Visualization Code"
+title: "Speed-Acc JEP: General Figure Visualization Code"
 output: html_document
 ---
 
-## Setup 
+## Set up 
 
 This document contains the codebase for generating the plots in the paper, "An information-seeking account of children's eye movements during grounded signed and spoken language comprehension"
 
@@ -17,11 +17,147 @@ knitr::opts_chunk$set(fig.width=3, fig.height=3, fig.crop = F, fig.pos = "tb",
 library(here); library(kableExtra); library(rogme)
 source(here::here("R/helper_functions/libraries_and_functions.R"))
 source(here::here("R/helper_functions/ewma_helper_funs.R"))
+```
+
+```{r set data paths}
 data_path <- "data/3_final_merged_data/first_shifts/"
+time_path <- "data/3_final_merged_data/timecourse/"
 models_path <- "data/3_final_merged_data/bda_posterior_samples/"
 ```
 
+```{r set model paths}
+ewma_path <- "data/3_final_merged_data/ewma_output/"
+hddm_path <- "data/3_final_merged_data/hddm_output/"
+```
+
+```{r read all ewma files}
+# read in all files using purrr
+files <- dir(path = ewma_path, pattern = "*.csv") 
+d_ewma <- files %>% purrr::map_df(read_ewma, path = ewma_path)
+```
+
+
 ## Spoken/Sign Language 
+
+### Trio Timecourse plot
+
+```{r}
+d_time_trio <- read_csv(here::here(time_path, "speed-acc-child-timecourse.csv"))
+
+d_time_trio %<>% mutate(stimuli = ifelse(stimuli %in% c("V1", "V2"), "ASL", 
+                               ifelse(stimuli == "Trio", "Object", 
+                                      ifelse(stimuli == "Bull", "Bullseye",stimuli))),
+              stimuli = factor(stimuli, levels = c("ASL", "Face", "Object", "Bullseye")))
+
+colnames(d_time_trio) <- gsub(pattern = "X", replacement = "", x = colnames(d_time_trio))
+```
+
+First, we munge the raw iChart data.
+
+Grab just the eye movement data and group information
+
+```{r}
+ss_iChart <- d_time_trio %>% 
+  select(Sub.Num, language_modality, trial_type, stimuli, age_code, Response, `0`:`3000`) %>% 
+  filter(Response == "D", age_code == "child") 
+```
+
+Convert to long format
+
+```{r}
+ss_iChart_long <- ss_iChart %>% 
+  gather(key = Time.ms, value = value, `0`:`3000`) %>% 
+  filter(value %in% c("0", "0.5", "1")) %>% 
+  mutate(value_cat = factor(value, labels = c("Distractor", "Center", "Target")),
+         Time.ms_numeric = as.numeric(Time.ms)) 
+```    
+
+Summarize for each participant - get proportion looking at each time slice
+
+```{r}
+ms_iChart_count <- ss_iChart_long %>% 
+  group_by(Sub.Num, Time.ms, language_modality, value_cat) %>% 
+  dplyr::summarise(count = ifelse(n() == 0, 0, n())) %>% 
+  dplyr::summarise(sum_count = sum(count)) %>% 
+  ungroup() %>% 
+  mutate(Sub.Num = as.character(Sub.Num))
+
+ms_iChart <- as.data.frame(xtabs(~ Sub.Num + value_cat + Time.ms, data = ss_iChart_long),
+                           stringsAsFactors = F) %>% 
+  left_join(y = ms_iChart_count, by = c("Sub.Num", "Time.ms")) %>% 
+  mutate(proportion_looking = Freq / sum_count,
+         language_modality_factor = as.factor(language_modality))
+```
+
+Get means and CIs for proportion looking at each time slice across particpants
+
+```{r}
+ms_iChart_count <- ss_iChart_long %>% 
+  group_by(Sub.Num, Time.ms, stimuli, value_cat) %>% 
+  dplyr::summarise(count = ifelse(n() == 0, 0, n())) %>% 
+  dplyr::summarise(sum_count = sum(count)) %>% 
+  ungroup() %>% 
+  mutate(Sub.Num = as.character(Sub.Num))
+
+ms_iChart <- as.data.frame(xtabs(~ Sub.Num + value_cat + Time.ms, data = ss_iChart_long),
+                           stringsAsFactors = F) %>% 
+  left_join(y = ms_iChart_count, by = c("Sub.Num", "Time.ms")) %>% 
+  mutate(proportion_looking = Freq / sum_count,
+         stimuli_factor = as.factor(stimuli))
+
+# ge plt means and bootsrapped CIs for each timepoint
+nboot <- 500
+
+ms_mean_iChart <- ms_iChart %>% 
+  group_by(Time.ms, stimuli, value_cat) %>% 
+  langcog::multi_boot_standard(column = "proportion_looking", na.rm = T, nboot = nboot) %>% 
+  filter(is.na(stimuli) == F) %>% 
+  ungroup() %>% 
+  mutate(Time.ms = as.numeric(Time.ms))
+```
+
+Now we make Tanenhaus style plot.
+
+```{r make tanenhaus-plot for trio}
+library(ggrepel)
+breaks <- seq(0,3000, by=500)
+y_breaks <- seq(0.25,1.0, by = 0.25)
+points <- seq(0,3000, by = 200)
+
+breaks <- seq(0,3000, by=500)
+y_breaks <- seq(0.25,1.0, by = 0.25)
+points <- seq(0,3000, by = 200)
+
+# change factor levels for plot to help compare conditions of interest
+ms_mean_iChart$stimuli <- factor(ms_mean_iChart$stimuli, 
+                                 levels = c("ASL", "Face", "Object", "Bullseye"))
+
+trio_timecourse <- ggplot(aes(x = as.numeric(Time.ms), y = mean, color = value_cat), 
+       data = ms_mean_iChart) + 
+  ylim(-.1,1) +
+  xlim(0,3550) +
+  geom_line(data = filter(ms_mean_iChart, as.numeric(Time.ms) %in% points), size=0.7) +
+  geom_linerange(data = filter(ms_mean_iChart, Time.ms %in% points),
+                 aes(ymin = summary_ci_lower, ymax = summary_ci_upper), alpha = 0.5) +
+  geom_point(data = filter(ms_mean_iChart, as.numeric(Time.ms) %in% points), size=2) +
+  scale_color_manual(values = c("grey70", "grey50", "grey1")) +
+  xlab("Time from noun onset (ms)") +
+  ylab("Proportion looking") +
+  guides(color = F) +
+  geom_rect(aes(xmin = 0, xmax = 2000, ymin = -Inf, ymax = -.1), alpha = 0.1, 
+            fill = "grey70", color = NA) +
+  facet_wrap(~stimuli, ncol = 1) +
+  theme(plot.margin = unit(c(1,4,1,1), "lines")) + 
+  geom_text_repel(
+    data = filter(ms_mean_iChart, Time.ms == max(Time.ms)),
+    aes(label = value_cat),
+    size = 4,
+    nudge_x = 55,
+    segment.color = NA
+  ) 
+```
+
+### Trio First shift accuracy plot
 
 ```{r get posterior samples trio}
 d_models_trio <- readRDS(here::here(models_path, "speed-acc-trio-posterior-samples.rds"))
@@ -46,10 +182,9 @@ ss_trio <- d_kids_trio %>%
   group_by(Sub.Num, age_code, Months, language_modality, 
            stimuli, hearing_status_participant) %>% 
   filter(trial_type != "no_shift") %>% 
-  summarise(mean_correct = mean(correct))
+  summarise(mean_correct = mean(correct),
+            m_rt = median(RT_sec))
 ```
-
-Make the Accuracy plot for trio data.
 
 ```{r make trio acc plot}
 ## global plot variables
@@ -66,11 +201,11 @@ q_seq <- c(0.5)
 p_acc_trio <- ss_trio %>% 
   ggplot(aes(x = fct_rev(stimuli), y = mean_correct)) +
   ggbeeswarm::geom_quasirandom(shape = 21, width = 0.1, color = "black", 
-                               size = 2,
+                               size = 1.5,
                                fill = "darkgrey",
                                alpha = 0.6) + 
   geom_hline(yintercept = 0.5, linetype = "dashed") +
-  labs(x = NULL, y = "Prop. Target Looking") +
+  labs(x = NULL, y = "Prop. Correct") +
   lims(y = c(0, 1)) 
 
 # get model values
@@ -85,68 +220,34 @@ d_model_vals <- d_models_trio$acc_trio_contin %>%
 
 d_quantiles <- d_model_vals %>% 
   group_by(stimuli) %>% 
-  summarise(val = hd(mean_correct))
+  summarise(ci_lower = hd(mean_correct, q = 0.025),
+            ci_upper = hd(mean_correct, q = 0.975),
+            mean_correct = hd(mean_correct, q = 0.5))
 
-## add MAP estimate
-for (qi in 1:length(q_seq)) {
-  p_acc_trio <- p_acc_trio + stat_summary(data = d_model_vals,
-                        geom = "errorbar", 
-                        fun.y = hd, fun.ymin = hd, fun.ymax = hd,
-                        width = dec_width - .02,
-                        size = dec_size,
-                        color = dec_color,
-                        fun.args = list(q = q_seq[[qi]]))
-}
-
-## add 95% HDI
-hdis <- c(0.025, 0.975)
-for (qi in 1:length(hdis)) {
-  p_acc_trio <- p_acc_trio + stat_summary(data = d_model_vals,
-                        geom = "errorbar", 
-                        fun.y = hd, fun.ymin = hd, fun.ymax = hd,
-                        width = dec_width - 0.2,
-                        size = dec_size - .3,
-                        color = dec_color,
-                        fun.args = list(q = hdis[[qi]]))
-}
-
-# add lines connecting medians
+# add quantiles to plot
 p_acc_trio <- p_acc_trio +
-  geom_segment(data = filter(d_quantiles, stimuli %in% c("Bullseye", "Object")),
-               aes(x = 1 + dec_width/connector_length,
-                   xend = 2 - dec_width/connector_length,
-                   y = val[1], yend = val[2]),
-               color = connector_color,
-               size = connector_size,
-               alpha = 1) +
-  geom_segment(data = filter(d_quantiles, stimuli %in% c("Object", "Face")),
-               aes(x = 2 + dec_width/connector_length,
-                   xend = 3 - dec_width/connector_length,
-                   y = val[2], yend = val[1]),
-               color = connector_color,
-               size = connector_size,
-               alpha = 1) +
-  geom_segment(data = filter(d_quantiles, stimuli %in% c("Face", "ASL")),
-               aes(x = 3 + dec_width/connector_length,
-                   xend = 4 - dec_width/connector_length,
-                   y = val[2], yend = val[1]),
-               color = connector_color,
-               size = connector_size,
-               alpha = 1)
+  geom_pointrange(aes(ymax = ci_upper, ymin = ci_lower), 
+                  data = d_quantiles,
+                  color = "red",
+                  shape = 15,
+                  size = 0.7)
 
 p_acc_trio
 ```
 
-Make RT plot.
+### Trio First shift RT plot 
 
 ```{r make trio rt plot}
-p_rt_trio <- d_kids_trio %>% 
-  filter(trial_type %in% c("C_T"), age_code == "child") %>% 
-  ggplot(aes(x = fct_rev(stimuli), y = RT_sec)) +
-  ggbeeswarm::geom_quasirandom(shape = 21, width = 0.15, color = "black", 
+p_rt_trio <- ss_trio %>% 
+  filter(age_code == "child") %>% 
+  ggplot(aes(x = fct_rev(stimuli), y = m_rt)) +
+  ggbeeswarm::geom_quasirandom(shape = 21, width = 0.25, color = "black", 
+                               size = 2,
                                fill = "darkgrey",
-                               alpha = 0.5) + 
-  labs(y = "RT (sec)", x = NULL) 
+                               alpha = 0.7) +  
+  ylim(0, 1.8) +
+  labs(y = "RT (sec)", x = NULL) +
+  coord_flip()
 
 # get model values
 d_model_vals <- d_models_trio$rt_trio_contin %>%
@@ -159,60 +260,60 @@ d_model_vals <- d_models_trio$rt_trio_contin %>%
   gather(key = stimuli, value = rt_msec, -sample_id) %>% 
   mutate(RT_sec = rt_msec / 1000)
 
+# add model values to plot
 d_quantiles <- d_model_vals %>% 
   group_by(stimuli) %>% 
-  summarise(val = hd(RT_sec))
-
-## add MAP estimate
-for (qi in 1:length(q_seq)) {
-  p_rt_trio <- p_rt_trio + stat_summary(data = d_model_vals,
-                        geom = "errorbar", 
-                        fun.y = hd, fun.ymin = hd, fun.ymax = hd,
-                        width = dec_width - .02,
-                        size = dec_size,
-                        color = dec_color,
-                        fun.args = list(q = q_seq[[qi]]))
-}
-
-## add 95% HDI
-hdis <- c(0.025, 0.975)
-for (qi in 1:length(hdis)) {
-  p_rt_trio <- p_rt_trio + stat_summary(data = d_model_vals,
-                        geom = "errorbar", 
-                        fun.y = hd, fun.ymin = hd, fun.ymax = hd,
-                        width = dec_width - 0.2,
-                        size = dec_size - .3,
-                        color = dec_color,
-                        fun.args = list(q = hdis[[qi]]))
-}
+  summarise(ci_lower = hd(RT_sec, q = 0.025),
+            ci_upper = hd(RT_sec, q = 0.975),
+            m_rt = hd(RT_sec, q = 0.5))
 
 p_rt_trio <- p_rt_trio +
-  geom_segment(data = filter(d_quantiles, stimuli %in% c("Bullseye", "Object")),
-               aes(x = 1 + dec_width/connector_length,
-                   xend = 2 - dec_width/connector_length,
-                   y = val[1], yend = val[2]),
-               color = connector_color,
-               size = connector_size,
-               alpha = 1) +
-  geom_segment(data = filter(d_quantiles, stimuli %in% c("Object", "Face")),
-               aes(x = 2 + dec_width/connector_length,
-                   xend = 3 - dec_width/connector_length,
-                   y = val[2], yend = val[1]),
-               color = connector_color,
-               size = connector_size,
-               alpha = 1) +
-  geom_segment(data = filter(d_quantiles, stimuli %in% c("Face", "ASL")),
-               aes(x = 3 + dec_width/connector_length,
-                   xend = 4 - dec_width/connector_length,
-                   y = val[2], yend = val[1]),
-               color = connector_color,
-               size = connector_size,
-               alpha = 1)
+  geom_pointrange(aes(ymax = ci_upper, ymin = ci_lower), 
+                  data = d_quantiles,
+                  color = "red",
+                  shape = 15,
+                  size = 0.7)
+
 
 p_rt_trio
 ```
 
+### Trio merge behavioral plots 
+
+```{r}
+trio_fst_shifts <- plot_grid(p_rt_trio, p_acc_trio, ncol = 1)
+trio_behav_plot <- plot_grid(trio_timecourse, trio_fst_shifts, rel_widths = c(1, 0.7))
+```
+
+```{r}
+save_plot(filename = here::here("paper/journal_submission/figures/figs/fig1_trio_behav.png"), 
+          trio_behav_plot,
+          ncol = 3,
+          nrow = 2,
+          base_aspect_ratio = 1)
+```
+
+### Trio model visualizations
+
+```{r make trio control plot}
+# make control plot
+trio_ewma_vals <- d_ewma %>% 
+  filter(rt <= 1.5, experiment == "trio", age_code == "child") %>% 
+  aggregate_ewma
+
+trio_ewma_vals$ewma_summary$condition <- factor(trio_ewma_vals$ewma_summary$condition, 
+                                                levels = c("ASL", "Face", "Object", "Bullseye"))
+
+trio_ewma_vals$cutoff_summary$condition <- factor(trio_ewma_vals$cutoff_summary$condition, 
+                                                levels = c("ASL", "Face", "Object", "Bullseye"))
+
+trio_control_plot <- trio_ewma_vals %>% plot_ewma_chart()
+trio_control_plot 
+```
+
+
 ## Text Processing
+
 
 ## Speech in background noise
 

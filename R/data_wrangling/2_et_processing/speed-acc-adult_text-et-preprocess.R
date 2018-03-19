@@ -6,7 +6,6 @@
 ################################################################################
 
 ## PRELIMINARIES
-rm(list = ls())
 source("../../helper_functions/libraries_and_functions.R")
 
 raw.data.path <- "../../data/1_raw_data/trio-adult/"
