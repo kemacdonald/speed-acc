@@ -1,0 +1,192 @@
+---
+title: "Speed-Acc JEP: General Figure Visualization Code (Text)"
+output: html_document
+---
+
+## Set up 
+
+This document contains the codebase for generating the plots for Study 2 in the paper, "An information-seeking account of children's eye movements during grounded signed and spoken language comprehension"
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.width=3, fig.height=3, fig.crop = F, fig.pos = "tb",
+                      fig.path='figs/',echo=F, warning=F, cache=T, message=F, include =F,
+                      sanitize = T)
+```
+
+```{r load libraries}
+library(here); library(kableExtra); library(rogme); library(ggridges); library(ggrepel)
+source(here::here("R/helper_functions/libraries_and_functions.R"))
+source(here::here("R/helper_functions/ewma_helper_funs.R"))
+```
+
+```{r set data paths}
+data_path <- "data/3_final_merged_data/first_shifts/"
+time_path <- "data/3_final_merged_data/timecourse/"
+models_path <- "data/3_final_merged_data/bda_posterior_samples/"
+ewma_path <- "data/3_final_merged_data/ewma_output/"
+hddm_path <- "data/3_final_merged_data/hddm_output/"
+```
+
+```{r read timecourse data}
+d_timecourse <- read_csv(here::here(time_path, "speed_acc_adult_text_timecourse_tidy.csv.gz"))
+d_timecourse %<>% filter(t.stim > 0, t.stim <= 5) 
+```
+
+```{r read first shift data}
+```
+
+```{r read ewma model data files}
+# read in ewma files for all experiments using purrr
+files <- dir(path = ewma_path, pattern = "*.csv") 
+d_ewma <- files %>% purrr::map_df(read_ewma, path = ewma_path)
+
+# hddm output for all experiments
+d_hddm <- read_csv(here::here(hddm_path, "hddm_tidy.csv"))
+```
+
+```{r read bda model output}
+```
+
+## Text Processing
+
+### Timecourse plots
+
+```{r}
+d_time_filt <- d_timecourse %>% 
+  filter(t.rel.noun >= 0, t.rel.noun <= 2)
+
+# get number of trials looking at each gaze target for each time slice
+ss.d <- d_time_filt %>% 
+  group_by(subid, t.stim, condition) %>% 
+  summarise(count = n()) %>% 
+  ungroup() %>% 
+  complete(nesting(subid, t.stim), condition,
+           fill = list(count = 0)) %>% 
+  mutate(subid = as.character(subid))
+
+# get proportion looking by dividing the freq looking at each target by the total looking 
+# derived in step 1 of this chunk
+ss.d <- as.data.frame(xtabs(~ subid + t.stim + target_looking + condition, 
+                            data = d_time_filt),
+                      stringsAsFactors = F) %>% 
+  mutate(t.stim = as.numeric(t.stim)) %>% 
+  left_join(x = ss.d, y = ., by = c("subid", "t.stim", "condition")) %>% 
+  mutate(proportion_looking = Freq / count)
+```
+
+Get means and CIs for proportion looking at each time slice across participants. Note that this stores the graph values in a file for reading in later in the analysis. 
+
+```{r, eval = F}
+# get means and bootsrapped CIs for each timepoint, nboot should be 500
+nboot <- 500
+
+ms_mean_iChart <- ss.d %>% 
+  group_by(t.stim, condition, target_looking) %>% 
+  langcog::multi_boot_standard(column = "proportion_looking", na.rm = T, nboot = nboot) %>% 
+  filter(is.na(condition) == F) %>% 
+  ungroup() %>% 
+  mutate(t.stim = as.numeric(t.stim - 3.3)) # make t.stim relative to noun onset
+
+write_csv(x = ms_mean_iChart, 
+          path = here::here("paper/journal_submission/figures/text_timecourse_graph_vals.csv"))
+```
+
+Make plot (todo: clean up and make same format as trio timecourse plots)
+
+```{r}
+text_time_gvs <- read_csv(here::here("paper/journal_submission/figures/text_timecourse_graph_vals.csv"))
+
+ggplot(aes(x = as.numeric(t.stim), y = mean, 
+           color = target_looking), data = text_time_gvs) + 
+  geom_line(size=0.7) +
+  geom_linerange(aes(ymin = summary_ci_lower, ymax = summary_ci_upper), alpha = 0.5) +
+  scale_color_manual(values = c("grey70", "grey50", "grey1")) +
+  xlab("Time from noun onset (ms)") +
+  ylab("Proportion looking") +
+  guides(color = F) +
+  geom_rect(aes(xmin = 0, xmax = 1, ymin = -Inf, ymax = -.1), alpha = 0.1, 
+            fill = "grey70", color = NA) +
+  facet_wrap(~condition, ncol = 1) +
+  theme(plot.margin = unit(c(1,4,1,1), "lines")) + 
+  geom_text_repel(
+    data = filter(ms_mean_iChart, t.stim == max(t.stim)),
+    aes(label = target_looking),
+    size = 4,
+    nudge_x = 55,
+    segment.color = NA
+  ) +
+  ylim(-.1,1) +
+  xlim(0,2) 
+```
+
+### First shifts plots
+
+### Model-based plots
+
+```{r make text control chart}
+# make control plot
+text_ewma_vals <- d_ewma %>% 
+  filter(rt <= 1, experiment == "text") %>% 
+  aggregate_ewma
+
+text_control_plot <- text_ewma_vals %>% plot_ewma_chart()
+
+# add some spacing to the right of plot for plot-grid layout
+text_control_plot <- text_control_plot + theme(plot.margin = unit(c(1,4,1,1), "lines"))
+```
+
+Ewma guessing plot. (TODO: get bda values for ewma text output)
+
+```{r}
+p_ewma_text <- d_ewma %>% 
+  filter(rt <= 1.5, experiment == "text") %>% 
+  group_by(subid, condition, guess) %>% 
+  summarise(count = n()) %>% 
+  mutate(prop.responding = round(count / sum(count), 2)) %>% 
+  filter(guess == "response") %>% 
+  ggplot(aes(x = fct_reorder(condition, prop.responding), y = prop.responding)) +
+  ggbeeswarm::geom_quasirandom(shape = 21, width = 0.15, color = "black", 
+                               size = 3,
+                               fill = "darkgrey",
+                               alpha = 0.6) +
+  lims(y = c(0,1)) +
+  labs(x = "Condition", y = "Prop. Language-driven")  +
+  scale_x_discrete(expand = c(0,1)) 
+
+d_quantiles_ewma_text <- d_models_trio$ewma_guess_trio %>% 
+  mutate(asl_kids = asl - age_beta,
+         face_kids = face - age_beta) %>% 
+  select(asl_kids, face_kids) %>% 
+  rename(ASL = asl_kids, Face = face_kids) %>% 
+  gather(key = condition, value = param_estimate) %>% 
+  mutate(param_est_prob = logit_to_prob(param_estimate)) %>% 
+  group_by(condition) %>% 
+  summarise(ci_lower = hd(param_est_prob, q = 0.025),
+            ci_upper = hd(param_est_prob, q = 0.975),
+            prop.responding = hd(param_est_prob, q = 0.5))
+
+# add quantiles to plot
+p_ewma_text <- p_ewma_text +
+  geom_pointrange(aes(ymax = ci_upper, ymin = ci_lower), 
+                  data = d_quantiles_ewma_text,
+                  color = "red",
+                  shape = 15,
+                  size = 0.7)
+```
+
+HDDM plot (todo: figure out where the text-no-audio parameter estimates went?)
+
+```{r}
+p_hddm_text <- d_hddm %>% 
+  filter(experiment == "text") %>%
+  ggplot(aes(x = param_value, y = param_name, fill = condition)) +
+  geom_density_ridges(scale = 0.7, rel_min_height = 0.005, alpha = 0.8) + 
+  labs(x = "Parameter value", y = NULL, color = "") +
+  scale_y_discrete(expand = c(0.2,0)) +
+  theme(legend.position=c(0.9,0.3)) +
+  scale_fill_grey()
+
+p_hddm_text
+```
+
+
