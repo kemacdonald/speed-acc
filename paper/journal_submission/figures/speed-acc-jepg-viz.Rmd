@@ -23,9 +23,6 @@ source(here::here("R/helper_functions/ewma_helper_funs.R"))
 data_path <- "data/3_final_merged_data/first_shifts/"
 time_path <- "data/3_final_merged_data/timecourse/"
 models_path <- "data/3_final_merged_data/bda_posterior_samples/"
-```
-
-```{r set model paths}
 ewma_path <- "data/3_final_merged_data/ewma_output/"
 hddm_path <- "data/3_final_merged_data/hddm_output/"
 ```
@@ -34,8 +31,8 @@ hddm_path <- "data/3_final_merged_data/hddm_output/"
 # read in all files using purrr
 files <- dir(path = ewma_path, pattern = "*.csv") 
 d_ewma <- files %>% purrr::map_df(read_ewma, path = ewma_path)
+d_hddm <- read_csv(here::here(hddm_path, "hddm_tidy.csv"))
 ```
-
 
 ## Spoken/Sign Language 
 
@@ -187,17 +184,6 @@ ss_trio <- d_kids_trio %>%
 ```
 
 ```{r make trio acc plot}
-## global plot variables
-dec_width = 0.5
-dec_size = 1.5
-dec_color <- "red"
-connector_size = dec_size - 0.9
-connector_length <- 2.1
-connector_color <- "black"
-
-# how many quantiles do you want?
-q_seq <- c(0.5)
-
 p_acc_trio <- ss_trio %>% 
   ggplot(aes(x = fct_rev(stimuli), y = mean_correct)) +
   ggbeeswarm::geom_quasirandom(shape = 21, width = 0.1, color = "black", 
@@ -274,7 +260,6 @@ p_rt_trio <- p_rt_trio +
                   shape = 15,
                   size = 0.7)
 
-
 p_rt_trio
 ```
 
@@ -295,6 +280,12 @@ save_plot(filename = here::here("paper/journal_submission/figures/figs/fig1_trio
 
 ### Trio model visualizations
 
+```{r}
+d_ewma_models <- readRDS(here::here(models_path, "ewma-posterior-samples.rds"))
+```
+
+Make control chart
+
 ```{r make trio control plot}
 # make control plot
 trio_ewma_vals <- d_ewma %>% 
@@ -308,11 +299,85 @@ trio_ewma_vals$cutoff_summary$condition <- factor(trio_ewma_vals$cutoff_summary$
                                                 levels = c("ASL", "Face", "Object", "Bullseye"))
 
 trio_control_plot <- trio_ewma_vals %>% plot_ewma_chart()
-trio_control_plot 
+trio_control_plot <- trio_control_plot + theme(plot.margin = unit(c(1,4,1,1), "lines"))
 ```
 
+```{r make trio boxplots of guessing}
+p_ewma_trio <- d_ewma %>% 
+  filter(rt <= 1.5, experiment == "trio", age_code == "child") %>% 
+  group_by(subid, condition, guess) %>% 
+  summarise(count = n()) %>% 
+  mutate(prop.responding = round(count / sum(count), 2)) %>% 
+  filter(guess == "response") %>% 
+  ggplot(aes(x = fct_reorder(condition, prop.responding), y = prop.responding)) +
+  ggbeeswarm::geom_quasirandom(shape = 21, width = 0.1, color = "black", 
+                               size = 2,
+                               fill = "darkgrey",
+                               alpha = 0.6) +
+  lims(y = c(0,1)) +
+  labs(x = "Condition", y = "Prop. Language-driven")  +
+  scale_x_discrete(expand = c(0,1)) 
+
+d_quantiles_ewma <- d_models_trio$ewma_guess_trio %>% 
+  mutate(asl_kids = asl - age_beta,
+         face_kids = face - age_beta) %>% 
+  select(asl_kids, face_kids) %>% 
+  rename(ASL = asl_kids, Face = face_kids) %>% 
+  gather(key = condition, value = param_estimate) %>% 
+  mutate(param_est_prob = logit_to_prob(param_estimate)) %>% 
+  group_by(condition) %>% 
+  summarise(ci_lower = hd(param_est_prob, q = 0.025),
+            ci_upper = hd(param_est_prob, q = 0.975),
+            prop.responding = hd(param_est_prob, q = 0.5))
+
+# add quantiles to plot
+p_ewma_trio <- p_ewma_trio +
+  geom_pointrange(aes(ymax = ci_upper, ymin = ci_lower), 
+                  data = d_quantiles_ewma,
+                  color = "red",
+                  shape = 15,
+                  size = 0.7)
+```
+
+Make hddm plots
+
+```{r}
+library(ggridges)
+x_lims <- c(0, 2)
+
+p_hddm_trio <- d_hddm %>% 
+  filter(experiment == "trio", age_code == "children") %>% 
+  ggplot(aes(x = param_value, y = param_name, fill = condition)) +
+  geom_density_ridges(scale = 0.7, rel_min_height = 0.005, alpha = 0.8) + 
+  labs(x = "Parameter value", y = NULL, color = "") +
+  lims(x = x_lims)  +
+  theme(legend.position=c(0.15,0.25)) +
+  scale_fill_grey()
+
+```
+
+Put trio model plots together.
+
+```{r}
+trio_ewma_hddm_plots <- plot_grid(p_ewma_trio, p_hddm_trio, ncol = 1, labels = c("B", "C"))
+trio_final_model_plot <- plot_grid(trio_control_plot, trio_ewma_hddm_plots, ncol = 2,
+                                   rel_widths = c(1, 0.8),
+                                   labels = "A")
+```
+
+```{r}
+save_plot(filename = here::here("paper/journal_submission/figures/figs/fig2_trio_models.png"), 
+          trio_final_model_plot,
+          ncol = 3,
+          nrow = 2,
+          base_aspect_ratio = 1)
+```
 
 ## Text Processing
+
+Behavioral results
+
+Model-based analyses
 
 
 ## Speech in background noise
