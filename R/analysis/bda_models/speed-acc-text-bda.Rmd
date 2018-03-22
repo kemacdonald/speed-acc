@@ -16,9 +16,6 @@ data_path <- "data/3_final_merged_data/first_shifts/"
 ewma_path <- "data/3_final_merged_data/ewma_output/"
 hddm_path <- "data/3_final_merged_data/hddm_output/"
 write_path <- "data/3_final_merged_data/bda_posterior_samples/"
-
-options(mc.cores=parallel::detectCores())
-set.seed (3875)
 ```
 
 ```{r set global analysis params}
@@ -82,11 +79,12 @@ m_acc <- d %>%
 
 samples_text_acc <- m_acc %>% 
   as.data.frame() %>% as_tibble() %>% 
-  dplyr::rename(bullseye = `(Intercept)`,
+  dplyr::rename(text_no_audio_int = `(Intercept)`,
                 face = conditionface,
                 text = conditiontext,
-                text_no_audio = `conditiontext-no-audio`) %>% 
-  select(bullseye:text_no_audio)
+                bullseye = conditionbullseye) %>% 
+  mutate(sample_id = 1:n()) %>% 
+  select(sample_id, bullseye, face, text, text_no_audio_int)
 ```
 
 ## RT model
@@ -106,14 +104,15 @@ m_rt <- d %>%
 
 samples_text_rt <- m_rt %>% 
   as.data.frame() %>% as_tibble() %>% 
-  dplyr::rename(bullseye = `(Intercept)`,
+  dplyr::rename(text_no_audio_int = `(Intercept)`,
                 face = conditionface,
                 text = conditiontext,
-                text_no_audio = `conditiontext-no-audio`) %>% 
-  select(bullseye:text_no_audio)
+                bullseye = conditionbullseye) %>% 
+  mutate(sample_id = 1:n()) %>% 
+  select(sample_id, bullseye, face, text, text_no_audio_int)
 ```
 
-## EWMA model
+## EWMA models
 
 ```{r read ewma output}
 text_ewma <- c("speed_acc_adult_text_ewma_results.csv")
@@ -148,7 +147,8 @@ samples_text_ewma_cuts <- m_ewma_cuts %>%
                 face = conditionface,
                 text = conditiontext,
                 text_no_audio = `conditiontext-no-audio`) %>% 
-  select(bullseye:text_no_audio)
+  mutate(sample_id = 1:n()) %>% 
+  select(sample_id, bullseye:text_no_audio)
 ```
 
 ### Prop guessing
@@ -167,12 +167,13 @@ m_ewma_guess <- d_ewma_text %>%
 
 samples_text_ewma_guess <- m_ewma_guess %>% 
   as.data.frame() %>% as_tibble() %>% 
-  dplyr::rename(asl = `(Intercept)`,
-                face = stimuliFace,
-                age_beta = months) %>% 
-  select(asl:face, age_beta)
+  dplyr::rename(bullseye = `(Intercept)`,
+                face = conditionface,
+                text = conditiontext,
+                text_no_audio = `conditiontext-no-audio`) %>% 
+  mutate(sample_id = 1:n()) %>% 
+  select(sample_id, bullseye:text_no_audio)
 ```
-
 
 ## Save posterior samples
 
@@ -183,6 +184,4 @@ posteriors <- list(rt_text = samples_text_rt,
                    ewma_cuts_text = samples_text_ewma_cuts)
 
 saveRDS(posteriors, file = here::here(write_path, "speed-acc-text-posterior-samples.rds"))
-
-beepr::beep(sound = 3)
 ```

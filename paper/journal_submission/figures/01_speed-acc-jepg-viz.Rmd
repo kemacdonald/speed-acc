@@ -107,7 +107,7 @@ ms_iChart <- as.data.frame(xtabs(~ Sub.Num + value_cat + Time.ms, data = ss_iCha
 
 Get means and CIs for proportion looking at each time slice across particpants
 
-```{r}
+```{r, eval = F}
 ms_iChart_count <- ss_iChart_long %>% 
   group_by(Sub.Num, Time.ms, stimuli, value_cat) %>% 
   dplyr::summarise(count = ifelse(n() == 0, 0, n())) %>% 
@@ -138,11 +138,12 @@ write_csv(x = ms_mean_iChart,
 Now we make Tanenhaus style plot.
 
 ```{r make tanenhaus-plot trio}
+trio_timecourse_gvs <- read_csv(here::here("paper/journal_submission/figures/trio_timecourse_graph_vals.csv"))
 # change factor levels for plot to help compare conditions of interest
-ms_mean_iChart$stimuli <- factor(ms_mean_iChart$stimuli, 
+trio_timecourse_gvs$stimuli <- factor(trio_timecourse_gvs$stimuli, 
                                  levels = c("ASL", "Face", "Object", "Bullseye"))
 
-trio_timecourse <- ms_mean_iChart %>% 
+trio_timecourse <- trio_timecourse_gvs %>% 
   filter(Time.ms <= 2500) %>% 
   ggplot(aes(x = as.numeric(Time.ms), y = mean, color = value_cat), 
        data = .) + 
@@ -159,7 +160,7 @@ trio_timecourse <- ms_mean_iChart %>%
   facet_wrap(~stimuli, ncol = 1) +
   theme(plot.margin = unit(c(1,4,1,1), "lines")) + 
   geom_text_repel(
-    data = filter(ms_mean_iChart, Time.ms == 2500),
+    data = filter(trio_timecourse_gvs, Time.ms == 2500),
     aes(label = value_cat),
     size = 4,
     nudge_x = 55,
@@ -177,7 +178,6 @@ ss_trio <- d_kids_trio %>%
   summarise(mean_correct = mean(correct),
             m_rt = median(RT_sec))
 ```
-
 
 ```{r set global plot values}
 pt_size <- 2.5
@@ -231,16 +231,16 @@ p_acc_trio
 ### Trio First shift RT plot 
 
 ```{r make trio rt plot}
-p_rt_trio <- ss_trio %>% 
-  filter(age_code == "child") %>% 
-  ggplot(aes(x = fct_rev(stimuli), y = m_rt)) +
+p_rt_trio <- d_kids_trio %>% 
+  filter(age_code == "child", correct == 1) %>% 
+  ggplot(aes(x = fct_rev(stimuli), y = RT_sec)) +
   ggbeeswarm::geom_quasirandom(shape = pt_shape, 
-                               width = pt_width, 
+                               width = pt_width + 0.1 , 
                                color = pt_color, 
-                               size = pt_size,
+                               size = pt_size - 1,
                                fill = pt_fill,
-                               alpha = pt_alpha) +  
-  ylim(0, 1.8) +
+                               alpha = pt_alpha + 0.1) +  
+  ylim(-0.15, 2.2) +
   labs(y = "RT (sec)", x = NULL) +
   coord_flip()
 
@@ -260,14 +260,14 @@ d_quantiles <- d_model_vals %>%
   group_by(stimuli) %>% 
   summarise(ci_lower = hd(RT_sec, q = 0.025),
             ci_upper = hd(RT_sec, q = 0.975),
-            m_rt = hd(RT_sec, q = 0.5))
+            RT_sec = hd(RT_sec, q = 0.5))
 
 p_rt_trio <- p_rt_trio +
   geom_pointrange(aes(ymax = ci_upper, ymin = ci_lower), 
                   data = d_quantiles,
                   color = "red",
                   shape = 15,
-                  size = 0.7)
+                  size = 1)
 
 p_rt_trio
 ```

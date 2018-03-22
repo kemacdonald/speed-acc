@@ -33,6 +33,7 @@ d_timecourse %<>% filter(t.stim > 0, t.stim <= 5)
 ```
 
 ```{r read first shift data}
+d_fst <- read_csv(here::here(data_path, "speed_acc_adult_text_fstshift_tidy.csv"))
 ```
 
 ```{r read ewma model data files}
@@ -96,7 +97,7 @@ Make plot (todo: clean up and make same format as trio timecourse plots)
 ```{r}
 text_time_gvs <- read_csv(here::here("paper/journal_submission/figures/text_timecourse_graph_vals.csv"))
 
-ggplot(aes(x = as.numeric(t.stim), y = mean, 
+text_timecourse_plot <- ggplot(aes(x = as.numeric(t.stim), y = mean, 
            color = target_looking), data = text_time_gvs) + 
   geom_line(size=0.7) +
   geom_linerange(aes(ymin = summary_ci_lower, ymax = summary_ci_upper), alpha = 0.5) +
@@ -109,10 +110,10 @@ ggplot(aes(x = as.numeric(t.stim), y = mean,
   facet_wrap(~condition, ncol = 1) +
   theme(plot.margin = unit(c(1,4,1,1), "lines")) + 
   geom_text_repel(
-    data = filter(ms_mean_iChart, t.stim == max(t.stim)),
+    data = filter(text_time_gvs, t.stim == max(t.stim)),
     aes(label = target_looking),
     size = 4,
-    nudge_x = 55,
+    nudge_x = 35,
     segment.color = NA
   ) +
   ylim(-.1,1) +
@@ -120,6 +121,133 @@ ggplot(aes(x = as.numeric(t.stim), y = mean,
 ```
 
 ### First shifts plots
+
+Filter data
+
+```{r}
+d_fst %<>% 
+  filter(shift_type %in% c("C_T", "C_D"), 
+         response_onset_type %in% c("noun")) %>% 
+  dplyr::select(subid, tr.num, condition, shift_accuracy, rt, response_onset_type) %>% 
+  unique()
+```
+
+Aggregate for accuracy and RT
+
+```{r}
+ss <- d_fst %>% 
+  mutate(correct_num = ifelse(shift_accuracy == "correct", 1, 0)) %>% 
+  group_by(condition, subid) %>% 
+  summarise(m_rt = mean(rt),
+            m_acc = mean(correct_num))
+```
+
+Make first shift accuracy plot.
+
+```{r set global plot values}
+pt_size <- 2.5
+pt_alpha <- 0.6
+pt_shape <- 21
+pt_width <- 0.2
+pt_color <- "black"
+pt_fill <- "darkgrey"
+```
+
+```{r make text acc plot}
+p_acc <- ss %>% 
+  ggplot(aes(x = fct_reorder(condition, m_acc, .fun = median), y = m_acc)) +
+  ggbeeswarm::geom_quasirandom(shape = pt_shape, 
+                               width = pt_width, 
+                               color = pt_color, 
+                               size = pt_size,
+                               fill = pt_fill,
+                               alpha = pt_alpha) + 
+  geom_hline(yintercept = 0.5, linetype = "dashed") +
+  labs(x = NULL, y = "Prop. Correct") +
+  lims(y = c(0, 1)) 
+
+# get model values
+d_model_vals <- d_bda$acc_trio_contin %>%
+  select(sample_id, contains("prob")) %>% 
+  select(-age_beta_prob) %>% 
+  dplyr::rename(ASL = asl_prob,
+                Bullseye = bullseye_prob,
+                Face = face_prob,
+                Object = object_prob) %>% 
+  gather(key = stimuli, value = mean_correct, -sample_id)
+
+d_quantiles <- d_model_vals %>% 
+  group_by(stimuli) %>% 
+  summarise(ci_lower = hd(mean_correct, q = 0.025),
+            ci_upper = hd(mean_correct, q = 0.975),
+            mean_correct = hd(mean_correct, q = 0.5))
+
+# add quantiles to plot
+p_acc <- p_acc +
+  geom_pointrange(aes(ymax = ci_upper, ymin = ci_lower), 
+                  data = d_quantiles,
+                  color = "red",
+                  shape = 15,
+                  size = 0.7)
+
+p_acc
+```
+
+First shift RT
+
+```{r make text rt plot}
+p_rt <- d_fst %>% 
+  ggplot(aes(x = fct_reorder(condition, rt, .fun = median), y = rt)) +
+  ggbeeswarm::geom_quasirandom(shape = pt_shape, 
+                               width = pt_width, 
+                               color = pt_color, 
+                               size = pt_size,
+                               fill = pt_fill,
+                               alpha = pt_alpha) +  
+  ylim(0, 1.8) +
+  labs(y = "RT (sec)", x = NULL) +
+  coord_flip()
+
+# get model values
+d_model_vals <- d_bda$rt_trio_contin %>%
+  select(sample_id, contains("scale")) %>% 
+  select(-age_beta_rt_scale) %>% 
+  dplyr::rename(ASL = asl_rt_scale,
+                Bullseye = bullseye_rt_scale,
+                Face = face_rt_scale,
+                Object = object_rt_scale) %>% 
+  gather(key = stimuli, value = rt_msec, -sample_id) %>% 
+  mutate(RT_sec = rt_msec / 1000)
+
+# add model values to plot
+d_quantiles <- d_model_vals %>% 
+  group_by(stimuli) %>% 
+  summarise(ci_lower = hd(RT_sec, q = 0.025),
+            ci_upper = hd(RT_sec, q = 0.975),
+            m_rt = hd(RT_sec, q = 0.5))
+
+p_rt <- p_rt +
+  geom_pointrange(aes(ymax = ci_upper, ymin = ci_lower), 
+                  data = d_quantiles,
+                  color = "red",
+                  shape = 15,
+                  size = 0.7)
+
+p_rt
+```
+
+### Merge behavioral plots and save
+
+```{r}
+text_fst_shifts <- plot_grid(p_rt, p_acc, ncol = 1)
+text_behav_plot <- plot_grid(text_timecourse_plot, text_fst_shifts, rel_widths = c(1, 0.7))
+
+save_plot(filename = here::here("paper/journal_submission/figures/figs_output/fig3_text_behav.png"), 
+          text_behav_plot,
+          ncol = 3,
+          nrow = 2,
+          base_aspect_ratio = 1)
+```
 
 ### Model-based plots
 
