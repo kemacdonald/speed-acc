@@ -16,12 +16,12 @@ hddm_path <- "data/3_final_merged_data/hddm_output/"
 Get list of hddm files that are the output of 
 
 ```{r}
-hddm_files <- list.files(here::here(hddm_path))
+hddm_files <- list.files(here::here(hddm_path), pattern = "samples")
 ```
 
 
 ```{r}
-conds <- c("ASL", "Face", "bull", "face", "text_no_audio", "text",
+conds <- c("ASL", "Face", "bull", "face", "text-no-audio", "text",
                     "straight_ahead_clear", "straight_ahead_noise", "gaze_clear",
                     "gaze_noise", "asl", "clear", "straightahead", "face", "gaze", "noise")
 

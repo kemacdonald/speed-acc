@@ -3,15 +3,15 @@ title: "Speed-Acc JEP: General Figure Visualization Code (Noise)"
 output: html_document
 ---
 
-## Set up 
-
-This document contains the codebase for generating the plots for Study 3 in the paper, "An information-seeking account of children's eye movements during grounded signed and spoken language comprehension"
-
 ```{r global_options, include=FALSE}
 knitr::opts_chunk$set(fig.width=3, fig.height=3, fig.crop = F, fig.pos = "tb",
                       fig.path='figs/',echo=F, warning=F, cache=T, message=F, include =F,
                       sanitize = T)
 ```
+
+## Set up 
+
+This document contains the codebase for generating the plots for Study 3 in the paper, "An information-seeking account of children's eye movements during grounded signed and spoken language comprehension"
 
 ```{r load libraries}
 library(here); library(kableExtra); library(rogme); library(ggridges); library(ggrepel)
@@ -27,49 +27,43 @@ ewma_path <- "data/3_final_merged_data/ewma_output/"
 hddm_path <- "data/3_final_merged_data/hddm_output/"
 ```
 
-
-```{r read bda}
-# noise experiment
-d_bda_noise <- readRDS(here::here(models_path, "speed-acc-posterior-samples.rds"))
-d_bda_ewma_noise <- readRDS(here::here(models_path, "ewma-posterior-samples.rds"))
-```
-
-
-## Speech in background noise
-
 ```{r read data}
 d_kids_noise <- read_csv(here::here(data_path, "speed_acc_child_noise_fstshift_tidy.csv")) %>% 
   select(-age)
 
-d_kids_gaze <- read_csv(here::here(data_path, "speed_acc_child_gaze_fstshift_tidy.csv")) %>% 
-  select(-age)
-
 d_adults <- read_csv(here::here(data_path, "speed_acc_adult_ng_fstshift_tidy.csv")) %>% 
   select(-age)
-```
 
-
-```{r clean datasets for merge}
-d_kids_noise %<>% mutate(gaze_condition = ifelse(gaze_condition == "no_gaze", 
-                                                 "straight_ahead", 
-                                                 gaze_condition))
-
-d_kids_gaze %<>% mutate(noise_condition = ifelse(noise_condition == "no_noise", 
-                                                 "clear", 
-                                                 noise_condition))
-```
-
-```{r merge datasets}
+# merge datasets
 d <- bind_rows(mutate(d_kids_noise, experiment = "kids_noise", age_category = "children"),
-               mutate(d_kids_gaze, experiment = "kids_gaze", age_category = "children"),
                mutate(d_adults, experiment = "adults_ng", age_category = "adults")) %>% 
   select(-resp_onset_type_fact, -subid_short) %>% 
   mutate(age_category = factor(age_category) %>% fct_rev(),
          gaze_condition = factor(gaze_condition) %>% fct_rev()) 
 
-# uncomment below to test that we have the right number of rows after the merge (result should be TRUE)
-nrow(d_kids_gaze) + nrow(d_kids_noise) + nrow(d_adults) == nrow(d)
+# test that we have the right number of rows after the merge (result should be TRUE)
+nrow(d_kids_noise) + nrow(d_adults) == nrow(d)
 ```
+
+```{r read timecourse}
+d_timecourse_adults <- read_csv(here::here(time_path, "speed_acc_adult_ng_timecourse_tidy.csv.gz"))
+d_timecourse_adults %<>% filter(t.stim > 0, t.stim <= 8) 
+
+d_timecourse_kids <- read_csv(here::here(time_path, "speed_acc_child_noise_timecourse_tidy.csv.gz"))
+d_timecourse_kids %<>% filter(t.stim > 0, t.stim <= 8) 
+```
+
+
+```{r read bda}
+d_bda_noise <- readRDS(here::here(models_path, "speed-acc-noise-posterior-samples.rds"))
+d_bda_ewma_noise <- readRDS(here::here(models_path, "speed-acc-noise-ewma-guess-posterior-samples.rds"))
+```
+
+## Speech in background noise
+
+### Timecourse plots
+
+### First shifts plots
 
 ```{r get noise experiment}
 d_e1 <- d %>% 
@@ -106,7 +100,7 @@ ss_final <- left_join(ss_acc_e1, ss_rt_e1) %>% ungroup()
 ```
 
 ```{r noise summarize model output}
-ms_acc_e1 <- d_models$acc_noise %>% 
+ms_acc_e1 <- d_bda_noise$acc_noise %>% 
   group_by(noise_condition, age_category) %>% 
   summarise(prop = mean(acc_prob_scale),
             hdi_lower = quantile(acc_prob_scale, probs = 0.025),
@@ -114,7 +108,7 @@ ms_acc_e1 <- d_models$acc_noise %>%
   mutate_if(.predicate = is.numeric, .funs = round, digits = 2) %>% 
   mutate(age_category = factor(age_category) %>% fct_rev()) 
 
-ms_rt_e1 <- d_models$rt_noise %>% 
+ms_rt_e1 <- d_bda_noise$rt_noise %>% 
   group_by(noise_condition, age_category) %>% 
   summarise(m_rt = mean(rt_ms_scale),
             hdi_lower = quantile(rt_ms_scale, probs = 0.025),
@@ -124,13 +118,13 @@ ms_rt_e1 <- d_models$rt_noise %>%
 ```
 
 ```{r noise create contrasts}
-noise_contrast <- d_models$acc_noise %>% 
+noise_contrast <- d_bda_noise$acc_noise %>% 
   select(sample_id:acc_prob_scale, -param_est) %>% 
   spread(noise_condition, acc_prob_scale) %>% 
   mutate(noise_contrast = noise - clear) %>% 
   select(sample_id, noise_contrast, age_category)
 
-noise_contrast_rt <- d_models$rt_noise %>% 
+noise_contrast_rt <- d_bda_noise$rt_noise %>% 
   select(sample_id:rt_ms_scale, -param_est) %>% 
   spread(noise_condition, rt_ms_scale) %>% 
   mutate(noise_contrast = noise - clear) %>% 
@@ -280,18 +274,8 @@ levels(ss_final$noise_condition) <- c(levels(ss_final$noise_condition),'')
 acc_plot_e1 <- ss_final %>% 
   filter(shift_accuracy_clean == "correct") %>% 
   ggplot(aes(x = noise_condition, y = prop, color = noise_condition)) +
-  #geom_line(aes(group = subid), color = "grey", alpha = 0.5) +
   geom_jitter(width = 0.04, alpha = 0.8, shape = 21) +
   geom_violin(draw_quantiles = 0.5, trim = T, width = 0.5, size = 1, fill = NA) + 
-  # geom_linerange(data = ms_acc_e1, aes(ymin = hdi_lower, ymax = hdi_upper), 
-  #                color = means_color, size = 1,
-  #                position = position_nudge(x = nudge_x)) + 
-  # geom_line(data = ms_acc_e1, aes(group = 1), 
-  #           color = means_color, size = 0.8,
-  #           position = position_nudge(x = nudge_x)) + 
-  # geom_point(data = ms_acc_e1, aes(x = noise_condition, y = prop), 
-  #            color = means_color, size = 1.5,
-  #            position = position_nudge(x = nudge_x)) +
   guides(fill = F, color = F) +
   ggthemes::scale_color_ptol() +
   scale_x_discrete(expand = c(0,0.8), drop=FALSE) +
@@ -302,24 +286,15 @@ acc_plot_e1 <- ss_final %>%
   facet_wrap(~age_category, ncol = 1, scale = "free_x")
 ```
 
+RTs
+
 ```{r rt plot}
-## first shift RTs
 rt_plot_e1 <- ss_final %>% 
   ungroup() %>% 
   filter(shift_accuracy_clean == "correct") %>% 
   ggplot(aes(x = noise_condition, y = m_rt, color = noise_condition)) +
-  #geom_line(aes(group = subid), color = "grey", alpha = 0.5) +
   geom_jitter(width = 0.04, alpha = 0.8, shape = 21) +
   geom_violin(draw_quantiles = 0.5, trim = T, width = 0.5, size = 1, fill = NA) + 
-  # geom_linerange(data = ms_rt_e1, aes(ymin = hdi_lower, ymax = hdi_upper), 
-  #                color = means_color, size = 1,
-  #                position = position_nudge(x = nudge_x)) + 
-  # geom_line(data = ms_rt_e1, aes(group = 1), 
-  #           color = means_color, size = 0.8,
-  #           position = position_nudge(x = nudge_x)) + 
-  # geom_point(data = ms_rt_e1, aes(x = noise_condition, y = m_rt), 
-  #            color = means_color, size = 1.5,
-  #            position = position_nudge(x = nudge_x)) +
   guides(fill = F, color = F) +
   ggthemes::scale_color_ptol() +
   scale_x_discrete(expand = c(0,0.8), drop = FALSE) +
@@ -357,7 +332,17 @@ rt_plot_final <- ggdraw() +
 e1_plot <- cowplot::plot_grid(rt_plot_final, acc_plot_final, labels = c("A", "B"))
 ```
 
-```{r save noise rt and acc plot}
-ggsave(here::here("paper/journal_submission/figs/e3_behav_results.png"), 
-       e1_plot, width = 8, height = 6)
+Merge and save behavioral plots.
+
+```{r}
+
 ```
+
+
+## Model-based analyses
+
+### Control charts
+
+### EWMA guessing
+
+### HDDM parameter estimates

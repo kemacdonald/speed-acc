@@ -46,6 +46,7 @@ d_hddm <- read_csv(here::here(hddm_path, "hddm_tidy.csv"))
 ```
 
 ```{r read bda model output}
+d_bda <- readRDS(here::here(models_path, "speed-acc-text-posterior-samples.rds"))
 ```
 
 ## Text Processing
@@ -113,7 +114,7 @@ text_timecourse_plot <- ggplot(aes(x = as.numeric(t.stim), y = mean,
     data = filter(text_time_gvs, t.stim == max(t.stim)),
     aes(label = target_looking),
     size = 4,
-    nudge_x = 35,
+    nudge_x = 15,
     segment.color = NA
   ) +
   ylim(-.1,1) +
@@ -155,7 +156,7 @@ pt_fill <- "darkgrey"
 
 ```{r make text acc plot}
 p_acc <- ss %>% 
-  ggplot(aes(x = fct_reorder(condition, m_acc, .fun = median), y = m_acc)) +
+  ggplot(aes(x = fct_relevel(condition, "face", after = 2), y = m_acc)) +
   ggbeeswarm::geom_quasirandom(shape = pt_shape, 
                                width = pt_width, 
                                color = pt_color, 
@@ -167,20 +168,19 @@ p_acc <- ss %>%
   lims(y = c(0, 1)) 
 
 # get model values
-d_model_vals <- d_bda$acc_trio_contin %>%
-  select(sample_id, contains("prob")) %>% 
-  select(-age_beta_prob) %>% 
-  dplyr::rename(ASL = asl_prob,
-                Bullseye = bullseye_prob,
-                Face = face_prob,
-                Object = object_prob) %>% 
-  gather(key = stimuli, value = mean_correct, -sample_id)
+d_model_vals <- d_bda$acc_text %>%
+  mutate(bullseye = text_no_audio_int + bullseye,
+         face = text_no_audio_int + face,
+         text = text_no_audio_int + text) %>% 
+  rename(`text-no-audio` = text_no_audio_int) %>% 
+  gather(key = condition, value = mean_correct, -sample_id) %>% 
+  mutate(mean_correct = logit_to_prob(mean_correct))
 
 d_quantiles <- d_model_vals %>% 
-  group_by(stimuli) %>% 
+  group_by(condition) %>% 
   summarise(ci_lower = hd(mean_correct, q = 0.025),
             ci_upper = hd(mean_correct, q = 0.975),
-            mean_correct = hd(mean_correct, q = 0.5))
+            m_acc = hd(mean_correct, q = 0.5))
 
 # add quantiles to plot
 p_acc <- p_acc +
@@ -199,32 +199,30 @@ First shift RT
 p_rt <- d_fst %>% 
   ggplot(aes(x = fct_reorder(condition, rt, .fun = median), y = rt)) +
   ggbeeswarm::geom_quasirandom(shape = pt_shape, 
-                               width = pt_width, 
+                               width = pt_width + 0.1 , 
                                color = pt_color, 
-                               size = pt_size,
+                               size = pt_size - 1,
                                fill = pt_fill,
-                               alpha = pt_alpha) +  
-  ylim(0, 1.8) +
+                               alpha = pt_alpha + 0.1) +  
+  ylim(-0.1, 2) +
   labs(y = "RT (sec)", x = NULL) +
   coord_flip()
 
 # get model values
-d_model_vals <- d_bda$rt_trio_contin %>%
-  select(sample_id, contains("scale")) %>% 
-  select(-age_beta_rt_scale) %>% 
-  dplyr::rename(ASL = asl_rt_scale,
-                Bullseye = bullseye_rt_scale,
-                Face = face_rt_scale,
-                Object = object_rt_scale) %>% 
-  gather(key = stimuli, value = rt_msec, -sample_id) %>% 
-  mutate(RT_sec = rt_msec / 1000)
+d_model_vals <- d_bda$rt_text %>%
+  mutate(bullseye = text_no_audio_int + bullseye,
+         face = text_no_audio_int + face,
+         text = text_no_audio_int + text) %>% 
+  rename(`text-no-audio` = text_no_audio_int) %>% 
+  gather(key = condition, value = mean_rt, -sample_id) %>% 
+  mutate(rt = exp(mean_rt))
 
 # add model values to plot
 d_quantiles <- d_model_vals %>% 
-  group_by(stimuli) %>% 
-  summarise(ci_lower = hd(RT_sec, q = 0.025),
-            ci_upper = hd(RT_sec, q = 0.975),
-            m_rt = hd(RT_sec, q = 0.5))
+  group_by(condition) %>% 
+  summarise(ci_lower = hd(rt, q = 0.025),
+            ci_upper = hd(rt, q = 0.975),
+            rt = hd(rt, q = 0.5))
 
 p_rt <- p_rt +
   geom_pointrange(aes(ymax = ci_upper, ymin = ci_lower), 
@@ -239,7 +237,7 @@ p_rt
 ### Merge behavioral plots and save
 
 ```{r}
-text_fst_shifts <- plot_grid(p_rt, p_acc, ncol = 1)
+text_fst_shifts <- plot_grid(p_rt, p_acc, ncol = 1, rel_heights = c(1,0.8))
 text_behav_plot <- plot_grid(text_timecourse_plot, text_fst_shifts, rel_widths = c(1, 0.7))
 
 save_plot(filename = here::here("paper/journal_submission/figures/figs_output/fig3_text_behav.png"), 
@@ -263,7 +261,7 @@ text_control_plot <- text_ewma_vals %>% plot_ewma_chart()
 text_control_plot <- text_control_plot + theme(plot.margin = unit(c(1,4,1,1), "lines"))
 ```
 
-Ewma guessing plot. (TODO: get bda values for ewma text output)
+Ewma guessing plot.
 
 ```{r}
 p_ewma_text <- d_ewma %>% 
@@ -281,12 +279,12 @@ p_ewma_text <- d_ewma %>%
   labs(x = "Condition", y = "Prop. Language-driven")  +
   scale_x_discrete(expand = c(0,1)) 
 
-d_quantiles_ewma_text <- d_models_trio$ewma_guess_trio %>% 
-  mutate(asl_kids = asl - age_beta,
-         face_kids = face - age_beta) %>% 
-  select(asl_kids, face_kids) %>% 
-  rename(ASL = asl_kids, Face = face_kids) %>% 
-  gather(key = condition, value = param_estimate) %>% 
+d_quantiles_ewma_text <- d_bda$ewma_guess_text %>% 
+  mutate(face = bullseye + face,
+         text = bullseye + text,
+         `text-no-audio`= bullseye + text_no_audio) %>% 
+  select(-text_no_audio) %>% 
+  gather(key = condition, value = param_estimate, -sample_id) %>% 
   mutate(param_est_prob = logit_to_prob(param_estimate)) %>% 
   group_by(condition) %>% 
   summarise(ci_lower = hd(param_est_prob, q = 0.025),
@@ -302,7 +300,7 @@ p_ewma_text <- p_ewma_text +
                   size = 0.7)
 ```
 
-HDDM plot (todo: figure out where the text-no-audio parameter estimates went?)
+HDDM plot 
 
 ```{r}
 p_hddm_text <- d_hddm %>% 
@@ -311,10 +309,24 @@ p_hddm_text <- d_hddm %>%
   geom_density_ridges(scale = 0.7, rel_min_height = 0.005, alpha = 0.8) + 
   labs(x = "Parameter value", y = NULL, color = "") +
   scale_y_discrete(expand = c(0.2,0)) +
-  theme(legend.position=c(0.9,0.3)) +
+  theme(legend.position=c(0.85,0.3)) +
   scale_fill_grey()
 
 p_hddm_text
 ```
 
+Put text model plots together.
+
+```{r put model plots together}
+text_ewma_hddm_plots <- plot_grid(p_ewma_text, p_hddm_text, ncol = 1, labels = c("B", "C"))
+text_final_model_plot <- plot_grid(text_control_plot, text_ewma_hddm_plots, ncol = 2,
+                                   rel_widths = c(1, 0.8),
+                                   labels = "A")
+
+save_plot(filename = here::here("paper/journal_submission/figures/figs_output/fig4_text_models.png"), 
+          text_final_model_plot,
+          ncol = 3,
+          nrow = 2,
+          base_aspect_ratio = 1)
+```
 
