@@ -49,7 +49,7 @@ d_hddm <- read_csv(here::here(hddm_path, "hddm_tidy.csv"))
 d_bda <- readRDS(here::here(models_path, "speed-acc-text-posterior-samples.rds"))
 ```
 
-## Text Processing
+## Text Processing Plots
 
 ### Timecourse plots
 
@@ -93,31 +93,29 @@ write_csv(x = ms_mean_iChart,
           path = here::here("paper/journal_submission/figures/text_timecourse_graph_vals.csv"))
 ```
 
-Make plot (todo: clean up and make same format as trio timecourse plots)
+Make plot.
 
 ```{r}
 text_time_gvs <- read_csv(here::here("paper/journal_submission/figures/text_timecourse_graph_vals.csv"))
 
 text_timecourse_plot <- ggplot(aes(x = as.numeric(t.stim), y = mean, 
-           color = target_looking), data = text_time_gvs) + 
+           color = condition, linetype = target_looking), data = text_time_gvs) + 
   geom_line(size=0.7) +
   geom_linerange(aes(ymin = summary_ci_lower, ymax = summary_ci_upper), alpha = 0.5) +
-  scale_color_manual(values = c("grey70", "grey50", "grey1")) +
-  xlab("Time from noun onset (ms)") +
+  #scale_color_manual(values = c("grey70", "grey50", "grey1")) +
+  ggthemes::scale_color_ptol() +
+  xlab("Time from noun onset (sec)") +
   ylab("Proportion looking") +
-  guides(color = F) +
-  geom_rect(aes(xmin = 0, xmax = 1, ymin = -Inf, ymax = -.1), alpha = 0.1, 
-            fill = "grey70", color = NA) +
+  guides(color = F, linetype = F) +
   facet_wrap(~condition, ncol = 1) +
-  theme(plot.margin = unit(c(1,4,1,1), "lines")) + 
   geom_text_repel(
     data = filter(text_time_gvs, t.stim == max(t.stim)),
     aes(label = target_looking),
     size = 4,
-    nudge_x = 15,
+    nudge_x = 0.1,
     segment.color = NA
   ) +
-  ylim(-.1,1) +
+  ylim(0,1) +
   xlim(0,2) 
 ```
 
@@ -147,23 +145,28 @@ Make first shift accuracy plot.
 
 ```{r set global plot values}
 pt_size <- 2.5
-pt_alpha <- 0.6
+pt_alpha <- 0.3
 pt_shape <- 21
 pt_width <- 0.2
 pt_color <- "black"
 pt_fill <- "darkgrey"
 ```
 
+First shift accuracy plot.
+
 ```{r make text acc plot}
 p_acc <- ss %>% 
-  ggplot(aes(x = fct_relevel(condition, "face", after = 2), y = m_acc)) +
+  ggplot(aes(x = fct_relevel(condition, "face", after = 2), y = m_acc,
+             fill = condition)) +
   ggbeeswarm::geom_quasirandom(shape = pt_shape, 
                                width = pt_width, 
                                color = pt_color, 
                                size = pt_size,
-                               fill = pt_fill,
+                               #fill = pt_fill,
                                alpha = pt_alpha) + 
   geom_hline(yintercept = 0.5, linetype = "dashed") +
+  ggthemes::scale_fill_ptol() +
+  guides(fill=F) +
   labs(x = NULL, y = "Prop. Correct") +
   lims(y = c(0, 1)) 
 
@@ -186,25 +189,31 @@ d_quantiles <- d_model_vals %>%
 p_acc <- p_acc +
   geom_pointrange(aes(ymax = ci_upper, ymin = ci_lower), 
                   data = d_quantiles,
-                  color = "red",
+                  color = "grey20",
                   shape = 15,
                   size = 0.7)
 
 p_acc
 ```
 
-First shift RT
+First shift RT plot.
 
 ```{r make text rt plot}
-p_rt <- d_fst %>% 
-  ggplot(aes(x = fct_reorder(condition, rt, .fun = median), y = rt)) +
+p_rt <- ss %>% 
+  ungroup() %>% 
+  mutate(condition = fct_relevel(condition, c("bullseye", "text", "face", "text-no-audio"))) %>% 
+  ggplot(aes(x = fct_rev(condition), 
+             y = m_rt,
+             fill = condition)) +
   ggbeeswarm::geom_quasirandom(shape = pt_shape, 
-                               width = pt_width + 0.1 , 
+                               width = pt_width, 
                                color = pt_color, 
-                               size = pt_size - 1,
-                               fill = pt_fill,
-                               alpha = pt_alpha + 0.1) +  
-  ylim(-0.1, 2) +
+                               size = pt_size,
+                               #fill = pt_fill,
+                               alpha = pt_alpha) +  
+  ylim(0, 1.5) +
+  guides(fill = F) + 
+  ggthemes::scale_fill_ptol() +
   labs(y = "RT (sec)", x = NULL) +
   coord_flip()
 
@@ -215,19 +224,19 @@ d_model_vals <- d_bda$rt_text %>%
          text = text_no_audio_int + text) %>% 
   rename(`text-no-audio` = text_no_audio_int) %>% 
   gather(key = condition, value = mean_rt, -sample_id) %>% 
-  mutate(rt = exp(mean_rt))
+  mutate(m_rt = exp(mean_rt))
 
 # add model values to plot
 d_quantiles <- d_model_vals %>% 
   group_by(condition) %>% 
-  summarise(ci_lower = hd(rt, q = 0.025),
-            ci_upper = hd(rt, q = 0.975),
-            rt = hd(rt, q = 0.5))
+  summarise(ci_lower = hd(m_rt, q = 0.025),
+            ci_upper = hd(m_rt, q = 0.975),
+            m_rt = hd(m_rt, q = 0.5))
 
 p_rt <- p_rt +
   geom_pointrange(aes(ymax = ci_upper, ymin = ci_lower), 
                   data = d_quantiles,
-                  color = "red",
+                  color = "grey20",
                   shape = 15,
                   size = 0.7)
 
@@ -237,8 +246,16 @@ p_rt
 ### Merge behavioral plots and save
 
 ```{r}
-text_fst_shifts <- plot_grid(p_rt, p_acc, ncol = 1, rel_heights = c(1,0.8))
-text_behav_plot <- plot_grid(text_timecourse_plot, text_fst_shifts, rel_widths = c(1, 0.7))
+text_fst_shifts <- plot_grid(p_rt, p_acc, 
+                             ncol = 1,
+                             rel_heights = c(0.95,1), 
+                             labels = c("B", "C"),
+                             scale = c(0.95, 0.95))
+
+text_behav_plot <- plot_grid(text_timecourse_plot, text_fst_shifts, 
+                             rel_widths = c(0.9, 1),
+                             labels = c("A"),
+                             scale = c(0.95, 0.9))
 
 save_plot(filename = here::here("paper/journal_submission/figures/figs_output/fig3_text_behav.png"), 
           text_behav_plot,
@@ -258,7 +275,7 @@ text_ewma_vals <- d_ewma %>%
 text_control_plot <- text_ewma_vals %>% plot_ewma_chart()
 
 # add some spacing to the right of plot for plot-grid layout
-text_control_plot <- text_control_plot + theme(plot.margin = unit(c(1,4,1,1), "lines"))
+text_control_plot <- text_control_plot
 ```
 
 Ewma guessing plot.
@@ -270,11 +287,14 @@ p_ewma_text <- d_ewma %>%
   summarise(count = n()) %>% 
   mutate(prop.responding = round(count / sum(count), 2)) %>% 
   filter(guess == "response") %>% 
-  ggplot(aes(x = fct_reorder(condition, prop.responding), y = prop.responding)) +
+  ggplot(aes(x = fct_reorder(condition, prop.responding), y = prop.responding,
+             fill = condition)) +
   ggbeeswarm::geom_quasirandom(shape = 21, width = 0.15, color = "black", 
                                size = 3,
-                               fill = "darkgrey",
+                               #fill = "darkgrey",
                                alpha = 0.6) +
+  ggthemes::scale_fill_ptol() +
+  guides(fill=F) +
   lims(y = c(0,1)) +
   labs(x = "Condition", y = "Prop. Language-driven")  +
   scale_x_discrete(expand = c(0,1)) 
@@ -295,7 +315,7 @@ d_quantiles_ewma_text <- d_bda$ewma_guess_text %>%
 p_ewma_text <- p_ewma_text +
   geom_pointrange(aes(ymax = ci_upper, ymin = ci_lower), 
                   data = d_quantiles_ewma_text,
-                  color = "red",
+                  color = "grey20",
                   shape = 15,
                   size = 0.7)
 ```
@@ -306,11 +326,13 @@ HDDM plot
 p_hddm_text <- d_hddm %>% 
   filter(experiment == "text") %>%
   ggplot(aes(x = param_value, y = param_name, fill = condition)) +
-  geom_density_ridges(scale = 0.7, rel_min_height = 0.005, alpha = 0.8) + 
+  geom_density_ridges(scale = 0.7, rel_min_height = 0.005, alpha = 0.8) +
+  ggthemes::scale_fill_ptol() +
   labs(x = "Parameter value", y = NULL, color = "") +
   scale_y_discrete(expand = c(0.2,0)) +
-  theme(legend.position=c(0.85,0.3)) +
-  scale_fill_grey()
+  theme(legend.position="top",
+        legend.text = element_text(size = 9),
+        legend.title = element_text(size = 10)) 
 
 p_hddm_text
 ```
@@ -318,9 +340,11 @@ p_hddm_text
 Put text model plots together.
 
 ```{r put model plots together}
-text_ewma_hddm_plots <- plot_grid(p_ewma_text, p_hddm_text, ncol = 1, labels = c("B", "C"))
+text_ewma_hddm_plots <- plot_grid(p_ewma_text, p_hddm_text, ncol = 1, labels = c("B", "C"),
+                                  scale = c(0.8, 0.8))
+
 text_final_model_plot <- plot_grid(text_control_plot, text_ewma_hddm_plots, ncol = 2,
-                                   rel_widths = c(1, 0.8),
+                                   rel_widths = c(1, 1), scale = c(0.95, 0.9),
                                    labels = "A")
 
 save_plot(filename = here::here("paper/journal_submission/figures/figs_output/fig4_text_models.png"), 
