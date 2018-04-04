@@ -11,4 +11,4 @@ summer_credit_pool_app/
 packrat/lib*/
 experiments/
 .DS_store
-
+*.icloud
