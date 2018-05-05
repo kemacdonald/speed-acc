@@ -241,7 +241,6 @@ p_acc_trio
 ```{r make trio rt plot}
 p_rt_trio <- ss_trio %>% 
   filter(age_code == "child") %>% 
-  
   ggplot(aes(x = fct_rev(stimuli), y = m_rt, fill = stimuli)) +
   ggbeeswarm::geom_quasirandom(shape = pt_shape, 
                                width = pt_width, 

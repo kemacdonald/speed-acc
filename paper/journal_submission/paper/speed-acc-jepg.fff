@@ -2,11 +2,11 @@
 \ifnextchar[{\eatarg}{}
 [tb]
 
-{\centering \includegraphics[width=0.8\linewidth]{figs/stimuli-plot-1}
+{\centering \includegraphics[width=0.7\linewidth]{figs/trio-stim-1}
 
 }
 
-\caption{Experimental design and stimuli. Panel A shows the timecourse of the linguistic stimuli for a single trial. Panel B shows the layout of the three fixation locations (speaker, target, and distracter). Panel C shows a visual representation of the clear and noisy waveforms.}\label{fig:stimuli-plot}
+\caption{Stimuli for Experiment 1. Panel A shows the timecourse of the linguistic stimuli for a single trial. Panel B shows the layout of the fixation locations for all tasks: the center stimulus, the target, and the distracter. Panel C shows the four center stimulus items: a static geometric shape (Bullseye), a static image of a familiar object (Object), a person speaking (Face), and a person signing (ASL).}\label{fig:trio-stim}
 \end{figure*}
 \efloatseparator
  

@@ -1,4 +1,4 @@
-\documentclass[english,man]{apa6}
+\documentclass[english,floatsintext,man]{apa6}
 
 \usepackage{amssymb,amsmath}
 \usepackage{ifxetex,ifluatex}
@@ -39,12 +39,6 @@
   {\begin{landscape}\begin{center}\begin{ThreePartTable}}
   {\end{ThreePartTable}\end{center}\end{landscape}}
 
-  \usepackage{ifthen} % Only add declarations when endfloat package is loaded
-  \ifthenelse{\equal{\string man}{\string man}}{%
-   \DeclareDelayedFloatFlavor{ThreePartTable}{table} % Make endfloat play with longtable
-   % \DeclareDelayedFloatFlavor{ltable}{table} % Make endfloat play with lscape
-   \DeclareDelayedFloatFlavor{lltable}{table} % Make endfloat play with lscape & longtable
-  }{}%
 
 
 
@@ -136,32 +130,27 @@ grounded signed and spoken language comprehension}
                                               }
 
 
-  \abstract{Language comprehension in grounded, social contexts involves integrating
-information from the visual and the linguistic signals. But gathering
-visual information presents a challenge since information is present at
-different fixation locations and listeners have limited time and
-cognitive resources. How do we decide where to look? Using three case
-studies, we test the hypothesis that even young listeners flexibly adapt
-the dynamics of their gaze in response to features of the language
-context, seeking higher value visual information to support language
-comprehension. We show that, compared to English-learners (n=80) and
-adults (n=25), young ASL-learners (n=30) and fluent adults (n= 16)
-delayed their gaze shifts away from a language source, gathering more
-information to produce more accurate with these shifts and a smaller
-proportion of random shifting behavior (E1). Next, we present a
-tightly-controlled, confirmatory experiment, showing that
-English-speaking adults produced fewer random gaze shifts when
-processing dynamic displays of printed text as compared to processing
-spoken language (Experiment 2). Finally, we report a confirmatory test
-of our account in children, showing that 3-5 year-olds (n=39) and adults
-(n=31) delayed the timing of gaze shifts away from a speaker's face when
-processing speech in a noisy environment. This delay resulted in
-listeners gathering more visual information from the language source,
-fewer random eye movements, and more accurate gaze shifts despite the
-more challenging processing context (E3). Together, these results
-provide evidence that even young listeners adjust to the demands of
-different processing environments by seeking out additinoal visual
-information to support their language comprehension.}
+  \abstract{Language comprehension in grounded, social interactions involves
+extracting meaning from the linguistic signal and mapping it to the
+visual world. Information that is gathered through visual fixations can
+facilitate this comprehension process. But how do listeners decide what
+visual information to gather and at what time? Here, we propose that
+listeners flexibly adapt their gaze behaviors to seek visual information
+from their social partners to support robust language understanding. We
+present evidence for our account using three case studies of eye
+movements during real-time language processing. First, compared to
+children (n=80) and adults (n=25) learning spoken English, young
+ASL-learners (n=30) and adults (n= 16) delayed gaze shifts away from a
+language source, were more accurate with these shifts, and produced a
+smaller proportion of random shifts. Next, English-speaking adults
+(n=30) produced fewer random gaze shifts when processing serially
+printed text compared to processing spoken language. Finally,
+English-speaking preschoolers (n=39) and adults (n=31) delayed the
+timing of shifts away from a speaker while processing speech in noisy
+environments, gathering more visual information while generating more
+accurate responses. Together, these results provide evidence that
+listeners adapt to the demands of different processing contexts by
+seeking out visual information from social partners.}
   \keywords{eye movements; language comprehension; information-seeking; speech in
 background noise; American Sign Language \\
 
@@ -197,106 +186,301 @@ background noise; American Sign Language \\
 \hypertarget{introduction}{%
 \section{Introduction}\label{introduction}}
 
-When processing language, we integrate information from the visual and
-linguistic signals to understand what others are saying. A classic
-demonstration of this integration is the \enquote{McGurk effect} where a
-speaker's mouth movements suggest one sound while their acoustic output
-indicates another. This conflict results in the listener perceiving a
-third, intermediate sound (MacDonald \& McGurk, 1978). Findings such as
-these have inspired prominent theories of speech perception (McClelland,
-Mirman, \& Holt, 2006) and lexical processing (MacDonald \& Seidenberg,
-2006) that argue for the importance of \emph{interactive} processes --
-where listeners integrate information from multiple sources in parallel.
-Moreover, empirical work on speech perception shows that adults are
-better able to recover linguistic information in noisy contexts when
-they have visual access to a speaker's face (Erber, 1969).
+Extracting meaning from language represents a formidable challenge for
+young language learners. Consider that even in the simple case of
+understanding grounded, familiar language (e.g., \enquote{look at the
+ball}), the listener must continuously integrate linguistic and
+non-linguistic information from continuous streams of input. Moreover,
+language unfolds within dynamic interactions where there is often
+insufficient information to figure out what is being said, and yet the
+listener must decide how best to respond. Even young children, however,
+can map language to the world quite efficiently, shifting visual
+attention to a named object in a scene within hundreds of milliseconds
+upon hearing the name of an object (Allopenna, Magnuson, \& Tanenhaus,
+1998; Spivey, Tanenhaus, Eberhard, \& Sedivy, 2002; Tanenhaus,
+Spivey-Knowlton, Eberhard, \& Sedivy, 1995). How do young listeners
+successfully interpret linguistic input despite these challenges?
 
-But how should listeners prioritize different kinds of information?
-Consider that the value of integrating visual information can change
-depending on features of the listener and the processing context. For
-example, if a friend asks you to \enquote{Pass the salt} in a noisy
-restaurant, you could facilitate comprehension by looking to the
-speaker's face to read her lips or perhaps the direction of her gaze. A
-second case is the comprehension of a visual-manual language, e.g.,
-American Sign Language (ASL). Here, the value of allocating visual
-fixations to the language source (the signer) is high since all of the
-language-relevant information is available in that location.
+One solution is for the language comprehension system to integrate
+multiple sources of information to constrain the set of possible
+interpretations (MacDonald \& Seidenberg, 2006; McClelland \& Elman,
+1986). Under this interactive account, listeners comprehend words by
+partially activating several candidates that are consistent with the
+incoming perceptual information. Then, as more information arrives,
+words that do not match the perceptual signal are no longer considered,
+and words that are more consistent become strongly activated until a
+single interpretation is reached (see McClelland, Mirman, and Holt
+(2006) for a review). Critically, information from multiple sources --
+e.g., the linguistic signal and visual world -- mutually influence one
+another to shape interpretation. For example, if a speaker's mouth
+movements suggest one sound while their acoustic output indicates
+another, the conflict results in the listener perceiving a third,
+intermediate sound (\enquote{McGurk effect}) (MacDonald \& McGurk,
+1978). Other research shows that listeners will use information in the
+visual scene to help parse syntactically ambiguous utterances (Tanenhaus
+et al., 1995).
 
-In prior work, we showed that, compared to spoken language learners,
-ASL-learners delay shifting gaze away from a language source until they
-have accumulated sufficient information to generate highly-accurate eye
-movements (MacDonald, Blonder, Marchman, Fernald, \& Frank, 2017). In
-contrast, spoken language learners were more likely to produce early,
-random gaze shifts when seeking named referents. We explained these
-differences using an information-seeking account: that listeners
-flexibly adapted the dynamics of their gaze in response to contexts
-where the value of gathering visual information was high.
+Thus, information gathered from the visual world can serve as a useful
+constraint on language comprehension. But the incoming linguistic
+information is ephemeral, meaning listeners must quickly decide how to
+direct their gaze to informative locations. Consider a speaker who asks
+you to \enquote{Pass the salt} in a noisy restaurant. Here,
+comprehension could be supported by looks that better encode the objects
+in the scene (e.g., the type of food she is eating), or by looks to the
+speaker (e.g., reading her lips or the direction of her gaze). A second
+interesting case is the processing a visual-manual language such as
+American Sign Language (ASL). Here, deciding to look away from another
+signer is inherently risky because the listener stops the flow of
+information from the linguistic signal to gather information about the
+visual world.
 
-Our account was inspired by ideas from several research programs. First,
-work on language-mediated visual attention shows that adults and
-children rapidly shift gaze upon hearing the name of an object in the
-visual scene (Allopenna, Magnuson, \& Tanenhaus, 1998; Tanenhaus,
-Spivey-Knowlton, Eberhard, \& Sedivy, 1995). Second, empirical work on
-visual attention during everyday tasks shows that people overwhelmingly
-prefer to look at \emph{goal-relevant} locations -- e.g., an upcoming
-obstacle while walking (Hayhoe \& Ballard, 2005). Finally, work on
-\enquote{effortful listening} shows that people will generate
-compensatory responses (e.g., increases in attention and working memory)
-within \enquote{challenging} language contexts such as processing noisy
-or accented speech (Van Engen \& Peelle, 2014). Together, these accounts
-predict that gaze dynamics during language comprehension should adapt to
-compensate for the reduced quality of the auditory signal and to
-facilitate the listener's goal of comprehension.
+Eye movements during language comprehension can be characterized an
+active decision-making process taking into account limits on visual
+attention. We propose that listeners are sensitive to this tradeoff,
+flexibly adapting the dynamics of their gaze in contexts that place a
+higher value on gathering visual information. That is, we suggest that
+listeners' eye movements are shaped by an interaction between their
+sensorimotor constraints and information features of the environment.
 
-\begin{figure}[tb]
+Our account is inspired by ideas from several research traditions.
+First, work on language-mediated visual attention showing rapid
+interactions between visual attention and language (Allopenna et al.,
+1998; Tanenhaus et al., 1995). Second, research on vision in everyday
+tasks shows that people allocate fixations to \emph{goal-relevant}
+locations -- e.g., an upcoming obstacle while walking (Hayhoe \&
+Ballard, 2005). Finally, work on multisensory integration showing that
+listeners leverage multimodal cues (e.g., gestures, facial expressions,
+mouth movements) to support communication. In the following sections, we
+review each of these literatures to motivate our information-seeking
+account of eye movements in social, grounded language comprehension.
 
-{\centering \includegraphics[width=0.8\linewidth]{figs/stimuli-plot-1} 
+\hypertarget{vision-language-interactions-during-language-comprehension}{%
+\subsection{Vision-Language interactions during language
+comprehension}\label{vision-language-interactions-during-language-comprehension}}
 
-}
+Eye movements during language comprehension have provided insight into
+the interaction between concepts, language, and visual attention. The
+majority of this work has used the Visual World Paradigm (VWP) where
+listeners' eye movements are recorded at the millisecond timescale while
+processing language and looking at a set of objects (see Salverda,
+Brown, and Tanenhaus (2011) for a review). Crucially, these analyses
+rely on the fact that people will initiate gaze shifts to naemd
+referents with only partial information, in contrast to waiting until
+the end of a cognitive process (Gold \& Shadlen, 2000). Thus, the
+timecourse of eye movements provides a window onto how and when people
+integrate information to reach an interpretation of the incoming
+linguistic signal.
 
-\caption{Experimental design and stimuli. Panel A shows the timecourse of the linguistic stimuli for a single trial. Panel B shows the layout of the three fixation locations (speaker, target, and distracter). Panel C shows a visual representation of the clear and noisy waveforms.}\label{fig:stimuli-plot}
-\end{figure}
+A classic finding using the VWP shows that listeners will rapidly shift
+visual attention upon hearing the name of an object (\enquote{Pick up a
+beaker.}) in the visual scene with a high proportion of shifts occurring
+soon after the target word begins (Allopenna et al., 1998). Moreover,
+adults tended to look at phonological onset-competitor (a beetle) early
+in the target noun, suggesting that they had activated multiple
+interpretations and resolved ambiguity as the stimulus unfolded. These
+behavioral results fall out of predictions made by interactive models of
+speech perception where information from multiple sources is integrated
+to constrain language understanding (McClelland et al., 2006).
 
-Here, we synthesize these ideas and test the generality of our
-information-seeking account of eye movements during grounded language
-comprehension. We ask whether listeners will adapt the timing of gaze
-shifts away from a speaker if the auditory signal is less reliable -- as
-is the case when processing speech in a noisy environment.
+The visual world can also constrain the set of plausible interpretations
+of language (Dahan \& Tanenhaus, 2005; Yee \& Sedivy, 2006). For
+example, Altmann and Kamide (2007) showed that people will allocate more
+looks to an empty wine glass as compared to a full beer glass upon
+hearing the past tense verb \enquote{has drunk.} They propose that
+anticipatory eye movements reflect the influence of the visual
+information in a scene activating a multi-featured, conceptual
+representation prior to the arrival of the linguistic signal (see also
+Huettig and Altmann (2005)).
 
-The second goal of this work is to test whether children show a similar
-pattern of behavior and flexibly adapt fixations in response to changes
-in the utility of gathering certain kinds of visual information. Recent
+In addition to work on adult psycholinguistics, the VWP has been useful
+for studying developmental change in language comprehension skill in
+children. Researchers have adapted the task to measure the timing and
+accuracy of children's gaze shifts as they look at two familiar objects
+and listen to simple sentences naming one of the objects (Fernald,
+Zangl, Portillo, \& Marchman, 2008; Venker, Eernisse, Saffran, \&
+Weismer, 2013). Such research finds that children, like adults, shift
+gaze to named objects occur soon after the auditory information is
+sufficient to enable referent identification. Moreover, individual
+differences in the speed and accuracy of eye movements predict
+vocabulary growth and later language and cognitive outcomes (Fernald,
+Perfors, \& Marchman, 2006; Marchman \& Fernald, 2008; Rigler et al.,
+2015). Finally, the VWP illustrated interesting developmental parallels
+and differences between children's language processing in different
+populations, including sign language (MacDonald, LaMarr, Corina,
+Marchman, \& Fernald, 2018), bilingualism (Byers-Heinlein,
+Morin-Lessard, \& Lew-Williams, 2017), and children with cochlear
+implants (Schwartz, Steinman, Ying, Mystal, \& Houston, 2013).
+
+\hypertarget{goal-based-accounts-of-eye-movements-in-everyday-tasks}{%
+\subsection{Goal-based accounts of eye movements in everyday
+tasks}\label{goal-based-accounts-of-eye-movements-in-everyday-tasks}}
+
+The majority of the work on language-mediated visual attention has used
+eye movements as an index of the underlying interaction between
+linguistic and visual information. This approach reflects a somewhat
+passive construal of how people allocate visual attention during
+language comprehension. In contrast, goal-based accounts of vision start
+from the idea that eye movements reflect an active information-gathering
+process where visual fixations are driven by task goals (Hayhoe \&
+Ballard, 2005).
+
+Under this account, people allocate visual attention to reduce
+uncertainty about the world and maximize the expected future reward. For
+example, Hayhoe and Ballard (2005) review evidence that people fixate on
+locations that are most helpful for their current goal (an upcoming
+obstacle) as opposed to other aspects of a visual scene that might be
+more salient (a flashing light). Moreover, other work shows that people
+gather task-specific information via different visual routines as they
+become useful for their goals. For example, Triesch et al 2003 found
+that people were much less likely to gather and store visual information
+about the size of an object when it was not relevant to the task of
+sorting and stacking the objects.
+
+Hayhoe and Ballard (2005)'s review also highlights the role of learning
+gaze patterns. They point out that visual routines are developed over
+time, and it is only when a task becomes highly-practiced that people
+allocate fewer looks to less relevant parts of the scene. For example,
+Shinoda et. al. (2001) show that drivers, with practice, learn to spread
+visual attention more broadly at intersections to better detect stop
+signs. Other empirical work shows that the visual system rapidly learns
+to use temporal regularities in the environment to control the timing of
+eye movements to detect goal-relevant events (Hoppe et al., 2016).
+Moreover, the timing of eye movements in these tasks often occur before
+an expected event (i.e., anticipatory), suggesting that gaze patterns
+reflect an interaction between people's expectations, information
+available in the visual scene, and their task goals.
+
+Recent theoretical work has argued for a stronger link between
+goal-based perspectives and work on eye movements during language
+comprehension. For example, Salverda et. al., 2011 highlight the
+immediate relevance of visual information with respect to the goal of
+language understanding, suggesting that listeners' goals should be a key
+predictor of fixation patterns. Moreover, they point out that factors
+such as the difficulty of executing a real world task should change
+decisions about where to look during language comprehension. Some
+empirical work on eye movements during category learning has started
+from the goal-based perspective. For example, Nelson and Cottrell (2007)
+modeled eye movements as a type of question-asking about features of a
+concept. In an experiment and computational model, they showed that the
+dynamics of eye movements changed as participants became more familiar
+with the novel concepts. Early in learning people generated a broader
+distribution of fixations to explore all features. Later in learning,
+eye movements shifted to focus on a single stimulus dimension to
+maximize accuracy on the task. This shift from exploratory to efficient
+suggests that fixation behavior changed as a function of changes in
+learning goals during the experiment.
+
+For the current work, the goal-based model of eye movements predicts
+that gaze dynamics during language comprehension should adapt to the
+processing context. That is, listeners should change the timing and
+location of eye movements when fixation locations become more useful for
+language understanding. This proposal dovetails with a growing body of
+research that explores the role of multisensory information available in
+face-to-face communication such as gesture, prosody, facial expression
+and body movement.
+
+\hypertarget{language-perception-as-multisensory-integration}{%
+\subsection{Language perception as multisensory
+integration}\label{language-perception-as-multisensory-integration}}
+
+Language comprehension is not just one stream of linguistic information.
+Instead, face-to-face communication provides access to a set of
+multimodal cues that can facilitate comprehension and there is a growing
+emphasis on studying language as a multimodal and multisensory process
+(for a review, see Vigliocco et. al., 2014). For example, empirical work
+shows that when gesture and speech provide redundant cues to meaning,
+people are faster to process the information and make fewer errors
+(Kelly et. al., 2010). Moreover, developmental work shows that parents
+use visual cues such as gesture and eye gaze to help structure language
+interactions with their children (Estigarribia \& Clark, 2007). Finally,
+from a young age, children also produce gestures such as reaches and
+points to share attention with others to achieve communicative goals
+(Liskowski et al., 2014).
+
+Additional support for multisensory processing comes from work on
+audiovisual speech perception, showing how spoken language perception is
+shaped by visual information coming from a speaker's mouth. In a review,
+Peele and Sommers (2015) point out that mouth movements provide a clear
+indication of when someone has started to speak, which cues the listener
+to allocate additional attention to the speech signal. Moreover, a
+speaker's mouth movements convey information about the phonemes in the
+acoustic signal. For example, visual speech information distinguishes
+between consonants such as /b/ vs. /d/ and place of articulation can
+help a listener differentiate between words such as \enquote{cat} or
+\enquote{cap.} Finally, classic empirical work shows comprehension
+benefits for audiovisual speech compared to auditory- or visual-only
+speech, especially in noisy listening contexts (Erber, 1969).
+
+In sum, the work on multisensory processing shows that both auditory and
+visual information interact to shape language perception. These results
+dovetail with the interactive models of language processing reviewed
+earlier and suggest that visual information can support comprehension
+(McClelland, 2006; MacDonald, 2006). Finally, these results highlight
+the value of studying language comprehension during face-to-face
+communication, where listeners have the choice to gather visual
+information about the linguistic signal from their social partners.
+
+\hypertarget{the-present-studies}{%
+\subsection{The present studies}\label{the-present-studies}}
+
+The studies reported here synthesize ideas from research on language
+processing as a multimodal, goal-based, and social phenomenon. We
+propose an information-seeking account of eye movements during grounded
+language comprehension in social interaction. We characterize the timing
+of gaze patterns as reflecting a tradeoff between gathering visual
+information about the incoming linguistic signal from a speaker and
+seeking information about the surrounding visual scene. We draw on
+models of eye movements as active decisions that gather information to
+achieve reliable interpretations of incoming language. We test
+predictions of our account using three case studies: sign language, text
+processing, and processing spoken language in noisy environments. These
+case studies represent a broad sampling of contexts that share a key
+feature: The interaction between the listener and context changes the
+value of fixating on the language source to gather visual information
+for comprehension.
+
+A secondary goal of this work was to test whether children and adults
+would show similar patterns of adaptation of gaze patterns. Recent
 developmental work shows that, like adults, preschoolers will flexibly
 adjust how they interpret ambiguous sentences (e.g., \enquote{I had
 carrots and \emph{bees} for dinner.}) by integrating information about
 the reliability of the incoming perceptual information with their
 expectations about the speaker (Yurovsky, Case, \& Frank, 2017). While
 children's behavior paralleled adults, they relied more on top-down
-expectations about the speaker, perhaps because their developing
-perceptual representations were noisier compared with adults. These
-developmental differences provide insight into how children succeed in
-understanding language despite having partial knowledge of word-object
-links and without a fully-developed language model.
+expectations about the speaker perhaps because their perceptual
+representations were noisier. These developmental differences provide
+insight into how children succeed in understanding language despite
+having partial knowledge of word-object mappings.
 
-In our experiment, we hypothesized that a noisy auditory environment
-increases the value of fixating a speaker to gather visual information
-that supports comprehension. Our key behavioral prediction is that
-listeners in noisy contexts will delay generating an eye movement away
-from a speaker until they have accumulated additional visual information
-about the identity of the named referent. This delay, in turn, will lead
-to fewer random gaze shifts to the rest of the visual world. We also
-predicted that preschoolers would show a parallel pattern of adaptation
-to noisy contexts and allocate more fixations to a speaker's face when
-it became more useful for accurate language comprehension. A plausible
-alternative to our hypothesis is that the effects of language on visual
-attention are so well-practiced that we would not see listeners adapt
-their gaze patterns to the processing context.
+The structure of the paper is as follows. First, we compare children and
+adult's eye movements while processing signed vs.~spoken language. Then,
+we present a comparison of adults' eye movements while processing
+serially printed text vs.~spoken language. Finally, we compare children
+and adults' gaze patterns while they process speech in noisy vs.~clear
+auditory environments. The key behavioral prediction (see Table 1 for
+more detailed predictions) is that both children and adults will adapt
+the timing of their eye movements to facilitate better word recognition.
+We hypothesized that when a language source provides higher value visual
+information, listeners would prioritize fixations to their social
+partner, and, in turn, would be slower to shift gaze away, generating
+(a) more accurate responses and (b) fewer random, exploratory eye
+movements to the objects in the visual scene.
 
-To quantify the evidence for our predictions, we analyze the accuracy
-and reaction times (RTs) of listeners' first gaze shifts after hearing
-the name of an object in the visual scene. We focus on first shifts
-because they provide a window onto changes in the underlying dynamics of
-decision processes that generate eye movements.
+Before describing the studies, it is worth motivating our analytic
+approach. To quantify the evidence for our predictions, we analyze the
+accuracy and reaction times (RTs) of listeners' initial gaze shifts
+after hearing the name of an object. The timescale of this analysis is
+milliseconds and focuses on a single decision within a series of
+decisions about where to look during language processing. We chose this
+approach because first shifts are rapid decisions driven by accumulating
+information about the identity of the named object. Moreover, these
+measurements provide a window onto changes in the underlying dynamics of
+how listeners integrate linguistic and visual information to make
+fixation decisions. Finally, by focusing our analysis on a specific
+decision, we could leverage models of decision making developed over the
+past decades to quantify changes in the underlying dynamics of eye
+movements in different processing contexts (see the analysis plan for
+more details).
 
 \hypertarget{experiment-1}{%
 \section{Experiment 1}\label{experiment-1}}
@@ -309,40 +493,43 @@ ball?}) while looking at a simplified visual world with 3 fixation
 targets (a center stimulus that varied by condition, a target picture,
 and a distracter picture; see Fig 1). The spoken language data are a
 reanalysis of three unpublished data sets, and the ASL data are reported
-in MacDonald et al. (under review). We predicted that, compared to
-spoken language processing, processing ASL would increase the value of
-fixating on the language source and decrease the value of generating
-exploratory, nonlanguage-driven shifts even after the target linguistic
-item began unfolding in time.
+in MacDonald et al. (2018). We predicted that, compared to spoken
+language processing, processing ASL would increase the value of fixating
+on the language source and decrease the value of generating exploratory,
+nonlanguage-driven shifts even after the disambiguating point in the
+linguistic signal.
 
-To test this prediction, we present traditional behavioral analyses of
-first shift Accuracy and RT. We also present two model-based analyses.
-First, we use an exponentially weighted moving average (EWMA) method
-(Vandekerckhove \& Tuerlinckx, 2007) to categorize participants' gaze
-shifts as language-driven or random. In contrast to the standard
-RT/Accuracy analysis, the EMWA allows us to quantify differences in the
-accuracy of gaze shifts as a function of \emph{when} that shift occurred
-in time. Next, we use drift-diffusion models (DDMs) (Ratcliff \&
-Childers, 2015) to quantify differences in the underlying psychological
-variables that might drive behavioral differences in Accuracy and RT.
-For example, the DDM uses the shape of \emph{both} the correct and
-incorrect RT distributions to provide a quantiative estimate of whether
-higher accuracy is driven by more cautious responding or by more
-efficient information processing.
+We quantify the timing and accuracy of gaze shifts using traditional
+behavioral analyses of first shift accuracy and reactoin time. We also
+present two model-based analyses. First, we use an exponentially
+weighted moving average (EWMA) method (Vandekerckhove \& Tuerlinckx,
+2007) to categorize gaze shifts as language-driven or random. In
+contrast to the standard RT/Accuracy analysis, the EMWA allows us to
+quantify differences in the accuracy of gaze shifts as a function of
+\emph{when} that shift occurred in time. Next, we use drift-diffusion
+models (DDMs) (Ratcliff \& Childers, 2015) to quantify differences in
+the underlying psychological processes that drive behavioral differences
+in Accuracy and RT. That is, the DDM uses the shape of \emph{both} the
+correct and incorrect RT distributions to provide a quantiative estimate
+of whether higher accuracy is driven by more cautious responding or by
+more efficient information processing -- an important distinction for
+our theoretical account.
 
 \hypertarget{analysis-plan}{%
 \subsection{Analysis plan}\label{analysis-plan}}
 
 First, we present behavioral analyses of First Shift Accuracy and
-Reaction Time (RT).\footnote{See \url{https://osf.io/g8h9r/} for a
-  pre-registration of the analysis plan.} RT corresponds to the latency
-to shift away from the central stimulus to either picture measured from
-the onset of the target noun. Accuracy corresponds to whether
-participants' first gaze shift landed on the target or the distracter
-picture. However, it is important to point out that when we analyze
-differences in accuracy, we are not making claims about the overall
-amount of time spent looking at the target vs.~the distractor image -- a
-measure typically used in analyses of the Visual World Paradigm.
+Reaction Time (RT). RT corresponds to the latency to shift away from the
+central stimulus to either picture measured from the onset of the target
+noun. Accuracy corresponds to whether participants' first gaze shift
+landed on the target or the distracter picture. It is important to note
+that this analysis of accuracy does not measure the overall amount of
+time spent looking at the target vs.~the distractor image -- a measure
+typically used in analyses of the Visual World Paradigm. We chose to
+focus on first shifts to provide a window onto how processing contexts
+change the underlying dynamics of information gathering decisions. All
+analysis code can be found in the online repository for this project:
+\url{https://github.com/kemacdonald/speed-acc}.
 
 We used the \texttt{rstanarm} (Gabry \& Goodrich, 2016) package to fit
 Bayesian mixed-effects regression models. The mixed-effects approach
@@ -354,8 +541,8 @@ estimation to quantify uncertainty in our point estimates, which we
 communicate using a 95\% Highest Density Interval (HDI). The HDI
 provides a range of credible values given the data and model. Finally,
 to estimate age-related differences, we fit two types of models: (1) age
-group (adults vs.~children) as a categorical predictor and (2) age (in
-days) as a continuous predictor within the child sample.
+group (adults vs.~children) as a categorical predictor and (2) age as a
+continuous predictor (measured in days) within the child sample.
 
 Next, we present the two model-based analyses -- the EWMA and DDM. The
 goal of these models is to move beyond a description of the data and map
@@ -380,17 +567,17 @@ Bayesian drift-diffusion model (HDDM). The DDM quantifies differences in
 the underlying decision process that lead to different patterns of
 behavior. The model assumes that people accumulate noisy evidence in
 favor of one alternative with a response generated when the evidence
-crosses a pre-defined decision threshold. Here, we focus on two
-parameters of interest: \emph{boundary separation}, which indexes the
-amount of evidence gathered before generating a response (higher values
-suggest more cautious responding) and \emph{drift rate}, which indexes
-the amount of evidence accumulated per unit time (higher values suggest
-more efficient processing).
-
-Note:\footnote{We, furthermore, used the R-packages \emph{here} (0.1,
-  Müller, 2017), \emph{knitr} (1.20, Xie, 2015), \emph{papaja}
-  (0.1.0.9492, Aust \& Barth, 2017), \emph{rstanarm} (2.17.3, Stan
-  Development Team, 2016), and \emph{tidyverse} (1.2.1, Wickham, 2017).}
+crosses a pre-defined decision threshold. We chose to implement a
+hierarchical Bayesian version of the DDM using the HDDM Python package
+(Wiecki, Sofer, \& Frank, 2013) since we had relatively few trials from
+child participants and recent simulation studies have shown that the
+HDDM approach was better than other DDM fitting methods for small data
+sets (Ratcliff \& Childers, 2015). Here, we focus on two parameters of
+interest: \emph{boundary separation}, which indexes the amount of
+evidence gathered before generating a response (higher values suggest
+more cautious responding) and \emph{drift rate}, which indexes the
+amount of evidence accumulated per unit time (higher values suggest more
+efficient processing).
 
 \hypertarget{methods}{%
 \subsection{Methods}\label{methods}}
@@ -402,12 +589,12 @@ Note:\footnote{We, furthermore, used the R-packages \emph{here} (0.1,
 \centering
 \begin{tabular}{lrrrr}
   \hline
-Task & Mean\_Age & Min\_Age & Max\_Age & n \\ 
+Center Stimulus & Mean\_Age & Min\_Age & Max\_Age & n \\ 
   \hline
-ASL & 27.90 & 16.00 & 53.00 &  30 \\ 
-  Face & 26.00 & 25.00 & 26.00 &  24 \\ 
-  Object & 31.90 & 26.00 & 39.00 &  40 \\ 
-  Bullseye & 26.10 & 26.00 & 27.00 &  16 \\ 
+ASL & 27.90 & 16.00 & 53.00 & 30.00 \\ 
+  Face & 26.00 & 25.00 & 26.00 & 24.00 \\ 
+  Object & 31.90 & 26.00 & 39.00 & 40.00 \\ 
+  Bullseye & 26.10 & 26.00 & 27.00 & 16.00 \\ 
    \hline
 \end{tabular}
 \caption{Age distributions of children in Experiment 1. All ages are reported in months.} 
@@ -430,6 +617,20 @@ because this is a rare population.
 
 \hypertarget{stimuli}{%
 \subsubsection{Stimuli}\label{stimuli}}
+
+\begin{figure}[tb]
+
+{\centering \includegraphics[width=0.7\linewidth]{figs/trio-stim-1} 
+
+}
+
+\caption{Stimuli for Experiment 1. Panel A shows the timecourse of the linguistic stimuli for a single trial. Panel B shows the layout of the fixation locations for all tasks: the center stimulus, the target, and the distracter. Panel C shows the four center stimulus items: a static geometric shape (Bullseye), a static image of a familiar object (Object), a person speaking (Face), and a person signing (ASL).}\label{fig:trio-stim}
+\end{figure}
+
+There are differences between ASL and English question structures.
+However, all linguistic stimuli shared the same trial structure:
+language to attract participants' attention followed by a sentence
+containing a target noun.
 
 \emph{ASL linguistic stimuli.} We recorded two sets of ASL stimuli,
 using two valid ASL sentence structures for questions: 1)
@@ -455,13 +656,25 @@ phonological overlap (ASL task: cat---bird, car---book, bear---doll,
 ball---shoe; English tasks: book-shoe, juice-banana, cookie-ball). Side
 of target picture was counterbalanced across trials.
 
+\emph{Trial structure.} On each trial, the child saw two images of
+familiar objects on the screen for two seconds before the center
+stimulus appeared. This time allowed the child to visually explore both
+images. Next, the target sentence -- which consisted of a carrier
+phrase, target noun, and question sign -- was presented, followed by two
+seconds without language to allow the child to respond to the signer's
+sentence. The trial structure of the Face, Object, and Bullseye tasks
+were highly similar: children were given two seconds to visually explore
+the objects prior to the appearance of the center stimulus, then
+processed a target sentence, and finally were given two seconds of
+silence to generate a response to the target noun.
+
 \hypertarget{design-and-procedure}{%
 \subsubsection{Design and procedure}\label{design-and-procedure}}
 
 Children sat on their caregiver's lap and viewed the task on a screen
 while their gaze was recorded using a digital camcorder. On each trial,
 children saw two images of familiar objects on the screen for two
-seconds before the center stimulus appeared (see Fig 1). Then they
+seconds before the center stimulus appeared (see Figure 1). Then they
 processed the target sentence -- which consisted of a carrier phrase, a
 target noun, and a question -- followed by two seconds without language
 to allow for a response. Participants saw 32 test trials with several
@@ -475,18 +688,15 @@ individual frames of video and averaged 98\% on these reliability
 assessments.
 
 \hypertarget{results-and-discussion}{%
-\subsection{Results and discussion}\label{results-and-discussion}}
-
-\hypertarget{results-and-discussion-1}{%
-\subsection{Results and Discussion}\label{results-and-discussion-1}}
+\subsection{Results and Discussion}\label{results-and-discussion}}
 
 \begin{figure}[tb]
 
-{\centering \includegraphics[width=0.8\linewidth]{figs/trio-plot-behav-1} 
+{\centering \includegraphics[width=0.9\linewidth]{figs/speed-acc-trio-plot-1} 
 
 }
 
-\caption{First shift accuracy and RTs from Experiment 1. Panel A shows a boxplot representing the distribution of RTs for correct (orange) and incorrect (blue) shifts for each center stimulus type. Panel B shows the distribution of mean first shift accuracy scores for each center stimulus type. The solid lines represent median values, the boundaries of the box show the upper and lower quartiles, and the whiskers show the full range of the data excluding outliers.}\label{fig:trio-plot-behav}
+\caption{Timecourse looking, first shift Reaction Time (RT), and Accuracy results for children in Experiment 1. Panel A shows the overall looking to the center, target, and distracter stimulus for each context. Panel B shows the distribution of RTs for each participant. Each point represents a participant's average RT. Color represents the processing context. Panel C shows the same information but for first shift accuracy.}\label{fig:speed-acc-trio-plot}
 \end{figure}
 
 \hypertarget{behavioral-analyses}{%
@@ -524,11 +734,11 @@ significant (\(p\) = 0.089).
 
 \begin{figure}[tb]
 
-{\centering \includegraphics[width=0.8\linewidth]{figs/trio-control-plot-1} 
+{\centering \includegraphics[width=0.9\linewidth]{figs/trio-model-plot-1} 
 
 }
 
-\caption{Output for the EWMA guessing model in E1. The black curve represents the evolution of the control statistic (CS) as a function of reaction time. The grey curve represents the upper control limit (UCL). The vertical dashed line is the median cutoff value (point when the control process shifts out of a guessing state). The grey shaded area represents the 95\% confidence interval around the estimate of the median cutoff point. And the shaded areas represents the proprotion of responses that were flagged as guesses (red) and language-driven (green).}\label{fig:trio-control-plot}
+\caption{Results for the model-based analyses in Experiment 1. Panel A shows a control chart representing the timecourse of the EWMA statistic. The black curve represents the evolution of the control statistic (CS) as a function of reaction time. The grey curve represents the upper control limit (UCL). The vertical dashed line is the median cutoff value (point when the control process shifts out of a guessing state). The grey shaded area represents the 95\% confidence interval around the estimate of the median cutoff point, and the shaded ribbons represent the proportion of responses that were categorized as guesses (red) and language-driven (green). Panel B shows a summary of the proprotion of shifts that were categorized as language-driven for the Face and ASL tasks. Panel C shows the posterior distributions for the boundary and drift rate parameters for the Face and ASL tasks.}\label{fig:trio-model-plot}
 \end{figure}
 
 \emph{EWMA.} Figure 3 shows changes in the control statistic (CS) and
@@ -550,18 +760,9 @@ below the UCL (\(\beta\) = -1.65, \(p\) \textless{} .001), indicating
 that a larger proportion of their initial shifts away were
 language-driven (see the differences in the red shaded area in Fig 3).
 We did not find evidence for a difference in the timing of when the CS
-crossed the UCL (\(\beta\) = 0.02, \(p\) = 0.712), indicating that both
+crossed the UCL (\(\beta\) = -0.04, \(p\) = 0.331), indicating that both
 groups began to generate language-driven shifts about the same time
 after noun onset.
-
-\begin{figure}[tb]
-
-{\centering \includegraphics[width=0.8\linewidth]{figs/trio-hddm-plot-1} 
-
-}
-
-\caption{Posterior distributions for the boundary and drift rate parameters for children in Experiment 1.}\label{fig:trio-hddm-plot}
-\end{figure}
 
 \emph{HDDM.} Using the output of the EWMA, we compared the timing and
 accuracy of language-driven shifts for participants in the ASL and Face
@@ -583,15 +784,35 @@ drift = 0.63, HDI = {[}0.44, 0.82{]}; Face drift = 0.55, HDI = {[}0.30,
 
 Taken together, the behavioral analyses and the EWMA/HDDM results
 provide converging support that ASL learners were sensitive to the value
-of eye movements, producing fewer nonlanguage-driven shifts and
-prioritizing accuracy over speed, but accumulating information at
-roughly the same rate. This behavior seems reasonable since the
-potential for missing subsequent linguistic information is high if ASL
-users shifted prior to gathering sufficient information. It is important
-to point out that these were exploratory findings and that there were
-several, potentially important differences between the stimuli,
-apparatus, and populations. In Experiment 2, we set out to perform a
-well-controlled, confirmatory test of our adaptive tradeoffs account.
+of delaying eye movements away from the language source. Compared to
+spoken language learners, children learning ASL prioritized accuracy
+over speed, produced fewer nonlanguage-driven shifts away from the
+center stimulus, and were more accurate with these gaze shifts.
+Importantly, we did not see evidence in the HDDM model fits that these
+accuracy differences could be explained by differential rates of
+information accumulation. Instead, the model-based analyses suggest that
+ASL learners increased their decision threshold for generating a
+response.
+
+We hypothesized that this prioritization of gathering additional
+information is an adaptive response to the channel competition present
+when processing a visual-manual language. That is, when ASL learners
+shift gaze away a signer, they are deciding to leave an area of the
+visual world that provides a great deal of useful and interesting
+information. Moreover, unlike children leanring spoken languages, ASL
+learners cannot gather more of the linguistic signal while looking at
+the objects. Thus, an adaptive language comprehension system would
+increase levels of certainty before generating a response to maintain
+robust understanding.
+
+It is important to point out that these findings are based on
+exploratory analyses, and our information seeking account was developed
+to account for these differences. There are, however, several,
+potentially important differences between the stimuli, apparatus, and
+populations that limit the sterngth of our interpretation of these data
+and the generality of our account. Thus, in Experiment 2, we set out to
+perform a well-controlled, confirmatory test of our adaptive information
+seeking account of eye movements during grounded language comprehension.
 
 \hypertarget{experiment-2}{%
 \section{Experiment 2}\label{experiment-2}}
@@ -648,16 +869,16 @@ Text-no-audio condition, the spoken language stimulus was removed.
 Participants saw a total of 128 trials while their eye movements were
 tracked using automated eye-tracking software.
 
-\hypertarget{results-and-discussion-2}{%
-\subsection{Results and Discussion}\label{results-and-discussion-2}}
+\hypertarget{results-and-discussion-1}{%
+\subsection{Results and Discussion}\label{results-and-discussion-1}}
 
-\begin{figure}[t]
+\begin{figure}[tb]
 
-{\centering \includegraphics[width=0.8\linewidth]{figs/text-plot-print-1} 
+{\centering \includegraphics[width=0.85\linewidth]{figs/text-plot-1} 
 
 }
 
-\caption{Behavioral results for Experiment 2. All plotting conventions are the same as in Figure 2.}\label{fig:text-plot-print}
+\caption{Results for the model-based analyses in Experiment 2. All plotting conventions are the same as in Figure 2.}\label{fig:text-plot}
 \end{figure}
 
 \hypertarget{behavioral-analyses-1}{%
@@ -687,11 +908,11 @@ statistically significant differences.
 
 \begin{figure}[tb]
 
-{\centering \includegraphics[width=0.8\linewidth]{figs/text-ewma-plot-1} 
+{\centering \includegraphics[width=0.9\linewidth]{figs/text-model-plots-1} 
 
 }
 
-\caption{EWMA model output for Experiment 2. All plotting conventions are the same as Figure 3.}\label{fig:text-ewma-plot}
+\caption{Results for the model-based analyses of Experiment 2. All plotting conventions are the same as Figure 3.}\label{fig:text-model-plots}
 \end{figure}
 
 \emph{EWMA.} For all four conditions, the CS crossed the UCL (see Fig
@@ -713,15 +934,6 @@ condition when tested against the three other conditions
 that increasing the value of fixating the language source reduces
 exploratory gaze shifts to the nonlinguistic visual world.
 
-\begin{figure}[tb]
-
-{\centering \includegraphics[width=0.8\linewidth]{figs/text-hddm-plot-1} 
-
-}
-
-\caption{Posterior distributions for the boundary and drift rate parameters for Experiment 2.}\label{fig:text-hddm-plot}
-\end{figure}
-
 \emph{HDDM.} Using the output of the EWMA, we fit the same HDDM as in
 Experiment 1. There was high overlap of the posterior distributions for
 the drift rate parameters (see Fig 4, panel B), suggesting that
@@ -731,9 +943,9 @@ boundary separation estimates for the Bullseye, Text, and Text-no-audio
 conditions. Interestingly, we found some evidence for a higher boundary
 separation in the Face condition compared to the other three center
 stimulus types (Face boundary = 1.73, HDI = {[}1.49, 1.98{]}; Bullseye
-boundary = 1.40, HDI = {[}1.19, 1.62{]}; Text boundary = 1.35, HDI =
-{[}1.15, 1.57{]}; Text-no-audio boundary = 1.74, HDI = {[}1.18,
-2.31{]}), suggesting that adults higher accuracy in this condition was
+boundary = 1.40, HDI = {[}1.19, 1.62{]}; Text boundary = 1.37, HDI =
+{[}1.16, 1.58{]}; Text-no-audio boundary = 1.34, HDI = {[}1.14,
+1.55{]}), suggesting that adults higher accuracy in this condition was
 driven by accumulating more information before generating a response.
 
 Together, these results suggest that adults were sensitive to the
@@ -764,34 +976,19 @@ manipulated the signal-to-noise ratio of the auditory signal by
 convolving the acoustic input with brown noise (random noise with
 greater energy at lower frequencies).
 
-First, we present standard behavioral analyses of reaction time (RT) and
-accuracy of listeners' first gaze shifts after target noun onset. Then,
-we present two model-based analyses that link observable behavior to
-underlying psychological constructs. We use an exponentially weighted
-moving average (EWMA) method (Vandekerckhove \& Tuerlinckx, 2007) to
-classify participants' gaze shifts as language-driven or random. In
-contrast to the standard RT/accuracy analysis, the EMWA approach allows
-us to quantify participants' willingness to generate gaze shifts after
-noun onset but before collecting sufficient information to seek the
-named referent. Higher values indicate that participants were waiting to
-shift until they had accumulated enough of the linguistic signal to
-locate the named referent. Finally, we use drift-diffusion models (DDMs)
-(Ratcliff \& Childers, 2015) to ask whether behavioral differences in
-accuracy and RT are driven by a more cautious responding strategy or by
-more efficient information processing.
-
 We predicted that processing speech in a noisy context would make
 participants less likely to shift before collecting sufficient
-information. This delay, in turn, would lead to a lower proportion of
-shifts flagged as random/exploratory in the EWMA analysis, and a pattern
-of DDM results indicating a prioritization of accuracy over and above
-speed of responding (see the Analysis Plan section below for more
-details on the models). We also predicted a developmental difference --
-that children would produce a higher proportion of random shifts and
-accumulate information less efficiently compared to adults; and a
-developmental parallel -- that children would show the same pattern of
-adapting gaze patterns to gather more visual information in the noisy
-processing context.
+information.\footnote{See \url{https://osf.io/g8h9r/} for a
+  pre-registration of the analysis plan.} This delay, in turn, would
+lead to a lower proportion of shifts flagged as random/exploratory in
+the EWMA analysis, and a pattern of DDM results indicating a
+prioritization of accuracy over and above speed of responding (see the
+Analysis Plan section below for more details on the models). We also
+predicted a developmental difference -- that children would produce a
+higher proportion of random shifts and accumulate information less
+efficiently compared to adults; and a developmental parallel -- that
+children would show the same pattern of adapting gaze patterns to gather
+more visual information in the noisy processing context.
 
 \hypertarget{methods-2}{%
 \subsection{Methods}\label{methods-2}}
@@ -849,8 +1046,8 @@ participants saw 64 trials (32 noise; 32 clear). The noise manipulation
 was presented in a blocked design with the order of block
 counterbalanced across participants.
 
-\hypertarget{results-and-discussion-3}{%
-\subsection{Results and discussion}\label{results-and-discussion-3}}
+\hypertarget{results-and-discussion-2}{%
+\subsection{Results and discussion}\label{results-and-discussion-2}}
 
 \hypertarget{behavioral-analyses-2}{%
 \subsubsection{Behavioral analyses:}\label{behavioral-analyses-2}}
@@ -861,7 +1058,7 @@ counterbalanced across participants.
 
 }
 
-\caption{Behavioral results for first shift Reaction Time (RT) and Accuracy. Panel A shows violin plots representing the distribution of RTs for each participant in each condition. Each point represents a participant's average RT. Color represents the processing context. The grey insets show the full posterior distribution of RT differences across conditions with the vertical dashed line representing the null value of zero condition difference. The green shading represents estimates in the predicted direction and above the null value while the red shading represents estimates below the null. Panel B shows the same information but for first shift accuracy.}\label{fig:noise-acc-rt}
+\caption{Behavioral results for children and adults in Experiment 3. Panel A shows the overall looking to the center, target, and distracter stimulus for each processing condition and age group. Panel B shows the distribution of RTs for each participant and the pairwise contrast between the noise and clear conditions. The square point represents the mean value for each mesure. The vertical dashed line represents the null model of zero condition difference. The width each point represents the 95\% HDI. Panel C shows the same information but for first shift accuracy.}\label{fig:noise-acc-rt}
 \end{figure}
 
 \textbf{RT.} To make RTs more suitable for modeling on a linear scale,
@@ -902,11 +1099,11 @@ interaction between age and noise condition.
 
 \begin{figure}[tb]
 
-{\centering \includegraphics[width=0.8\linewidth]{figs/noise-violin-ewma-1} 
+{\centering \includegraphics[width=0.9\linewidth]{figs/noise-model-plots-1} 
 
 }
 
-\caption{EWMA results for children and adults. Each point represents the proportion of shifts categorized as language-driven (as opposed to guessing) for a single participant. Color represents the processing context.}\label{fig:noise-violin-ewma}
+\caption{Results for the model-based analyses for Experiment 3. The majority of plotting conventions are the same as Figure 3. In Panel C, linetype and alpha value represent age group: children vs. adults.}\label{fig:noise-model-plots}
 \end{figure}
 
 \textbf{EWMA.} Fig.~\ref{fig:noise_ewma_violin_plot} shows the
@@ -926,15 +1123,6 @@ pattern of results suggests that the noise condition caused participants
 to increase visual fixations to the language source, leading them to
 generate fewer exploratory, random shifts before accumulating sufficient
 information to respond accurately.
-
-\begin{figure}[tb]
-
-{\centering \includegraphics[width=0.8\linewidth]{figs/hddm-plot-noise-1} 
-
-}
-
-\caption{HDDM results. Each panel shows the posterior distribution for either the boundary separation or drift rate parameters for children (top panels) and adults (bottom panels).}\label{fig:hddm-plot-noise}
-\end{figure}
 
 \textbf{HDDM.} Fig.~\ref{fig:hddm_plot_noise} shows the full posterior
 distributions for the HDDM output. Children had lower drift rates
@@ -1060,38 +1248,81 @@ the time course of spoken word recognition using eye movements: Evidence
 for continuous mapping models. \emph{Journal of Memory and Language},
 \emph{38}(4), 419--439.
 
-\leavevmode\hypertarget{ref-R-papaja}{}%
-Aust, F., \& Barth, M. (2017). \emph{papaja: Create APA manuscripts with
-R Markdown}. Retrieved from \url{https://github.com/crsh/papaja}
+\leavevmode\hypertarget{ref-altmann2007real}{}%
+Altmann, G., \& Kamide, Y. (2007). The real-time mediation of visual
+attention by language and world knowledge: Linking anticipatory (and
+other) eye movements to linguistic processing. \emph{Journal of Memory
+and Language}, \emph{57}(4), 502--518.
+
+\leavevmode\hypertarget{ref-byers2017bilingual}{}%
+Byers-Heinlein, K., Morin-Lessard, E., \& Lew-Williams, C. (2017).
+Bilingual infants control their languages as they listen.
+\emph{Proceedings of the National Academy of Sciences}, \emph{114}(34),
+9032--9037.
+
+\leavevmode\hypertarget{ref-dahan2005looking}{}%
+Dahan, D., \& Tanenhaus, M. K. (2005). Looking at the rope when looking
+for the snake: Conceptually mediated eye movements during spoken-word
+recognition. \emph{Psychonomic Bulletin \& Review}, \emph{12}(3),
+453--459.
 
 \leavevmode\hypertarget{ref-erber1969interaction}{}%
 Erber, N. P. (1969). Interaction of audition and vision in the
 recognition of oral speech stimuli. \emph{Journal of Speech and Hearing
 Research}, \emph{12}(2), 423--425.
 
+\leavevmode\hypertarget{ref-fernald2006picking}{}%
+Fernald, A., Perfors, A., \& Marchman, V. A. (2006). Picking up speed in
+understanding: Speech processing efficiency and vocabulary growth across
+the 2nd year. \emph{Developmental Psychology}, \emph{42}(1), 98.
+
+\leavevmode\hypertarget{ref-fernald2008looking}{}%
+Fernald, A., Zangl, R., Portillo, A. L., \& Marchman, V. A. (2008).
+Looking while listening: Using eye movements to monitor spoken language.
+\emph{Developmental Psycholinguistics: On-Line Methods in Children's
+Language Processing}, \emph{44}, 97.
+
 \leavevmode\hypertarget{ref-gabry2016rstanarm}{}%
 Gabry, J., \& Goodrich, B. (2016). Rstanarm: Bayesian applied regression
 modeling via stan. R package version 2.10. 0.
 
+\leavevmode\hypertarget{ref-gold2000representation}{}%
+Gold, J. I., \& Shadlen, M. N. (2000). Representation of a perceptual
+decision in developing oculomotor commands. \emph{Nature},
+\emph{404}(6776), 390.
+
 \leavevmode\hypertarget{ref-hayhoe2005eye}{}%
 Hayhoe, M., \& Ballard, D. (2005). Eye movements in natural behavior.
 \emph{Trends in Cognitive Sciences}, \emph{9}(4), 188--194.
+
+\leavevmode\hypertarget{ref-huettig2005word}{}%
+Huettig, F., \& Altmann, G. T. (2005). Word meaning and the control of
+eye fixation: Semantic competitor effects and the visual world paradigm.
+\emph{Cognition}, \emph{96}(1), B23--B32.
 
 \leavevmode\hypertarget{ref-macdonald1978visual}{}%
 MacDonald, J., \& McGurk, H. (1978). Visual influences on speech
 perception processes. \emph{Attention, Perception, \& Psychophysics},
 \emph{24}(3), 253--257.
 
-\leavevmode\hypertarget{ref-macdonald2017info}{}%
-MacDonald, K., Blonder, A., Marchman, V. and, Fernald, A., \& Frank, M.
-C. (2017). An information-seeking account of eye movements during spoken
-and signed language comprehension. In \emph{Proceedings of the 39th
-annual conference of the cognitive science society}.
+\leavevmode\hypertarget{ref-macdonald2018real}{}%
+MacDonald, K., LaMarr, T., Corina, D., Marchman, V. A., \& Fernald, A.
+(2018). Real-time lexical comprehension in young children learning
+american sign language. \emph{Developmental Science}, e12672.
 
 \leavevmode\hypertarget{ref-macdonald2006constraint}{}%
 MacDonald, M. C., \& Seidenberg, M. S. (2006). Constraint satisfaction
 accounts of lexical and sentence comprehension. \emph{Handbook of
 Psycholinguistics}, \emph{2}, 581--611.
+
+\leavevmode\hypertarget{ref-marchman2008speed}{}%
+Marchman, V. A., \& Fernald, A. (2008). Speed of word recognition and
+vocabulary knowledge in infancy predict cognitive and language outcomes
+in later childhood. \emph{Developmental Science}, \emph{11}(3).
+
+\leavevmode\hypertarget{ref-mcclelland1986trace}{}%
+McClelland, J. L., \& Elman, J. L. (1986). The trace model of speech
+perception. \emph{Cognitive Psychology}, \emph{18}(1), 1--86.
 
 \leavevmode\hypertarget{ref-mcclelland2006there}{}%
 McClelland, J. L., Mirman, D., \& Holt, L. L. (2006). Are there
@@ -1104,18 +1335,38 @@ lexical access: Cochlear implants or severely degraded input lead
 listeners to process speech less incrementally. \emph{Cognition},
 \emph{169}, 147--164.
 
-\leavevmode\hypertarget{ref-R-here}{}%
-Müller, K. (2017). \emph{Here: A simpler way to find your files}.
-Retrieved from \url{https://CRAN.R-project.org/package=here}
+\leavevmode\hypertarget{ref-nelson2007probabilistic}{}%
+Nelson, J. D., \& Cottrell, G. W. (2007). A probabilistic model of eye
+movements in concept formation. \emph{Neurocomputing}, \emph{70}(13-15),
+2256--2272.
 
 \leavevmode\hypertarget{ref-ratcliff2015individual}{}%
 Ratcliff, R., \& Childers, R. (2015). Individual differences and fitting
 methods for the two-choice diffusion model of decision making.
 \emph{Decision}, \emph{2}(4), 237--279.
 
-\leavevmode\hypertarget{ref-R-rstanarm}{}%
-Stan Development Team. (2016). Rstanarm: Bayesian applied regression
-modeling via Stan. Retrieved from \url{http://mc-stan.org/}
+\leavevmode\hypertarget{ref-rigler2015slow}{}%
+Rigler, H., Farris-Trimble, A., Greiner, L., Walker, J., Tomblin, J. B.,
+\& McMurray, B. (2015). The slow developmental time course of real-time
+spoken word recognition. \emph{Developmental Psychology}, \emph{51}(12),
+1690.
+
+\leavevmode\hypertarget{ref-salverda2011goal}{}%
+Salverda, A. P., Brown, M., \& Tanenhaus, M. K. (2011). A goal-based
+perspective on eye movements in visual world studies. \emph{Acta
+Psychologica}, \emph{137}(2), 172--180.
+
+\leavevmode\hypertarget{ref-schwartz2013language}{}%
+Schwartz, R. G., Steinman, S., Ying, E., Mystal, E. Y., \& Houston, D.
+M. (2013). Language processing in children with cochlear implants: A
+preliminary report on lexical access for production and comprehension.
+\emph{Clinical Linguistics \& Phonetics}, \emph{27}(4), 264--277.
+
+\leavevmode\hypertarget{ref-spivey2002eye}{}%
+Spivey, M. J., Tanenhaus, M. K., Eberhard, K. M., \& Sedivy, J. C.
+(2002). Eye movements and spoken language comprehension: Effects of
+visual context on syntactic ambiguity resolution. \emph{Cognitive
+Psychology}, \emph{45}(4), 447--481.
 
 \leavevmode\hypertarget{ref-tanenhaus1995integration}{}%
 Tanenhaus, M. K., Spivey-Knowlton, M. J., Eberhard, K. M., \& Sedivy, J.
@@ -1131,15 +1382,21 @@ Review}, \emph{14}(6), 1011--1026.
 Van Engen, K. J., \& Peelle, J. E. (2014). Listening effort and accented
 speech. \emph{Frontiers in Human Neuroscience}, \emph{8}.
 
-\leavevmode\hypertarget{ref-R-tidyverse}{}%
-Wickham, H. (2017). \emph{Tidyverse: Easily install and load the
-'tidyverse'}. Retrieved from
-\url{https://CRAN.R-project.org/package=tidyverse}
+\leavevmode\hypertarget{ref-venker2013individual}{}%
+Venker, C. E., Eernisse, E. R., Saffran, J. R., \& Weismer, S. E.
+(2013). Individual differences in the real-time comprehension of
+children with asd. \emph{Autism Research}, \emph{6}(5), 417--432.
 
-\leavevmode\hypertarget{ref-R-knitr}{}%
-Xie, Y. (2015). \emph{Dynamic documents with R and knitr} (2nd ed.).
-Boca Raton, Florida: Chapman; Hall/CRC. Retrieved from
-\url{https://yihui.name/knitr/}
+\leavevmode\hypertarget{ref-wiecki2013hddm}{}%
+Wiecki, T. V., Sofer, I., \& Frank, M. J. (2013). HDDM: Hierarchical
+bayesian estimation of the drift-diffusion model in python.
+\emph{Frontiers in Neuroinformatics}, \emph{7}, 14.
+
+\leavevmode\hypertarget{ref-yee2006eye}{}%
+Yee, E., \& Sedivy, J. C. (2006). Eye movements to pictures reveal
+transient semantic activation during spoken word recognition.
+\emph{Journal of Experimental Psychology: Learning, Memory, and
+Cognition}, \emph{32}(1), 1.
 
 \leavevmode\hypertarget{ref-yurovsky2017preschoolers}{}%
 Yurovsky, D., Case, S., \& Frank, M. C. (2017). Preschoolers flexibly
