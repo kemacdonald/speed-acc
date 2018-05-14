@@ -618,7 +618,7 @@ because this is a rare population.
 \hypertarget{stimuli}{%
 \subsubsection{Stimuli}\label{stimuli}}
 
-\begin{figure}[tb]
+\begin{figure}[H]
 
 {\centering \includegraphics[width=0.7\linewidth]{figs/trio-stim-1} 
 
@@ -690,7 +690,7 @@ assessments.
 \hypertarget{results-and-discussion}{%
 \subsection{Results and Discussion}\label{results-and-discussion}}
 
-\begin{figure}[tb]
+\begin{figure}[H]
 
 {\centering \includegraphics[width=0.9\linewidth]{figs/speed-acc-trio-plot-1} 
 
@@ -702,67 +702,79 @@ assessments.
 \hypertarget{behavioral-analyses}{%
 \subsubsection{Behavioral analyses}\label{behavioral-analyses}}
 
-\emph{RT.} Visual inspection of the Fig 2, panel A suggests that there
-was a speed accuracy tradeoff in the ASL, Face, and Bullseye conditions,
-with incorrect shifts tending to be faster than correct shifts. To
-quantify differences across the groups, we fit a linear mixed-effects
-regression predicting first shift RT as a function of center stimulus
-type, controlling for age, and including user-defined contrasts to test
-specific comparisons of interest:
+\emph{Timecourse analyses.} Panel A of
+Fig.~\ref{fig:speed-acc-trio-plot} shows the proportion looking curves
+to the center stimulus, target, and distractor images for each
+processing context.
+
+\emph{RT.} Panel B of Fig.~\ref{fig:speed-acc-trio-plot} shows the full
+RT data distribution and the full posterior distribution of the
+estimated RT difference between the noise and clear conditions. To
+quantify differences across the groups, we fit a Bayesian linear
+mixed-effects regression predicting first shift RT as a function of
+center stimulus type, controlling for age, and including user-defined
+contrasts to test specific comparisons of interest:
 \texttt{Log(RT) $\sim$ center stimulus type + age +  (1 | subject) + (1 | item)}.
 We found that (a) ASL learners generated slower RTs compared to all of
-the spoken English samples (\(\beta\) = -0.97, \(p\) \textless{} .001),
-(b) ASL learners' shifts were slower compared directly to participants
-in the Face task (\(\beta\) = -0.42, \(p\) \textless{} .001), and (c)
-participants in the Face task shifted slower compared to participants in
-the Object and Bullseye tasks (\(\beta\) = -0.73, \(p\) \textless{}
-.001).
+the spoken English samples (\(\beta\) = 595 sec, 95\% HDI {[}445 sec,
+761 sec{]}), (b) ASL learners' shifts were slower compared directly to
+children processing spoken language in the Face condition (\(\beta\) =
+323 sec, 95\% HDI {[}132 sec, 523 sec{]}), and (c) children in the Face
+condition shifted gaze slower compared to participants in the Object and
+Bullseye tasks (\(\beta\) = 408 sec, 95\% HDI {[}287 sec, 546 sec{]}).
 
 \emph{Accuracy.} Next we compared the accuracy of first shifts across
 the different tasks by fitting a mixed-effects logistic regression with
 the same specifications and contrasts as the RT model. We found that (a)
 ASL learners were more accurate compared to all of the spoken English
-samples (\(\beta\) = -0.78, \(p\) \textless{} .001), (b) ASL learners
-were more accurate when directly compared to participants in the Face
-task (\(\beta\) = -0.62, \(p\) = 0.001), and (c) participants in the
-Face task were numerically more accurate compared to participants in the
-Object and Bullseye tasks (\(\beta\) = -0.73) but this effect was not
-significant (\(p\) = 0.089).
+samples (\(\beta\) = 0.23 sec, 95\% HDI {[}0.17{]}, 0.29), (b) ASL
+learners were more accurate when directly compared to participants in
+the Face task (\(\beta\) = 0.13 sec, 95\% HDI {[}0.04 sec, 0.23 sec{]}),
+(c) children learning spoken language were more accurate when processing
+language from dynamic video of a person speaking compared to the Object
+and Bullseye tasks (\(\beta\) = 0.16 sec, 95\% HDI {[}0.07 sec, 0.24
+sec{]}), and (d) English-learners' first shifts were no different from
+random responding in the Object (\(\beta\) = -0.04 sec, 95\% HDI
+{[}-0.13 sec, 0.03 sec{]}) and Bullseye (\(\beta\) = -0.02 sec, 95\% HDI
+{[}-0.12 sec, 0.08 sec{]}) contexts.
 
 \hypertarget{model-based-analyses}{%
 \subsubsection{Model-based analyses}\label{model-based-analyses}}
 
-\begin{figure}[tb]
+\begin{figure}[H]
 
 {\centering \includegraphics[width=0.9\linewidth]{figs/trio-model-plot-1} 
 
 }
 
-\caption{Results for the model-based analyses in Experiment 1. Panel A shows a control chart representing the timecourse of the EWMA statistic. The black curve represents the evolution of the control statistic (CS) as a function of reaction time. The grey curve represents the upper control limit (UCL). The vertical dashed line is the median cutoff value (point when the control process shifts out of a guessing state). The grey shaded area represents the 95\% confidence interval around the estimate of the median cutoff point, and the shaded ribbons represent the proportion of responses that were categorized as guesses (red) and language-driven (green). Panel B shows a summary of the proprotion of shifts that were categorized as language-driven for the Face and ASL tasks. Panel C shows the posterior distributions for the boundary and drift rate parameters for the Face and ASL tasks.}\label{fig:trio-model-plot}
+\caption{Results for the model-based analyses in Experiment 1. Panel A shows a control chart representing the timecourse of the EWMA statistic. The black curve represents the evolution of the control statistic (CS) as a function of reaction time. The grey curve represents the upper control limit (UCL). The vertical dashed line is the median cutoff value (point when the control process shifts out of a guessing state). The grey shaded area represents the 95\% confidence interval around the estimate of the median cutoff point, and the shaded ribbons represent the proportion of responses that were categorized as guesses (red) and language-driven (green). Panel B shows a summary of the proportion of shifts that were categorized as language-driven for the Face and ASL processing contexts. Panel C shows the posterior distributions for the boundary and drift rate parameters for the Face and ASL processing contexts.}\label{fig:trio-model-plot}
 \end{figure}
 
-\emph{EWMA.} Figure 3 shows changes in the control statistic (CS) and
-the upper control limit (UCL) as a function of participants' RTs. Each
-CS starts at chance performance and below the UCL. In the ASL and Face
-tasks, the CS value begins to increase with RTs around 0.7 seconds after
-noun onset and eventually crosses the UCL, indicating that responses
-\textgreater{} 0.7 sec were on average above chance levels. In contrast,
-the CS in the Object and Bullseye tasks never crossed the UCL,
-indicating that children's shifts were equally likely to land on the
-target or the distracter, regardless of when they were initiated. This
-result suggests that first shifts in the Bullseye/Object tasks were not
-language-driven and may instead have reflected a different process such
-as gathering more information about the referents in the visual world.
+\emph{EWMA.} Panel A of Fig.~\ref{fig:trio-model-plot} shows changes in
+the control statistic (CS) and the upper control limit (UCL) as a
+function of RT. Each CS starts at chance performance and below the UCL.
+In the ASL and Face tasks, the CS value begins to increase with RTs
+around 0.7 seconds after noun onset and eventually crosses the UCL,
+indicating that responses \textgreater{} 0.7 sec were on average above
+chance levels. In contrast, the CS in the Object and Bullseye tasks
+never crossed the UCL, indicating that children's shifts were equally
+likely to land on the target or the distracter, regardless of when they
+were initiated. This result suggests that first shifts in the
+Bullseye/Object tasks were not language-driven and may instead have
+reflected a different process such as gathering more information about
+the referents in the visual world.
 
-Next, we compared the EWMA output for participants in the ASL and Face
-tasks. We found that ASL learners generated fewer shifts when the CS was
-below the UCL (\(\beta\) = -1.65, \(p\) \textless{} .001), indicating
-that a larger proportion of their initial shifts away were
-language-driven (see the differences in the red shaded area in Fig 3).
-We did not find evidence for a difference in the timing of when the CS
-crossed the UCL (\(\beta\) = -0.04, \(p\) = 0.331), indicating that both
-groups began to generate language-driven shifts about the same time
-after noun onset.
+Next, we compared the EWMA model fits for participants in the ASL and
+Face processing contexts. We found that ASL learners generated fewer
+shifts when the CS was below the UCL compared to children learning
+spoken language (\(\beta\) = 0.14, 95\% HDI {[}0.08, 0.23{]}). This
+result indicates that ASL-learners were more likely to have gathered
+sufficient information about the linguistic signal prior to shifting
+gaze away from the language source (i.e., gaze shifts were
+language-driven). We found some evidence that ASL learners started
+producing language-driven shifts earlier in the RT distribution as
+indicated by the point at which the CS crossed the UCL (\(\beta\) = 0.22
+ms, 95\% HDI {[}0.05 ms, 0.39 ms{]}).
 
 \emph{HDDM.} Using the output of the EWMA, we compared the timing and
 accuracy of language-driven shifts for participants in the ASL and Face
@@ -782,16 +794,16 @@ groups processed the linguistic information with similar efficiency (ASL
 drift = 0.63, HDI = {[}0.44, 0.82{]}; Face drift = 0.55, HDI = {[}0.30,
 0.80{]}).
 
-Taken together, the behavioral analyses and the EWMA/HDDM results
-provide converging support that ASL learners were sensitive to the value
-of delaying eye movements away from the language source. Compared to
-spoken language learners, children learning ASL prioritized accuracy
-over speed, produced fewer nonlanguage-driven shifts away from the
-center stimulus, and were more accurate with these gaze shifts.
-Importantly, we did not see evidence in the HDDM model fits that these
-accuracy differences could be explained by differential rates of
-information accumulation. Instead, the model-based analyses suggest that
-ASL learners increased their decision threshold for generating a
+\emph{Results summary.} Taken together, the behavioral analyses and the
+EWMA/HDDM results provide converging support that ASL learners were
+sensitive to the value of delaying eye movements away from the language
+source. Compared to spoken language learners, children learning ASL
+prioritized accuracy over speed, produced fewer nonlanguage-driven
+shifts away from the center stimulus, and were more accurate with these
+gaze shifts. Importantly, we did not see evidence in the HDDM model fits
+that these accuracy differences could be explained by differential rates
+of information accumulation. Instead, the model-based analyses suggest
+that ASL learners increased their decision threshold for generating a
 response.
 
 We hypothesized that this prioritization of gathering additional
@@ -807,36 +819,42 @@ robust understanding.
 
 It is important to point out that these findings are based on
 exploratory analyses, and our information seeking account was developed
-to account for these differences. There are, however, several,
+to explain this pattern of results. There are, however, several,
 potentially important differences between the stimuli, apparatus, and
 populations that limit the sterngth of our interpretation of these data
-and the generality of our account. Thus, in Experiment 2, we set out to
-perform a well-controlled, confirmatory test of our adaptive information
-seeking account of eye movements during grounded language comprehension.
+and the generality of our account. Thus, in Experiments 2 and 3, we set
+out to perform well-controlleds, confirmatory tests of our adaptive
+information seeking account of eye movements during grounded language
+comprehension.
 
 \hypertarget{experiment-2}{%
 \section{Experiment 2}\label{experiment-2}}
 
-In Experiment 2, we attempt to replicate a key finding from Experiment
-1: that increasing the competition between fixating the language source
-and the nonlinguistic visual world reduces nonlanguage-driven eye
-movements. Moreover, we conducted a confirmatory test of our hypothesis
-that also controlled for the population differences present in
-Experiment 1. We tested a sample of English-speaking adults using a
-within-participants manipulation of the center stimulus type. We used
-the Face and Bullseye stimulus sets from Experiment 1 and added two new
-conditions: Text, where the verbal language information was accompanied
-by a word-by-word display of printed text (see Fig 1), and
-Text-no-audio, where the spoken language stimulus was removed. We chose
-text processing since, like sign language comprehension, the linguistic
-information is gathered via fixations to the visual world.
+In Experiment 2, we aimed to replicate a key finding from Experiment 1:
+that increasing the competition between fixating the language source and
+the nonlinguistic visual world reduces nonlanguage-driven eye movements.
+Moreover, we conducted a confirmatory test of our hypothesis that also
+controlled for the population differences present in Experiment 1. We
+tested a sample of English-speaking adults using a within-participants
+manipulation of the center stimulus type. We used the Face and Bullseye
+stimulus sets from Experiment 1 and added two new conditions: Text,
+where the verbal language information was accompanied by a word-by-word
+display of printed text (see Figure 3), and Text-no-audio, where the
+spoken language stimulus was removed. We chose text processing since,
+like sign language comprehension, information relevant to the linguistic
+signal is concentrated in one location in the visual scene.
 
-Our key behavioral prediction is that participants in the Text
-conditions should produce a higher proportion of language-driven shifts
-as indexed by the EWMA model output. We did not have strong predictions
-for the DDM parameter fits since the goal of the Text manipulation was
-to modulate participants' strategic allocation of visual attention and
-not the accuracy/efficiency of information processing.
+Our key behavioral prediction is that processing serially-presented text
+will shift the value of allocating fixations to the center stimulus as
+the linguistic information unfolds in time. This shift in information
+value should result in listeners allocating more fixations to the center
+stimulus and fewer to the objects in the visual scene. This behavioral
+pattern should be indexed by proportion guessing and cutoff point
+parameters of the EWMA model. We did not have strong predictions for
+first shift accuracy and reaaction time or the DDM parameter fits since
+the goal of the text manipulation was to modulate participants'
+strategic allocation of visual attention and not the accuracy/efficiency
+of information processing.
 
 \hypertarget{methods-1}{%
 \subsection{Methods}\label{methods-1}}
@@ -872,9 +890,9 @@ tracked using automated eye-tracking software.
 \hypertarget{results-and-discussion-1}{%
 \subsection{Results and Discussion}\label{results-and-discussion-1}}
 
-\begin{figure}[tb]
+\begin{figure}[H]
 
-{\centering \includegraphics[width=0.85\linewidth]{figs/text-plot-1} 
+{\centering \includegraphics[width=0.9\linewidth]{figs/text-plot-1} 
 
 }
 
@@ -884,29 +902,57 @@ tracked using automated eye-tracking software.
 \hypertarget{behavioral-analyses-1}{%
 \subsubsection{Behavioral analyses}\label{behavioral-analyses-1}}
 
-\emph{RT.} Visual inspection of Figure 5, panel A suggests that there
-was a speed-accuracy tradeoff for all conditions: incorrect gaze shifts
-tended to be faster than correct shifts. We fit a linear mixed-effects
-regression with the same specification as in Experiment 1, but we added
-by-subject intercepts and slopes for each center stimulus type to
-account for our within-subjects manipulation. We did not find evidence
-that RTs were different across conditions (all \(p\) \textgreater{}
-.05).
+\emph{Timecourse analyses.} TODO (add text and maybe a permutation
+analysis of the center and target looking curves).
+
+\emph{RT.} Visual inspection of Figure 5, panel C suggests that mean
+response times of first shifts were similar across the four center
+stimulus conditions (\(M_{bull}\) = 0.55, \(M_{face}\) = 0.59,
+\(M_{text}\) = 0.58, \(M_{textNoaudio}\) = 0.56). We fit a linear
+mixed-effects regression with the same specification as in Experiment 1,
+but we added by-subject intercepts and slopes for each center stimulus
+type to account for our within-subjects manipulation. We did not see
+evidence that RTs were different across conditions, with the null value
+of zero condition differences falling within the 95\% CIs for each
+comparison of interest (see table XX in the appendix for full model
+output).
 
 \emph{Accuracy.} Next, we modeled accuracy using a mixed-effects
-logistic regression with the same specifications (see Panel B of Fig 5).
-We found that adults' first shifts were highly accurate, and, in
-contrast to the children in Experiment 1, their responses were above
-chance level even in the Bullseye condition when the center stimulus was
-not salient or informative. We also found that participants tended to be
-less accurate in the Text conditions compared to conditions without text
-(\(\beta\) = 1.18, \(p\) = 0.00). We did find not any other
-statistically significant differences.
+logistic regression with the same specifications (see Panel B of Figur
+5). We found that adults' first shifts were highly accurate
+(\(M_{bull}\) = 0.92, \(M_{face}\) = 0.95, \(M_{text}\) = 0.90,
+\(M_{textNoaudio}\) = 0.89). And, in contrast to the children in
+Experiment 1, adults' responses were above chance level even in the
+Bullseye condition when the center stimulus was not salient or
+informative.
+
+Adults' accurate first shifts suggests an interesting developmental
+difference in the construal of the center stimulus in our task. This is
+speculative, but it seems plausible that adults thought the Bullseye was
+designed to be a valid starting point for fixating gaze while the
+sentence unfolded (i.e., someone put this here for a reason). As a
+result, if adults maintained their fixation on the center stimulus for
+enough time to gather sufficient linguistic singal, then they were
+highly accurate across all four processing condition, which is
+reasonable since these were highly familiar words presented in
+child-directed speech.
+
+Visual inspection of the timecourse looking curves, however, suggests
+that the effect of the text manipulations occurred earlier in timecourse
+of decisions about visual fixation. That is, in the first 300 ms after
+the start of the target word, adults in the Bullseye, Face, and Text
+conditions, where they had access to linguistic information via the
+auditory channel, were already allocating fixations away from the center
+stimulus and to the objects. In contrast, in the Text-No-Audio
+condition, all of adults' fixation were directed to the center stimulus
+location, which contained the language-relevant information. Next, we
+use our model-based analyses to quantify these differences in adults'
+decisions about where to fixate as a function of time.
 
 \hypertarget{model-based-analyses-1}{%
 \subsubsection{Model-based analyses}\label{model-based-analyses-1}}
 
-\begin{figure}[tb]
+\begin{figure}[H]
 
 {\centering \includegraphics[width=0.9\linewidth]{figs/text-model-plots-1} 
 
@@ -915,54 +961,72 @@ statistically significant differences.
 \caption{Results for the model-based analyses of Experiment 2. All plotting conventions are the same as Figure 3.}\label{fig:text-model-plots}
 \end{figure}
 
-\emph{EWMA.} For all four conditions, the CS crossed the UCL (see Fig
-6), suggesting that for all tasks some proportion of adults' shifts were
-language-driven. Interestingly, we found a graded effect of condition
-(see the shift in the vertical dashed lines in Fig 5) on the point when
-the CS crossed the UCL such that the Text-no-audio condition occurred
-earliest (\(M_{text-no-audio}\) = 0.39), followed by the Text and Face
-conditions that were not different from one another (\(M_{text}\) =
-0.44, \(M_{face}\) = 0.45, \(p\) \textgreater{} .05), and finally the
-Bullseye condition (\(M_{bullseye}\) = 0.54). We also found the same
-graded difference in the proportion of shifts that occurred while the CS
-was below the UCL (see the red vs.~green shaded area in Fig 5),
-indicating a higher proportion of first shifts were language-driven in
-the Text conditions, with the highest proportion in the Text-no-audio
-condition when tested against the three other conditions
-(\(M_{text-no-audio}\) = 3.79, \(\beta\) = 1.74, \(p\) \textless{}
-.001). These results provide strong evidence for our key prediction:
-that increasing the value of fixating the language source reduces
-exploratory gaze shifts to the nonlinguistic visual world.
+\emph{EWMA.} For all four conditions, the control statistic crossed the
+upper control limit (see Panel A of Figure 6), suggesting that at some
+point in the RT distribution adults' shifts were reliably driven by
+linguistic information. Interestingly, we found a graded effect of
+condition on the cutoff point (see the shift in the vertical dashed
+lines in Panel A of Figure 5). That is, the CS crossed the UCL earliest
+in the Text-no-audio condition (\(M_{text-no-audio}\) = 0.39, 95\% HDI
+{[}0.37, 0.41{]}), followed by the Text (\(M_{text}\) = 0.44, 95\% HDI
+{[}0.42, 0.46{]}) and Face (\(M_{face}\) = 0.45, 95\% HDI {[}0.43,
+0.47{]}) conditions, and finally the Bullseye condition
+(\(M_{bullseye}\) = 0.54, 95\% HDI {[}0.52, 0.56{]}).\footnote{See Table
+  XX in the appendix for the relevant statistics for the pairwise
+  comparisons of interest.}
 
-\emph{HDDM.} Using the output of the EWMA, we fit the same HDDM as in
+We also found a smiliar pattern of a graded difference in the proportion
+of shifts that occurred when the control statistic was below the upper
+control limit (\(M_{bullseye}\) = 0.78, \(M_{text}\) = 0.86,
+\(M_{text-no-audio}\) = 0.89, \(M_{face}\) = 0.93). Adults generated
+fewer language-driven eye movements in the Bullseye condition comapred
+to the other contexts (\(\beta\) = -0.12, 95\% HDI {[}-0.26, -0.01{]}).
+And the highest proportion of language-driven shifts in the
+Text-no-audio context (\(\beta\) = 0.04, 95\% HDI {[}-0.02, 0.08{]}).
+These results provide evidence for our key prediction: that increasing
+the value of fixating the center stimulus for gathering linguistic
+information reduced gaze shifts to the rest of the visual world. This
+shift in gaze dynamics, in turn, resulted in adults gathering more of
+the linguistic signal prior to generating eye movements away from the
+center stimulus, leading to a higher proporiton of language-driven
+shifts earlier in the distribution of reaction times.
+
+\emph{HDDM.} Using the classifications generated by the EWMA, we fit a
+HDDM to the language-drven shifts with the same specifications as in
 Experiment 1. There was high overlap of the posterior distributions for
-the drift rate parameters (see Fig 4, panel B), suggesting that
+the drift rate parameters (see panel C of Figure 5), suggesting that
 participants gathered the linguistic information with similar
-efficiency. We also found high overlap in the distribution of credible
-boundary separation estimates for the Bullseye, Text, and Text-no-audio
-conditions. Interestingly, we found some evidence for a higher boundary
-separation in the Face condition compared to the other three center
-stimulus types (Face boundary = 1.73, HDI = {[}1.49, 1.98{]}; Bullseye
-boundary = 1.40, HDI = {[}1.19, 1.62{]}; Text boundary = 1.37, HDI =
-{[}1.16, 1.58{]}; Text-no-audio boundary = 1.34, HDI = {[}1.14,
-1.55{]}), suggesting that adults higher accuracy in this condition was
-driven by accumulating more information before generating a response.
+efficiency. We also found high overlap in the distribution of boundary
+separation estimates for the Bullseye, Text, and Text-no-audio
+conditions. We saw some evidence for a higher boundary separation in the
+Face condition compared to the other three center stimulus types (Face
+boundary = 1.73, HDI = {[}1.49, 1.98{]}; Bullseye boundary = 1.40, HDI =
+{[}1.19, 1.62{]}; Text boundary = 1.37, HDI = {[}1.16, 1.58{]};
+Text-no-audio boundary = 1.34, HDI = {[}1.14, 1.55{]}), indicating that
+adults' higher accuracy in this condition was driven by accumulating
+more information before generating a response. Note that the higher
+boundary separation and drift rate parameters for the Face condition
+differs from the results of the standard Accuracy analyses, which found
+similar patterns of performance. This occurs because the HDDM estimates
+parameter fits using reaction times distributions for both correct and
+incorrect responses.
 
-Together, these results suggest that adults were sensitive to the
-tradeoff between gathering different kinds of information. When
-processing text, people generated fewer nonlanguage-driven shifts (EWMA
-results) but their processing efficiency of the linguistic signal itself
-did not change (HDDM results). Interestingly, we found a graded
-difference in the EWMA results between the Text and Text-no-audio
-conditions, with the lowest proportion of early, nonlanguage-driven
-shifts occurring while processing text without the verbal stimuli. This
-behavior makes sense; if the adults could rely on the auditory channel
-to gather the linguistic information, then the value of fixating the
-text display decreases. In contrast to the children in Experiment 1,
-adults were highly accurate in the Bullseye condition, perhaps because
-they construed the Bullseye as a center fixation that they \emph{should}
-fixate, or perhaps they had better encoded the location/identity of the
-two referents prior to the start of the target sentence.
+\emph{Results summary.} Together, these results suggest that adults were
+sensitive to the tradeoff between gathering different kinds of visual
+information. When processing text, people generated fewer
+nonlanguage-driven shifts (EWMA results) but their processing efficiency
+of the linguistic signal itself did not change (HDDM results).
+Interestingly, we found a graded difference in the EWMA results between
+the Text and Text-no-audio conditions, with the lowest proportion of
+early, nonlanguage-driven shifts occurring while processing text without
+the verbal stimuli. This behavior makes sense; if the adults could rely
+on the auditory channel to gather the linguistic information, then the
+value of fixating the text display decreases. In contrast to the
+children in Experiment 1, adults were highly accurate in the Bullseye
+condition, perhaps because they construed the Bullseye as a center
+fixation that they \emph{should} fixate, or perhaps they had better
+encoded the location/identity of the two referents prior to the start of
+the target sentence.
 
 \hypertarget{experiment-3}{%
 \section{Experiment 3}\label{experiment-3}}
@@ -970,11 +1034,10 @@ two referents prior to the start of the target sentence.
 In this experiment, we recorded adults and children's eye movements
 during a real-time language comprehension task where participants
 processed familiar sentences (e.g., \enquote{Where's the ball?}) while
-looking at a simplified visual world with three fixation targets (see
-Fig.~\ref{fig:stimuli_plot}). Using a within-participants design, we
-manipulated the signal-to-noise ratio of the auditory signal by
-convolving the acoustic input with brown noise (random noise with
-greater energy at lower frequencies).
+looking at a simplified visual world with three fixation targets. Using
+a within-participants design, we manipulated the signal-to-noise ratio
+of the auditory signal by convolving the acoustic input with brown noise
+(random noise with greater energy at lower frequencies).
 
 We predicted that processing speech in a noisy context would make
 participants less likely to shift before collecting sufficient
@@ -1052,9 +1115,9 @@ counterbalanced across participants.
 \hypertarget{behavioral-analyses-2}{%
 \subsubsection{Behavioral analyses:}\label{behavioral-analyses-2}}
 
-\begin{figure}[tb]
+\begin{figure}[H]
 
-{\centering \includegraphics[width=0.8\linewidth]{figs/noise-acc-rt-1} 
+{\centering \includegraphics[width=0.95\linewidth]{figs/noise-acc-rt-1} 
 
 }
 
@@ -1064,18 +1127,18 @@ counterbalanced across participants.
 \textbf{RT.} To make RTs more suitable for modeling on a linear scale,
 we analyzed responses in log space with the final model specified as:
 \texttt{$log(RT) \sim noise\_condition + age\_group + (noise\_condition \mid sub\_id ) + (noise\_condition \mid target\_item)$}.
-Panel A of Fig.~\ref{fig:noise_acc_rt_noise_plot} shows the full RT data
-distribution and the full posterior distribution of the estimated RT
-difference between the noise and clear conditions. Both children and
+Panel A of Figure ~\ref{fig:noise_acc_rt_noise_plot} shows the full RT
+data distribution and the full posterior distribution of the estimated
+RT difference between the noise and clear conditions. Both children and
 adults were slower to identify the target in the noise condition
-(Children \(M_{noise}\) = 500.19 ms; Adult \(M_{noise}\) = 595.23 ms),
-as compared to the clear condition (Children \(M_{clear}\) = 455.72 ms;
-Adult \(M_{clear}\) = 542.45 ms). RTs in the noise condition were 48.82
-ms slower on average, with a 95\% HDI ranging from 3.72 ms to 96.26 ms,
-and not including the null value of zero condition difference. Older
-children responded faster than younger children (\(M_{age}\) = -0.44,
-{[}-0.74, -0.16{]}), with little evidence for an interaction between age
-and condition.
+(Children \(M_{noise}\) = 500.19 sec; Adult \(M_{noise}\) = 595.23 sec),
+as compared to the clear condition (Children \(M_{clear}\) = 455.72 sec
+Adult \(M_{clear}\) = 542.45 sec). RTs in the noise condition were 48.82
+seconds slower on average, with a 95\% HDI ranging from 3.72 sec to
+96.26 ms, and not including the null value of zero condition difference.
+Older children responded faster than younger children (\(M_{age}\) =
+-0.44, {[}-0.74, -0.16{]}), with little evidence for an interaction
+between age and condition.
 
 \textbf{Accuracy.} Next, we modeled adults and children's first shift
 accuracy using a mixed-effects logistic regression with the same
@@ -1097,7 +1160,7 @@ interaction between age and noise condition.
 \hypertarget{model-based-analyses-2}{%
 \subsubsection{Model-based analyses:}\label{model-based-analyses-2}}
 
-\begin{figure}[tb]
+\begin{figure}[H]
 
 {\centering \includegraphics[width=0.9\linewidth]{figs/noise-model-plots-1} 
 

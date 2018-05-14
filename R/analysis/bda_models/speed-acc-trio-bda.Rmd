@@ -173,7 +173,7 @@ samples_trio_rt_cat <- m_rt_cat %>%
 
 ## EWMA models
 
-```{r read ewma output noise}
+```{r read ewma output}
 trio_ewma <- c("speed_acc_kids_trio_ewma_results.csv")
 d_ewma_trio <- trio_ewma %>% purrr::map_df(read_ewma, path = ewma_path) 
 ```
@@ -203,6 +203,14 @@ samples_trio_ewma_cuts <- m_ewma_trio %>%
                 face = stimuliFace + asl,
                 sample_id = 1:n()) %>% 
   select(sample_id, asl:face)
+```
+
+
+```{r}
+d_ewma_trio %>% 
+  filter(stimuli %in% c("ASL", "Face")) %>% 
+  group_by(stimuli) %>% 
+  summarise(mean(guess_num))
 ```
 
 ### Prop Guessing

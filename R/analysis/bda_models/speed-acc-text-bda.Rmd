@@ -30,33 +30,13 @@ set.seed (3875)
 
 ```{r read data}
 d <- read_csv(here::here(data_path, "speed_acc_adult_text_fstshift_tidy.csv"))
-d_asl <- read_csv(here::here(data_path, "speed_acc_child_trio_fstshift_tidy.csv"))
 ```
 
-Some minor data cleaning. 
-
-```{r clean datasets to merge}
-d_asl %<>% 
-  filter(language_modality == "ASL" & age_code == "adult") %>% 
-  mutate(subid = as.character(Sub.Num),
-         tr.num = Tr.Num, 
-         rt = RT_sec,
-         shift_type = trial_type,
-         condition = language_modality, 
-         hearing_status = hearing_status_participant,
-         response_onset_type = "noun") %>% 
-  rename(target_image = clean_target_img) %>% 
-  select(subid, tr.num, rt, shift_type, hearing_status, condition, response_onset_type, target_image)
-
-d %<>%
-  mutate(hearing_status = "hearing") %>% 
-  select(subid, tr.num, rt, shift_type, hearing_status, condition, response_onset_type, target_image)
-```
-
-Now merge ASL and spoken language data.
+Minor data cleaning. 
 
 ```{r merge asl and english data}
-d %<>% bind_rows(., d_asl) %>% 
+d %<>% 
+  filter(shift_type %in% c("C_T", "C_D")) %>% 
   mutate(shift_accuracy = ifelse(shift_type == "C_T", "correct", "incorrect"),
          correct = as.integer(ifelse(shift_accuracy == "correct", 1, 0)),
          log_rt = log(rt))
@@ -66,50 +46,49 @@ d %<>% bind_rows(., d_asl) %>%
 
 ```{r}
 m_acc <- d %>% 
-  filter(response_onset_type == "noun") %>% 
+  filter(response_onset_type == "noun", 
+         shift_type %in% c("C_T", "C_D")) %>% 
   stan_glmer(correct ~ condition + (condition | subid) + (target_image | condition), 
-  data = .,
-  family = binomial(link = "logit"), 
-  prior = normal(0, 2),
-  prior_intercept = normal(0, 1),
-  prior_covariance = decov(regularization = 2), 
-  adapt_delta = 0.99,
-  chains = n_chains,
-  iter = n_samples)
+             data = .,
+             family = binomial(link = "logit"), 
+             prior = normal(0, 2),
+             prior_intercept = normal(0, 1),
+             prior_covariance = decov(regularization = 2), 
+             chains = n_chains,
+             iter = n_samples)
 
 samples_text_acc <- m_acc %>% 
   as.data.frame() %>% as_tibble() %>% 
-  dplyr::rename(text_no_audio_int = `(Intercept)`,
+  dplyr::rename(text_no_audio = `conditiontext-no-audio`,
                 face = conditionface,
                 text = conditiontext,
-                bullseye = conditionbullseye) %>% 
+                bullseye_int = `(Intercept)`) %>% 
   mutate(sample_id = 1:n()) %>% 
-  select(sample_id, bullseye, face, text, text_no_audio_int)
+  dplyr::select(sample_id, bullseye_int, face, text, text_no_audio)
 ```
 
 ## RT model
 
 ```{r}
 m_rt <- d %>% 
-  filter(shift_accuracy == "correct", response_onset_type == "noun") %>% 
+  filter(response_onset_type == "noun") %>% 
   stan_glmer(log_rt ~ condition + (condition | subid) + (target_image | condition), 
-  family = gaussian(),
-  data = .,
-  prior = normal(0, 2), 
-  prior_intercept = normal(0, 5),
-  prior_covariance = decov(regularization = 2), 
-  adapt_delta = 0.99,
-  chains = n_chains,
-  iter = n_samples)
+             family = gaussian(),
+             data = .,
+             prior = normal(0, 2), 
+             prior_intercept = normal(0, 5),
+             prior_covariance = decov(regularization = 2), 
+             chains = n_chains,
+             iter = n_samples)
 
 samples_text_rt <- m_rt %>% 
   as.data.frame() %>% as_tibble() %>% 
-  dplyr::rename(text_no_audio_int = `(Intercept)`,
+  dplyr::rename(text_no_audio = `conditiontext-no-audio`,
                 face = conditionface,
                 text = conditiontext,
-                bullseye = conditionbullseye) %>% 
+                bullseye_int = `(Intercept)`) %>% 
   mutate(sample_id = 1:n()) %>% 
-  select(sample_id, bullseye, face, text, text_no_audio_int)
+  dplyr::select(sample_id, bullseye_int, face, text, text_no_audio)
 ```
 
 ## EWMA models
@@ -117,67 +96,68 @@ samples_text_rt <- m_rt %>%
 ```{r read ewma output}
 text_ewma <- c("speed_acc_adult_text_ewma_results.csv")
 d_ewma_text <- text_ewma %>% purrr::map_df(read_ewma, path = ewma_path) 
+d_ewma_text %<>% filter(rt <= 1.5)
 ```
 
 ### Cutoff points
 
-```{r}
+```{r fit cutoff model}
 # Aggregate cutoffs for each participant
 ss_cutoffs <- d_ewma_text %>% 
-  filter(guess == "response") %>% 
   group_by(condition, subid) %>% 
   summarise_(cutoff = interp(~ min(x), x = as.name("rt"))) 
 
 # fit model
 m_ewma_cuts <- ss_cutoffs %>% 
+  filter(guess == "response") %>% 
   stan_glmer(log(cutoff) ~ condition + (condition | subid), 
-  family = gaussian(),
-  data = .,
-  prior = normal(0, 2), 
-  prior_intercept = normal(0, 5),
-  prior_covariance = decov(regularization = 2), 
-  adapt_delta = 0.99,
-  chains = n_chains,
-  iter = n_samples)
+             family = gaussian(),
+             data = .,
+             prior = normal(0, 2), 
+             prior_intercept = normal(0, 5),
+             prior_covariance = decov(regularization = 2), 
+             #adapt_delta = 0.99,
+             chains = n_chains,
+             iter = n_samples)
 
 # extract samples
 samples_text_ewma_cuts <- m_ewma_cuts %>% 
   as.data.frame() %>% as_tibble() %>% 
-  dplyr::rename(bullseye = `(Intercept)`,
-                face = conditionface,
-                text = conditiontext,
-                text_no_audio = `conditiontext-no-audio`) %>% 
+  dplyr::rename(bullseye = `(Intercept)`) %>% 
+  mutate(face = conditionface + bullseye,
+         text = conditiontext + bullseye,
+         text_no_audio = `conditiontext-no-audio` + bullseye) %>% 
   mutate(sample_id = 1:n()) %>% 
-  select(sample_id, bullseye:text_no_audio)
+  select(sample_id, bullseye, text_no_audio, text, face)
 ```
 
-### Prop guessing
+### Proportion guessing
 
-```{r}
+```{r fit proportion guessing model}
 m_ewma_guess <- d_ewma_text %>% 
   stan_glmer(correct ~ condition + (condition|subid),
-        data = .,
-        family = binomial(link = "logit"), 
-        prior = normal(0, 2),
-        prior_intercept = normal(0, 1),
-        prior_covariance = decov(regularization = 2), 
-        adapt_delta = 0.99,
-        chains = n_chains,
-        iter = n_samples)
+             data = .,
+             family = binomial(link = "logit"), 
+             prior = normal(0, 2),
+             prior_intercept = normal(0, 1),
+             prior_covariance = decov(regularization = 2), 
+             #adapt_delta = 0.99,
+             chains = n_chains,
+             iter = n_samples)
 
 samples_text_ewma_guess <- m_ewma_guess %>% 
   as.data.frame() %>% as_tibble() %>% 
-  dplyr::rename(bullseye = `(Intercept)`,
-                face = conditionface,
-                text = conditiontext,
-                text_no_audio = `conditiontext-no-audio`) %>% 
+  dplyr::rename(bullseye = `(Intercept)`) %>% 
+  mutate(face = conditionface + bullseye,
+         text = conditiontext + bullseye,
+         text_no_audio = `conditiontext-no-audio` + bullseye) %>% 
   mutate(sample_id = 1:n()) %>% 
-  select(sample_id, bullseye:text_no_audio)
+  select(sample_id, bullseye, text_no_audio, text, face)
 ```
 
 ## Save posterior samples
 
-```{r}
+```{r save posterior samples}
 posteriors <- list(rt_text = samples_text_rt,
                    acc_text = samples_text_acc,
                    ewma_guess_text = samples_text_ewma_guess,
