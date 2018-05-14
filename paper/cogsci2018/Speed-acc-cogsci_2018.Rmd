@@ -20,7 +20,9 @@ output: cogsci2016::cogsci_paper
 knitr::opts_chunk$set(fig.width=3, fig.height=3, fig.crop = F, fig.pos = "tb",
                       fig.path='figs/',echo=F, warning=F, cache=T, message=F, include =F,
                       sanitize = T)
+```
 
+```{r libaries}
 library(here);
 source(here::here("R/helper_functions/paper_helpers.R"))
 source(here::here("R/helper_functions/ewma_helper_funs.R"))
@@ -30,6 +32,7 @@ source(here::here("R/helper_functions/ewma_helper_funs.R"))
 data_path <- "data/3_final_merged_data/first_shifts/"
 ewma_path <- here::here("data/3_final_merged_data/ewma_output/")
 hddm_path <- "data/3_final_merged_data/hddm_output/"
+bda_path <- "data/3_final_merged_data/bda_posterior_samples/"
 ```
 
 ```{r read data}
@@ -51,8 +54,7 @@ d_hddm <- read_csv(here::here(hddm_path, "hddm_tidy.csv"))
 ```
 
 ```{r read bda output}
-d_models <- readRDS(here::here(data_path, "speed-acc-posterior-samples.rds"))
-d_ewma_models <- readRDS(here::here(data_path, "ewma-posterior-samples.rds"))
+d_models <- readRDS(here::here(bda_path, "speed-acc-noise-posterior-samples.rds"))
 ```
 
 ```{r clean datasets for merge}
@@ -168,7 +170,15 @@ n_kids_filt <- n_kids_run - sum(e1_kids$n)
 n_adults_filt <- n_adults_run - sum(e1_adults$n)
 ```
 
-Participants were native, monolingual English-learning children ($n=$ `r sum(e1_kids$n)`; `r e1_kids$n[1]` F) and adults ($n=$ `r sum(e1_adults$n)`; `r e1_adults$n[1]` F). All participants had no reported history of developmental or language delay and normal vision. `r n_kids_filt + n_adults_filt` participants (`r n_kids_filt` children, `r n_adults_filt` adults) were run but not included in the analysis because either the eye tracker falied to calibrate (2 children, 3 adults) or the participant did not complete the task (9 children). 
+```{r}
+ms_age <- d %>% 
+  filter(age_category == "children") %>% 
+  summarise(m = mean(age, na.rm = T) / 365,
+            sd_age = sd(age, na.rm = T) / 365) %>% 
+  mutate_all(round, 2)
+```
+
+Participants were native, monolingual English-learning children ($n=$ `r sum(e1_kids$n)`; `r e1_kids$n[1]` F, $M_{age}$ = `r ms_age$m` years, $SD_{age}$ = `r ms_age$sd_age`) and adults ($n=$ `r sum(e1_adults$n)`; `r e1_adults$n[1]` F). All participants had no reported history of developmental or language delay and normal vision/hearing. `r n_kids_filt + n_adults_filt` participants (`r n_kids_filt` children, `r n_adults_filt` adults) were run but not included in the analysis because either the eye tracker falied to calibrate (2 children, 3 adults) or the participant did not complete the task (9 children). 
 
 ```{r noise_acc_rt_e1_plot, include = T, fig.env = "figure*", fig.pos = "t", fig.width=5, fig.asp = 0.6, out.width= "75%", fig.align='center', fig.cap = "Behavioral results for first shift Reaction Time (RT) and Accuracy. Panel A shows violin plots representing the distribution of RTs for each participant in each condition. Each point represents a participant's average RT. Color represents the processing context. The grey insets show the full posterior distribution of RT differences across conditions with the vertical dashed line representing the null value of zero condition difference. The green shading represents estimates in the predicted direction and above the null value while the red shading represents estimates below the null. Panel B shows the same information but for first shift accuracy."}
 png::readPNG(here::here("paper/cogsci2018/figs/e1_behav_results.png")) %>% 
@@ -197,7 +207,7 @@ ms_words_length <- d_word_lengths %>%
 
 *Linguistic stimuli.* The video/audio stimuli were recorded in a sound-proof room and featured two female speakers who used natural child-directed speech and said one of two phrases: "Hey! Can you find the (target word)" or "Look! Where’s the (target word) -- see panel A of Fig.\ \ref{fig:stimuli_plot}. The target words were: ball, bunny, boat, bottle, cookie, juice, chicken, and shoe. The target words varied in length (shortest = `r min(ms_words_length$m)` ms, longest = `r max(ms_words_length$m)` ms) with an average length of `r mean(ms_words_length$m) %>% round(digits=2)` ms. 
 
-*Noise manipulation*. To create the stimuli in the noise condition, we convolved each recording with Brown noise using the Audacity audio editor. The average signal-to-noise ratio ^[The ratio of signal power to the noise power, with values greater than 0 dB indicating more signal than noise.] in the noise condition was 2.87 dB compared to the clear condition, which was 35.05 dB. 
+*Noise manipulation*. To create the stimuli for the noise condition, we convolved each recording with Brown noise using the Audacity audio editor. The average signal-to-noise ratio ^[The ratio of signal power to the noise power, with values greater than 0 dB indicating more signal than noise.] in the noise condition was 2.87 dB compared to the clear condition, which was 35.05 dB. 
 
 *Visual stimuli.* The image set consisted of colorful digitized pictures of objects presented in fixed pairs with no phonological overlap between the target and the distractor image (cookie-bottle, boat-juice, bunny-chicken, shoe-ball). The side of the target picture was counterbalanced across trials.
 
@@ -235,7 +245,7 @@ d_ewma_noise %>%
 
 ### Design and procedure
 
-Participants viewed the task on a screen while their gaze was tracked using an SMI RED corneal-reflection eye-tracker mounted on an LCD monitor, sampling at 60 Hz. The eye-tracker was first calibrated for each participant using a 6-point calibration. On each trial, participants saw two images of familiar objects on the screen for two seconds before the center stimulus appeared (see Fig.\ \ref{fig:stimuli_plot}). Next, they processed the target sentence -- which consisted of a carrier phrase, a target noun, and a question -- followed by two seconds without language to allow for a response. Child participants saw 32 trials (16 noise trials; 16 clear trials) with several filler trials interspersed to maintain interest. Adult participants saw 64 trials (32 noise; 32 clear). The noise manipulation was presented in a blocked design with the order of block counterbalanced across participants.
+Participants viewed the task on a screen while their gaze was tracked using an SMI RED corneal-reflection eye-tracker mounted on an LCD monitor, sampling at 60 Hz. The eye-tracker was first calibrated for each participant using a 6-point calibration. On each trial, participants saw two images of familiar objects on the screen for two seconds before the center stimulus appeared (see Fig.\ \ref{fig:stimuli_plot}). Next, they processed the target sentence -- which consisted of a carrier phrase, a target noun, and a question -- followed by two seconds without language to allow for a response. Child participants saw 32 trials (16 noise trials; 16 clear trials) with several filler trials interspersed to maintain interest. Adult participants saw 64 trials (32 noise; 32 clear). The noise manipulation was presented in a blocked design with the order of block counterbalanced across participants. Audio levels were kept at a constant level across participants.
 
 ## Analysis plan
 
@@ -254,7 +264,6 @@ d_hddm %>%
          condition %in% c("gaze_noise", "straight_ahead_clear",
                           "clear", "noise")) %>%
   mutate(condition = ifelse(str_detect(condition, "noise"), "noise", "clear"),
-         age_code = ifelse(age_code == "kid", "children", "adults"),
          age_code = factor(age_code, levels = c("children", "adults"))) %>% 
   ggplot(aes(x = param_value, color = condition)) +
   geom_line(stat = "density", size = 1, position = position_dodge(width=0.1)) +
@@ -365,7 +374,7 @@ prob_diff0 <- noise_contrast %>%
 #   select(model, parameter, everything())
 
 # summarise group means for prop guessing parameter
-ms_guess_noise <- d_ewma_models$ewma_guess_noise %>% 
+ms_guess_noise <- d_models$ewma_guess_noise %>% 
   group_by(age_category, noise_condition) %>% 
   summarise(MAP = mean(param_est),
             hdi_lower = quantile(param_est, probs = 0.025),
@@ -374,7 +383,7 @@ ms_guess_noise <- d_ewma_models$ewma_guess_noise %>%
   mutate_if(.predicate = is.numeric, .funs = round, digits = 2) %>% 
   select(model, parameter, everything())
 
-ms_guess_noise_age <- d_ewma_models$ewma_guess_noise %>% 
+ms_guess_noise_age <- d_models$ewma_guess_noise %>% 
   group_by(age_category) %>% 
   summarise(MAP = mean(param_est),
             hdi_lower = quantile(param_est, probs = 0.025),
@@ -383,7 +392,7 @@ ms_guess_noise_age <- d_ewma_models$ewma_guess_noise %>%
   mutate_if(.predicate = is.numeric, .funs = round, digits = 2) %>% 
   select(model, parameter, everything())
 
-ms_cond_diff_guessing_m <- d_ewma_models$ewma_guess_noise %>% 
+ms_cond_diff_guessing_m <- d_models$ewma_guess_noise  %>% 
   select(sample_id, noise_beta, age_beta) %>%
   mutate(age_beta = age_beta * -1) %>% 
   rename(`adults-children` = age_beta, 
@@ -503,8 +512,7 @@ hddm_table_age <- d_hddm %>%
   filter(experiment %in% c("noise_gaze", "noise"),
          condition %in% c("straight_ahead_noise", "straight_ahead_clear",
                           "clear", "noise")) %>%
-  mutate(condition = ifelse(str_detect(condition, "noise"), "noise", "clear"),
-        age_code = ifelse(str_detect(age_code, "kid"), "children", "adults")) %>% 
+  mutate(condition = ifelse(str_detect(condition, "noise"), "noise", "clear")) %>% 
   group_by(param_name, age_code) %>% 
   summarise(MAP = mean(param_value),
             HDI_lower = quantile(param_value, probs = 0.025),
@@ -516,9 +524,8 @@ hddm_table_contrast <- d_hddm %>%
   filter(experiment %in% c("noise_gaze", "noise"),
          condition %in% c("straight_ahead_noise", "straight_ahead_clear",
                           "clear", "noise")) %>%
-  mutate(condition = ifelse(str_detect(condition, "noise"), "noise", "clear"),
-        age_code = ifelse(str_detect(age_code, "kid"), "children", "adults")) %>% 
-  filter(param_name == "boundary", age_code == "children") %>% 
+  mutate(condition = ifelse(str_detect(condition, "noise"), "noise", "clear")) %>% 
+  dplyr::filter(param_name == "boundary", age_code == "children") %>% 
   group_by(condition) %>% 
   mutate(sample_id = 1:n()) %>% 
   select(param_value, condition, sample_id) %>% 
