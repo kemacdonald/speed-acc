@@ -16,10 +16,10 @@ library(rstanarm);
 library(tidyverse); 
 
 # set ggplot theme
-theme_set(
-  ggthemes::theme_few() +
-  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
-)
+#theme_set(
+  #ggthemes::theme_few() #+
+  #theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+#)
 
 
 # make function to convert logit back to probability 

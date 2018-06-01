@@ -149,28 +149,28 @@ trio_timecourse_gvs %<>%
   mutate(Time.ms = Time.ms / 1000)
 
 trio_timecourse <- trio_timecourse_gvs %>% 
-  ggplot(aes(x = as.numeric(Time.ms), y = mean, color = stimuli, linetype = value_cat), 
+  ggplot(aes(x = as.numeric(Time.ms), y = mean, 
+             color = value_cat), 
+             #linetype = value_cat), 
        data = .) + 
   ylim(0,1) +
   xlim(0,3) +
   geom_line(size=0.7) +
   geom_linerange(aes(ymin = summary_ci_lower, ymax = summary_ci_upper), alpha = 0.5) +
-  #scale_color_manual(values = c("grey70", "grey50", "grey1")) +
   ggthemes::scale_color_ptol() +
-  guides(fill=F, linetype=F) +
+  guides(fill=F, linetype=F, color = F) +
   xlab("Time from noun onset (sec)") +
   ylab("Proportion looking") +
-  guides(color = F) +
-  facet_wrap(~stimuli, ncol = 1) +
+  facet_wrap(~stimuli, ncol = 4) +
+  theme(strip.text = element_text(size = 18),
+        axis.text = element_text(size = 14),
+        axis.title = element_text(size = 14)) +
   geom_text_repel(
     data = filter(trio_timecourse_gvs, Time.ms == 2.5),
     aes(label = value_cat),
     size = 4,
     nudge_x = 0.25,
-    segment.color = NA) +
-    theme(legend.position = "top",
-        legend.text = element_text(size = 9),
-        legend.title = element_text(size = 10)) 
+    segment.color = NA) 
 ```
 
 ### Trio First shift accuracy plot
@@ -185,8 +185,8 @@ ss_trio <- d_kids_trio %>%
 ```
 
 ```{r set global plot values}
-pt_size <- 2.2
-pt_alpha <- 0.25
+pt_size <- 3.5
+pt_alpha <- 0.5
 pt_shape <- 21
 pt_width <- 0.15
 pt_color <- "black"
@@ -196,18 +196,21 @@ nboot <- 500
 
 ```{r make trio acc plot}
 p_acc_trio <- ss_trio %>% 
-  ggplot(aes(x = fct_rev(stimuli), y = mean_correct, fill = stimuli)) +
+  ggplot(aes(x = fct_rev(stimuli), y = mean_correct)) +
   ggbeeswarm::geom_quasirandom(shape = pt_shape, 
                                width = pt_width, 
                                color = pt_color, 
                                size = pt_size,
-                               #fill = pt_fill,
+                               fill = "grey",
                                alpha = pt_alpha) + 
   geom_hline(yintercept = 0.5, linetype = "dashed") +
   guides(fill = F) + 
   ggthemes::scale_fill_ptol() +
   labs(x = NULL, y = "Prop. Correct") +
-  lims(y = c(0, 1)) 
+  lims(y = c(0, 1)) +
+  theme(strip.text = element_text(size = 18),
+        axis.text = element_text(size = 18),
+        axis.title = element_text(size = 18)) 
 
 # get model values
 d_model_vals <- d_bda_trio$acc_trio_contin %>%
@@ -241,18 +244,21 @@ p_acc_trio
 ```{r make trio rt plot}
 p_rt_trio <- ss_trio %>% 
   filter(age_code == "child") %>% 
-  ggplot(aes(x = fct_rev(stimuli), y = m_rt, fill = stimuli)) +
+  ggplot(aes(x = fct_rev(stimuli), y = m_rt)) +
   ggbeeswarm::geom_quasirandom(shape = pt_shape, 
                                width = pt_width, 
                                color = pt_color, 
                                size = pt_size,
-                               #fill = pt_fill,
+                               fill = "grey",
                                alpha = pt_alpha) +  
   ylim(0, 1.8) +
   labs(y = "RT (sec)", x = NULL) +
   guides(fill = F) + 
   ggthemes::scale_fill_ptol() +
-  coord_flip()
+  coord_flip() +
+  theme(strip.text = element_text(size = 18),
+        axis.text = element_text(size = 18),
+        axis.title = element_text(size = 18)) 
 
 # get model values
 d_model_vals <- d_bda_trio$rt_trio_contin %>%
@@ -320,7 +326,12 @@ trio_ewma_vals$ewma_summary$condition <- factor(trio_ewma_vals$ewma_summary$cond
 trio_ewma_vals$cutoff_summary$condition <- factor(trio_ewma_vals$cutoff_summary$condition, 
                                                 levels = c("ASL", "Face", "Object", "Bullseye"))
 
-trio_control_plot <- trio_ewma_vals %>% plot_ewma_chart()
+trio_control_plot <- trio_ewma_vals %>% 
+  plot_ewma_chart() +
+  theme(strip.text = element_text(size = 18),
+        axis.text = element_text(size = 14),
+        axis.title = element_text(size = 14),
+        panel.border = element_rect(color="black", fill=NA))
 ```
 
 ```{r make trio boxplots of guessing}
@@ -330,19 +341,21 @@ p_ewma_trio <- d_ewma %>%
   summarise(count = n()) %>% 
   mutate(prop.responding = round(count / sum(count), 2)) %>% 
   filter(guess == "response") %>% 
-  ggplot(aes(x = fct_reorder(condition, prop.responding), y = prop.responding,
-             fill = condition)) +
+  ggplot(aes(x = fct_reorder(condition, prop.responding), y = prop.responding)) +
   ggbeeswarm::geom_quasirandom(shape = pt_shape, 
                                width = pt_width, 
                                color = pt_color, 
                                size = pt_size,
-                               #fill = pt_fill,
+                               fill = "grey",
                                alpha = pt_alpha) +
   lims(y = c(0,1)) +
   guides(fill = F) + 
   ggthemes::scale_fill_ptol() +
   labs(x = "Condition", y = "Prop. Language-driven")  +
-  scale_x_discrete(expand = c(0,1)) 
+  scale_x_discrete(expand = c(0,1))  +
+  theme(strip.text = element_text(size = 18),
+        axis.text = element_text(size = 14),
+        axis.title = element_text(size = 14))
 
 d_quantiles_ewma <- d_bda_trio$ewma_guess_trio %>% 
   mutate(asl_kids = asl - age_beta,
@@ -380,7 +393,10 @@ p_hddm_trio <- d_hddm %>%
   ggthemes::scale_fill_ptol() +
   theme(legend.position = "top",
         legend.text = element_text(size = 9),
-        legend.title = element_text(size = 10))
+        legend.title = element_text(size = 10)) +
+  theme(strip.text = element_text(size = 18),
+        axis.text = element_text(size = 18),
+        axis.title = element_text(size = 18))
   
 p_hddm_trio
 ```

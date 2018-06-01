@@ -69,7 +69,6 @@ d_bda_ewma_noise <- readRDS(here::here(models_path, "speed-acc-noise-ewma-guess-
 d_hddm <- read_csv(here::here(hddm_path, "hddm_tidy.csv"))
 ```
 
-
 # Plots for speech in background noise experiment
 
 ### Timecourse plots
@@ -130,7 +129,7 @@ noise_time_gvs <- read_csv(here::here("paper/journal_submission/figures/noise_ti
 
 noise_time_gvs %<>% 
   filter(t.rel.noun <= 2.4, !(is.na(mean))) %>% 
-  mutate(age_code = fct_relevel(age_code, "children", "adults"))
+  mutate(age_code = fct_relevel(age_code, "adults", "children"))
 
 noise_timecourse_plot <- ggplot(aes(x = as.numeric(t.rel.noun), 
                                     y = mean, 
@@ -142,7 +141,7 @@ noise_timecourse_plot <- ggplot(aes(x = as.numeric(t.rel.noun),
   xlab("Time from noun onset (sec)") +
   ylab("Proportion looking") +
   guides(linetype = F) +
-  facet_wrap(~age_code, ncol = 1) +
+  facet_wrap(~age_code, ncol = 2) +
   ggthemes::scale_color_ptol() +
   geom_text_repel(
     data = filter(noise_time_gvs, t.rel.noun == max(t.rel.noun), 
@@ -156,8 +155,11 @@ noise_timecourse_plot <- ggplot(aes(x = as.numeric(t.rel.noun),
   lims(x = c(0, 2.6), 
        y = c(0,1)) +
   theme(legend.position = "top",
-        legend.text = element_text(size = 9),
-        legend.title = element_text(size = 10)) 
+        legend.text = element_text(size = 18),
+        legend.title = element_text(size = 18),
+        strip.text = element_text(size = 18),
+        axis.text = element_text(size = 18),
+        axis.title = element_text(size = 18))
 
 
 noise_timecourse_plot
@@ -189,8 +191,8 @@ ss <- d_fst %>%
 Make first shift accuracy plot.
 
 ```{r set global plot values}
-pt_size <- 2.2
-pt_alpha <- 0.25
+pt_size <- 3
+pt_alpha <- 0.35
 pt_shape <- 21
 pt_width <- 0.15
 pt_color <- "black"
@@ -214,7 +216,10 @@ p_acc <- ss %>%
   ggthemes::scale_fill_ptol() +
   labs(x = NULL, y = "Prop. Correct") +
   lims(y = c(0, 1)) +
-  facet_wrap(~age_category, ncol = 1)
+  facet_wrap(~age_category, ncol = 1) +
+  theme(strip.text = element_text(size = 18),
+        axis.text = element_text(size = 18),
+        axis.title = element_text(size = 18))
 
 # get model values
 ms_acc_e1 <- d_bda_noise$acc_noise %>% 
@@ -243,7 +248,7 @@ diffs_df <- ss %>%
 
 ms_diffs <- diffs_df %>% 
   group_by(age_category) %>% 
-  langcog::multi_boot_standard(column = "diff", na.rm = T, nboot = nboot) %>% 
+  langcog::multi_boot_standard(col = "diff", na.rm = T, nboot = nboot) %>% 
   rename(diff = mean)
 
 # now plot those differs
@@ -257,7 +262,7 @@ pairwise_diffs_plot <- diffs_df %>%
               fill = pt_fill,
               alpha = pt_alpha) +
   geom_hline(yintercept = 0, linetype = "dashed") +
-  geom_pointrange(aes(ymin = summary_ci_lower, ymax = summary_ci_upper), 
+  geom_pointrange(aes(ymin = ci_lower, ymax = ci_upper), 
                   data = ms_diffs,
                   shape = 15,
                   size = 0.7,
@@ -265,7 +270,10 @@ pairwise_diffs_plot <- diffs_df %>%
   ylim(-0.45, 0.7) +
   labs(x = NULL, y = "Prop. correct difference") +
   coord_flip() +
-  facet_wrap(~title)
+  facet_wrap(~title) +
+    theme(strip.text = element_text(size = 18),
+        axis.text = element_text(size = 18),
+        axis.title = element_text(size = 18))
 
 # put plots together
 p_acc <- plot_grid(p_acc, pairwise_diffs_plot, ncol = 2, rel_widths = c(0.9, 1),
@@ -289,7 +297,10 @@ p_rt <- ss %>%
   ggthemes::scale_fill_ptol() +
   labs(y = "RT (sec)", x = NULL) +
   coord_flip() +
-  facet_wrap(~age_category, ncol = 1)
+  facet_wrap(~age_category, ncol = 1) +
+  theme(strip.text = element_text(size = 18),
+        axis.text = element_text(size = 18),
+        axis.title = element_text(size = 18))
 
 # get model values
 ms_rt_e1 <- d_bda_noise$rt_noise %>% 
@@ -316,7 +327,7 @@ diffs_df <- ss %>%
 
 ms_diffs <- diffs_df %>% 
   group_by(age_category) %>% 
-  langcog::multi_boot_standard(column = "diff", na.rm = T, nboot = nboot, 
+  langcog::multi_boot_standard(col = "diff", na.rm = T, nboot = nboot, 
                                empirical_function = "mean") %>% 
   rename(diff = mean)
 
@@ -330,15 +341,18 @@ pairwise_diffs_plot <- diffs_df %>%
               fill = pt_fill,
               alpha = pt_alpha) +
   geom_hline(yintercept = 0, linetype = "dashed") +
-  geom_pointrange(aes(ymin = summary_ci_lower, ymax = summary_ci_upper), 
+  geom_point(aes(ymin = ci_lower, ymax = ci_upper), 
                   data = ms_diffs,
                   shape = 15,
-                  size = 0.7,
+                  size = 4,
                   color = "grey20") +
   ylim(-0.45, 0.7) +
   labs(x = NULL, y = "RT difference (sec)") +
   facet_wrap(~title) +
-  coord_flip() 
+  coord_flip() +
+  theme(strip.text = element_text(size = 18),
+        axis.text = element_text(size = 18),
+        axis.title = element_text(size = 18))
 
 p_rt <- plot_grid(p_rt, pairwise_diffs_plot, ncol = 2, rel_widths = c(0.9, 1),
                   scale = c(1, 0.85))
@@ -382,7 +396,11 @@ noise_ewma_vals_adults <- d_ewma %>%
   aggregate_ewma
 
 noise_control_plot_adults <- noise_ewma_vals_adults %>% plot_ewma_chart() +
-  labs(title = "adults")
+  labs(title = "adults") +
+  theme(strip.text = element_text(size = 18),
+        axis.text = element_text(size = 14),
+        axis.title = element_text(size = 14),
+        panel.border = element_rect(color="black", fill=NA))
 
 # make control plot kids
 noise_ewma_vals_kids <- d_ewma %>% 
@@ -391,7 +409,11 @@ noise_ewma_vals_kids <- d_ewma %>%
   aggregate_ewma
 
 noise_control_plot_kids <- noise_ewma_vals_kids %>% plot_ewma_chart() + 
-  labs(title = "children")
+  labs(title = "children") +
+  theme(strip.text = element_text(size = 18),
+        axis.text = element_text(size = 14),
+        axis.title = element_text(size = 14),
+        panel.border = element_rect(color="black", fill=NA))
 
 ## merge kids and adults plot
 noise_control_chart <- plot_grid(noise_control_plot_kids, 
@@ -419,9 +441,10 @@ Make the ewma guessing plot
 ```{r}
 p_ewma_noise <- d_ewma %>%
   ggplot(aes(x = fct_rev(age_code), y = prop.responding, fill = noise_condition)) +
-  geom_jitter(aes(fill = noise_condition, alpha = 0.1),
+  geom_jitter(aes(fill = noise_condition),
+              alpha = 0.3,
               shape = 21, 
-              size = 2,
+              size = 3,
               position = position_jitterdodge(jitter.width = 0.1, 
                                               dodge.width = 0.8)) +
   lims(y = c(0,1)) +
@@ -429,10 +452,12 @@ p_ewma_noise <- d_ewma %>%
   ggthemes::scale_fill_ptol() +
   scale_x_discrete(expand = c(0,0.8), drop = FALSE) +
   labs(x = NULL, y = "Prop. Language-driven", fill = "Processing context:") +
-  theme(panel.border = element_rect(fill = NA, color = "black"),
-        legend.position = "top",
-        legend.text = element_text(size = 9),
-        legend.title = element_text(size = 10))
+  theme(legend.position = "top",
+        legend.text = element_text(size = 15),
+        legend.title = element_text(size = 16))  +
+   theme(strip.text = element_text(size = 18),
+        axis.text = element_text(size = 14),
+        axis.title = element_text(size = 14))
 
 d_quantiles_ewma_noise <- d_bda_noise$ewma_guess_noise %>% 
   rename(age_code = age_category) %>% 
@@ -475,9 +500,12 @@ p_hddm_noise <- d_hddm %>%
   scale_y_discrete(expand = c(0.2,0)) +
   scale_alpha_manual(values = c(0.9, 0.6)) + 
   theme(legend.position = "top",
-        legend.text = element_text(size = 9),
-        legend.title = element_text(size = 10)) +
-  ggthemes::scale_fill_ptol() 
+        legend.text = element_text(size = 15),
+        legend.title = element_text(size = 16)) +
+  ggthemes::scale_fill_ptol() +
+   theme(strip.text = element_text(size = 18),
+        axis.text = element_text(size = 18),
+        axis.title = element_text(size = 18))
 
 p_hddm_noise
 ```

@@ -1,0 +1,158 @@
+---
+title: "Speed-Acc JEP: General Figure Visualization Code (Noise -- step sizes)"
+author: "Kyle MacDonald"
+output: html_document
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.width=3, fig.height=3, fig.crop = F, fig.pos = "tb",
+                      fig.path='figs/',echo=F, warning=F, cache=T, message=F, include =F,
+                      sanitize = T)
+```
+
+# Set up 
+
+This document contains the codebase for generating the plots for Study 3 in the paper, "An information-seeking account of children's eye movements during grounded signed and spoken language comprehension"
+
+```{r load libraries}
+library(tidyboot); library(here); library(kableExtra); library(rogme); library(ggridges); library(ggrepel)
+source(here::here("R/helper_functions/libraries_and_functions.R"))
+source(here::here("R/helper_functions/ewma_helper_funs.R"))
+```
+
+```{r set data paths}
+time_path <- "data/3_final_merged_data/timecourse/"
+```
+
+```{r read timecourse}
+d_timecourse_adults <- read_csv(here::here(time_path, "speed_acc_adult_ng_timecourse_tidy.csv.gz"))
+d_timecourse_adults %<>% mutate(age_code = "adults")
+d_timecourse_kids <- read_csv(here::here(time_path, "speed_acc_child_noise_timecourse_tidy.csv.gz"))
+d_timecourse_kids %<>% mutate(age_code = "children")
+
+# join adult and kids eye tracking data
+d <- bind_rows(d_timecourse_adults, d_timecourse_kids)
+```
+
+# Step size analysis
+
+### Compute size of each step
+
+Here we use the lead() function to find the "next" x and y coordinates. And then compute the euclidean distance between the gaze coordinates. 
+
+$$\displaystyle d(\mathbf {p} ,\mathbf {q} )={\sqrt {(q_{1}-p_{1})^{2}+(q_{2}-p_{2})^{2}}}$$
+
+```{r}
+compute_euc_dist <- function(x1, y1, x2, y2) {
+  ((x1 - x2)^2) + ((y1 - y2)^2) %>% sqrt()
+}
+```
+
+```{r}
+
+```
+
+
+```{r}
+d %<>% 
+  mutate(next_x_coord = lead(x),
+         next_y_coord = lead(y), 
+         step_size_euc = sqrt(sum()))
+```
+
+### Aggregate and compare 
+
+```{r}
+
+```
+
+
+# Proportion looking to center pre-exposure phase
+
+Select plotting window and downsample the t.rel.noun time bins based on the sampling rate of the tracker. 
+
+```{r}
+d_time_filt <- d %>% filter(t.rel.noun <= 0)
+```
+
+Create time bins for each trial and flag bins with participant data in both conditions.
+
+```{r}
+d_time_filt %<>% 
+  group_by(subid, tr.num) %>% 
+  arrange(t.stim) %>% 
+  mutate(Bin = 1:n())
+```
+
+Aggregate at the subject level
+
+```{r}
+# get number of trials looking at each gaze target for each time slice
+ss.d <- d_time_filt %>% 
+  group_by(subid, Bin, noise_condition, age_code) %>% 
+  summarise(count = n()) %>% 
+  ungroup() %>% 
+  complete(nesting(subid, Bin, age_code), noise_condition,
+           fill = list(count = 0)) %>% 
+  mutate(subid = as.character(subid))
+
+# get proportion looking by dividing the freq looking at each target by the total looking 
+# derived in step 1 of this chunk
+ss.d <- as.data.frame(xtabs(~ subid + Bin + target_looking + noise_condition + age_code, 
+                            data = d_time_filt),
+                      stringsAsFactors = F) %>% 
+  mutate(Bin = as.numeric(Bin)) %>% 
+  left_join(x = ss.d, y = ., by = c("subid", "Bin", "noise_condition", "age_code")) %>% 
+  mutate(proportion_looking = Freq / count)
+```
+
+Plot things just to make sure the transformations didn't do anything crazy.
+
+```{r, eval = F}
+ms.means.timeslice <- ss.d %>% 
+  filter(!is.na(proportion_looking)) %>% 
+  group_by(Bin, noise_condition, target_looking, age_code) %>% 
+  tidyboot_mean(column = proportion_looking, nboot = 10)
+```
+
+```{r}
+ms.means.timeslice %>% 
+  filter(Bin <= 175) %>% 
+  ggplot(aes(x = as.numeric(Bin), y = mean, 
+           color = noise_condition, 
+           fill = noise_condition,
+           linetype = target_looking), 
+         data = .) + 
+  lims(y = c(0,1),
+       x = c(0, 195)) +
+  geom_line(size=1) +
+  geom_ribbon(aes(ymin = ci_lower, ymax = ci_upper), alpha = 0.5) +
+  guides(linetype = F, fill = F) +
+  ggthemes::scale_color_ptol() + 
+  ggthemes::scale_fill_ptol() + 
+  xlab("Time in sec from onset of trial") +
+  ylab("Proportion looking") +
+  geom_dl(aes(label = target_looking), 
+          color = "black",
+          method = "last.bumpup") +
+  labs(linetype = "noise condition: ") +
+  facet_wrap(~age_code) +
+  theme(legend.position = "top",
+        legend.text = element_text(size = 18),
+        legend.title = element_text(size = 18),
+        strip.text = element_text(size = 18),
+        axis.text = element_text(size = 18),
+        axis.title = element_text(size = 18))
+```
+
+
+
+
+
+# Entropy analysis
+
+```{r}
+
+```
+
+
