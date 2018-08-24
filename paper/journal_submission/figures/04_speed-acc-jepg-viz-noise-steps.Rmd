@@ -145,10 +145,6 @@ ms.means.timeslice %>%
         axis.title = element_text(size = 18))
 ```
 
-
-
-
-
 # Entropy analysis
 
 ```{r}

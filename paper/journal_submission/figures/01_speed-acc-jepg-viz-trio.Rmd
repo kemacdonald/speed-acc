@@ -17,6 +17,12 @@ knitr::opts_chunk$set(fig.width=3, fig.height=3, fig.crop = F, fig.pos = "tb",
 library(here); library(kableExtra); library(rogme); library(ggridges); library(ggrepel)
 source(here::here("R/helper_functions/libraries_and_functions.R"))
 source(here::here("R/helper_functions/ewma_helper_funs.R"))
+
+theme_set(theme_minimal() + 
+            theme(panel.border = element_rect(fill = NA, color = "grey", size = 1),
+                  panel.grid.major = element_blank(), 
+                  panel.grid.minor = element_blank())
+)
 ```
 
 ```{r set data paths}
@@ -52,17 +58,15 @@ d_kids_trio %<>%
   filter(RT <= upper_bound_RT, trial_type != "no_shift", age_code == "child")
 ```
 
-```{r read ewma model data files}
+```{r read model and data files}
 # read in ewma files for all experiments using purrr
 files <- dir(path = ewma_path, pattern = "*.csv") 
 d_ewma <- files %>% purrr::map_df(read_ewma, path = ewma_path)
 
 # hddm output for all experiments
 d_hddm <- read_csv(here::here(hddm_path, "hddm_tidy.csv"))
-```
 
-```{r read bda model output}
-# trio experiment
+# read bda model output}
 d_bda_trio <- readRDS(here::here(models_path, "speed-acc-trio-posterior-samples.rds"))
 ```
 
@@ -70,72 +74,7 @@ d_bda_trio <- readRDS(here::here(models_path, "speed-acc-trio-posterior-samples.
 
 ### Trio Timecourse plot
 
-Grab just the eye movement data and group information
-
-```{r}
-ss_iChart <- d_time_trio %>% 
-  select(Sub.Num, language_modality, trial_type, stimuli, age_code, Response, `0`:`3000`) %>% 
-  filter(Response == "D", age_code == "child") 
-```
-
-Convert to wide data to long format
-
-```{r}
-ss_iChart_long <- ss_iChart %>% 
-  gather(key = Time.ms, value = value, `0`:`3000`) %>% 
-  filter(value %in% c("0", "0.5", "1")) %>% 
-  mutate(value_cat = factor(value, labels = c("Distractor", "Center", "Target")),
-         Time.ms_numeric = as.numeric(Time.ms)) 
-```    
-
-Summarize proportion looking for each participant at each time slice.
-
-```{r}
-ms_iChart_count <- ss_iChart_long %>% 
-  group_by(Sub.Num, Time.ms, language_modality, value_cat) %>% 
-  dplyr::summarise(count = ifelse(n() == 0, 0, n())) %>% 
-  dplyr::summarise(sum_count = sum(count)) %>% 
-  ungroup() %>% 
-  mutate(Sub.Num = as.character(Sub.Num))
-
-ms_iChart <- as.data.frame(xtabs(~ Sub.Num + value_cat + Time.ms, data = ss_iChart_long),
-                           stringsAsFactors = F) %>% 
-  left_join(y = ms_iChart_count, by = c("Sub.Num", "Time.ms")) %>% 
-  mutate(proportion_looking = Freq / sum_count,
-         language_modality_factor = as.factor(language_modality))
-```
-
-Get means and CIs for proportion looking at each time slice across particpants
-
-```{r, eval = F}
-ms_iChart_count <- ss_iChart_long %>% 
-  group_by(Sub.Num, Time.ms, stimuli, value_cat) %>% 
-  dplyr::summarise(count = ifelse(n() == 0, 0, n())) %>% 
-  dplyr::summarise(sum_count = sum(count)) %>% 
-  ungroup() %>% 
-  mutate(Sub.Num = as.character(Sub.Num))
-
-ms_iChart <- as.data.frame(xtabs(~ Sub.Num + value_cat + Time.ms, data = ss_iChart_long),
-                           stringsAsFactors = F) %>% 
-  left_join(y = ms_iChart_count, by = c("Sub.Num", "Time.ms")) %>% 
-  mutate(proportion_looking = Freq / sum_count,
-         stimuli_factor = as.factor(stimuli))
-
-# get means and bootsrapped CIs for each timepoint
-nboot <- 500
-
-ms_mean_iChart <- ms_iChart %>% 
-  group_by(Time.ms, stimuli, value_cat) %>% 
-  langcog::multi_boot_standard(column = "proportion_looking", na.rm = T, nboot = nboot) %>% 
-  filter(is.na(stimuli) == F) %>% 
-  ungroup() %>% 
-  mutate(Time.ms = as.numeric(Time.ms))
-
-write_csv(x = ms_mean_iChart, 
-          path = here::here("paper/journal_submission/figures/trio_timecourse_graph_vals.csv"))
-```
-
-Now we make Tanenhaus style plot.
+Make Tanenhaus style plot.
 
 ```{r make tanenhaus-plot trio}
 trio_timecourse_gvs <- read_csv(here::here("paper/journal_submission/figures/trio_timecourse_graph_vals.csv"))
@@ -161,10 +100,10 @@ trio_timecourse <- trio_timecourse_gvs %>%
   guides(fill=F, linetype=F, color = F) +
   xlab("Time from noun onset (sec)") +
   ylab("Proportion looking") +
-  facet_wrap(~stimuli, ncol = 4) +
-  theme(strip.text = element_text(size = 18),
-        axis.text = element_text(size = 14),
-        axis.title = element_text(size = 14)) +
+  facet_wrap(~stimuli, ncol = 1) +
+  theme(strip.text = element_text(size = 12),
+        axis.text = element_text(size = 12),
+        axis.title = element_text(size = 12)) +
   geom_text_repel(
     data = filter(trio_timecourse_gvs, Time.ms == 2.5),
     aes(label = value_cat),
@@ -328,11 +267,17 @@ trio_ewma_vals$cutoff_summary$condition <- factor(trio_ewma_vals$cutoff_summary$
 
 trio_control_plot <- trio_ewma_vals %>% 
   plot_ewma_chart() +
-  theme(strip.text = element_text(size = 18),
+  theme_minimal() +
+  theme(panel.border = element_rect(fill = NA, color = "grey", size = 1),
+                  panel.grid.major = element_blank(), 
+                  panel.grid.minor = element_blank()) +
+  theme(strip.text = element_text(size = 14),
         axis.text = element_text(size = 14),
         axis.title = element_text(size = 14),
-        panel.border = element_rect(color="black", fill=NA))
+        panel.border = element_rect(color="grey", fill=NA)) 
 ```
+
+Dotplots of guessing behavior. 
 
 ```{r make trio boxplots of guessing}
 p_ewma_trio <- d_ewma %>% 
@@ -386,17 +331,17 @@ x_lims <- c(0, 2)
 p_hddm_trio <- d_hddm %>% 
   filter(experiment == "trio", age_code == "children") %>% 
   ggplot(aes(x = param_value, y = param_name, fill = condition)) +
-  geom_density_ridges(scale = 0.7, rel_min_height = 0.005, alpha = 0.8) + 
+  geom_density_ridges(scale = 0.7, rel_min_height = 0.005, alpha = 0.75) + 
   labs(x = "Parameter value", y = NULL, color = "") +
   lims(x = x_lims)  +
-  scale_y_discrete(expand = c(0.2,0)) +
+  scale_y_discrete(expand = c(0.6,0)) +
   ggthemes::scale_fill_ptol() +
   theme(legend.position = "top",
         legend.text = element_text(size = 9),
         legend.title = element_text(size = 10)) +
-  theme(strip.text = element_text(size = 18),
-        axis.text = element_text(size = 18),
-        axis.title = element_text(size = 18))
+  theme(strip.text = element_text(size = 14),
+        axis.text = element_text(size = 14),
+        axis.title = element_text(size = 14))
   
 p_hddm_trio
 ```
