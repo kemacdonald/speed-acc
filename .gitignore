@@ -12,3 +12,5 @@ packrat/lib*/
 experiments/
 .DS_store
 *.icloud
+hddm/
+.ipynb_checkpoints/

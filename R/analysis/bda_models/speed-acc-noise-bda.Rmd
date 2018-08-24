@@ -21,12 +21,14 @@ options(mc.cores=parallel::detectCores())
 set.seed (3875)
 ```
 
+Read adult and child data.
+
 ```{r read data}
 d_kids_noise <- read_csv(here::here(data_path, "speed_acc_child_noise_fstshift_tidy.csv")) 
 d_adults <- read_csv(here::here(data_path, "speed_acc_adult_ng_fstshift_tidy.csv")) 
 ```
 
-## Merge datasets
+Merge datasets.
 
 ```{r clean datasets and merge}
 d_adults %<>% select(-age)

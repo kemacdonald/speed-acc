@@ -9,7 +9,6 @@ knitr::opts_chunk$set(echo=T, warning=F, cache=F, message=F, sanitize = T)
 ```
 
 ```{r}
-library(here)
 source(here::here("R/helper_functions/libraries_and_functions.R"))
 ```
 

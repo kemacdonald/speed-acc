@@ -8,7 +8,6 @@
 ## Gaze and the signal-to-noise ratio of the language
 
 ## PRELIMINARIES
-rm(list = ls())
 library(readr); library(magrittr); library(pryr); library(stringr); 
 source("../../helper_functions/libraries_and_functions.R")
 library(tidyverse)

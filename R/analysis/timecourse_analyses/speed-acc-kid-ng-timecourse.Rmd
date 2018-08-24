@@ -13,7 +13,6 @@ Load libraries and read in tidy data.
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo=F, warning=F, cache=F, message=F, sanitize = T, results = 'asis')
-library(here)
 source(here::here("R/helper_functions/libraries_and_functions.R"))
 source((here::here("R/helper_functions/permutation_helpers.R")))
 data_path <- "data/3_final_merged_data/timecourse/"
@@ -91,7 +90,6 @@ plot <- ms.means.timeslice %>%
   theme(text = element_text(size = 18),
         legend.position = "top") 
 ```
-
 
 ## Noise timecourse
 

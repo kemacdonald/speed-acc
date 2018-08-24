@@ -47,7 +47,7 @@ d %>%
 
 Not every participant has the same number of trials, but no participant has more than 32 trials, which is good.
 
-How many trials does each participoant have in each condition? 
+How many trials does each participant have in each condition? 
 
 ```{r, eval = F}
 trials_df <- d %>% 
