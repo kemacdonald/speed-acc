@@ -14,12 +14,11 @@ knitr::opts_chunk$set(fig.width=3, fig.height=3, fig.crop = F, fig.pos = "tb",
 ```
 
 ```{r load libraries}
-library(here); library(kableExtra); library(rogme); library(ggridges); library(ggrepel)
 source(here::here("R/helper_functions/libraries_and_functions.R"))
 source(here::here("R/helper_functions/ewma_helper_funs.R"))
-```
+source(here::here("R/helper_functions/paper_helpers.R"))
 
-```{r set data paths}
+# data paths
 data_path <- "data/3_final_merged_data/first_shifts/"
 time_path <- "data/3_final_merged_data/timecourse/"
 models_path <- "data/3_final_merged_data/bda_posterior_samples/"
@@ -27,25 +26,22 @@ ewma_path <- "data/3_final_merged_data/ewma_output/"
 hddm_path <- "data/3_final_merged_data/hddm_output/"
 ```
 
-```{r read timecourse data}
+```{r read data}
+# timecourse
 d_timecourse <- read_csv(here::here(time_path, "speed_acc_adult_text_timecourse_tidy.csv.gz"))
 d_timecourse %<>% filter(t.stim > 0, t.stim <= 5) 
-```
 
-```{r read first shift data}
+#  first shift data
 d_fst <- read_csv(here::here(data_path, "speed_acc_adult_text_fstshift_tidy.csv"))
-```
 
-```{r read ewma model data files}
-# read in ewma files for all experiments using purrr
+# ewma files for all experiments using purrr
 files <- dir(path = ewma_path, pattern = "*.csv") 
 d_ewma <- files %>% purrr::map_df(read_ewma, path = ewma_path)
 
 # hddm output for all experiments
 d_hddm <- read_csv(here::here(hddm_path, "hddm_tidy.csv"))
-```
 
-```{r read bda model output}
+# read bda model output}
 d_bda <- readRDS(here::here(models_path, "speed-acc-text-posterior-samples.rds"))
 ```
 
@@ -84,7 +80,7 @@ nboot <- 500
 
 ms_mean_iChart <- ss.d %>% 
   group_by(t.stim, condition, target_looking) %>% 
-  langcog::multi_boot_standard(column = "proportion_looking", na.rm = T, nboot = nboot) %>% 
+  langcog::multi_boot_standard(col = "proportion_looking", na.rm = T, nboot = nboot) %>% 
   filter(is.na(condition) == F) %>% 
   ungroup() %>% 
   mutate(t.stim = as.numeric(t.stim - 3.3)) # make t.stim relative to noun onset
@@ -99,11 +95,11 @@ Make plot.
 text_time_gvs <- read_csv(here::here("paper/journal_submission/figures/text_timecourse_graph_vals.csv"))
 
 text_timecourse_plot <- ggplot(aes(x = as.numeric(t.stim), y = mean, 
-           color = condition, linetype = target_looking), data = text_time_gvs) + 
+           color = target_looking), 
+           data = text_time_gvs) + 
   geom_line(size=0.7) +
-  geom_linerange(aes(ymin = summary_ci_lower, ymax = summary_ci_upper), alpha = 0.5) +
-  #scale_color_manual(values = c("grey70", "grey50", "grey1")) +
-  ggthemes::scale_color_ptol() +
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), alpha = 0.5) +
+  scale_color_brewer(palette="Dark2") +
   xlab("Time from noun onset (sec)") +
   ylab("Proportion looking") +
   guides(color = F, linetype = F) +
@@ -115,8 +111,10 @@ text_timecourse_plot <- ggplot(aes(x = as.numeric(t.stim), y = mean,
     nudge_x = 0.1,
     segment.color = NA
   ) +
-  ylim(0,1) +
+  ylim(-0.01,1.01) +
   xlim(0,2) 
+
+text_timecourse_plot
 ```
 
 ### First shifts plots
@@ -144,28 +142,27 @@ ss <- d_fst %>%
 Make first shift accuracy plot.
 
 ```{r set global plot values}
-pt_size <- 2.5
-pt_alpha <- 0.45
+pt_size <- 3.5
+pt_alpha <- 0.5
 pt_shape <- 21
-pt_width <- 0.2
+pt_width <- 0.15
 pt_color <- "black"
 pt_fill <- "darkgrey"
+nboot <- 500
 ```
 
 First shift accuracy plot.
 
 ```{r make text acc plot}
 p_acc <- ss %>% 
-  ggplot(aes(x = fct_relevel(condition, "face", after = 3), y = m_acc,
-             fill = condition)) +
-  ggbeeswarm::geom_quasirandom(shape = pt_shape, 
+  ggplot(aes(x = fct_relevel(condition, "face", after = 3), y = m_acc)) +
+   ggbeeswarm::geom_quasirandom(shape = pt_shape, 
                                width = pt_width, 
                                color = pt_color, 
                                size = pt_size,
-                               #fill = pt_fill,
+                               fill = "grey",
                                alpha = pt_alpha) + 
   geom_hline(yintercept = 0.5, linetype = "dashed") +
-  ggthemes::scale_fill_ptol() +
   guides(fill=F) +
   labs(x = NULL, y = "Prop. Correct") +
   lims(y = c(0, 1)) 
@@ -206,15 +203,14 @@ p_rt <- ss %>%
   ggplot(aes(x = fct_rev(condition), 
              y = m_rt,
              fill = condition)) +
-  ggbeeswarm::geom_quasirandom(shape = pt_shape, 
+   ggbeeswarm::geom_quasirandom(shape = pt_shape, 
                                width = pt_width, 
                                color = pt_color, 
                                size = pt_size,
-                               #fill = pt_fill,
-                               alpha = pt_alpha) +  
+                               fill = "grey",
+                               alpha = pt_alpha) + 
   ylim(0, 1.3) +
   guides(fill = F) + 
-  ggthemes::scale_fill_ptol() +
   labs(y = "RT (sec)", x = NULL) +
   coord_flip()
 
@@ -274,7 +270,15 @@ text_ewma_vals <- d_ewma %>%
   filter(rt <= 1, experiment == "text") %>% 
   aggregate_ewma
 
-text_control_plot <- text_ewma_vals %>% plot_ewma_chart()
+text_control_plot <- text_ewma_vals %>%
+  plot_ewma_chart() +
+  theme_minimal() +
+  theme(panel.border = element_rect(fill = NA, color = "grey", size = 1),
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        strip.text = element_text(size = 12),
+        axis.text = element_text(size = 12),
+        axis.title = element_text(size = 12)) 
 ```
 
 Ewma guessing plot.
@@ -288,11 +292,12 @@ p_ewma_text <- d_ewma %>%
   filter(guess == "response") %>% 
   ggplot(aes(x = fct_reorder(condition, prop.responding), y = prop.responding,
              fill = condition)) +
-  ggbeeswarm::geom_quasirandom(shape = 21, width = 0.15, color = "black", 
-                               size = 3,
-                               #fill = "darkgrey",
-                               alpha = 0.6) +
-  ggthemes::scale_fill_ptol() +
+   ggbeeswarm::geom_quasirandom(shape = pt_shape, 
+                               width = pt_width, 
+                               color = pt_color, 
+                               size = pt_size,
+                               fill = "grey",
+                               alpha = pt_alpha) +
   guides(fill=F) +
   lims(y = c(0,1)) +
   labs(x = "Condition", y = "Prop. Language-driven")  +
@@ -320,7 +325,7 @@ p_ewma_text <- p_ewma_text +
 
 HDDM plot 
 
-```{r}
+```{r density hddm plot}
 p_hddm_text <- d_hddm %>% 
   filter(experiment == "text") %>%
   ggplot(aes(x = param_value, y = param_name, fill = condition)) +
@@ -335,6 +340,25 @@ p_hddm_text <- d_hddm %>%
 p_hddm_text
 ```
 
+```{r forest hddm plot}
+p_hddm_text <- d_hddm %>% 
+  filter(experiment == "text") %>%
+  group_by(param_name, condition) %>% 
+  summarise(m = mean(param_value),
+            lower = quantile(param_value, probs = 0.05),
+            upper = quantile (param_value, probs = 0.95)) %>% 
+  ggplot(aes(x = param_name, y = m, color = condition)) +
+  geom_pointrange(aes(ymin = lower, ymax = upper), size = 1,
+                  position = position_dodge(width = .4)) +
+  labs(y = "Parameter value", x = NULL, color = "Center stimulus: ") +
+  lims(y =c(0.5,3.5))  +
+  scale_color_brewer(palette="Dark2") +
+  coord_flip() 
+
+p_hddm_text
+```
+
+
 Put text model plots together.
 
 ```{r put model plots together}
@@ -342,7 +366,7 @@ text_ewma_hddm_plots <- plot_grid(p_ewma_text, p_hddm_text, ncol = 1, labels = c
                                   scale = c(0.8, 0.8))
 
 text_final_model_plot <- plot_grid(text_control_plot, text_ewma_hddm_plots, ncol = 2,
-                                   rel_widths = c(1, 1), scale = c(0.95, 0.9),
+                                   rel_widths = c(1, 1.2), scale = c(0.95, 0.9),
                                    labels = "A")
 
 save_plot(filename = here::here("paper/journal_submission/figures/figs_output/fig4_text_models.png"), 

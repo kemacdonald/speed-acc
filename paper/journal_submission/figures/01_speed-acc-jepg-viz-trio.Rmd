@@ -14,18 +14,11 @@ knitr::opts_chunk$set(fig.width=3, fig.height=3, fig.crop = F, fig.pos = "tb",
 ```
 
 ```{r load libraries}
-library(here); library(kableExtra); library(rogme); library(ggridges); library(ggrepel)
 source(here::here("R/helper_functions/libraries_and_functions.R"))
 source(here::here("R/helper_functions/ewma_helper_funs.R"))
+source(here::here("R/helper_functions/paper_helpers.R"))
 
-theme_set(theme_minimal() + 
-            theme(panel.border = element_rect(fill = NA, color = "grey", size = 1),
-                  panel.grid.major = element_blank(), 
-                  panel.grid.minor = element_blank())
-)
-```
-
-```{r set data paths}
+# data paths
 data_path <- "data/3_final_merged_data/first_shifts/"
 time_path <- "data/3_final_merged_data/timecourse/"
 models_path <- "data/3_final_merged_data/bda_posterior_samples/"
@@ -85,25 +78,22 @@ trio_timecourse_gvs$stimuli <- factor(trio_timecourse_gvs$stimuli,
 
 trio_timecourse_gvs %<>% 
   filter(Time.ms <= 2500) %>% 
-  mutate(Time.ms = Time.ms / 1000)
+  mutate(Time.ms = Time.ms / 1000,
+         value_cat = ifelse(value_cat == "Distractor", "Distracter", value_cat))
 
 trio_timecourse <- trio_timecourse_gvs %>% 
   ggplot(aes(x = as.numeric(Time.ms), y = mean, 
-             color = value_cat), 
-             #linetype = value_cat), 
+             color = value_cat),
        data = .) + 
   ylim(0,1) +
   xlim(0,3) +
   geom_line(size=0.7) +
   geom_linerange(aes(ymin = summary_ci_lower, ymax = summary_ci_upper), alpha = 0.5) +
-  ggthemes::scale_color_ptol() +
+  scale_color_brewer(palette="Dark2") +
   guides(fill=F, linetype=F, color = F) +
   xlab("Time from noun onset (sec)") +
   ylab("Proportion looking") +
   facet_wrap(~stimuli, ncol = 1) +
-  theme(strip.text = element_text(size = 12),
-        axis.text = element_text(size = 12),
-        axis.title = element_text(size = 12)) +
   geom_text_repel(
     data = filter(trio_timecourse_gvs, Time.ms == 2.5),
     aes(label = value_cat),
@@ -146,10 +136,7 @@ p_acc_trio <- ss_trio %>%
   guides(fill = F) + 
   ggthemes::scale_fill_ptol() +
   labs(x = NULL, y = "Prop. Correct") +
-  lims(y = c(0, 1)) +
-  theme(strip.text = element_text(size = 18),
-        axis.text = element_text(size = 18),
-        axis.title = element_text(size = 18)) 
+  lims(y = c(0, 1)) 
 
 # get model values
 d_model_vals <- d_bda_trio$acc_trio_contin %>%
@@ -194,10 +181,7 @@ p_rt_trio <- ss_trio %>%
   labs(y = "RT (sec)", x = NULL) +
   guides(fill = F) + 
   ggthemes::scale_fill_ptol() +
-  coord_flip() +
-  theme(strip.text = element_text(size = 18),
-        axis.text = element_text(size = 18),
-        axis.title = element_text(size = 18)) 
+  coord_flip() 
 
 # get model values
 d_model_vals <- d_bda_trio$rt_trio_contin %>%
@@ -269,9 +253,9 @@ trio_control_plot <- trio_ewma_vals %>%
   plot_ewma_chart() +
   theme_minimal() +
   theme(panel.border = element_rect(fill = NA, color = "grey", size = 1),
-                  panel.grid.major = element_blank(), 
-                  panel.grid.minor = element_blank()) +
-  theme(strip.text = element_text(size = 14),
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        strip.text = element_text(size = 14),
         axis.text = element_text(size = 14),
         axis.title = element_text(size = 14),
         panel.border = element_rect(color="grey", fill=NA)) 
@@ -325,7 +309,7 @@ p_ewma_trio <- p_ewma_trio +
 
 Make hddm plots
 
-```{r make trio hddm plot}
+```{r ggridges plot hddm plot}
 x_lims <- c(0, 2)
 
 p_hddm_trio <- d_hddm %>% 
@@ -335,14 +319,28 @@ p_hddm_trio <- d_hddm %>%
   labs(x = "Parameter value", y = NULL, color = "") +
   lims(x = x_lims)  +
   scale_y_discrete(expand = c(0.6,0)) +
-  ggthemes::scale_fill_ptol() +
-  theme(legend.position = "top",
-        legend.text = element_text(size = 9),
-        legend.title = element_text(size = 10)) +
-  theme(strip.text = element_text(size = 14),
-        axis.text = element_text(size = 14),
-        axis.title = element_text(size = 14))
+  scale_fill_brewer(palette="Dark2")
   
+p_hddm_trio
+```
+
+Make hddm plot
+
+```{r forest hddm}
+p_hddm_trio <- d_hddm %>% 
+  filter(experiment == "trio", age_code == "children") %>% 
+  group_by(param_name, condition) %>% 
+  summarise(m = mean(param_value),
+            lower = quantile(param_value, probs = 0.05),
+            upper = quantile (param_value, probs = 0.95)) %>% 
+  ggplot(aes(x = param_name, y = m, color = condition)) +
+  geom_pointrange(aes(ymin = lower, ymax = upper), size = 1,
+                  position = position_dodge(width = .3)) +
+  labs(y = "Parameter value", x = NULL, color = "Center stimulus: ") +
+  lims(y =c(0,2))  +
+  scale_color_brewer(palette="Dark2") +
+  coord_flip() 
+
 p_hddm_trio
 ```
 

@@ -50,7 +50,7 @@ source(here::here("R/helper_functions/ewma_helper_funs.R"))
 ```
 
 ```{r analysis_preferences}
-knitr::opts_chunk$set(fig.pos = '!ht', fig.width = 4, fig.asp=0.618, out.width = "85%", 
+knitr::opts_chunk$set(fig.pos = '!t', fig.width = 4, fig.asp=0.618, out.width = "85%", 
                       cache = T, fig.path='figs/', fig.align = 'center',
                       echo=F, warning=F, cache=T, 
                       message=F, sanitize = T)
@@ -410,7 +410,7 @@ After looking to the target image, participants tended to shift their gaze back 
 
 ### Model-based analyses
 
-```{r trio-model-plot, fig.cap = "Results for the model-based analyses in Experiment 1. Panel A shows a control chart representing the timecourse of the EWMA statistic. The black curve represents the evolution of the control statistic (CS) as a function of reaction time. The grey curve represents the upper control limit (UCL). The vertical dashed line is the median cutoff value (point when the control process shifts out of a guessing state). The grey shaded area represents the 95\\% confidence interval around the estimate of the median cutoff point, and the shaded ribbons represent the proportion of responses that were categorized as guesses (red) and language-driven (green). Panel B shows a summary of the proportion of shifts that were categorized as language-driven for the Face and ASL processing contexts. Panel C shows the posterior distributions for the boundary and drift rate parameters for the Face and ASL processing contexts."}
+```{r trio-model-plot, fig.env = 'figure', fig.cap = "Results for the model-based analyses in Experiment 1. Panel A shows a control chart representing the timecourse of the EWMA statistic. The black curve represents the evolution of the control statistic (CS) as a function of reaction time. The grey curve represents the upper control limit (UCL). The vertical dashed line is the median cutoff value (point when the control process shifts out of a guessing state). The grey shaded area represents the 95\\% confidence interval around the estimate of the median cutoff point, and the shaded ribbons represent the proportion of responses that were categorized as guesses (red) and language-driven (green). Panel B shows a summary of the proportion of shifts that were categorized as language-driven for the Face and ASL processing contexts. Panel C shows the posterior distributions for the boundary and drift rate parameters for the Face and ASL processing contexts."}
 
 knitr::include_graphics(here::here(image_path, "fig2_trio_models.png"), dpi = 108)
 ```
@@ -811,9 +811,8 @@ noise_contrast_rt <- d_models_noise$rt_noise %>%
 
 ### Behavioral analyses:
 
-```{r noise-acc-rt, fig.cap = "Behavioral results for children and adults in Experiment 3. Panel A shows the overall looking to the center, target, and distracter stimulus for each processing condition and age group. Panel B shows the distribution of RTs for each participant and the pairwise contrast between the noise and clear conditions. The square point represents the mean value for each mesure. The vertical dashed line represents the null model of zero condition difference. The width each point represents the 95\\% HDI. Panel C shows the same information but for first shift accuracy."}
-
-png::readPNG(here::here(image_path, "fig5_noise_behav.png")) %>% grid.raster()
+```{r noise-acc-rt, fig.env='figure', fig.cap = "Behavioral results for children and adults in Experiment 3. Panel A shows the overall looking to the center, target, and distracter stimulus for each processing condition and age group. Panel B shows the distribution of RTs for each participant and the pairwise contrast between the noise and clear conditions. The square point represents the mean value for each mesure. The vertical dashed line represents the null model of zero condition difference. The width each point represents the 95\\% HDI. Panel C shows the same information but for first shift accuracy."}
+knitr::include_graphics(here::here(image_path, "fig5_noise_behav.png"), dpi = 108)
 ```
 
 ```{r ms contrast noise rt}
@@ -853,9 +852,8 @@ prob_diff0 <- noise_contrast %>%
 
 ### Model-based analyses:
 
-```{r noise-model-plots, out.width="90%", fig.cap = "Results for the model-based analyses for Experiment 3. The majority of plotting conventions are the same as Figure 3. In Panel C, linetype and alpha value represent age group: children vs. adults."}
-
-png::readPNG(here::here(image_path, "fig6_noise_models.png")) %>% grid.raster()
+```{r noise-model-plots, fig.env='figure', fig.cap = "Results for the model-based analyses for Experiment 3. The majority of plotting conventions are the same as Figure 3. In Panel C, linetype and alpha value represent age group: children vs. adults."}
+knitr::include_graphics(here::here(image_path, "fig6_noise_models.png"), dpi = 108)
 ```
 
 ```{r noise ewma group means summary}
