@@ -154,7 +154,6 @@ samples_e1_acc_age_int <- m_bglm_acc_int_e1 %>%
   select(clear_children, noise_beta, age_beta, int_beta)
 ```
 
-
 ## RT models
 
 ### RT age (categorical)
@@ -410,7 +409,6 @@ samples_ewma_guess_noise_ageInt <- m_guessing_noise_ageInt %>%
                 int_beta = `noise_conditionnoise:age`) %>% 
   select(clear_children, noise_beta, age_beta, int_beta)
 ```
-
 
 ## Save the posterior samples 
 

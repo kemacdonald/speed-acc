@@ -8,7 +8,7 @@ output: html_document
 This document contains the codebase for the bayesian data analysis in Experiment 1 (Speed-acc-trio) of the paper, "An information-seeking account of children's eye movements during grounded signed and spoken language comprehension."
 
 ```{r set global_options, include=FALSE}
-library(here)
+library(here); library(tidybayes)
 source(here::here("R/helper_functions/libraries_and_functions.R"))
 source(here::here("R/helper_functions/ewma_helper_funs.R"))
 
@@ -22,6 +22,7 @@ write_path <- "data/3_final_merged_data/bda_posterior_samples/"
 upper_bound_RT <- 2000
 n_samples <- 3000
 n_chains <- 4
+rstan::rstan_options(auto_write = TRUE)
 options(mc.cores=parallel::detectCores())
 set.seed (3875)
 ```

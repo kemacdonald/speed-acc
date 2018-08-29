@@ -14,8 +14,6 @@ knitr::opts_chunk$set(fig.width=3, fig.height=3, fig.crop = F, fig.pos = "tb",
 library(here); library(kableExtra)
 source(here::here("R/helper_functions/libraries_and_functions.R"))
 source(here::here("R/helper_functions/ewma_helper_funs.R"))
-
-#
 data_path <- "data/3_final_merged_data/first_shifts/"
 ```
 

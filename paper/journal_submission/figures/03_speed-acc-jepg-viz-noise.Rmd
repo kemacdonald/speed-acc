@@ -178,8 +178,75 @@ ss <- d_fst %>%
   mutate(correct_num = ifelse(shift_accuracy == "correct", 1, 0)) %>% 
   group_by(noise_condition, subid, age_category) %>% 
   summarise(m_rt = median(rt),
-            m_acc = mean(correct_num))
+            se_rt = sd(rt, na.rm = T) / sqrt(n()),
+            m_acc = mean(correct_num),
+            se_acc = sd(correct_num, na.rm = T) / sqrt(n()),
+            n = n()) %>% 
+  filter(n > 4)
 ```
+
+Make within-subjects scatterplots
+
+```{r}
+# RT
+means <- ss %>% 
+  select(noise_condition, age_category, subid, m_rt) %>%
+  spread(key=noise_condition, value=m_rt, sep = "_m_")
+
+ses <- ss %>% 
+  select(noise_condition, age_category, subid, se_rt) %>%
+  spread(key=noise_condition, value= se_rt, sep = "_SE_")
+
+sums <- left_join(means, ses) %>% 
+  mutate(slower_cond = ifelse(noise_condition_m_clear > noise_condition_m_noise, "clear", "noise")) %>% 
+  filter(!is.na(slower_cond))
+
+lims <- c(0, 1.5)
+
+ggplot(sums, aes(x=noise_condition_m_clear, y=noise_condition_m_noise, color = slower_cond)) +
+  geom_point(size = 2.5) +
+  geom_errorbar(aes(ymin= noise_condition_m_noise - noise_condition_SE_noise, 
+                    ymax = noise_condition_m_noise+noise_condition_SE_noise)) +
+  geom_errorbarh(aes(xmin= noise_condition_m_clear - noise_condition_SE_clear, 
+                     xmax = noise_condition_m_clear+noise_condition_SE_clear)) +
+  geom_abline() +
+  guides(color = F) +
+  scale_color_brewer(palette = "Dark2") +
+  facet_grid(.~age_category) +
+  labs(x = "RT (sec) Clear", y = "RT (sec) Noise") +
+  lims(x = lims, y = lims) +
+  theme(aspect.ratio = 1)
+
+# Accuracy
+means <- ss %>% 
+  select(noise_condition, age_category, subid, m_acc) %>%
+  spread(key=noise_condition, value=m_acc, sep = "_m_")
+
+ses <- ss %>% 
+  select(noise_condition, age_category, subid, se_acc) %>%
+  spread(key=noise_condition, value= se_acc, sep = "_SE_")
+
+sums <- left_join(means, ses) %>% 
+  mutate(slower_cond = ifelse(noise_condition_m_clear > noise_condition_m_noise, "clear", "noise")) %>% 
+  filter(!is.na(slower_cond))
+
+lims <- c(0, 1)
+
+ggplot(sums, aes(x=noise_condition_m_clear, y=noise_condition_m_noise, color = slower_cond)) +
+  geom_point(size = 2.5) +
+  geom_errorbar(aes(ymin= noise_condition_m_noise - noise_condition_SE_noise, 
+                    ymax = noise_condition_m_noise+noise_condition_SE_noise)) +
+  geom_errorbarh(aes(xmin= noise_condition_m_clear - noise_condition_SE_clear, 
+                     xmax = noise_condition_m_clear+noise_condition_SE_clear)) +
+  geom_abline() +
+  guides(color = F) +
+  scale_color_brewer(palette = "Dark2") +
+  facet_grid(.~age_category) +
+  labs(x = "Prop. Correct Clear", y = "Prop. Correct Noise") +
+  lims(x = lims, y = lims) +
+  theme(aspect.ratio = 1)
+```
+
 
 Make first shift accuracy plot.
 

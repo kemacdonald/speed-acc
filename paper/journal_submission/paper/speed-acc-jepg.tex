@@ -722,12 +722,13 @@ center stimulus type, controlling for age, and including user-defined
 contrasts to test specific comparisons of interest:
 \texttt{Log(RT) $\sim$ center stimulus type + age +  (1 | subject) + (1 | item)}.
 We found that (a) ASL learners generated slower RTs compared to all of
-the spoken English samples (\(\beta\) = 595 sec, 95\% HDI {[}445 sec,
-761 sec{]}), (b) ASL learners' shifts were slower compared directly to
+the spoken English samples (\(\beta\) = 0.60 sec, 95\% HDI {[}0.44 sec,
+0.76 sec{]}), (b) ASL learners' shifts were slower compared directly to
 children processing spoken language in the Face condition (\(\beta\) =
-323 sec, 95\% HDI {[}132 sec, 523 sec{]}), and (c) children in the Face
-condition shifted gaze slower compared to participants in the Object and
-Bullseye tasks (\(\beta\) = 408 sec, 95\% HDI {[}287 sec, 546 sec{]}).
+0.32 sec, 95\% HDI {[}0.13 sec, 0.52 sec{]}), and (c) children in the
+Face condition shifted gaze slower compared to participants in the
+Object and Bullseye tasks (\(\beta\) = 0.41 sec, 95\% HDI {[}0.29 sec,
+0.55 sec{]}).
 
 \emph{Accuracy.} Next we compared the accuracy of first shifts across
 the different tasks by fitting a mixed-effects logistic regression with
@@ -898,7 +899,7 @@ tracked using automated eye-tracking software.
 
 \begin{figure}[!t]
 
-{\centering \includegraphics[width=0.9\linewidth]{figs/text-plot-1} 
+{\centering \includegraphics[width=0.85\linewidth]{figs/text-plot-1} 
 
 }
 
@@ -908,26 +909,49 @@ tracked using automated eye-tracking software.
 \hypertarget{behavioral-analyses-1}{%
 \subsubsection{Behavioral analyses}\label{behavioral-analyses-1}}
 
-\emph{Timecourse analyses.} TODO (add text and maybe a permutation
-analysis of the center and target looking curves).
+\emph{Time course looking.} The first question of interest was how do
+young ASL and English learners distribute attention while processing
+language in real-time? Panel A of Fig.~\ref{fig:text-plot} presents an
+overview of adults's looking to the center stimulus, target, and
+distractor images for each center stimulus type. Similar to children's
+looking behavior in Experiment 1, at target-noun onset the majority of
+adults were looking at the center. As the target noun unfolded, the mean
+proportion looking to the center decreased rapidly as participants
+shifted their gaze to the objects. Proportion looking to the target
+increased sooner and reached a higher asymptote compared to proportion
+looking to the distracter for all four processing contexts.
+
+After looking to the target image, adults did not tend to shif their
+gaze back to the center as shown by the relatively flat proportion
+looking to the center curves one second after target-noun onset. The
+primary qualitative difference in adult's looking behavior across the
+different center stimulus types was a higher tendency to be looking at
+the center stimulus in the Face and Text conditions relative to the
+Bullseye condition. This was especially true for the Text-no-audio
+condition where adults were looking to the center at target-noun onset
+on 100\% of the trials. This pattern of behavior provides preliminary,
+qualitative evidence that the condition manipulation affected the
+dynamics of adults looking beahvior early in the time course of the
+target noun. We did not see evidence of differences in the asymptotes or
+slopes for the target- or distracter-looking curves.
 
 \emph{RT.} Visual inspection of Figure 5, panel C suggests that mean
 response times of first shifts were similar across the four center
-stimulus conditions (\(M_{bull}\) = 0.55, \(M_{face}\) = 0.59,
-\(M_{text}\) = 0.58, \(M_{textNoaudio}\) = 0.56). We fit a linear
-mixed-effects regression with the same specification as in Experiment 1,
-but we added by-subject intercepts and slopes for each center stimulus
-type to account for our within-subjects manipulation. We did not see
-evidence that RTs were different across conditions, with the null value
-of zero condition differences falling within the 95\% CIs for each
-comparison of interest (see table XX in the appendix for full model
+stimulus conditions (\(M_{bull}\) = 0.55 sec, \(M_{face}\) = 0.59 sec,
+\(M_{text}\) = 0.58 sec, \(M_{textNoaudio}\) = 0.56 sec). We fit a
+linear mixed-effects regression with the same specification as in
+Experiment 1, but we added by-subject intercepts and slopes for each
+center stimulus type to account for our within-subjects manipulation. We
+did not see evidence that RTs were different across conditions, with the
+null value of zero condition differences falling within the 95\% CIs for
+each comparison of interest (see table XX in the appendix for full model
 output).
 
 \emph{Accuracy.} Next, we modeled accuracy using a mixed-effects
 logistic regression with the same specifications (see Panel B of Figur
 5). We found that adults' first shifts were highly accurate
-(\(M_{bull}\) = 0.92, \(M_{face}\) = 0.95, \(M_{text}\) = 0.90,
-\(M_{textNoaudio}\) = 0.89). And, in contrast to the children in
+(\(M_{bullseye}\) = 0.92, \(M_{face}\) = 0.95, \(M_{text}\) = 0.90,
+\(M_{textNoAudio}\) = 0.89). And, in contrast to the children in
 Experiment 1, adults' responses were above chance level even in the
 Bullseye condition when the center stimulus was not salient or
 informative.
@@ -1168,7 +1192,7 @@ interaction between age and noise condition.
 
 \begin{figure}[!t]
 
-{\centering \includegraphics[width=0.9\linewidth]{figs/noise-model-plots-1} 
+{\centering \includegraphics[width=0.85\linewidth]{/Users/kmacdonald/Documents/Projects/SPEED-ACC/paper/journal_submission/figures/figs_output//fig6_noise_models} 
 
 }
 
@@ -1221,21 +1245,42 @@ over speed in the more challenging, noisy environment.
 \hypertarget{general-discussion}{%
 \section{General Discussion}\label{general-discussion}}
 
-Language comprehension in grounded contexts involves integrating
-information from the visual and linguistic signals. But the value of
-integrating visual information depends on the processing context. Here,
-we presented a test of an information-seeking account of eye movements
-during language processing: that listeners flexibly adapt gaze patterns
-in response to the value of seeking visual information for accurate
-language understanding. We showed that children and adults generate
-slower but more accurate gaze shifts away from a speaker when processing
-speech in a noisy context. Both groups showed evidence of prioritizing
-information accumulation over speed (HDDM) while guessing less often
-(EWMA). Listeners were able to achieve higher accuracy in the more
-challenging, noisy context. Together, these results suggest that in
-settings with a degraded linguistic signal, listeners support language
-comprehension by seeking additional language-relevant information from
-the visual world.
+Language comprehension in grounded, social contexts involves extracting
+meaning from the linguistic signal and mapping it to the surrounding
+world. But how should listeners prioritize integrating different kinds
+of visual information? In this work, we proposed that listeners flexibly
+adapt their gaze behaviors in response to features of the social
+context, seeking visual information from their social partners when it
+was especially useful for language comprehension. We present evidence
+for our account using three case studies sampled from a diverse set of
+language processing contexts: sign language, dynamic displays of printed
+text, and spoken language in noisy auditory environments. We found that,
+compared to children learning spoken English, young ASL-learners delayed
+their gaze shifts away from a language source, were more accurate with
+these shifts, and produced a smaller proportion of random shifting
+behavior. Next, English-speaking adults produced fewer random gaze
+shifts when processing dynamic displays of printed text compared to
+spoken language. Finally, 3-5 year-olds and adults delayed the timing of
+gaze shifts away from a speaker's face when processing speech in a noisy
+environment, which resulted in fewer random eye movements and more
+accurate gaze shifts. Together, these results provide evidence that
+young listeners, like adults, adapt their gaze patterns to the demands
+of different processing environments by seeking out visual information
+from social partners to support language comprehension.
+
+This work attempts to integrate top-down, goal-based models of vision
+(Hayhoe \& Ballard, 2005) with work on language-driven eye movements
+(Allopenna et al., 1998). While we chose to start with two case studies
+-- ASL and text processing -- we think the account is more general and
+that there are many real world situations where people must negotiate
+the tradeoff between gathering more information about language or about
+the world: e.g., processing spoken language in noisy environments or at
+a distance; or early in language learning when children are acquiring
+new words and often rely on nonlinguistic cues to reference such as
+pointing or eye gaze. Overall, we hope this work contributes to a
+broader account of eye movements during language comprehension that can
+explain fixation behaviors across a wider variety of populations,
+processing contexts, and during different stages of language learning.
 
 These results synthesize ideas from several research programs, including
 work on language-mediated visual attention (Tanenhaus et al., 1995),

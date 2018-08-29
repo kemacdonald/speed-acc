@@ -160,11 +160,4 @@ ss_ewma %>%
         axis.title = element_text(size = 16))
 ```
 
-
-
-
-
-
-
-### HDDM 
-
+### HDDM with age
