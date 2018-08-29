@@ -247,11 +247,10 @@ ggplot(sums, aes(x=noise_condition_m_clear, y=noise_condition_m_noise, color = s
   theme(aspect.ratio = 1)
 ```
 
-
 Make first shift accuracy plot.
 
 ```{r set global plot values}
-pt_size <- 3.5
+pt_size <- 3
 pt_alpha <- 0.5
 pt_shape <- 21
 pt_width <- 0.15
@@ -416,14 +415,14 @@ noise_fst_shifts <- plot_grid(pairwise_diffs_plot_rt, pairwise_diffs_plot_acc,
                               scale = c(0.95, 0.95))
 
 noise_behav_plot <- plot_grid(noise_timecourse_plot, noise_fst_shifts, 
-                              rel_widths = c(1.5, 0.8),
+                              rel_widths = c(1.5, 0.7),
                               labels = c("A"),
-                              scale = c(0.9, 0.8))
+                              scale = c(0.95, 0.9))
 
 save_plot(filename = here::here("paper/journal_submission/figures/figs_output/fig5_noise_behav.png"), 
           noise_behav_plot,
-          ncol = 4,
-          nrow = 1.7,
+          ncol = 3,
+          nrow = 1.5,
           base_aspect_ratio = 1)
 ```
 
@@ -588,7 +587,7 @@ noise_ewma_hddm_plots <- plot_grid(p_ewma_noise, p_hddm_noise,
                                    rel_heights = c(0.8,1), 
                                    ncol = 2, 
                                    labels = c("A", "B"), 
-                                   scale = c(0.85, 0.8))
+                                   scale = c(0.95, 0.9))
 
 # noise_final_model_plot <- plot_grid(noise_control_chart, noise_ewma_hddm_plots, 
 #                                     ncol = 2,
@@ -598,8 +597,8 @@ noise_ewma_hddm_plots <- plot_grid(p_ewma_noise, p_hddm_noise,
 
 save_plot(filename = here::here("paper/journal_submission/figures/figs_output/fig6_noise_models.png"), 
           noise_ewma_hddm_plots,
-          ncol = 2.5,
-          nrow = 1.2,
+          ncol = 3,
+          nrow = 1,
           base_aspect_ratio = 1)
 ```
 

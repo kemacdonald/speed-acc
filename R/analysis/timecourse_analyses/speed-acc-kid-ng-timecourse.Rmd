@@ -13,10 +13,10 @@ Load libraries and read in tidy data.
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo=F, warning=F, cache=F, message=F, sanitize = T, results = 'asis')
-source(here::here("R/helper_functions/libraries_and_functions.R"))
-source((here::here("R/helper_functions/permutation_helpers.R")))
+library(here)
+source(here("R/helper_functions/libraries_and_functions.R"))
+source(here("R/helper_functions/permutation_helpers.R"))
 data_path <- "data/3_final_merged_data/timecourse/"
-theme_set(ggthemes::theme_few())
 ```
 
 Read data. 
@@ -239,7 +239,6 @@ ss_filt <- ss.d %>%
 ss_complete <- ss_filt %>% filter(complete_case == "complete")
 ```
 
-
 Define thresholds for t-test
 
 ```{r}
@@ -268,8 +267,6 @@ by_bin %<>% filter(Bin <= bin_cut_point)
 ```
 
 1. Map the t-test to each time bin and store it as a variable in the by_bin data frame. 
-
-TODO: figure out how to keep only complete cases (participant with a valid prop looking estimate in each condition), so we can run the paired t-test.
 
 ```{r}
 by_bin %<>% mutate(model = map(data, run_t_test, paired = TRUE, alternative = "two.sided"))
@@ -318,10 +315,6 @@ largest_t
 
 We will take our data and randomly shuffle it, assigning participants randomly to each condition. Then we will perform steps (1)-(3) on the shuffled dataset and save the biggest sum-statistic from each permutation analysis. 
 
-A note from the supplemental materials in Cesana-Arlotti et. al., (2018):  
-
-> To evaluate the significance of the test, we recomputed the same analysis on 1000 sets of random permutations. The permutations were computed by randomly assigning the participants to the condition labels (Inference/No Inference), taking care to maintain the N of the two conditions identical to the N available for the original data.
-
 So we create a list of data frames. Each data frame is a permuted dataset.
 
 ```{r, message=F}
@@ -353,7 +346,7 @@ system.time(
 )
 ```
 
-Then, we make clusters for each filtered data frame of Bins that have above-threshold t-values. **KM: What to do if there weren't any significant t-stats during the by_bin pass? Right now, I'm just ignoring these simulations.**
+Then, we make clusters for each filtered data frame of Bins that have above-threshold t-values.
 
 ```{r}
 system.time(
@@ -361,7 +354,7 @@ system.time(
 )
 ```
 
-Then, we sum the t-stats for each cluster and store the largest value for each simulation. **KM: What to do if there weren't any significant t-stats during the by_bin pass? Right now, I'm just ignoring these simulations.**
+Then, we sum the t-stats for each cluster and store the largest value for each simulation. 
 
 ```{r}
 system.time(
