@@ -70,7 +70,7 @@ d_bda_trio <- readRDS(here::here(models_path, "speed-acc-trio-posterior-samples.
 Make Tanenhaus style plot.
 
 ```{r make tanenhaus-plot trio}
-trio_timecourse_gvs <- read_csv(here::here("paper/journal_submission/figures/trio_timecourse_graph_vals.csv"))
+trio_timecourse_gvs <- read_csv(here::here("writing/journal_submission/figures/trio_timecourse_graph_vals.csv"))
 
 # change factor levels for plot to help compare conditions of interest
 trio_timecourse_gvs$stimuli <- factor(trio_timecourse_gvs$stimuli, 
@@ -226,7 +226,7 @@ trio_behav_plot <- plot_grid(trio_timecourse, trio_fst_shifts,
                               labels = c("A"),
                               scale = c(0.95, 0.9))
 
-save_plot(filename = here::here("paper/journal_submission/figures/figs_output/fig1_trio_behav.png"), 
+save_plot(filename = here::here("writing/journal_submission/figures/figs_output/fig1_trio_behav.png"), 
           trio_behav_plot,
           ncol = 2.7,
           nrow = 1.7,
@@ -360,7 +360,7 @@ trio_final_model_plot <- plot_grid(trio_control_plot, trio_ewma_hddm_plots,
                                    scale = c(0.9, 0.9),
                                    labels = "A")
 
-save_plot(filename = here::here("paper/journal_submission/figures/figs_output/fig2_trio_models.png"), 
+save_plot(filename = here::here("writing/journal_submission/figures/figs_output/fig2_trio_models.png"), 
           trio_final_model_plot,
           ncol = 2.7,
           nrow = 1.7,

@@ -86,13 +86,13 @@ ms_mean_iChart <- ss.d %>%
   mutate(t.stim = as.numeric(t.stim - 3.3)) # make t.stim relative to noun onset
 
 write_csv(x = ms_mean_iChart, 
-          path = here::here("paper/journal_submission/figures/text_timecourse_graph_vals.csv"))
+          path = here::here("writing/journal_submission/figures/text_timecourse_graph_vals.csv"))
 ```
 
 Make plot.
 
 ```{r}
-text_time_gvs <- read_csv(here::here("paper/journal_submission/figures/text_timecourse_graph_vals.csv"))
+text_time_gvs <- read_csv(here::here("writing/journal_submission/figures/text_timecourse_graph_vals.csv"))
 
 text_timecourse_plot <- ggplot(aes(x = as.numeric(t.stim), y = mean, 
            color = target_looking), 
@@ -255,7 +255,7 @@ text_behav_plot <- plot_grid(text_timecourse_plot, text_fst_shifts,
                              labels = c("A"),
                              scale = c(0.95, 0.9))
 
-save_plot(filename = here::here("paper/journal_submission/figures/figs_output/fig3_text_behav.png"), 
+save_plot(filename = here::here("writing/journal_submission/figures/figs_output/fig3_text_behav.png"), 
           text_behav_plot,
           ncol = 3,
           nrow = 2,
@@ -369,7 +369,7 @@ text_final_model_plot <- plot_grid(text_control_plot, text_ewma_hddm_plots, ncol
                                    rel_widths = c(1, 1.2), scale = c(0.95, 0.9),
                                    labels = "A")
 
-save_plot(filename = here::here("paper/journal_submission/figures/figs_output/fig4_text_models.png"), 
+save_plot(filename = here::here("writing/journal_submission/figures/figs_output/fig4_text_models.png"), 
           text_final_model_plot,
           ncol = 3,
           nrow = 2,

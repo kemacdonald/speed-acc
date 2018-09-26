@@ -1,5 +1,5 @@
-\documentclass[english,floatsintext,man]{apa6}
-
+\documentclass[english,,man,floatsintext]{apa6}
+\usepackage{lmodern}
 \usepackage{amssymb,amsmath}
 \usepackage{ifxetex,ifluatex}
 \usepackage{fixltx2e} % provides \textsubscript
@@ -9,121 +9,105 @@
 \else % if luatex or xelatex
   \ifxetex
     \usepackage{mathspec}
-    \usepackage{xltxtra,xunicode}
   \else
     \usepackage{fontspec}
   \fi
-  \defaultfontfeatures{Mapping=tex-text,Scale=MatchLowercase}
-  \newcommand{\euro}{€}
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
 \fi
 % use upquote if available, for straight quotes in verbatim environments
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 % use microtype if available
-\IfFileExists{microtype.sty}{\usepackage{microtype}}{}
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdftitle={Children seek visual information to support signed and spoken language comprehension},
+            pdfauthor={Kyle MacDonald, Virginia Marchman, Anne Fernald, \& Michael C. Frank},
+            pdfkeywords={eye movements; language comprehension; information-seeking; speech in
+background noise; American Sign Language},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[shorthands=off,main=english]{babel}
+\else
+  \usepackage{polyglossia}
+  \setmainlanguage[]{english}
+\fi
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
 
-% Table formatting
-\usepackage{longtable, booktabs}
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+
+  \title{Children seek visual information to support signed and spoken language
+comprehension}
+    \author{Kyle MacDonald\textsuperscript{1}, Virginia Marchman\textsuperscript{1},
+Anne Fernald\textsuperscript{1}, \& Michael C. Frank\textsuperscript{1}}
+    \date{}
+  
+\shorttitle{Information-seeking eye movements}
+\affiliation{
+\vspace{0.5cm}
+\textsuperscript{1} Stanford University}
+\keywords{eye movements; language comprehension; information-seeking; speech in background noise; American Sign Language\newline\indent Word count: X}
+\usepackage{csquotes}
+\usepackage{upgreek}
+\captionsetup{font=singlespacing,justification=justified}
+
+\usepackage{longtable}
 \usepackage{lscape}
-% \usepackage[counterclockwise]{rotating}   % Landscape page setup for large tables
-\usepackage{multirow}		% Table styling
-\usepackage{tabularx}		% Control Column width
-\usepackage[flushleft]{threeparttable}	% Allows for three part tables with a specified notes section
-\usepackage{threeparttablex}            % Lets threeparttable work with longtable
+\usepackage{multirow}
+\usepackage{tabularx}
+\usepackage[flushleft]{threeparttable}
+\usepackage{threeparttablex}
 
-% Create new environments so endfloat can handle them
-% \newenvironment{ltable}
-%   {\begin{landscape}\begin{center}\begin{threeparttable}}
-%   {\end{threeparttable}\end{center}\end{landscape}}
+\newenvironment{lltable}{\begin{landscape}\begin{center}\begin{ThreePartTable}}{\end{ThreePartTable}\end{center}\end{landscape}}
 
-\newenvironment{lltable}
-  {\begin{landscape}\begin{center}\begin{ThreePartTable}}
-  {\end{ThreePartTable}\end{center}\end{landscape}}
-
-
-
-
-% The following enables adjusting longtable caption width to table width
-% Solution found at http://golatex.de/longtable-mit-caption-so-breit-wie-die-tabelle-t15767.html
 \makeatletter
 \newcommand\LastLTentrywidth{1em}
 \newlength\longtablewidth
 \setlength{\longtablewidth}{1in}
-\newcommand\getlongtablewidth{%
- \begingroup
-  \ifcsname LT@\roman{LT@tables}\endcsname
-  \global\longtablewidth=0pt
-  \renewcommand\LT@entry[2]{\global\advance\longtablewidth by ##2\relax\gdef\LastLTentrywidth{##2}}%
-  \@nameuse{LT@\roman{LT@tables}}%
-  \fi
-\endgroup}
+\newcommand{\getlongtablewidth}{\begingroup \ifcsname LT@\roman{LT@tables}\endcsname \global\longtablewidth=0pt \renewcommand{\LT@entry}[2]{\global\advance\longtablewidth by ##2\relax\gdef\LastLTentrywidth{##2}}\@nameuse{LT@\roman{LT@tables}} \fi \endgroup}
 
+\authornote{
 
-\ifxetex
-  \usepackage[setpagesize=false, % page size defined by xetex
-              unicode=false, % unicode breaks when used with xetex
-              xetex]{hyperref}
-\else
-  \usepackage[unicode=true]{hyperref}
-\fi
-\hypersetup{breaklinks=true,
-            pdfauthor={},
-            pdftitle={Children seek visual information to support signed and spoken language comprehension},
-            colorlinks=true,
-            citecolor=blue,
-            urlcolor=blue,
-            linkcolor=black,
-            pdfborder={0 0 0}}
-\urlstyle{same}  % don't use monospace font for urls
+Correspondence concerning this article should be addressed to Kyle
+MacDonald, 450 Serra Mall, Stanford, CA 94306. E-mail:
+\href{mailto:kylem4@stanford.edu}{\nolinkurl{kylem4@stanford.edu}}}
 
-\setlength{\parindent}{0pt}
-%\setlength{\parskip}{0pt plus 0pt minus 0pt}
-
-\setlength{\emergencystretch}{3em}  % prevent overfull lines
-
-\ifxetex
-  \usepackage{polyglossia}
-  \setmainlanguage{}
-\else
-  \usepackage[english]{babel}
-\fi
-
-% Manuscript styling
-\captionsetup{font=singlespacing,justification=justified}
-\usepackage{csquotes}
-\usepackage{upgreek}
-
-
-
-\usepackage{tikz} % Variable definition to generate author note
-
-% fix for \tightlist problem in pandoc 1.14
-\providecommand{\tightlist}{%
-  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
-
-% Essential manuscript parts
-  \title{Children seek visual information to support signed and spoken language
-comprehension}
-
-  \shorttitle{Information-seeking eye movements}
-
-
-  \author{Kyle MacDonald\textsuperscript{1}, Virginia Marchman\textsuperscript{1}, Anne Fernald\textsuperscript{1}, \& Michael C. Frank\textsuperscript{1}}
-
-  % \def\affdep{{"", "", "", ""}}%
-  % \def\affcity{{"", "", "", ""}}%
-
-  \affiliation{
-    \vspace{0.5cm}
-          \textsuperscript{1} Stanford University  }
-
-  \authornote{
-    Correspondence concerning this article should be addressed to Kyle
-    MacDonald, 450 Serra Mall, Stanford, CA 94306. E-mail:
-    \href{mailto:kylem4@stanford.edu}{\nolinkurl{kylem4@stanford.edu}}
-  }
-
-
-  \abstract{Understanding grounded language involves linking the incoming linguistic
+\abstract{
+Understanding grounded language involves linking the incoming linguistic
 signal to the visual world. Information that is gathered through visual
 fixations can facilitate the comprehension process. But how do listeners
 decide what visual information to gather? Here, we propose that
@@ -138,24 +122,13 @@ and adults (n=31) delayed the timing of gaze shifts away from a
 speaker's face while processing language in a noisy environment, which
 resulted in more more accurate responding. These results suggest that
 even young listeners can adapt their gaze to seek supportive visual
-information from their social partners.}
-  \keywords{eye movements; language comprehension; information-seeking; speech in
-background noise; American Sign Language \\
-
-    \indent Word count: X
-  }
+information from their social partners.
 
 
-
-
+}
 
 \begin{document}
-
 \maketitle
-
-\setcounter{secnumdepth}{0}
-
-
 
 \hypertarget{introduction}{%
 \section{Introduction}\label{introduction}}
@@ -623,7 +596,7 @@ because this is a rare population.
 
 \begin{figure}[!t]
 
-{\centering \includegraphics[width=0.9\linewidth]{/Users/kmacdonald/Documents/Projects/SPEED-ACC/paper/journal_submission/figures/figs_output//trio_stimuli} 
+{\centering \includegraphics[width=0.9\linewidth]{/Users/kmacdonald/Documents/Projects/SPEED-ACC/writing/journal_submission/figures/figs_output//trio_stimuli} 
 
 }
 
@@ -696,7 +669,7 @@ assessments.
 
 \begin{figure}[!t]
 
-{\centering \includegraphics[width=0.9\linewidth]{/Users/kmacdonald/Documents/Projects/SPEED-ACC/paper/journal_submission/figures/figs_output//fig1_trio_behav} 
+{\centering \includegraphics[width=0.9\linewidth]{/Users/kmacdonald/Documents/Projects/SPEED-ACC/writing/journal_submission/figures/figs_output//fig1_trio_behav} 
 
 }
 
@@ -787,7 +760,7 @@ HDI {[}-0.12, 0.08{]}) contexts.
 
 \begin{figure}[!t]
 
-{\centering \includegraphics[width=0.9\linewidth]{/Users/kmacdonald/Documents/Projects/SPEED-ACC/paper/journal_submission/figures/figs_output//fig2_trio_models} 
+{\centering \includegraphics[width=0.9\linewidth]{/Users/kmacdonald/Documents/Projects/SPEED-ACC/writing/journal_submission/figures/figs_output//fig2_trio_models} 
 
 }
 
@@ -969,7 +942,7 @@ counterbalanced across participants.
 
 \begin{figure}[!t]
 
-{\centering \includegraphics[width=0.9\linewidth]{/Users/kmacdonald/Documents/Projects/SPEED-ACC/paper/journal_submission/figures/figs_output//fig5_noise_behav} 
+{\centering \includegraphics[width=0.9\linewidth]{/Users/kmacdonald/Documents/Projects/SPEED-ACC/writing/journal_submission/figures/figs_output//fig5_noise_behav} 
 
 }
 
@@ -978,7 +951,7 @@ counterbalanced across participants.
 
 \begin{figure}[!t]
 
-{\centering \includegraphics[width=0.9\linewidth]{/Users/kmacdonald/Documents/Projects/SPEED-ACC/paper/journal_submission/figures/figs_output//fig6_noise_models} 
+{\centering \includegraphics[width=0.9\linewidth]{/Users/kmacdonald/Documents/Projects/SPEED-ACC/writing/journal_submission/figures/figs_output//fig6_noise_models} 
 
 }
 
@@ -1297,8 +1270,6 @@ between decisions about visual fixation, language comprehension, and
 acquisition across a wider set of processing contexts and at different
 stages of development.
 
-\newpage
-
 \hypertarget{references}{%
 \section{References}\label{references}}
 
@@ -1569,9 +1540,172 @@ Yurovsky, D., Case, S., \& Frank, M. C. (2017). Preschoolers flexibly
 adapt to linguistic input in a noisy channel. \emph{Psychological
 Science}, \emph{28}(1), 132--140.
 
+\clearpage
+\makeatletter
+\efloat@restorefloats
+\makeatother
 
 
+\begin{appendix}
+\section{}
+\begin{table}[h]
+\begin{center}
+\begin{threeparttable}
+\caption{\label{tab:trio-acc-model}Output of the logistic regression predicting accuracy as a function of center stimulus type in Experiment 1.}
+\begin{tabular}{lll}
+\toprule
+Center Stimulus Type & \multicolumn{1}{c}{Mean Accuracy} & \multicolumn{1}{c}{95\% HDI}\\
+\midrule
+Object & 0.46 & [0.37, 0.53]\\
+Bullseye & 0.48 & [0.38, 0.58]\\
+Face & 0.63 & [0.54, 0.7]\\
+ASL & 0.76 & [0.7, 0.81]\\
+\bottomrule
+\end{tabular}
+\end{threeparttable}
+\end{center}
+\end{table}
 
+\begin{table}[h]
+\begin{center}
+\begin{threeparttable}
+\caption{\label{tab:trio-rt-model}Output of the regression predicting reaction time (milliseconds) as a function of center stimulus type in Experiment 1.}
+\begin{tabular}{lll}
+\toprule
+Center Stimulus Type & \multicolumn{1}{c}{Mean RT} & \multicolumn{1}{c}{95\% HDI}\\
+\midrule
+Bullseye & 288.71 & [229.8, 355.17]\\
+Object & 344.51 & [295.71, 397.31]\\
+Face & 724.78 & [603.2, 862.81]\\
+ASL & 1,047.89 & [897.29, 1213.52]\\
+\bottomrule
+\end{tabular}
+\end{threeparttable}
+\end{center}
+\end{table}
+
+\begin{table}[h]
+\begin{center}
+\begin{threeparttable}
+\caption{\label{tab:trio-acc-contrasts}Output of the model estimating differences in Accuracy for specific contrasts of interest in Experiment 1.}
+\begin{tabular}{lll}
+\toprule
+Contrast & \multicolumn{1}{c}{Mean Difference Accuracy} & \multicolumn{1}{c}{95\% HDI}\\
+\midrule
+Object vs. Chance & -0.04 & [-0.13, 0.03]\\
+Bullseye vs. Chance & -0.02 & [-0.12, 0.08]\\
+ASL vs. Face & 0.13 & [0.04, 0.23]\\
+Face vs. Object/Bullseye & 0.16 & [0.07, 0.24]\\
+ASL vs. English & 0.23 & [0.17, 0.29]\\
+\bottomrule
+\end{tabular}
+\end{threeparttable}
+\end{center}
+\end{table}
+
+\begin{table}[h]
+\begin{center}
+\begin{threeparttable}
+\caption{\label{tab:trio-rt-contrasts}Output of the model estimating differences in RT for specific contrasts of interest in Experiment 1.}
+\begin{tabular}{lll}
+\toprule
+Contrast & \multicolumn{1}{c}{Mean Difference RT} & \multicolumn{1}{c}{95\% HDI}\\
+\midrule
+ASL vs. Face & 323.10 & [132.3, 522.6]\\
+Face vs. Object/Bullseye & 408.20 & [286.6, 546.2]\\
+ASL vs. English & 595.20 & [444.6, 760.8]\\
+\bottomrule
+\end{tabular}
+\end{threeparttable}
+\end{center}
+\end{table}
+
+\begin{table}[h]
+\begin{center}
+\begin{threeparttable}
+\caption{\label{tab:trio-ewma-cuts}Output of the model estimating the point in the Reaction Time distribution when children's Exponentially Weighted Moving Average statistic crossed the pre-defined guessing threshold for the ASL and Face center stimulus types in Experiment 1.}
+\begin{tabular}{lll}
+\toprule
+Center Stimulus Type & \multicolumn{1}{c}{Mean EWMA Cut Point} & \multicolumn{1}{c}{95\% HDI}\\
+\midrule
+ASL & 0.68 & [0.59, 0.78]\\
+Face & 0.90 & [0.77, 1.03]\\
+\bottomrule
+\end{tabular}
+\end{threeparttable}
+\end{center}
+\end{table}
+
+\begin{table}[h]
+\begin{center}
+\begin{threeparttable}
+\caption{\label{tab:trio-guess-cuts}Output of the model estimating the mean proportion of shifts categorized as language-driven by the Exponentially Weighted Moving Average model for the ASL and Face center stimulus types in Experiment 1.}
+\begin{tabular}{lll}
+\toprule
+Center Stimulus Type & \multicolumn{1}{c}{Mean Language-driven} & \multicolumn{1}{c}{95\% HDI}\\
+\midrule
+Face & 0.34 & [0.23, 0.46]\\
+Asl & 0.75 & [0.65, 0.84]\\
+\bottomrule
+\end{tabular}
+\end{threeparttable}
+\end{center}
+\end{table}
+
+\begin{table}[h]
+\begin{center}
+\begin{threeparttable}
+\caption{\label{tab:noise-acc-model}Output of the logistic regression predicting accuracy as a function of noise condition and age group in Experiment 2.}
+\begin{tabular}{llll}
+\toprule
+Noise Condition & \multicolumn{1}{c}{Age Group} & \multicolumn{1}{c}{Mean Accuracy} & \multicolumn{1}{c}{95\% HDI}\\
+\midrule
+clear & children & 0.61 & [0.54, 0.68]\\
+noise & children & 0.67 & [0.6, 0.74]\\
+clear & adults & 0.90 & [0.87, 0.93]\\
+noise & adults & 0.92 & [0.89, 0.95]\\
+\bottomrule
+\end{tabular}
+\end{threeparttable}
+\end{center}
+\end{table}
+
+\begin{table}[h]
+\begin{center}
+\begin{threeparttable}
+\caption{\label{tab:noise-rt-model}Output of the regression estimating reaction times (milliseconds) as a function of noise condition and age group in Experiment 2.}
+\begin{tabular}{llll}
+\toprule
+Noise Condition & \multicolumn{1}{c}{Age Group} & \multicolumn{1}{c}{Mean RT} & \multicolumn{1}{c}{95\% HDI}\\
+\midrule
+clear & children & 455.70 & [407, 503.6]\\
+noise & children & 500.20 & [446.6, 555.6]\\
+clear & adults & 542.40 & [486.2, 602.4]\\
+noise & adults & 595.20 & [532.4, 665.3]\\
+\bottomrule
+\end{tabular}
+\end{threeparttable}
+\end{center}
+\end{table}
+
+\begin{table}[h]
+\begin{center}
+\begin{threeparttable}
+\caption{\label{tab:noise-guess-cuts}Output of the model estimating the mean proportion of shifts categorized as language-driven by the Exponentially Weighted Moving Average model for the each noise condition and age group in Experiment 1.}
+\begin{tabular}{llll}
+\toprule
+Noise Condition & \multicolumn{1}{c}{Age Group} & \multicolumn{1}{c}{Mean Language-driven} & \multicolumn{1}{c}{95\% HDI}\\
+\midrule
+Clear & children & 0.36 & [0.32, 0.4]\\
+Noise & children & 0.47 & [0.43, 0.51]\\
+Clear & adults & 0.81 & [0.77, 0.86]\\
+Noise & adults & 0.93 & [0.89, 0.97]\\
+\bottomrule
+\end{tabular}
+\end{threeparttable}
+\end{center}
+\end{table}
+\end{appendix}
 
 
 \end{document}

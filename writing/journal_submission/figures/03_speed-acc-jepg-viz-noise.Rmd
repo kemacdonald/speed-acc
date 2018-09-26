@@ -117,13 +117,13 @@ ms_mean_iChart <- ss.d %>%
   filter(is.na(noise_condition) == F) 
 
 write_csv(x = ms_mean_iChart, 
-          path = here::here("paper/journal_submission/figures/noise_timecourse_graph_vals.csv"))
+          path = here::here("writing/journal_submission/figures/noise_timecourse_graph_vals.csv"))
 ```
 
 Make the timecourse plot.
 
 ```{r}
-noise_time_gvs <- read_csv(here::here("paper/journal_submission/figures/noise_timecourse_graph_vals.csv"))
+noise_time_gvs <- read_csv(here::here("writing/journal_submission/figures/noise_timecourse_graph_vals.csv"))
 
 noise_time_gvs %<>% 
   filter(t.rel.noun <= 2.4, !(is.na(mean))) %>% 
@@ -419,7 +419,7 @@ noise_behav_plot <- plot_grid(noise_timecourse_plot, noise_fst_shifts,
                               labels = c("A"),
                               scale = c(0.95, 0.9))
 
-save_plot(filename = here::here("paper/journal_submission/figures/figs_output/fig5_noise_behav.png"), 
+save_plot(filename = here::here("writing/journal_submission/figures/figs_output/fig5_noise_behav.png"), 
           noise_behav_plot,
           ncol = 3,
           nrow = 1.5,
@@ -595,7 +595,7 @@ noise_ewma_hddm_plots <- plot_grid(p_ewma_noise, p_hddm_noise,
 #                                     scale = c(0.9, 0.9),
 #                                     labels = "A")
 
-save_plot(filename = here::here("paper/journal_submission/figures/figs_output/fig6_noise_models.png"), 
+save_plot(filename = here::here("writing/journal_submission/figures/figs_output/fig6_noise_models.png"), 
           noise_ewma_hddm_plots,
           ncol = 3,
           nrow = 1,

@@ -38,13 +38,13 @@ lineno            : no
 lang              : "english"
 class             : "man"
 output            : papaja::apa6_pdf
+appendix          : "speed-acc-appendix.Rmd"
 ---
 
 ```{r load_packages, include = FALSE}
-library(papaja); library(here); library(lme4); library(directlabels); library(lazyeval)
 source(here::here("R/helper_functions/paper_helpers.R"))
 source(here::here("R/helper_functions/ewma_helper_funs.R"))
-bib <- knitcitations::read.bibtex(here::here("paper/journal_submission/paper/speed-acc.bib"))
+bib <- knitcitations::read.bibtex(here::here("writing/journal_submission/paper/speed-acc.bib"))
 ```
 
 ```{r analysis_preferences}
@@ -67,7 +67,7 @@ data_path <- "data/3_final_merged_data/first_shifts/"
 ewma_path <- "data/3_final_merged_data/ewma_output/"
 hddm_path <- "data/3_final_merged_data/hddm_output/"
 bda_path <- "data/3_final_merged_data/bda_posterior_samples/"
-image_path <- "paper/journal_submission/figures/figs_output/"
+image_path <- "writing/journal_submission/figures/figs_output/"
 ```
 
 ```{r read hddm and bda data}
@@ -786,8 +786,6 @@ In this paper, we presented an information-seeking explanation for the differenc
 
 While we chose to start with the domain of familiar language processing, we think the account is more general and could could be applied to the language acquisition context. Consider that early in language learning, children are acquiring novel word-object links while also learning about visual object categories. Both of these tasks produce different goals that should, in turn, modulate children's decisions about where to allocate visual attention -- e.g., seeking nonlinguistic cues to reference such as eye gaze and pointing become critical when you are unfamiliar with the information in the linguistic signal. More generally, this framework presents a way forward for explaining links between decisions about visual fixation, language comprehension, and acquisition across a wider set of processing contexts and at different stages of development.
 
-\newpage
-
 # References
 
 \setlength{\parindent}{-0.5in}
@@ -800,3 +798,5 @@ nocite: |
   @tomasello1986joint
   @bavelier2006deaf
 ...
+
+
