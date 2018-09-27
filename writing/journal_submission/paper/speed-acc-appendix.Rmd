@@ -1,3 +1,4 @@
+
 ```{r trio-acc-model, results = 'asis'}
 ms_acc_trio %>% 
   mutate(`95% HDI` = str_c("[", hdi_lower, ", ", hdi_upper, "]"),
@@ -83,6 +84,8 @@ ms_guess_trio %>%
 
 ```{r noise-acc-model, results = 'asis'}
 ms_acc_noise %>% 
+  ungroup() %>% 
+  mutate_if(is.character, str_to_title) %>% 
   mutate(`95% HDI` = str_c("[", hdi_lower, ", ", hdi_upper, "]")) %>% 
   arrange(prop) %>% 
   select(-hdi_lower, -hdi_upper) %>% 
@@ -95,6 +98,8 @@ ms_acc_noise %>%
 
 ```{r noise-rt-model, results = 'asis'}
 ms_rt_noise %>% 
+  ungroup() %>% 
+  mutate_if(is.character, str_to_title) %>% 
   mutate(`95% HDI` = str_c("[", hdi_lower, ", ", hdi_upper, "]")) %>% 
   select(-hdi_lower, -hdi_upper) %>% 
   arrange(m_rt) %>% 
