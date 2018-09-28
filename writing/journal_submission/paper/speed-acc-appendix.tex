@@ -5,24 +5,8 @@
 
 
 \begin{appendix}
-\section{}
-\begin{table}[h]
-\begin{center}
-\begin{threeparttable}
-\caption{\label{tab:trio-acc-model}Output of the logistic regression predicting accuracy as a function of center stimulus type in Experiment 1.}
-\begin{tabular}{lll}
-\toprule
-Center Stimulus Type & \multicolumn{1}{c}{Mean Accuracy} & \multicolumn{1}{c}{95\% HDI}\\
-\midrule
-Object & 0.46 & [0.37, 0.53]\\
-Bullseye & 0.48 & [0.38, 0.58]\\
-Face & 0.63 & [0.54, 0.7]\\
-ASL & 0.76 & [0.7, 0.81]\\
-\bottomrule
-\end{tabular}
-\end{threeparttable}
-\end{center}
-\end{table}
+\hypertarget{experiment-1}{%
+\section{Experiment 1}\label{experiment-1}}
 
 \begin{table}[h]
 \begin{center}
@@ -36,6 +20,24 @@ Bullseye & 288.71 & [229.8, 355.17]\\
 Object & 344.51 & [295.71, 397.31]\\
 Face & 724.78 & [603.2, 862.81]\\
 ASL & 1,047.89 & [897.29, 1213.52]\\
+\bottomrule
+\end{tabular}
+\end{threeparttable}
+\end{center}
+\end{table}
+
+\begin{table}[h]
+\begin{center}
+\begin{threeparttable}
+\caption{\label{tab:trio-acc-model}Output of the logistic regression predicting accuracy as a function of center stimulus type in Experiment 1.}
+\begin{tabular}{lll}
+\toprule
+Center Stimulus Type & \multicolumn{1}{c}{Mean Accuracy} & \multicolumn{1}{c}{95\% HDI}\\
+\midrule
+Object & 0.46 & [0.37, 0.53]\\
+Bullseye & 0.48 & [0.38, 0.58]\\
+Face & 0.63 & [0.54, 0.7]\\
+ASL & 0.76 & [0.7, 0.81]\\
 \bottomrule
 \end{tabular}
 \end{threeparttable}
@@ -113,6 +115,27 @@ Asl & 0.75 & [0.65, 0.84]\\
 \begin{table}[h]
 \begin{center}
 \begin{threeparttable}
+\caption{\label{tab:trio-hddm}Summary of the Drift Diffusion Model output for the drift rate and boundary separation parameters for both all four center stimulus types in Experiment 1.}
+\begin{tabular}{llll}
+\toprule
+Parameter & \multicolumn{1}{c}{Center Stim Type} & \multicolumn{1}{c}{Mean Param Estimate} & \multicolumn{1}{c}{95\% HDI}\\
+\midrule
+Boundary & Face & 1.34 & [1.21, 1.47]\\
+Boundary & ASL & 1.76 & [1.65, 1.88]\\
+Drift & Face & 0.55 & [0.3, 0.8]\\
+Drift & ASL & 0.63 & [0.44, 0.82]\\
+\bottomrule
+\end{tabular}
+\end{threeparttable}
+\end{center}
+\end{table}
+
+\hypertarget{experiment-2}{%
+\section{Experiment 2}\label{experiment-2}}
+
+\begin{table}[h]
+\begin{center}
+\begin{threeparttable}
 \caption{\label{tab:noise-acc-model}Output of the logistic regression predicting accuracy as a function of noise condition and age group in Experiment 2.}
 \begin{tabular}{llll}
 \toprule
@@ -149,7 +172,7 @@ Noise & adults & 595.20 & [532.4, 665.3]\\
 \begin{table}[h]
 \begin{center}
 \begin{threeparttable}
-\caption{\label{tab:noise-guess-cuts}Output of the model estimating the mean proportion of shifts categorized as language-driven by the Exponentially Weighted Moving Average model for the each noise condition and age group in Experiment 1.}
+\caption{\label{tab:noise-guess-cuts}Output of the model estimating the mean proportion of shifts categorized as language-driven by the Exponentially Weighted Moving Average model for the each noise condition and age group in Experiment 2.}
 \begin{tabular}{llll}
 \toprule
 Noise Condition & \multicolumn{1}{c}{Age Group} & \multicolumn{1}{c}{Mean Language-driven} & \multicolumn{1}{c}{95\% HDI}\\
@@ -158,6 +181,24 @@ Clear & children & 0.36 & [0.32, 0.4]\\
 Noise & children & 0.47 & [0.43, 0.51]\\
 Clear & adults & 0.81 & [0.77, 0.86]\\
 Noise & adults & 0.93 & [0.89, 0.97]\\
+\bottomrule
+\end{tabular}
+\end{threeparttable}
+\end{center}
+\end{table}
+
+\begin{table}[h]
+\begin{center}
+\begin{threeparttable}
+\caption{\label{tab:noise-hddm}Summary of the Drift Diffusion Model output for the drift rate and boundary separation parameters for both processing contexts and age groups in Experiment 2.}
+\begin{tabular}{llll}
+\toprule
+Parameter & \multicolumn{1}{c}{Age Group} & \multicolumn{1}{c}{Mean Parameter Estimate} & \multicolumn{1}{c}{95\% HDI}\\
+\midrule
+Boundary & Children & 1.16 & [0.94, 1.39]\\
+Boundary & Adults & 1.67 & [1.49, 1.84]\\
+Drift & Children & 0.59 & [0.3, 0.89]\\
+Drift & Adults & 1.90 & [1.51, 2.3]\\
 \bottomrule
 \end{tabular}
 \end{threeparttable}
