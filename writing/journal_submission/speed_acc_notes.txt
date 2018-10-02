@@ -1,0 +1,333 @@
+discovery of spoken language notes
+
+- "how to extract meaning from the speech signal"
+
+
+"The Original Word Game" (Brown 1958). Brown uses this game as an
+analogy of how the child learns words. A tutor, who already knows
+the names of objects, names them according to the customs of the
+linguistic community. The player (or learner) tries to discern
+the categories to which the names apply. The player tests hypotheses
+by applying the names to other objects. Hypotheses are revised in response
+to feedback from the tutor. Brown suggests that we all play this game as
+long as we continue to extend our vocabularies, but he points out that by
+adulthood, many aspects of the game have already been perfected.
+By comparison, the child is still struggling with many of the
+rudiments of the game. Brown notes (p. 195):
+
+
+"words are handed out early in the term like empty containers
+to be filled with experience"
+
+"Functionalism claims that language acquisition is guided by
+form- function correlations" (Bates and MacWhinney 1989, p. 26).
+
+
+Language acquisition is a perceptual-motor problem. The child is trying
+to extract patterns, islands of regularity that can be isolated within a
+ noisy sound stream.
+
+
+ In conclusion, bootstrapping accounts of language acquisition have
+ suggested ways learners draw on one type of information in the
+ linguist input (i.e., syntax, semantics, or prosody) to provide
+ clues about other levels of linguistic organization.
+
+
+ The increasing indications that certain nonspeech stimuli are
+ perceived categorically by infants and adults alike led investigators
+ to seek other dimensions that might help differentiate speech from
+ nonspeech process- ing. One such dimension that was investigated
+ had to do with the kinds of changes that occur in speech processing
+ as listeners adjust to changes in speaking rates.
+
+
+ If an infant has learned to recognize the sound patterns of
+ some words (e.g., "juice," "baby," "daddy") when they are produced
+ as isolated utterances, will the infant still be able to recog- nize
+ these words when they are embedded in a sentential context?
+
+ Some research has suggested that 6- to 8-month-old infants also
+ need a higher signal-to-noise ratio (S/N) than do adults in
+ order to detect speech (Nozza et al. 1988; Trehub, Bull, and Schneider 1981)
+  and to make phonetic distinctions (Nozza et al.
+ 1991; Nozza et al. 1990).
+
+
+Tuning one's perceptual capacities to optimally pick up the kinds of
+differences that serve to distinguish between frequently occurring categories
+of sounds in the input is adaptive for developing successful word recognition
+procedures.
+
+
+ n the WRAPSA model, the consequences of directing attention to some
+ portions of the auditory analysis and ignoring others is a distortion
+ of the perceptual space. It is in this sense that the role of attention
+ in weighting the output of the auditory analyzers is similar to one
+ proposed by Nosofsky (1986, 1987; Nosofsky et al. 1989). His generalized
+ context model claims that selectively attending to a particular dimension
+ distorts the overall psychological space by stretching or shrinking
+ perceptual dis- tances (see also Smith and Heise 1992). Distances between
+ points along an attended perceptual dimension are stretched (making them
+ more dis- criminable), whereas distances along unattended perceptual
+ dimensions are shrunk (making them less discriminable).
+
+ Thus, imagine comparing two types of objects that potentially
+ differ in size, shape, and color. If size is selected as the
+ critical dimension for comparing the objects, then sub- jects will
+ give more weight to fine gradations along this dimension and less weight
+ to differences along the other dimensions.
+
+
+ Given the demands of fluent speech perception, such as the number of
+ categorizations that must be made in a short timespan, it is obviously
+ beneficial to have a way to preset attention to those portions of the
+ signal with the highest information value.
+
+----
+
+rigler et al. : The Slow Developmental Time Course of Real-Time Spoken Word Recognition
+
+
+From a developmental perspective, an important question is
+whether the situation time dynamics of competition change as
+children acquire language, over developmental time
+
+Moreover, the existing work on young children does not offer a
+precise profile of how real-time lexical processing changes
+over development. Such a description is necessary for
+developing mechanistic models of development.
+
+
+Moreover, an increasing body of research on the visual
+system—perhaps the strongest a priori candidate for an
+input system— suggests that processing in
+even the earliest levels of the visual cortex is
+mod- ulated by task-specific constraints
+(e.g., Gilbert, 1998; Gottlieb, Kusunoki, & Goldberg, 1998). Results such as
+these are calling into question the long- standing belief that
+perceptual systems create context-independent perceptual representations.
+
+
+----
+
+
+huettig review paper
+
+In a related study, Huettig and Altmann (2004)
+found that participants shifted their eye gaze
+to a picture of a strawberry when they heard “lips”
+(presumably on the basis of the typical color of these objects).
+
+The likelihood of fixating a particular visual object
+thus reflects the overlap between stored knowledge of
+visual features of a word’s referent, accessed on
+hearing the spoken word, and visual features extracted
+from the objects in the visual environment.
+
+
+attention:
+
+Within the field of attention research, objects in the
+visual field are assumed to compete for representa- tion,
+with the strongest object being selected for further behavior
+(e.g., a manual or oculomotor response;
+
+This competition is generally thought to be
+biased by two types of mechanism: a bottom-up or
+feedforward mechanism representing stimulus strength,
+and a top-down or feedback mechanism repre- senting
+the current goals of the observer (see, e.g., Theeuwes, 2010, for a review).
+
+
+Whatever the precise model, note that for linguistic content to be
+translated into a spatial attentional landscape, a considerable binding
+problem needs to be solved, linking the phonological and semantic codes
+to a specific visual location. Cognition needs what has been referred to
+as grounding, situating, or indexing.
+
+
+the language–vision interaction is modulated by cognitive
+factors which correlate with formal lit- eracy and/or general
+schooling and thus accounts which assume that this language-mediated
+eye movement behavior is automatic or a non-trivial consequence of
+human cognitive architecture may have to be revised.
+
+
+overall framing of the project:
+
+In sum, we conclude that the investigation of language- mediated eye
+gaze is a useful approach to study the interaction of linguistic and
+non-linguistic cognitive processes.
+
+Questions that remain to be answered include whether the binding of
+linguistic types to visual tokens is an implicit or an explicit process,
+occurs automat- ically or is subject to cognitive control, whether it is
+restricted by capacity limitations, and to what extent it suffers from
+interfer- ence and decay.
+
+
+------
+
+
+explanatory pluralism as a way to motivate the analysis approach:
+
+
+explanatory pluralism, regards different approaches to the study of
+cognition as complementary ways of studying the same phenomenon, at
+specific temporal and spatial scales, using appropriate methodological tools.
+
+
+levels of analysis  <--> theoretical frameworks
+
+timescale of a method: we can define the scale of a method as the set of
+units typically used in analyses. e.g., milliseconds, seconds, etc.
+
+spatial scale of a method: nanometer-to-centimeter scale, while
+ecology con- siders environments on a meter-to-kilometer scale
+
+
+language as multiscale behavior:
+
+  - A prime example of a complex, multiscale cognitive and behav- ioral
+  phenomenon is human language (Beckner et al., 2009). Units of language
+  such as phonemes, syllables, words, phrases, texts, and discourse exist
+  at distinct scales. They are studied at corre- sponding temporal and
+  spatial scales, from raw acoustic energy patterns unfolding in the
+  milliseconds range, to larger structures encompassing minutes, hours,
+  and even days. The range extends further still, to the slower pace of
+  language change and evolu- tion that occurs over years and centuries.
+  These different scales are studied using a variety of different frameworks
+  and methods, including Fourier analysis, Markov chain analyses, discrete-
+  and continuous-unit power law analyses, and for language in particu- lar,
+  corpus methods and semantic analyses. Linguistic behavior has been shown
+  to be systematically organized across multiple time scales.
+
+Comparisons between approaches are also necessary in order to assess their
+reciprocal productivity and explanatory power. This can be done in at least
+three often related ways:
+
+  (1) through a conceptual analysis of the approaches involved,
+  (2) through a data-driven statistical model comparison, and
+  (3) through a more direct experimen- tal manipulation of the factors
+  involved, aimed at disentangling the reciprocal role of the mechanisms
+  suggested by the different models.
+
+
+benefits of explanatory pluralism for theory:
+
+  - top-down constraining: We are advocating that scientists identify
+  and analyze the different types and levels of contextual influences
+  on a phenomenon. Top-down constraining affords the scientist a basis
+  for unify- ing multiple levels of analysis by identifying longer-scaled
+  levels as contextual constraints for the smaller-scaled levels. For example,
+  the amount of phonetic convergence (Pardo, 2006) – the phe- nomenon where the
+  phonetic properties of interlocutors tend to align over the course of an
+  interaction – depends on the contex- tual properties such as participant role
+  and sex of the dyad.
+
+  - bottom-up scaffolding: Bottom-up scaffolding provides a framework for
+  identifying what can emerge from lower-level patterns (i.e., patterns
+  existing at shorter time scales or smaller spatial scales), and the
+  dynamics and processes by which these patterns are formed.
+
+
+-----
+
+anderson et al., embodied cognition perspective
+
+
+nice description of the modular vs. interactive accounts of the mind:
+
+  - With a language subsystem and a vision subsystem each
+  taking their input streams and producing their output streams continuously,
+  this begs the question of how they combine these data streams for
+  understanding environmental situations that intermingle both
+  linguistic and visual properties. The pervasive modularity assumption
+  of decades ago (Fodor, 1983) has been compromised by findings in a number
+  of fields, time and time again (for reviews, see Bechtel, 2003;
+  Driver & Spence, 1998; Farah, 1994; Lalanne & Lorenceau, 2004; Spivey, 2007).
+
+nice bit about what the mind is doing in language/vision tasks:
+
+  - The brain is simply being guided by situational constraints to map an
+  array of multimodal sensory inputs onto a limited set of afforded actions —
+  hopefully in a fashion similar to how it normally does that in everyday life.
+
+physical constraints on cognitive processes:
+
+  - Many examples of perceptual and cognitive processing,
+  which we will review in more depth later, suggest that cognition
+  is unavoidably shaped and nuanced by the sensorimotor constraints
+  of the organism coupled with its environment (Gibson, 1979; Turvey, 2007).
+
+vision interactions with higher-level cognition:
+
+  - There is also evidence for the interaction of vision with so-called
+  “high level” cognitive processes like language. For example, ascribing
+  linguistic meaning to an otherwise arbitrary visual stimulus facilitates
+  performance in visual categorization (Goldstone, Lippa, & Shiffrin, 2001;
+  Lupyan, 2008) and in visual search (Lupyan & Spivey, 2008). In Lupyan and
+  Spivey's (2008) experiment, some participants were explicitly instructed
+  to apply a meaningful label to a novel visual stimulus in a visual search
+  task. As a result, participants who used that label performed the search
+  faster and more efficiently (i.e., shallower slope of reaction time by
+  number-of-distractors). Similarly, concurrent delivery of an auditory label
+  with a noisy visual stimulus (e.g., hearing the name of a letter when
+  performing a signal detection task with a very low-contrast image of a letter)
+  has been shown to produce a significantly greater visual sensitivity measure
+  (i.e., d-prime) specifically when the verbal cue matches the visual stimulus
+  (Lupyan & Spivey, 2010). These data suggest that there is a top-down conceptual
+  influence on visual perception, such that seeing not only depends on what
+  something looks like, but also on what it means.
+
+arguments to support a dense sampling approach to studying cognition:
+
+  - Essentially, with every measurement of a change of state, there are coarse
+  time scales at which that change will look more or less instantaneous, and
+  there are fine time scales at which that change will look gradual.
+  For discovering the mechanisms or processes that actually enact that
+  change of state, it is crucial that our science operate at a time scale
+  that reveals the underlying gradualness of that change (Spivey, 2007).
+  In addition to studying temporally-extended cognitive performance,
+  dense sampling methods (such as eye-tracking and reach- tracking) can
+  also be applied to measuring individual behaviors to provide a window
+  into a cognitive process as it is happening.
+
+  -  Interaction between modalities, such as that occurring in
+  language-mediated vision and in vision-mediated language,
+  necessitates that we not only understand the offline resultant choice
+  and latency of the behavior, but that we also resolve how and when multiple
+  sources of information interact on the way toward producing the response
+  behavior.
+
+visual world paradigm as example of dense sampling:
+
+  - A primary assumption in this “visual world paradigm” is that
+  saccades are readily driven by partially active representations.
+  Thus, by collecting samples of 2–4 fixations per second, one observes
+  that during spoken word recognition eye movements are made not only to
+  target referents but also to competitor objects with phonologically
+  similar names (Allopenna et al., 1998; Spivey-Knowlton,
+  Tanenhaus, Eberhard, & Sedivy, 1995), semantically related properties
+  (Huettig & Altmann, 2005; Yee & Sedivy, 2006), and visually similar shapes
+  (Huettig & Altmann, 2007).
+
+vision influences language:
+
+  - mccgurk effect
+  - Another intriguing example of vision-mediated language is the process of
+  silent lip-reading, during which the auditory cortex of a skilled lip-reader
+  is active (Calvert et al., 1997).
+  - graded spatial attraction provides evidence both of the continuous uptake of
+  (and interaction between) visual and linguistic information ("pass the beaker"
+  while seeing a beaker, speaker, beetle, and carriage) (allopena et al., 1995)
+  - syntactic ambiguity is reduced with a supprotive visual context ("put the
+  apple on the towel in the box" while viewing a scene with one apple or more
+  than one apple. when more than one, people don't look at the towel, meaning
+  they don't parse the pp "on the towel" as the complement of the "move" verb)
+  (Tanenhaus et al., 1995)
+
+
+
+  

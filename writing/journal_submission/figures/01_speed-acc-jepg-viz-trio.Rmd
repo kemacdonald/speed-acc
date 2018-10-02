@@ -1,0 +1,368 @@
+---
+title: "Speed-Acc JEP: General Figure Visualization Code (Trio)"
+output: html_document
+---
+
+## Set up 
+
+This document contains the codebase for generating the plots for Study 1 in the paper, "An information-seeking account of children's eye movements during grounded signed and spoken language comprehension"
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.width=3, fig.height=3, fig.crop = F, fig.pos = "tb",
+                      fig.path='figs/',echo=F, warning=F, cache=T, message=F, include =F,
+                      sanitize = T)
+```
+
+```{r load libraries}
+source(here::here("R/helper_functions/libraries_and_functions.R"))
+source(here::here("R/helper_functions/ewma_helper_funs.R"))
+source(here::here("R/helper_functions/paper_helpers.R"))
+
+# data paths
+data_path <- "data/3_final_merged_data/first_shifts/"
+time_path <- "data/3_final_merged_data/timecourse/"
+models_path <- "data/3_final_merged_data/bda_posterior_samples/"
+ewma_path <- "data/3_final_merged_data/ewma_output/"
+hddm_path <- "data/3_final_merged_data/hddm_output/"
+```
+
+```{r read trio timecourse data}
+d_time_trio <- read_csv(here::here(time_path, "speed-acc-child-timecourse.csv"))
+
+d_time_trio %<>% mutate(stimuli = ifelse(stimuli %in% c("V1", "V2"), "ASL", 
+                               ifelse(stimuli == "Trio", "Object", 
+                                      ifelse(stimuli == "Bull", "Bullseye",stimuli))),
+              stimuli = factor(stimuli, levels = c("ASL", "Face", "Object", "Bullseye")))
+
+colnames(d_time_trio) <- gsub(pattern = "X", replacement = "", x = colnames(d_time_trio))
+```
+
+```{r read trio first shift data}
+upper_bound_RT <- 2000
+
+d_kids_trio <- read_csv(here::here(data_path, "speed_acc_child_trio_fstshift_tidy.csv")) 
+
+d_kids_trio %<>% 
+  mutate(stimuli = ifelse(stimuli == "V1" | stimuli == "V2", "ASL", 
+                          ifelse(stimuli == "Trio", "Object", 
+                                 ifelse(stimuli == "Bull", "Bullseye",
+                                        stimuli))),
+         stimuli = factor(stimuli, levels = c("ASL", "Face", "Object", "Bullseye"))) %>% 
+  filter(RT <= upper_bound_RT, trial_type != "no_shift", age_code == "child")
+```
+
+```{r read model and data files}
+# read in ewma files for all experiments using purrr
+files <- dir(path = ewma_path, pattern = "*.csv") 
+d_ewma <- files %>% purrr::map_df(read_ewma, path = ewma_path)
+
+# hddm output for all experiments
+d_hddm <- read_csv(here::here(hddm_path, "hddm_tidy.csv"))
+
+# read bda model output}
+d_bda_trio <- readRDS(here::here(models_path, "speed-acc-trio-posterior-samples.rds"))
+```
+
+## Spoken vs. Sign Language 
+
+### Trio Timecourse plot
+
+Make Tanenhaus style plot.
+
+```{r make tanenhaus-plot trio}
+trio_timecourse_gvs <- read_csv(here::here("writing/journal_submission/figures/trio_timecourse_graph_vals.csv"))
+
+# change factor levels for plot to help compare conditions of interest
+trio_timecourse_gvs$stimuli <- factor(trio_timecourse_gvs$stimuli, 
+                                 levels = c("ASL", "Face", "Object", "Bullseye"))
+
+trio_timecourse_gvs %<>% 
+  filter(Time.ms <= 2500) %>% 
+  mutate(Time.ms = Time.ms / 1000,
+         value_cat = ifelse(value_cat == "Distractor", "Distracter", value_cat))
+
+trio_timecourse <- trio_timecourse_gvs %>% 
+  ggplot(aes(x = as.numeric(Time.ms), y = mean, 
+             color = value_cat),
+       data = .) + 
+  ylim(0,1) +
+  xlim(0,3) +
+  geom_line(size=0.7) +
+  geom_linerange(aes(ymin = summary_ci_lower, ymax = summary_ci_upper), alpha = 0.5) +
+  scale_color_brewer(palette="Dark2") +
+  guides(fill=F, linetype=F, color = F) +
+  xlab("Time from noun onset (sec)") +
+  ylab("Proportion looking") +
+  facet_wrap(~stimuli, ncol = 1) +
+  geom_text_repel(
+    data = filter(trio_timecourse_gvs, Time.ms == 2.5),
+    aes(label = value_cat),
+    size = 4,
+    nudge_x = 0.25,
+    segment.color = NA) 
+```
+
+### Trio First shift accuracy plot
+
+```{r get mean acc for each participant trio}
+ss_trio <- d_kids_trio %>% 
+  group_by(Sub.Num, age_code, Months, language_modality, 
+           stimuli, hearing_status_participant) %>% 
+  filter(trial_type != "no_shift") %>% 
+  summarise(mean_correct = mean(correct),
+            m_rt = median(RT_sec))
+```
+
+```{r set global plot values}
+pt_size <- 3.5
+pt_alpha <- 0.5
+pt_shape <- 21
+pt_width <- 0.15
+pt_color <- "black"
+pt_fill <- "darkgrey"
+nboot <- 500
+```
+
+```{r make trio acc plot}
+p_acc_trio <- ss_trio %>% 
+  ggplot(aes(x = fct_rev(stimuli), y = mean_correct)) +
+  ggbeeswarm::geom_quasirandom(shape = pt_shape, 
+                               width = pt_width, 
+                               color = pt_color, 
+                               size = pt_size,
+                               fill = "grey",
+                               alpha = pt_alpha) + 
+  geom_hline(yintercept = 0.5, linetype = "dashed") +
+  guides(fill = F) + 
+  ggthemes::scale_fill_ptol() +
+  labs(x = NULL, y = "Prop. Correct") +
+  lims(y = c(0, 1)) 
+
+# get model values
+d_model_vals <- d_bda_trio$acc_trio_contin %>%
+  select(sample_id, contains("prob")) %>% 
+  select(-age_beta_prob) %>% 
+  dplyr::rename(ASL = asl_prob,
+                Bullseye = bullseye_prob,
+                Face = face_prob,
+                Object = object_prob) %>% 
+  gather(key = stimuli, value = mean_correct, -sample_id)
+
+d_quantiles <- d_model_vals %>% 
+  group_by(stimuli) %>% 
+  summarise(ci_lower = hd(mean_correct, q = 0.025),
+            ci_upper = hd(mean_correct, q = 0.975),
+            mean_correct = hd(mean_correct, q = 0.5))
+
+# add quantiles to plot
+p_acc_trio <- p_acc_trio +
+  geom_pointrange(aes(ymax = ci_upper, ymin = ci_lower), 
+                  data = d_quantiles,
+                  color = "grey20",
+                  shape = 15,
+                  size = 0.7)
+
+p_acc_trio
+```
+
+### Trio First shift RT plot 
+
+```{r make trio rt plot}
+p_rt_trio <- ss_trio %>% 
+  filter(age_code == "child") %>% 
+  ggplot(aes(x = fct_rev(stimuli), y = m_rt)) +
+  ggbeeswarm::geom_quasirandom(shape = pt_shape, 
+                               width = pt_width, 
+                               color = pt_color, 
+                               size = pt_size,
+                               fill = "grey",
+                               alpha = pt_alpha) +  
+  ylim(0, 1.8) +
+  labs(y = "RT (sec)", x = NULL) +
+  guides(fill = F) + 
+  ggthemes::scale_fill_ptol() +
+  coord_flip() 
+
+# get model values
+d_model_vals <- d_bda_trio$rt_trio_contin %>%
+  select(sample_id, contains("scale")) %>% 
+  select(-age_beta_rt_scale) %>% 
+  dplyr::rename(ASL = asl_rt_scale,
+                Bullseye = bullseye_rt_scale,
+                Face = face_rt_scale,
+                Object = object_rt_scale) %>% 
+  gather(key = stimuli, value = rt_msec, -sample_id) %>% 
+  mutate(RT_sec = rt_msec / 1000)
+
+# add model values to plot
+d_quantiles <- d_model_vals %>% 
+  group_by(stimuli) %>% 
+  summarise(ci_lower = hd(RT_sec, q = 0.025),
+            ci_upper = hd(RT_sec, q = 0.975),
+            m_rt = hd(RT_sec, q = 0.5))
+
+p_rt_trio <- p_rt_trio +
+  geom_pointrange(aes(ymax = ci_upper, ymin = ci_lower), 
+                  data = d_quantiles,
+                  color = "grey20",
+                  shape = 15,
+                  size = 0.7)
+
+p_rt_trio
+```
+
+### Merge behavioral plots and save
+
+```{r}
+trio_fst_shifts <- plot_grid(p_rt_trio, p_acc_trio,
+                             ncol = 1, 
+                             rel_heights = c(0.95,1), 
+                             labels = c("B", "C"),
+                             scale = c(0.95, 0.95))
+
+
+trio_behav_plot <- plot_grid(trio_timecourse, trio_fst_shifts, 
+                             rel_widths = c(1, 0.9),
+                              labels = c("A"),
+                              scale = c(0.95, 0.9))
+
+save_plot(filename = here::here("writing/journal_submission/figures/figs_output/fig1_trio_behav.png"), 
+          trio_behav_plot,
+          ncol = 2.7,
+          nrow = 1.7,
+          base_aspect_ratio = 1)
+```
+
+### Model visualizations
+
+Make trio control chart
+
+```{r make trio control plot}
+# make control plot
+trio_ewma_vals <- d_ewma %>% 
+  filter(rt <= 1.5, experiment == "trio", age_code == "child") %>% 
+  aggregate_ewma
+
+trio_ewma_vals$ewma_summary$condition <- factor(trio_ewma_vals$ewma_summary$condition, 
+                                                levels = c("ASL", "Face", "Object", "Bullseye"))
+
+trio_ewma_vals$cutoff_summary$condition <- factor(trio_ewma_vals$cutoff_summary$condition, 
+                                                levels = c("ASL", "Face", "Object", "Bullseye"))
+
+trio_control_plot <- trio_ewma_vals %>% 
+  plot_ewma_chart() +
+  theme_minimal() +
+  theme(panel.border = element_rect(fill = NA, color = "grey", size = 1),
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        strip.text = element_text(size = 14),
+        axis.text = element_text(size = 14),
+        axis.title = element_text(size = 14),
+        panel.border = element_rect(color="grey", fill=NA)) 
+```
+
+Dotplots of guessing behavior. 
+
+```{r make trio boxplots of guessing}
+p_ewma_trio <- d_ewma %>% 
+  filter(rt <= 1.5, experiment == "trio", age_code == "child") %>% 
+  group_by(subid, condition, guess) %>% 
+  summarise(count = n()) %>% 
+  mutate(prop.responding = round(count / sum(count), 2)) %>% 
+  filter(guess == "response") %>% 
+  ggplot(aes(x = fct_reorder(condition, prop.responding), y = prop.responding)) +
+  ggbeeswarm::geom_quasirandom(shape = pt_shape, 
+                               width = pt_width, 
+                               color = pt_color, 
+                               size = pt_size,
+                               fill = "grey",
+                               alpha = pt_alpha) +
+  lims(y = c(0,1)) +
+  guides(fill = F) + 
+  ggthemes::scale_fill_ptol() +
+  labs(x = "Condition", y = "Prop. Language-driven")  +
+  scale_x_discrete(expand = c(0,1))  +
+  theme(strip.text = element_text(size = 18),
+        axis.text = element_text(size = 14),
+        axis.title = element_text(size = 14))
+
+d_quantiles_ewma <- d_bda_trio$ewma_guess_trio %>% 
+  mutate(asl_kids = asl - age_beta,
+         face_kids = face - age_beta) %>% 
+  select(asl_kids, face_kids) %>% 
+  rename(ASL = asl_kids, Face = face_kids) %>% 
+  gather(key = condition, value = param_estimate) %>% 
+  mutate(param_est_prob = logit_to_prob(param_estimate)) %>% 
+  group_by(condition) %>% 
+  summarise(ci_lower = hd(param_est_prob, q = 0.025),
+            ci_upper = hd(param_est_prob, q = 0.975),
+            prop.responding = hd(param_est_prob, q = 0.5))
+
+# add quantiles to plot
+p_ewma_trio <- p_ewma_trio +
+  geom_pointrange(aes(ymax = ci_upper, ymin = ci_lower), 
+                  data = d_quantiles_ewma,
+                  color = "grey20",
+                  shape = 15,
+                  size = 0.7) 
+```
+
+Make hddm plots
+
+```{r ggridges plot hddm plot}
+x_lims <- c(0, 2)
+
+p_hddm_trio <- d_hddm %>% 
+  filter(experiment == "trio", age_code == "children") %>% 
+  ggplot(aes(x = param_value, y = param_name, fill = condition)) +
+  geom_density_ridges(scale = 0.7, rel_min_height = 0.005, alpha = 0.75) + 
+  labs(x = "Parameter value", y = NULL, color = "") +
+  lims(x = x_lims)  +
+  scale_y_discrete(expand = c(0.6,0)) +
+  scale_fill_brewer(palette="Dark2")
+  
+p_hddm_trio
+```
+
+Make hddm plot
+
+```{r forest hddm}
+p_hddm_trio <- d_hddm %>% 
+  filter(experiment == "trio", age_code == "children") %>% 
+  group_by(param_name, condition) %>% 
+  summarise(m = mean(param_value),
+            lower = quantile(param_value, probs = 0.05),
+            upper = quantile (param_value, probs = 0.95)) %>% 
+  ggplot(aes(x = param_name, y = m, color = condition)) +
+  geom_pointrange(aes(ymin = lower, ymax = upper), size = 1,
+                  position = position_dodge(width = .3)) +
+  labs(y = "Parameter value", x = NULL, color = "Center stimulus: ") +
+  lims(y =c(0,2))  +
+  scale_color_brewer(palette="Dark2") +
+  coord_flip() 
+
+p_hddm_trio
+```
+
+Put trio model plots together.
+
+```{r put model plots together}
+trio_ewma_hddm_plots <- plot_grid(p_ewma_trio, p_hddm_trio,
+                                  rel_heights = c(1,1), 
+                                  ncol = 1, 
+                                  labels = c("B", "C"), 
+                                  scale = c(0.85, 0.9))
+
+
+trio_final_model_plot <- plot_grid(trio_control_plot, trio_ewma_hddm_plots, 
+                                   ncol = 2,
+                                   rel_widths = c(1, 0.95), 
+                                   scale = c(0.9, 0.9),
+                                   labels = "A")
+
+save_plot(filename = here::here("writing/journal_submission/figures/figs_output/fig2_trio_models.png"), 
+          trio_final_model_plot,
+          ncol = 2.7,
+          nrow = 1.7,
+          base_aspect_ratio = 1)
+```
