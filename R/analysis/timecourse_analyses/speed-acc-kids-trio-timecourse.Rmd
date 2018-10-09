@@ -200,7 +200,6 @@ ss.d <- as.data.frame(xtabs(~ subid + Bin + target_looking + condition,
   mutate(proportion_looking = Freq / count)
 
 # plot
-
 ms.means.timeslice <- ss.d %>% 
   group_by(Bin, condition, target_looking) %>% 
   summarise(mean = mean(proportion_looking, na.rm = T))
