@@ -23,7 +23,7 @@
 }{}
 \usepackage{hyperref}
 \hypersetup{unicode=true,
-            pdftitle={Children flexibly seek supportive visual information during signed and spoken language comprehension},
+            pdftitle={Children flexibly seek visual information during signed and spoken language comprehension},
             pdfauthor={Kyle MacDonald, Virginia A. Marchman, Anne Fernald, \& Michael C. Frank},
             pdfkeywords={eye movements; grounded language comprehension; information-seeking;
 speech in background noise; American Sign Language},
@@ -64,8 +64,8 @@ speech in background noise; American Sign Language},
 \def\footnote{\protect\rmarkdownfootnote}
 
 
-  \title{Children flexibly seek supportive visual information during signed and
-spoken language comprehension}
+  \title{Children flexibly seek visual information during signed and spoken
+language comprehension}
     \author{Kyle MacDonald\textsuperscript{1}, Virginia A.
 Marchman\textsuperscript{1}, Anne Fernald\textsuperscript{1}, \& Michael
 C. Frank\textsuperscript{1}}
@@ -440,7 +440,7 @@ objects and (c) fewer early, nonlanguage-driven eye movements to the
 
 Before describing the empirical work, it is worth motivating our
 analytic approach. To quantify evidence for our predictions, for each
-experiment we present four analyses: (1) the timecourse of listeners'
+experiment we present four analyses: (1) the time course of listeners'
 looking to each area of interest (AOI), (2) the Reaction Time (RT) and
 Accuracy of listeners' first shifts away from the signer/speaker, (3) an
 Exponentially Weighted Moving Average (EWMA) of first shifts, and (4) a
@@ -448,7 +448,7 @@ Drift Diffusion Model (DDM) of first shifts.\footnote{All analysis code
   can be found in the online repository for this project:
   \url{https://github.com/kemacdonald/speed-acc}.}
 
-First, we analyzed the timecourse of participants' looking to each AOI
+First, we analyzed the time course of participants' looking to each AOI
 in the visual scene as the target sentence unfolded. Proportion looking
 reflects the mean proportion of trials on which participants fixated on
 the signer/speaker, the target image, or the distracter image at every
@@ -456,14 +456,15 @@ the signer/speaker, the target image, or the distracter image at every
 in the proportion looking to the language source -- signer or speaker --
 using a nonparametric cluster-based permutation analysis, which accounts
 for the issue of taking multiple comparisons across many time bins in
-the timecourse (Maris \& Oostenveld, 2007). This analysis tests the
-binary hypothesis of a difference between two time series and provides a
-high-level overview of how changes in the processing context modulated
-listeners' looking behavior. A higher proportion of looking to the
-language source across the trial would indicate listeners'
-prioritization of seeking information from the signer/speaker.
+the timecourse (see Maris and Oostenveld (2007) for details about the
+technique). This analysis tests the binary hypothesis of a difference
+between two time series and provides a high-level overview of how
+changes in the processing context modulated listeners' looking behavior.
+A higher proportion of looking to the language source across the trial
+would indicate listeners' prioritization of seeking information from the
+signer/speaker.
 
-Next, we analyzed the RT and accuracy of participants' initial gaze
+Next, we analyzed the RT and Accuracy of participants' initial gaze
 shifts away from the signer/speaker. RT corresponds to the latency of
 shifting gaze away from the central stimulus to either object measured
 from the onset of the target noun. We trimmed all reaction time
@@ -471,14 +472,21 @@ distributions to between zero and two seconds and modeled RTs in log
 space. Accuracy corresponds to whether participants' first gaze shift
 landed on the target or the distracter object. This analysis of accuracy
 does not focus on the amount of time spent looking at the target vs.~the
-distracter image -- a measure typically used in analyses of the Visual
-World Paradigm. We chose to analyze first shifts because we think that
-they reflect rapid decisions driven by accumulating information about
-the identity of the named object and thus provide a window onto changes
-in the underlying dynamics of how listeners integrate linguistic and
-visual information. If listeners generate slower but more accurate gaze
-shifts, this provides evidence that gathering more visual information
-from the signer/speaker led to more robust language comprehension.
+distracter images -- a measure typically used in analyses of the Visual
+World Paradigm. Moreover, while we use the term accuracy as a label for
+this dependent measure in our task, we do not want to claim that
+fixations to the distracter object are incorrect in a general sense
+since these behaviors could help listeners to encode the identity of
+objects in the scene better.
+
+We chose to analyze first shifts because we think that they tend to
+reflect rapid decisions driven by accumulating information about the
+identity of the named object. This measure provides a window on to
+changes in the underlying dynamics of how listeners decide what kind of
+visual information to gather. If listeners generate slower but more
+accurate gaze shifts, this provides evidence that gathering more visual
+information from the signer/speaker led to more robust language
+comprehension.
 
 We used the \texttt{rstanarm} (Gabry \& Goodrich, 2016) package to fit
 Bayesian mixed-effects regression models. The mixed-effects approach
@@ -556,7 +564,7 @@ decrease the value of generating exploratory, nonlanguage-driven shifts
 even after the disambiguation point in the linguistic signal. If ASL
 learners are sensitive to the cost of shifting gaze away from a signer,
 then they would show evidence of prioritizing accuracy over and above
-speed of shifting gaze to the named object.
+the speed of shifting gaze to the named object.
 
 \subsection{Methods}\label{methods}
 
@@ -812,34 +820,34 @@ drift = 0.63, 95\% HDI {[}0.44, 0.82{]}; Face drift = 0.55, 95\% HDI
 
 \subsection{Discussion}\label{discussion}
 
-Taken together, the behavioral and model-based analyses provide
-converging support that ASL learners were sensitive to the value of
-delaying eye movements away from the language source. Compared to spoken
-language learners, ASL learners prioritized accuracy over speed (HDDM),
-produced fewer nonlanguage-driven shifts away from the center stimulus
-(EWMA), and were more accurate with these gaze shifts (behavioral).
-Importantly, we did not see evidence in the HDDM model fits that these
-accuracy differences could be explained by differential efficiency in
-processing the linguistic information. Instead, the pattern of results
-suggests that ASL learners increased their decision threshold to gather
-more information before shifting gaze away from the signer and to a
-named object.
+The behavioral and model-based analyses provide converging support that
+ASL learners were sensitive to the value of delaying eye movements away
+from the language source. Compared to spoken language learners, ASL
+learners prioritized accuracy over speed (HDDM), produced fewer
+nonlanguage-driven shifts away from the center stimulus (EWMA), and were
+more accurate with these gaze shifts (behavioral). Importantly, we did
+not see evidence in the HDDM model fits that these accuracy differences
+could be explained by differential efficiency in processing the
+linguistic information. Instead, the pattern of results suggests that
+ASL learners increased their decision threshold to gather more
+information before shifting gaze away from the signer and to a named
+object.
 
-We hypothesized that prioritizing accuracy of gaze shifts above speed of
-responding when processing a visual-manual language is an adaptive
-response. That is, to map referential language to the visual world in
-ASL involves competition for visual attention. When ASL learners choose
-to shift their gaze away from a signer, they are leaving an area that
-provides a great deal of useful information. Moreover, unlike children
-learning spoken languages, ASL learners cannot gather more of the
-linguistic signal if their gaze is directed away from a signer. Thus, it
-seems reasonable that ASL learners would adapt the timing of their gaze
-shifts to gather additional information that increases certainty in
-comprehension before seeking a named object.
+We hypothesized that prioritizing accuracy of gaze shifts when
+processing a visual-manual language is an adaptive response. That is, to
+map referential language to the visual world in ASL involves competition
+for visual attention. When ASL learners choose to shift their gaze away
+from a signer, they are leaving an area that provides a great deal of
+useful information. Moreover, unlike children learning spoken languages,
+ASL learners cannot gather more of the linguistic signal if their gaze
+is directed away from a signer. Thus, it seems reasonable that ASL
+learners would adapt the timing of their gaze shifts to gather
+additional information that increases certainty in their comprehension
+before seeking a named object.
 
-These findings were based on exploratory analyses, and our information
-seeking explanation was developed to explain this pattern of results.
-There are, however, several, potentially important differences between
+These findings, however, were based on exploratory analyses, and our
+information-seeking explanation was developed to explain this pattern of
+results. There are several, potentially significant differences between
 the stimuli, apparatus, and populations that limit the strength of our
 interpretation and the generality of our account. We also cannot make
 causal conclusions because of the observational nature of research
@@ -851,20 +859,20 @@ Experiment 1.
 
 \section{Experiment 2}\label{experiment-2}
 
-In Experiment 2, we set out to create a well-controlled experimental
-context where we could manipulate the information-seeking demands in
-ways that parallel some aspects of the differences between young ASL-
-and English-learners.\footnote{See \url{https://osf.io/g8h9r/} for a
+In Experiment 2, we created a well-controlled experimental context where
+we could manipulate the information-seeking demands in ways that
+parallel some aspects of the differences between young ASL- and
+English-learners.\footnote{See \url{https://osf.io/g8h9r/} for a
   pre-registration of the analysis plan.} We measured adults and
 children's eye movements during a real-time language comprehension task
 where participants processed familiar sentences (e.g., \enquote{Where's
 the ball?}) while looking at a simplified visual world with three
 fixation targets. Using a within-participants design, we manipulated the
 signal-to-noise ratio of the auditory signal by convolving the acoustic
-input with brown noise (random noise with greater energy at lower
-frequencies). We chose a noise manipulation because it allowed us to
-increase the value of looking to a speaker for language comprehension,
-and it could be used with both adults and children.
+input with brown noise (random noise with higher energy at lower
+frequencies). We chose to manipulate background noise because it allowed
+us to increase the value of looking to a speaker for language
+comprehension, and it could be used with both adults and children.
 
 We predicted that processing speech in a noisy context would make
 participants less likely to shift before collecting sufficient
@@ -1049,18 +1057,18 @@ rate suggests that participants were able to integrate the visual and
 auditory signals such that they could achieve a level of processing
 efficiency comparable to the clear processing context.
 
-Taken together, the behavioral and EWMA/HDDM results provide evidence
-for our information-seeking explanation of eye movements during grounded
+The behavioral and model-based results provide evidence for our
+information-seeking explanation of eye movements during grounded
 language comprehension. Processing speech in noise caused both children
 and adults to look longer at their social partner, which in turn,
 resulted in a higher proportion of accurate gaze shifts to a named
 object. Moreover, we observed a similar pattern of behavior in children
 and adults, with both groups producing more language-driven shifts
-(EWMA) and prioritizing accuracy over speed (HDDM) in the more
+(EWMA) and prioritized accuracy over speed (HDDM) in the more
 challenging noisy environment.
 
 Our analysis plan was preregistered, but there were some cases where we
-deviated or did not predict a particular result. We sucessfully
+deviated or did not predict a particular result. We successfully
 predicted that the noise manipulation would cause listeners to gather
 more information by looking longer at the speaker's face (slower RTs)
 and that this behavior would lead listeners to produce a higher
@@ -1068,17 +1076,18 @@ proportion of language-driven shifts as indexed by the EWMA analysis. We
 did not, however, predict that first shifts would be \emph{more}
 accurate in the noisier context and that the noise manipulation would
 selectively affect the boundary separation parameter in the HDDM.
-Finally, we did not collect our planned sample size (42) for each age
-group (3-, 4-, and 5-year-olds) in the target age range; instead we made
-the decision to use age as a continous covariate and collected a single
-sample that included children across the entire age range.
+Finally, based on time and resource constraints, we did not collect our
+planned sample size (42) for each age group (3-, 4-, and 5-year-olds) in
+the target age range; instead, we decided to use age as a continuous
+covariate and collected a single sample that included children across
+the entire age range.
 
 \section{General Discussion}\label{general-discussion}
 
 Language comprehension in grounded, social contexts provides children
 access to a rich set of multimodal cues that could support the linking
-of linguistic information to the world. But how do children select what
-information to gather? In this work, we proposed that listeners flexibly
+of linguistic information to the world. But do children flexibly select
+what information to gather? In this work, we proposed that listeners
 adapt their gaze to seek visual information from their social partners
 when it was especially useful for language comprehension. We presented
 evidence for this explanation by measuring changes in how children chose
@@ -1110,13 +1119,14 @@ consistently processing degraded auditory input, are more likely to
 delay the process of lexical access as measured by slower gaze shifts to
 named referents and fewer incorrect gaze shifts to phonological onset
 competitors. McMurray et al. (2017) also found that they could replicate
-these changes in adults with typical hearing by noise-vocoded speech
-stimuli that shared features with the output of a cochlear implant.
+these changes in adults with typical hearing by using noise-vocoded
+speech stimuli that shared features with the output of a cochlear
+implant.
 
 Our findings also connect to the literature investigating how experience
 with a visual-manual language may change basic cognitive processes (see
 Bavelier, Dye, and Hauser (2006) for a review). The upshot of this work
-is that the effects of Deafness can be dissociated from the effects of
+is that the effects of Deafness are dissociable from the effects of
 learning a signed language. Specifically, Deaf individuals show
 selective enhancement in peripheral visual attention as evidenced by
 higher sensitivity to peripheral distracters on spatial orienting tasks.
@@ -1127,8 +1137,8 @@ rotation (Emmorey, Klima, \& Hickok, 1998), and face processing
 Experiment 1 suggest that ASL learners adapt the timing of when they
 disengage from a language source to increase their certainty before
 seeking named object. It is an open question as to whether ASL-learners'
-differential responding is best explained by lack of access to auditory
-information or learning a visual-manual language.
+differential responding is best explained by a lack of access to
+auditory information or learning a visual-manual language.
 
 Finally, our results dovetail with recent developmental work by Yurovsky
 et al. (2017). In their study, preschoolers, like adults, were able to
@@ -1148,37 +1158,36 @@ In sum, the work reported here shows that young listeners can seek
 visual information to support language comprehension. These results fit
 well with the interactive models of language perception reviewed in the
 Introduction (M. C. MacDonald \& Seidenberg, 2006; McClelland et al.,
-2006). These studies also also highlight the value of using both
+2006). These studies also highlight the value of integrating
 observational and experimental approaches. In Experiment 1, we compared
 language comprehension across populations of children who had very
-different language experiences (signed vs.~spoken) to generate a novel
+different language experiences (signed vs.~spoken) to generate a new
 explanation of observed differences in children's gaze dynamics. We were
 able to better understand this observational result by designing a
-well-controlled, follow-up experiment that tested predictions of our
-explanation and allowed us to make stronger claims about the generality
-of our hypothesis.
+well-controlled, follow-up experiment that allowed us to make stronger
+claims about the generality of our hypothesis.
 
 \subsection{Limitations and future
 work}\label{limitations-and-future-work}
 
 Our results provide evidence that young listeners can adapt their gaze
 patterns to the demands of different processing environments to seek
-visual information from social partners that supports language
+visual information from social partners that support language
 comprehension. We cannot, however, make claims about how children's
 behavior in our task (the Visual World Paradigm: VWP) would generalize
-to their decisions about how to distribute attention in real-world
+to their decisions about how to distribute attention within real-world
 learning environments. There is a growing body of research showing
 meaningful links between children's gaze behavior in the VWP and
 relevant outcome measures such as vocabulary development (Fernald et
 al., 2006; Marchman \& Fernald, 2008; Rigler et al., 2015). Nonetheless,
-a valuable next step for our work would be to leverage tasks and
-measures that are come closer to the ecological context in which
-children actually processs and learn language such as using head-mounted
-cameras and eye trackers that would allow measurement of where children
-choose to look during everyday interactions (Fausey, Jayaraman, \&
-Smith, 2016; Franchak, Kretch, Soska, \& Adolph, 2011).
+a valuable next step for our work would be to leverage tasks that move
+closer to the ecological context in which children process and learn
+language such as using head-mounted cameras and eye trackers that would
+allow measurement of where children choose to look during everyday
+interactions (Fausey, Jayaraman, \& Smith, 2016; Franchak, Kretch,
+Soska, \& Adolph, 2011).
 
-This work has several other important limitations. First, we chose to
+This work has several other significant limitations. First, we chose to
 focus on a single decision about visual fixation to provide a window
 onto the dynamics of decision-making across different language
 processing contexts. But our analysis does not consider the rich
@@ -1192,7 +1201,7 @@ to speak.
 
 Second, we chose one instantiation of a noisy processing context --
 random background noise. But we think our findings should generalize to
-contexts where other kinds of noise -- e.g., uncertainty over a
+settings where other kinds of noise -- e.g., uncertainty over a
 speaker's reliability or when processing accented speech -- make
 gathering visual information from the speaker more useful for language
 understanding. Moreover, we used a simple visual world, with only three
@@ -1239,10 +1248,9 @@ they are fixating on objects; whereas other interactions are marked by
 adaptations that accommodate the demands on visual attention by parents
 displacing signs onto the objects that are currently the focus of
 children's attention (similar to follow-in labeling effects Tomasello
-and Farrar, 1986). Thus it is an interesting, open question how
-interacting with a speaker that adapts to increase the availability and
-utility of visual information might change children's decisions about
-visual fixation.
+and Farrar, 1986). Thus it is an open question how interacting with a
+speaker that adapts to increase the availability and utility of visual
+information might change children's decisions about visual fixation.
 
 \subsection{Conclusion}\label{conclusion}
 
@@ -1258,7 +1266,7 @@ that young listeners can adapt the dynamics of their gaze to gather
 visual information when it is useful for language understanding.
 
 While we chose to start with the domain of familiar language processing,
-this approach could be applied to the acquisition context. Consider that
+this approach could generalize to the acquisition context. Consider that
 early in language learning, children are acquiring novel word-object
 links while also learning about visual object categories. Both of these
 tasks produce different goals that should, in turn, modulate children's
@@ -1267,7 +1275,7 @@ nonlinguistic cues to reference such as eye gaze and pointing become
 critical when you are unfamiliar with the information in the linguistic
 signal. More generally, this approach presents a way forward for
 explaining decisions about visual fixation during language comprehension
-and acquisition across a larger set of processing contexts and at
+and acquisition across a broader set of processing contexts and at
 different stages of development.
 
 \section{References}\label{references}
