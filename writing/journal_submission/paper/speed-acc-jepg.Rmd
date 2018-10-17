@@ -20,7 +20,7 @@ affiliation:
     institution   : "Stanford University"
 
 author_note: |
-
+  
 abstract: |
   During real-time language comprehension, listeners must link the incoming linguistic signal to the visual world. Information gathered through visual fixations can facilitate understanding. But do listeners flexibly select visual information? Here, we propose that even young children can adapt their gaze to seek visual information that will support their language understanding actively. We present evidence using two case studies of eye movements during real-time language processing where the value of fixating on a social partner varies across different contexts. First, compared to children learning spoken English (n=80), young American Sign Language (ASL) learners (n=30) delayed gaze shifts away from a language source, were more accurate, and produced a higher proportion of language-driven shifts. This result suggests that ASL learners adapt to the trade-off between allocating attention to language or to referents, which both compete for processing via the same channel: vision. Second, English-speaking preschoolers (n=39) and adults (n=31) delayed the timing of gaze shifts away from a speaker's face while processing language in a noisy environment. This delay resulted in more accurate responses and a higher proportion of language-driven gaze shifts. These results suggest that young listeners can adapt their gaze to seek supportive visual information from their social partners during real-time language comprehension.
   
@@ -790,6 +790,8 @@ Finally, our eye tracking paradigm removes an important component of successful 
 In this paper, we presented an information-seeking explanation for the differences in the dynamics of eye movements during grounded signed vs. spoken language comprehension. We started from an interesting, observational result: that ASL learners, compared to English-learning children, generate slower but more accurate gaze shifts away from a language source and to a named referent. We then tested the generality and causal claims of this explanation by experimentally manipulating the value of seeking visual information for language comprehension. We found that young listeners can adapt the dynamics of their gaze to gather visual information when it is useful for language understanding. 
 
 While we chose to start with the domain of familiar language processing, this approach could generalize to the acquisition context. Consider that early in language learning, children are acquiring novel word-object links while also learning about visual object categories. Both of these tasks produce different goals that should, in turn, modulate children's decisions about where to allocate visual attention -- e.g., seeking nonlinguistic cues to reference such as eye gaze and pointing become critical when you are unfamiliar with the information in the linguistic signal. More generally, this approach presents a way forward for explaining decisions about visual fixation during language comprehension and acquisition across a broader set of processing contexts and at different stages of development.
+
+\newpage
 
 # References
 
