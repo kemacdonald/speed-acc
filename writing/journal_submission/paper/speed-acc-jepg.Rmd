@@ -613,7 +613,7 @@ noise_contrast_rt <- d_models_noise$rt_noise %>%
   select(sample_id, noise_contrast, age_category)
 ```
 
-```{r noise-acc-rt-plot, fig.env='figure', fig.cap = "Behavioral results for children and adults in Experiment 2. Panel A shows the overall looking to the center, target, and distracter stimulus for each processing condition and age group. Panel B shows the distribution of RTs for each participant and the pairwise contrast between the noise and clear conditions. The square point represents the mean value for each mesure. The vertical dashed line represents the null model of zero condition difference. The width each point represents the 95\\% HDI. Panel C shows the same information but for first shift accuracy."}
+```{r noise-acc-rt-plot, fig.env='figure', fig.cap = "Behavioral results for children and adults in Experiment 2. Panel A shows the overall looking to the center, target, and distracter stimulus for each processing condition and age group. Panel B shows the distribution of pairwise contrasts between RTs in the noise and clear conditions. The square point represents the mean value for each mesure. The vertical dashed line represents the null model of zero condition difference. The width each point represents the 95\\% HDI. Panel C shows the same information but for first shift accuracy."}
 
 knitr::include_graphics(here::here(image_path, "fig5_noise_behav.png"), dpi = 300)
 ```

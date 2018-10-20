@@ -335,7 +335,7 @@ p_acc <- plot_grid(p_acc, pairwise_diffs_plot_acc, ncol = 2, rel_widths = c(0.9,
 
 Make RT plot
 
-```{r make text rt plot}
+```{r make noise rt plot}
 p_rt <- ss %>% 
   ggplot(aes(x = fct_reorder(noise_condition, m_rt, .fun = median), y = m_rt,
              fill = noise_condition)) +
