@@ -17,6 +17,7 @@ knitr::opts_chunk$set(fig.width=3, fig.height=3, fig.crop = F, fig.pos = "tb",
 source(here::here("R/helper_functions/libraries_and_functions.R"))
 source(here::here("R/helper_functions/ewma_helper_funs.R"))
 source(here::here("R/helper_functions/paper_helpers.R"))
+library(rogme)
 
 # data paths
 data_path <- "data/3_final_merged_data/first_shifts/"
@@ -135,7 +136,7 @@ p_acc_trio <- ss_trio %>%
   geom_hline(yintercept = 0.5, linetype = "dashed") +
   guides(fill = F) + 
   ggthemes::scale_fill_ptol() +
-  labs(x = NULL, y = "Prop. Correct") +
+  labs(x = NULL, y = "Prop. Language-consistent") +
   lims(y = c(0, 1)) 
 
 # get model values
@@ -257,8 +258,7 @@ trio_control_plot <- trio_ewma_vals %>%
         panel.grid.minor = element_blank(),
         strip.text = element_text(size = 14),
         axis.text = element_text(size = 14),
-        axis.title = element_text(size = 14),
-        panel.border = element_rect(color="grey", fill=NA)) 
+        axis.title = element_text(size = 14)) 
 ```
 
 Dotplots of guessing behavior. 
