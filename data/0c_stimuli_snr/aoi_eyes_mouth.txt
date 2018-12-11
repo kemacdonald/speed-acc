@@ -1,0 +1,9 @@
+AOIs for eyes vs. mouth analysis in speed-acc
+
+Eyes:
+  point 1 (841, 62)
+  point 2 (1113, 260)
+
+Mouth:
+  point 1 (843, 260)
+  point 2 (1110, 412)
