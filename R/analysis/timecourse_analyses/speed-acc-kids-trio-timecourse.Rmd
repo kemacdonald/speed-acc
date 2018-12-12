@@ -157,11 +157,15 @@ ggplot(aes(x = as.numeric(Time.ms), y = mean,
 
 ## Cluster-based permutation test of center looking curves
 
-Filter timecourse to analysis window.
+The cluster-based permutation test only tests differences between two curves. So in this chunk we can control which conditions to compare. 
 
 ```{r}
-conds_to_compare <- c("Bullseye", "Object")
+conds_to_compare <- c("ASL", "Face")
+```
 
+Filter the timeseries data to the analysis window.
+
+```{r}
 d_cluster <- ss_iChart_long %>% 
   rename(condition = stimuli, 
          t_stim = Time.ms_numeric,
@@ -221,9 +225,11 @@ ms.means.timeslice %>%
 
 Rename variables to work with cluster-based permutation functions. We also create a varible to track complete cases for the paired t-test.
 
+Note that we use Bin > 1 because the first bin everyone is looking at center, so we can't do a t-test because "data are constant."
+
 ```{r}
 ss_filt <- ss.d %>% 
-  filter(Bin <= 60) %>% 
+  filter(Bin > 1, Bin <= 60) %>% 
   filter(!is.na(proportion_looking),
          target_looking == "Center") %>% 
   mutate(trial_type = condition,
@@ -308,22 +314,24 @@ n_permutations <- 1000
 permuted_dfs <-  vector("list", length(1:n_permutations))
 
 for (n_sim in 1:n_permutations) {
-  permuted_dfs[[n_sim]] <- permute_data(ss_complete, within = T)
+  permuted_dfs[[n_sim]] <- permute_data(ss_complete, within = F)
 }
 
 # Now that we have our list of permuted datasets, we map the statistical test 
-# using a wrapper function to each time bin in each dataset. *
-# *Note that this takes about 4.5 minutes to do 1000 permutations.**
+# using a wrapper function to each time bin in each dataset. 
+# *Note that this takes about 4.5 minutes to do 1000 permutations.*
 # currently does not support paired T-tests
 
 system.time(
-  null_dist_1 <- map(permuted_dfs, t_test_by_bin, paired = T, alternative = "two.sided", bin_cut = bin_cut_point)
+  null_dist_1 <- map(permuted_dfs, t_test_by_bin, paired = F, 
+                     alternative = "two.sided", 
+                     bin_cut = bin_cut_point)
 )
 
 # Next, we need to extract the t-stats, filtering by the pre-defined threshold. 
 # **Note that this takes about 4.5 minutes to do 1000 permutations.**
 system.time(
- null_dist_2 <- map(null_dist_1, extract_t, t_threshold = threshold_t, alternative = "two.sided") 
+  null_dist_2 <- map(null_dist_1, extract_t, t_threshold = threshold_t, alternative = "two.sided") 
 )
 
 # Then, we make clusters for each filtered data frame of Bins that have above-threshold t-values.
@@ -365,4 +373,7 @@ crit_p <- ( sum(nulls) / length(nulls) ) %>% round(3) # get the p-value rounded 
 crit_p
 ```
 
-All ps for text-no-audio center looking curves < .001
+Cluster-based permutation results:
+  * Face vs. ASL p-value is p < .001
+  * Face vs. Bullseye p-value is p < .001
+  * No p-values greater than t-threshold for the Object vs. Bullseye comparison -- highly similar looking curves.

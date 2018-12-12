@@ -1,8 +1,10 @@
 ---
 title: "Timecourse plots Noise-Gaze Kids"
-output: html_notebook
-editor_options: 
-  chunk_output_type: inline
+output:
+  html_document:
+    df_print: paged
+editor_options:
+  chunk_output_type: console
 ---
 
 This script plots and analyzes the timecrouse eye-tracking data for an experiment comparing speed-accuracy tradeoffs when establishing reference in real-time. We vary the information value and saliency of the center fixation and measure the effects on accuracy and RT.
@@ -13,9 +15,8 @@ Load libraries and read in tidy data.
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo=F, warning=F, cache=F, message=F, sanitize = T, results = 'asis')
-library(here)
-source(here("R/helper_functions/libraries_and_functions.R"))
-source(here("R/helper_functions/permutation_helpers.R"))
+source(here::here("R/helper_functions/libraries_and_functions.R"))
+source(here::here("R/helper_functions/permutation_helpers.R"))
 data_path <- "data/3_final_merged_data/timecourse/"
 ```
 
@@ -235,6 +236,8 @@ ss_filt <- ss.d %>%
          complete_case = ifelse(n == 2, "complete", "incomplete"))
 ```
 
+Filter to only keep complete cases.
+
 ```{r}
 ss_complete <- ss_filt %>% filter(complete_case == "complete")
 ```
@@ -321,7 +324,10 @@ So we create a list of data frames. Each data frame is a permuted dataset.
 # global variables for setting up shuffling and 
 set.seed(7)
 n_permutations <- 1000
-permuted_dfs <-  vector("list", length(1:n_permutations))
+permuted_dfs <- vector("list", length(1:n_permutations))
+
+# change condition column name so function will work
+ss_complete %<>% rename(condition = noise_condition)
 
 system.time(
   for (n_sim in 1:n_permutations) {
@@ -334,7 +340,8 @@ Now that we have our list of permuted datasets, we map the statistical test usin
 
 ```{r}
 system.time(
-  null_dist_1 <- map(permuted_dfs, t_test_by_bin, paired = FALSE, alternative = "two.sided", bin_cut = bin_cut_point)
+  null_dist_1 <- map(permuted_dfs, t_test_by_bin, paired = FALSE, 
+                     alternative = "two.sided", bin_cut = bin_cut_point)
 )
 ```
 
@@ -360,6 +367,8 @@ Then, we sum the t-stats for each cluster and store the largest value for each s
 system.time(
   null_dist_4 <- map(null_dist_3, sum_t_stats) %>% unlist() %>% data.frame(null_t = .)  
 )
+
+
 ```
 
 Now we have a data frame with a single column that is a distribution of t-stats from the randomly shuffled datasets. We can use this as a null distribution against which we can compare the cluster-statistic measured from our actual data in step (3). This will get us a p-value, or the probability of that we would have observed our data or something more extreme if the null were true.

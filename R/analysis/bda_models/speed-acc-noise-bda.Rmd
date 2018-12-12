@@ -56,7 +56,7 @@ d_e1_analysis <- d %>%
          !is.na(rt)) %>% 
   filter(rt <= mean(rt) + 3*sd(rt),
          rt >= mean(rt) - 3*sd(rt),
-         rt <= 1.5,
+         rt <= 2,
          response_onset_type == "noun", 
          shift_start_location == "center") %>% 
   mutate(shift_acc_num = ifelse(shift_accuracy_clean == "correct", 1, 0),
