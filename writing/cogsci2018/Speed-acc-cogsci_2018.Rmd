@@ -20,10 +20,6 @@ output: cogsci2016::cogsci_paper
 knitr::opts_chunk$set(fig.width=3, fig.height=3, fig.crop = F, fig.pos = "tb",
                       fig.path='figs/',echo=F, warning=F, cache=T, message=F, include =F,
                       sanitize = T)
-```
-
-```{r libaries}
-library(here);
 source(here::here("R/helper_functions/paper_helpers.R"))
 source(here::here("R/helper_functions/ewma_helper_funs.R"))
 ```
@@ -105,8 +101,8 @@ In prior work, we showed that, compared to spoken language learners, ASL-learner
 
 Our account was inspired by ideas from several research programs. First, work on language-mediated visual attention shows that adults and children rapidly shift gaze upon hearing the name of an object in the visual scene [@allopenna1998tracking; @tanenhaus1995integration]. Second, empirical work on visual attention during everyday tasks shows that people overwhelmingly prefer to look at *goal-relevant* locations -- e.g., an upcoming obstacle while walking [@hayhoe2005eye]. Finally, work on "effortful listening" shows that people will generate compensatory responses (e.g., increases in attention and working memory) within "challenging" language contexts such as processing noisy or accented speech [@van2014listening]. Together, these accounts predict that gaze dynamics during language comprehension should adapt to compensate for the reduced quality of the auditory signal and to facilitate the listener's goal of comprehension.
 
-```{r stimuli_plot, include = T, fig.env = "figure*", fig.pos = "tb", fig.width=5, fig.asp = 0.3, out.width= "75%", fig.align='center', fig.cap = "Experimental design and stimuli. Panel A shows the timecourse of the linguistic stimuli for a single trial. Panel B shows the layout of the three fixation locations (speaker, target, and distracter). Panel C shows a visual representation of the clear and noisy waveforms."}
-grid::grid.raster(png::readPNG(here::here("paper/cogsci2018/figs/stimuli_info.png")))
+```{r stimuli_plot, include = T, fig.env = "figure*", fig.pos = "tb", fig.width=5, fig.asp = 0.6, out.width= "85%", fig.align='center', fig.cap = "Experimental design and stimuli. Panel A shows the timecourse of the linguistic stimuli for a single trial. Panel B shows the layout of the three fixation locations (speaker, target, and distracter). Panel C shows a visual representation of the clear and noisy waveforms."}
+grid::grid.raster(png::readPNG(here::here("writing/cogsci2018/figs/stimuli_info.png")))
 ```
 
 Here, we synthesize these ideas and test the generality of our information-seeking account of eye movements during grounded language comprehension. We ask whether listeners will adapt the timing of gaze shifts away from a speaker if the auditory signal is less reliable -- as is the case when processing speech in a noisy environment.  
@@ -180,8 +176,8 @@ ms_age <- d %>%
 
 Participants were native, monolingual English-learning children ($n=$ `r sum(e1_kids$n)`; `r e1_kids$n[1]` F, $M_{age}$ = `r ms_age$m` years, $SD_{age}$ = `r ms_age$sd_age`) and adults ($n=$ `r sum(e1_adults$n)`; `r e1_adults$n[1]` F). All participants had no reported history of developmental or language delay and normal vision/hearing. `r n_kids_filt + n_adults_filt` participants (`r n_kids_filt` children, `r n_adults_filt` adults) were run but not included in the analysis because either the eye tracker falied to calibrate (2 children, 3 adults) or the participant did not complete the task (9 children). 
 
-```{r noise_acc_rt_e1_plot, include = T, fig.env = "figure*", fig.pos = "t", fig.width=5, fig.asp = 0.6, out.width= "75%", fig.align='center', fig.cap = "Behavioral results for first shift Reaction Time (RT) and Accuracy. Panel A shows violin plots representing the distribution of RTs for each participant in each condition. Each point represents a participant's average RT. Color represents the processing context. The grey insets show the full posterior distribution of RT differences across conditions with the vertical dashed line representing the null value of zero condition difference. The green shading represents estimates in the predicted direction and above the null value while the red shading represents estimates below the null. Panel B shows the same information but for first shift accuracy."}
-png::readPNG(here::here("paper/cogsci2018/figs/e1_behav_results.png")) %>% 
+```{r noise_acc_rt_e1_plot, include = T, fig.env = "figure*", fig.pos = "t", fig.width=5, fig.asp = 0.6, out.width= "85%", fig.align='center', fig.cap = "Behavioral results for first shift Reaction Time (RT) and Accuracy. Panel A shows violin plots representing the distribution of RTs for each participant in each condition. Each point represents a participant's average RT. Color represents the processing context. The grey insets show the full posterior distribution of RT differences across conditions with the vertical dashed line representing the null value of zero condition difference. The green shading represents estimates in the predicted direction and above the null value while the red shading represents estimates below the null. Panel B shows the same information but for first shift accuracy."}
+png::readPNG(here::here("writing/cogsci2018/figs/e1_behav_results.png")) %>% 
   grid::grid.raster()
 ```
 
