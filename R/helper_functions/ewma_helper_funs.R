@@ -148,6 +148,7 @@ plot_ewma_chart <- function(model_vals) {
   # create plot
   ewma_df %>% 
     ggplot(aes(x = rt, y = mean_param, color = ewma_param)) +
+    geom_hline(yintercept = 0.5, linetype = "solid", alpha = 0.7) +
     geom_segment(aes(x = ci_lower, y = 0.8, xend = ci_upper, yend = 0.8), 
                  color = "black", size = 100, alpha = 0.2,
                  data = cutoffs_df) +
@@ -157,18 +158,17 @@ plot_ewma_chart <- function(model_vals) {
     geom_ribbon(aes(ymin = cs, ymax = ucl, x = rt), fill = "darkgreen", alpha = 0.5, 
                 data = ribbons$green, 
                 inherit.aes = F) +
-    geom_line(size = 1) +
+    geom_line(size = 1.5) +
     geom_vline(aes(xintercept = median_param), linetype = 2, 
                data = cutoffs_df) +
-    geom_hline(yintercept = 0.5, linetype = "solid") +
     labs(x = "RT (sec)", y = "EWMA statistic") +
     guides(color=F) + 
     xlim(0, x_max) +
     facet_wrap(~condition, ncol = 1) +
-    scale_color_manual(values = c("black", "darkgrey")) +
+    scale_color_manual(values = c("black", "#636363")) +
     geom_dl(aes(label = ewma_param), method = "last.bumpup") +
     ggthemes::theme_few() +
-    theme(text = element_text(size = 10))
+    theme(text = element_text(size = 14))
 }
 
 
