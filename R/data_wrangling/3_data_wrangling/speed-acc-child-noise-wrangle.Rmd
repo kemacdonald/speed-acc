@@ -6,10 +6,8 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo=T, warning=F, cache=F, message=F, sanitize = T)
-```
-
-```{r}
 source(here::here("R/helper_functions/libraries_and_functions.R"))
+filter_path <- 'data/0b_trial_information/speed_acc_data_filters/'
 ```
 
 This script munges eye-tracking data for an experiment comparing speed-accuracy tradeoffs when establishing reference in real-time. We vary the information value and saliency of the center fixation and measure the effects on accuracy and RT.
@@ -62,7 +60,7 @@ d %<>% left_join(subinfo_df, by = "subid")
 Filter out calibration trial and any keypress events, and outro.
 
 ```{r}
-bad_stimuli <- c("UE-keypress VolumeUp", "UE-keypress VolumeDown",
+black_list_stimuli <- c("UE-keypress VolumeUp", "UE-keypress VolumeDown",
                  "cc3bd7c5c8d457694031c7630357751f", 
                  "85e91b277ab3c43334caff8617a99a27_1920x1080",
                  "a14e8d2f42de904c74b227f460058f80_1920x1080",
@@ -73,7 +71,7 @@ bad_stimuli <- c("UE-keypress VolumeUp", "UE-keypress VolumeDown",
                  "6cc2283d5439516a7f183c460278aed5_1920x1080",
                  "074d7edcd6e1aaa51346a9225dc5e669_1920x1080")
 
-d %<>% filter(!(stimulus %in% bad_stimuli))
+d %<>% filter(!(stimulus %in% black_list_stimuli))
 ```
 
 ### Filter out unusable participants 
@@ -99,12 +97,12 @@ d %<>% left_join(., d_screentime, by = "subid")
 d$keep_et <- ifelse(d$percent_bad_looks > (3*sd_ss + mean_ss), 'exclude', 'include')
 ```
 
-Now we make a table of participant information.
+Now we make a table of filtered participants and save to report in the paper.
 
 ```{r}
-d %>% select(subid, gender, run_date, keep_et, keep_runsheet) %>% 
-  unique() %>% 
-  kable()
+d %>% 
+  distinct(subid, gender, keep_runsheet, keep_et, comments) %>% 
+  filter(keep_runsheet == "exclude" | keep_et == "exclude") -> d_exclusions
 ```
 
 ## Data cleaning/munging
@@ -141,15 +139,33 @@ d %<>%
   left_join(x = d, y = ., by = c("subid", "stimulus"))
 ```
 
-Check that we have the right number of trials for each participant: 32 trials
+Check how many trials we have for each participant:
 
 ```{r}
 d %>% 
   select(subid, tr.num) %>% 
   unique() %>% 
   group_by(subid) %>% 
-  count() %>% 
+  count(name = "n_trals") %>% 
   kable()
+```
+
+Add ss with feweer than 50% trials to exclusions table and save.
+
+```{r}
+d %>% 
+  distinct(subid, tr.num, gender, keep_runsheet, keep_et, comments) %>% 
+  count(subid, gender, keep_runsheet, keep_et, comments, name = "n_trials") %>% 
+  mutate(keep_trial_filter = ifelse(n_trials < 16, "exclude", "include")) -> d_tr_filter
+
+# add information back to data frame
+left_join(d, d_tr_filter) -> d
+
+# save
+d_tr_filter %>% 
+  left_join(d_exclusions) %>% 
+  filter(keep_trial_filter == "exclude" | keep_runsheet == "exclude" | keep_et == "exclude") %>% 
+  write_csv(here::here(filter_path, 'speed-acc-child-noise-sub-filter.csv'))
 ```
 
 Extract short subid
@@ -335,12 +351,6 @@ d %<>%
                                                   'sentence', 'noun')))
 ```
 
-Extract short subid
-
-```{r}
-d %<>% mutate(subid_short = as.numeric(str_extract(subid, "[:digit:]+")))
-```
-
 ### Write tidy data to .csv file
 
 Before writing to .csv, we split the data into the timecourse information and first shift information. This will make analysis more efficient since we won't have to load large datasets into working memory.
@@ -351,13 +361,13 @@ d.timecourse <- d %>%
   filter(response_onset_type == "noun") %>% 
   select(subid, subid_short, x, y, t.stim, gaze_condition, noise_condition, target_image,
          tr.num, noun_onset_sec, gaze_target:shift_accuracy, shift_accuracy_clean, 
-         shift_start_location, block, keep_runsheet, keep_et, resp_onset_type_fact)
+         shift_start_location, block, keep_runsheet, keep_et, keep_trial_filter, resp_onset_type_fact)
 
 # first shift
 d.fs <- d %>% 
   select(subid, subid_short, tr.num, gaze_condition, noise_condition, target_image,
          run_date:comments, response:shift_accuracy, shift_accuracy_clean, shift_start_location,
-         block, keep_runsheet, keep_et, resp_onset_type_fact) %>% 
+         block, keep_runsheet, keep_et, keep_trial_filter, resp_onset_type_fact) %>% 
   unique()
 ```
 
@@ -370,5 +380,5 @@ write_csv(d.timecourse, path = here::here(write.path.time,
 
 write.path.fst <- "data/3_final_merged_data/first_shifts/"
 write_csv(d.fs, path = here::here(write.path.fst, 
-                              "speed_acc_child_noise_fstshift_tidy.csv"))
+                                  "speed_acc_child_noise_fstshift_tidy.csv"))
 ```

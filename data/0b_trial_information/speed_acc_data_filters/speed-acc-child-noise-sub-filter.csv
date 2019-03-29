@@ -1,0 +1,15 @@
+subid,gender,keep_runsheet,keep_et,comments,n_trials,keep_trial_filter
+speed_acc_child_noise_12,F,exclude,include,could not calibrate; tried four times,32,include
+speed_acc_child_noise_14,F,keep,exclude,got very distracted by me; was not picking up her eyes because she was looking at me,32,include
+speed_acc_child_noise_16,F,exclude,include,calibration slightly more than 1! also I said her name. also said the noise bothered her. also played the gaze game with tami already,32,include
+speed_acc_child_noise_17,F,keep,include,"turned off the monitor at the beginning of the game, didn't finish",12,exclude
+speed_acc_child_noise_23,F,exclude,include,"stopped early, also didn't calibrate…and I didn't take her name tag off",7,exclude
+speed_acc_child_noise_26,F,keep,include,stopped early,9,exclude
+speed_acc_child_noise_29,M,exclude,include,"distracted during calibration, only one eye calibrated.",32,include
+speed_acc_child_noise_32,F,exclude,include,"did not go well, she started crying a few trials in",11,exclude
+speed_acc_child_noise_38,M,exclude,include,"very distracted, humming a lot",32,include
+speed_acc_child_noise_39,M,exclude,include,"calibration slightly off, got bored towards the end",32,include
+speed_acc_child_noise_4,M,keep,include,did not enjoy the noise and stopped early,10,exclude
+speed_acc_child_noise_40,M,exclude,include,"very distracted, messing with the headphone, they fell off for a little while, said ""it's too noisy!""",32,include
+speed_acc_child_noise_44,M,exclude,include,"did not want to wear headphones, couldn't hear the noise trials and stopped early",25,include
+speed_acc_child_noise_47,M,exclude,exclude,"saw me through the screen and got very distracted, eyetracker didn't pick up eyes at the end",32,include

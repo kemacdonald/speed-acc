@@ -1,0 +1,4 @@
+subid,gender,dot,keep_runsheet,keep_et,reason_excluded
+speed_acc_adult_ng_1,F,7/5/17,no,include,english not native language
+speed_acc_adult_ng_23,M,10/10/17,no,include,noticed grace's hair pointed at the correct image; shifting prior to the language cue
+speed_acc_adult_ng_25,M,10/10/17,yes,exclude,tracker had some difficulty picking up eyes; check data quality
