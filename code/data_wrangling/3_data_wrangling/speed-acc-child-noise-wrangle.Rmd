@@ -150,7 +150,7 @@ d %>%
   kable()
 ```
 
-Add ss with feweer than 50% trials to exclusions table and save.
+Add ss with fewer than 50% trials to exclusions table and save.
 
 ```{r}
 d %>% 

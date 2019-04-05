@@ -6,7 +6,7 @@ author:
   - name          : "Kyle MacDonald"
     affiliation   : "1, 2"
     corresponding : yes    # Define only one corresponding author
-    address       : "450 Serra Mall, Stanford, CA 94306"
+    address       : "2225 Rolfe Hall, Los Angeles, CA 90095"
     email         : "kemacdonald@ucla.edu"
   - name          : "Virginia A. Marchman"
     affiliation   : "1"
@@ -40,8 +40,9 @@ appendix          : "speed-acc-appendix.Rmd"
 ---
 
 ```{r load_packages, include = FALSE}
-source(here::here("R/helper_functions/paper_helpers.R"))
-source(here::here("R/helper_functions/ewma_helper_funs.R"))
+library(papaja)
+source(here::here("code/helper_functions/paper_helpers.R"))
+source(here::here("code/helper_functions/ewma_helper_funs.R"))
 bib <- knitcitations::read.bibtex(here::here("writing/journal_submission/paper/speed-acc.bib"))
 ```
 
@@ -61,6 +62,8 @@ my_citations <- cite_r(file = "r-references.bib",
                        footnote = TRUE)
 
 # relevant paths
+stimuli_info_path <- "data/0b_trial_information/"
+filters_path <- "data/0b_trial_information/speed_acc_data_filters/"
 data_path <- "data/3_final_merged_data/first_shifts/"
 ewma_path <- "data/3_final_merged_data/ewma_output/"
 hddm_path <- "data/3_final_merged_data/hddm_output/"
@@ -76,6 +79,19 @@ d_hddm <- read_csv(here::here(hddm_path, "hddm_tidy.csv"))
 d_models_trio <- readRDS(here::here(bda_path, "speed-acc-trio-posterior-samples.rds"))
 d_models_text <- readRDS(here::here(bda_path, "speed-acc-text-posterior-samples.rds"))
 d_models_noise <- readRDS(here::here(bda_path, "speed-acc-noise-posterior-samples.rds"))
+```
+
+```{r read noise stimuli information}
+d_gaze_stim <- read_csv(here::here(stimuli_info_path, "speed-acc-child-gaze-trial-info.csv"),
+                        col_types = cols(.default = "c"))
+d_noise_stim <- read_csv(here::here(stimuli_info_path, "speed-acc-child-noise-trial-info.csv"),
+                         col_types = cols(.default = "c"))
+d_adult_ng_stim <- read_csv(here::here(stimuli_info_path, "speed-acc-adult-ng-trial-info.csv"),
+                            col_types = cols(.default = "c"))
+
+d_stim <- bind_rows(mutate(d_noise_stim, experiment = "kids_noise"),
+                    mutate(d_gaze_stim, experiment = "kids_gaze"),
+                    mutate(d_adult_ng_stim, experiment = "adults_ng"))
 ```
 
 # Introduction 
@@ -161,9 +177,8 @@ df_trio %<>%
                                  ifelse(stimuli == "Bull", "Bullseye",
                                         stimuli))),
          stimuli = factor(stimuli, levels = c("ASL", "Face", "Object", "Bullseye")))
-```
 
-```{r read trio stimuli information}
+# read trio stimuli information
 d.words.length <- read_csv(here::here("data/0b_trial_information/speed-acc-adult-text-trial-info-final.csv"))
 d.signs.length <- read_csv(here::here("data/0b_trial_information/sol_target_sign_lengths_all.csv"))
 ```
@@ -183,6 +198,28 @@ trio_n <- df_trio %>%
   tally()
 ```
 
+```{r trio get n trials contributed}
+df_trio_ps <- read_csv(here::here(filters_path, "speed-acc-trio-sub-filters.csv")) %>% 
+  mutate(stimuli = ifelse(str_detect(experiment, "6"), "Object", 
+                          ifelse(str_detect(experiment, "Bull"), "Bullseye", 
+                                 ifelse(str_detect(experiment, "Face"), "Face",
+                                        experiment))))
+
+ms_trials <- df_trio_ps %>%
+  filter(age_code == "child") %>% 
+  mutate(`Center Stimulus` = stimuli) %>% 
+  group_by(`Center Stimulus`) %>% 
+  summarise(`Trials` = paste0(round(mean(n_good_trials), 1),
+                              " (", min(n_good_trials), ", ", 
+                              max(n_good_trials), ")"))
+
+ms_good_trials <- df_trio_ps %>% 
+  filter(age_code == "child") %>% 
+  summarise(m_good_trials = mean(n_good_trials),
+            min = min(n_good_trials),
+            max = max(n_good_trials))
+```
+
 ```{r trio make participants table, results="asis"}
 trio_tab <- df_trio %>% 
   filter(age_code == "child") %>% 
@@ -190,18 +227,20 @@ trio_tab <- df_trio %>%
   mutate(`Center Stimulus` = stimuli) %>% 
   unique() %>% 
   group_by(`Center Stimulus`) %>% 
-  summarise(Mean = round(mean(Months), 1),
-            Min = min(Months),
-            Max = max(Months)) %>% 
+  summarise(`Age` = paste0(round(mean(Months), 1),
+                           " (", min(Months), ", ", 
+                           max(Months), ")")) %>% 
   left_join(., filter(trio_n, age_code == "child")) %>% 
+  left_join(ms_trials) %>% 
   mutate_if(is.numeric, round, digits = 1) %>% 
+  select(`Center Stimulus`, n, everything()) %>% 
   select(-age_code)
 
-trio_tab[, -1] <- printnum(trio_tab[, -1])
+trio_tab[, -1] <- printnum(trio_tab[, -1], digits = 1)
 
 apa_table(
   trio_tab
-  , caption = "Age distributions of children in Experiment 1 in months."
+  , caption = "Sample sizes, mean ages and ranges (in months), and average number of trials contributed for child participants in Experiment 1."
 )
 ```
 
@@ -215,15 +254,15 @@ kids_n <- df_trio %>%
 
 spoken_eng_n <- kids_n %>% filter(stimuli != "ASL") %>% .$n %>%  sum()
 asl_n <- kids_n %>% filter(stimuli == "ASL") %>% .$n %>%  sum()
-hearing_n <- kids_n %>% filter(stimuli == "ASL", hearing_status_participant == "hearing") %>% .$n
-deaf_n <- kids_n %>% filter(stimuli == "ASL", hearing_status_participant == "deaf") %>% .$n
+hearing_n <- kids_n %>% filter(stimuli == "ASL", hearing_status_participant == "hearing") %>% pull(n)
+deaf_n <- kids_n %>% filter(stimuli == "ASL", hearing_status_participant == "deaf") %>% pull(n)
 ```
 
-Table 1 contains details about the age distributions of children in all four samples. 
+Table 1 contains details about the age distributions and sample sizes for children in all four studies. After excluding trials for inattention or parental interfence, children contributed on average `r printnum(ms_good_trials$m_good_trials)` trials to the analysis (min = `r printnum(ms_good_trials$min, digits = 0)`, max = `r printnum(ms_good_trials$max, digits = 0)`). 
 
-*Spoken English samples.* Participants were `r spoken_eng_n` native, monolingual English-learning children divided across three samples with no reported history of developmental or language delay.
+*Spoken English samples.* Participants were `r spoken_eng_n` native, monolingual English-learning children divided across three samples with no reported history of developmental or language delay. 
 
-*ASL sample.* Participants were `r asl_n` native, monolingual ASL-learning children (`r deaf_n` deaf, `r hearing_n` hearing). All children, regardless of hearing status, were exposed to ASL from birth through extensive interaction with at least one caregiver fluent in ASL and were reported to experience at least 80% ASL in their daily lives. The ASL sample included a wider age range compared to the spoken English samples because this is a rare population.
+*ASL sample.* Participants were `r asl_n` native, monolingual ASL-learning children (`r deaf_n` deaf, `r hearing_n` hearing). All children, regardless of hearing status, were exposed to ASL from birth through extensive interaction with at least one caregiver fluent in ASL and were reported to experience at least 80% ASL in their daily lives. The ASL sample included a wider age range compared to the spoken English samples because this is a rare population that is more challenging to recruit.
 
 ### Stimuli
 
@@ -451,10 +490,6 @@ These findings, however, were based on exploratory analyses, and our information
 
 # Experiment 2
 
-In Experiment 2, we created an experimental context where we could manipulate the information-seeking demands in ways that parallel some aspects of the differences between young ASL- and English-learners. ^[See https://osf.io/g8h9r/ for a pre-registration of the analysis plan.] We measured adults and children's eye movements during a real-time language comprehension task where participants processed sentences with familiar words (e.g., "Where's the ball?") while looking at a simplified visual world with three fixation targets. Using a within-participants design, we manipulated the signal-to-noise ratio of the auditory signal by convolving the acoustic input with brown noise (random noise with higher energy at lower frequencies). We chose to manipulate background noise because it allowed us to increase the value of fixation on a speaker for the task of language comprehension, and it could be used with both children and adults. In Experiment 2, we chose to collect an adult sample so we could ask whether children might rely more on visual information because they have had less exposure to the target words and less experience processing language in the presence of background noise.
-
-We predicted that processing speech in a noisy context would make listeners fixate longer on a speaker's face (slower reaction times), collect more visual information and generate a higher proportion of language-consistent responses (fewer responses classified as random by the EWMA model). We also predicted that children and adults would both adapt their gaze to gather additional visual information in the noisier auditory context, but that children might show an even stronger response in the noisy context since they have less-developed language and perceptual models as compared to adults.
-
 ```{r read noise data}
 d_kids_noise <- read_csv(here::here(data_path, "speed_acc_child_noise_fstshift_tidy.csv")) 
 d_kids_gaze <- read_csv(here::here(data_path, "speed_acc_child_gaze_fstshift_tidy.csv")) 
@@ -478,7 +513,7 @@ d_kids_gaze %<>% mutate(noise_condition = ifelse(noise_condition == "no_noise",
                                                  noise_condition))
 ```
 
-```{r merge datasets, include = F}
+```{r merge noise datasets, include = F}
 d <- bind_rows(mutate(d_kids_noise, experiment = "kids_noise", age_category = "children"),
                mutate(d_kids_gaze, experiment = "kids_gaze", age_category = "children"),
                mutate(d_adults, experiment = "adults_ng", age_category = "adults")) %>% 
@@ -489,18 +524,9 @@ d <- bind_rows(mutate(d_kids_noise, experiment = "kids_noise", age_category = "c
  nrow(d_kids_gaze) + nrow(d_kids_noise) + nrow(d_adults) == nrow(d)
 ```
 
-```{r read stimuli information}
-d_gaze_stim <- read_csv(here::here("data/0b_trial_information/speed-acc-child-gaze-trial-info.csv"),
-                        col_types = cols(.default = "c"))
-d_noise_stim <- read_csv(here::here("data/0b_trial_information/speed-acc-child-noise-trial-info.csv"),
-                         col_types = cols(.default = "c"))
-d_adult_ng_stim <- read_csv(here::here("data/0b_trial_information/speed-acc-adult-ng-trial-info.csv"),
-                            col_types = cols(.default = "c"))
+In Experiment 2, we created an experimental context where we could manipulate the information-seeking demands in ways that parallel some aspects of the differences between young ASL- and English-learners. ^[See https://osf.io/g8h9r/ for a pre-registration of the analysis plan.] We measured adults and children's eye movements during a real-time language comprehension task where participants processed sentences with familiar words (e.g., "Where's the ball?") while looking at a simplified visual world with three fixation targets. Using a within-participants design, we manipulated the signal-to-noise ratio of the auditory signal by convolving the acoustic input with brown noise (random noise with higher energy at lower frequencies). We chose to manipulate background noise because it allowed us to increase the value of fixation on a speaker for the task of language comprehension, and it could be used with both children and adults. In Experiment 2, we chose to collect an adult sample so we could ask whether children might rely more on visual information because they have had less exposure to the target words and less experience processing language in the presence of background noise.
 
-d_stim <- bind_rows(mutate(d_noise_stim, experiment = "kids_noise"),
-                    mutate(d_gaze_stim, experiment = "kids_gaze"),
-                    mutate(d_adult_ng_stim, experiment = "adults_ng"))
-```
+We predicted that processing speech in a noisy context would make listeners fixate longer on a speaker's face (slower reaction times), collect more visual information and generate a higher proportion of language-consistent responses (fewer responses classified as random by the EWMA model). We also predicted that children and adults would both adapt their gaze to gather additional visual information in the noisier auditory context, but that children might show an even stronger response in the noisy context since they have less-developed language and perceptual models as compared to adults.
 
 ## Methods
 
@@ -514,7 +540,7 @@ d_noise <- d %>%
          gaze_condition == "straight_ahead")
 ```
 
-```{r noise participants}
+```{r noise get participant info}
 noise_adults <- d_noise %>% 
   filter(age_category == "adults") %>% 
   select(subid, gender) %>% 
@@ -547,7 +573,48 @@ n_kids_filt <- n_kids_run - sum(noise_kids$n)
 n_adults_filt <- n_adults_run - sum(noise_adults$n)
 ```
 
-Participants were native, monolingual English-learning children ($n=$ `r sum(noise_kids$n)`; `r noise_kids$n[1]` F) and adults ($n=$ `r sum(noise_adults$n)`; `r noise_adults$n[1]` F). All participants had no reported history of developmental or language delay and normal vision. `r n_kids_filt + n_adults_filt` participants (`r n_kids_filt` children, `r n_adults_filt` adults) were run but not included in the analysis because either the eye tracker failed to calibrate (2 children, 3 adults) or the participant did not complete the task (9 children). Finally, based on time and resource constraints, we did not collect our planned sample size (42) for each age group (3-, 4-, and 5-year-olds) in the target age range; instead, we decided to use age as a continuous covariate and collected a single sample that included children across the entire age range.
+```{r noise analysis filter}
+d_noise_analysis <- d_noise %>% 
+  filter(rt <= upper_bound_RT_sec,
+         response_onset_type == "noun",
+         shift_start_location == "center") %>% 
+  mutate(shift_acc_num = ifelse(shift_accuracy_clean == "correct", 1, 0),
+         log_rt = log(rt))
+```
+
+```{r noise get n trials contributed}
+ms_trials_noise_age <- d_noise %>% 
+  filter(rt <= upper_bound_RT_sec,
+    response_onset_type == "noun", 
+    keep_trial_filter == "include" | is.na(keep_trial_filter)) %>% 
+  count(subid, noise_condition, age_category) %>% 
+  group_by(age_category, noise_condition) %>% 
+  summarise(m = mean(n), 
+            min = min(n),
+            max = max(n))
+
+ms_trials_condition <- d_noise %>% 
+  filter(rt <= upper_bound_RT_sec,
+    response_onset_type == "noun", 
+    keep_trial_filter == "include" | is.na(keep_trial_filter)) %>% 
+  count(subid, noise_condition) %>% 
+  group_by(noise_condition) %>% 
+  summarise(m = mean(n), 
+            min = min(n),
+            max = max(n))
+
+ms_trials_noise_collapse <- d_noise %>% 
+  filter(rt <= upper_bound_RT_sec,
+    response_onset_type == "noun", 
+    keep_trial_filter == "include" | is.na(keep_trial_filter)) %>% 
+  count(subid, age_category) %>% 
+  group_by(age_category) %>% 
+  summarise(m = mean(n), 
+            min = min(n),
+            max = max(n))
+```
+
+Participants were native, monolingual English-learning children ($n=$ `r sum(noise_kids$n)`; `r noise_kids$n[1]` F) and adults ($n=$ `r sum(noise_adults$n)`; `r noise_adults$n[1]` F). All participants had no reported history of developmental or language delay and normal vision. `r n_kids_filt + n_adults_filt` participants (`r n_kids_filt` children, `r n_adults_filt` adults) were run but not included in the analysis because either the eye tracker failed to calibrate (2 children, 3 adults) or the participant did not complete the task (9 children). After excluding trials with less than 50% valid data and RTs longer than two seconds, adults contributed on average `r printnum(ms_trials_noise_collapse$m[2], digits = 1)` trials (min = `r printnum(ms_trials_noise_collapse$min[2], digits = 0)`, max = `r printnum(ms_trials_noise_collapse$max[2], digits = 0)`) to the analysis while children contributed on average `r printnum(ms_trials_noise_collapse$m[1], digits = 1)` trials (min = `r printnum(ms_trials_noise_collapse$min[1], digits = 0)`, max = `r printnum(ms_trials_noise_collapse$max[1], digits = 0)`). There was no difference in the average number of trials contributed for the noisy (`r printnum(ms_trials_condition$m[2], digits = 1)`) and clear auditory contexts (`r printnum(ms_trials_condition$m[1], digits = 1)`). Based on time and resource constraints, we did not collect our planned sample size of 42 children in each age group (3-, 4-, and 5-year-olds); instead, we decided to use age as a continuous covariate and collected a single sample that included children across the entire age range.
 
 ### Stimuli 
 
@@ -580,15 +647,6 @@ ms_words_length <- d_word_lengths %>%
 Participants viewed the task on a screen while their gaze was tracked using an SMI RED corneal-reflection eye-tracker mounted on an LCD monitor, sampling at 30 Hz. The eye-tracker was first calibrated for each participant using a 6-point calibration. On each trial, participants saw two images of familiar objects on the screen for two seconds before the center stimulus appeared. Next, they processed the target sentence -- which consisted of a carrier phrase, a target noun, and a question -- followed by two seconds without language to allow for a response. Child participants saw 32 trials (16 noise trials; 16 clear trials) with several filler trials interspersed to maintain interest. Adult participants saw 64 trials (32 noise; 32 clear). The noise manipulation was presented in a blocked design with the order of block counterbalanced across participants.
 
 ## Results and Discussion
-
-```{r noise analysis filter}
-d_noise_analysis <- d_noise %>% 
-  filter(rt <= upper_bound_RT_sec,
-         response_onset_type == "noun",
-         shift_start_location == "center") %>% 
-  mutate(shift_acc_num = ifelse(shift_accuracy_clean == "correct", 1, 0),
-         log_rt = log(rt))
-```
 
 ```{r noise summarize model output}
 ms_acc_noise <- d_models_noise$acc_noise %>% 

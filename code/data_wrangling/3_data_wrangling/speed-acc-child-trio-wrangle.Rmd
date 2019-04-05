@@ -6,8 +6,9 @@ output: html_document
 ## Script to munge eye movement data
 
 ```{r libraries}
-source("../helper_functions/libraries_v_3.6.R")
-source("../helper_functions/libraries_and_functions.R")
+library(here)
+source(here("code/helper_functions/libraries_v_3.6.R"))
+source(here("code/helper_functions/libraries_and_functions.R"))
 ```
 
 ### Read in icharts for ASL kids/adults and Trio Series
@@ -23,8 +24,9 @@ We start with 5 iCharts.
 Note the use of the colClasses function to set all variables to be read as characters.
 
 ```{r load data}
-path_demo <- "../../data/demographics/"
-path_data <- "../../data/2_cleaned_data/"
+path_demo <- "data/0a_demographics/"
+path_data <- "data/2_cleaned_data/"
+path_prescreen <- "data/0b_trial_information/"
 
 read_csv_fun <- function(path, file_name) {
   df <- read_csv(paste0(path, file_name)) %>% 
@@ -40,9 +42,11 @@ sol_demo <- read_csv_fun(path = path_demo, file_name = "sol_demo_all.csv")
 sol_df <- read_csv_fun(path_data, "sol-ichart-cleaned.csv") 
 sol_n <- sol_df %>% select(Sub.Num) %>% unique() %>% summarise(ASL = n())
 
+## Trio prescreening information 
+trio_ps <- read_csv_fun(path = path_prescreen, file_name = "trio_prescreening_info.csv") 
+
 ## Trio Face
 trio_face <- read_csv_fun(path = path_data, file_name = "TrioFace26n24_cleaned.csv") 
-trio_ps <- read_csv_fun(path = "../../data/trial_info/", file_name = "trio_prescreening_info.csv") 
 trio_n <- trio_face %>% select(Sub.Num) %>% unique() %>% summarise(Face = n())
 
 ## Trio 26
@@ -62,6 +66,8 @@ trio_bull_26 <- read_csv_fun(path = path_data, file_name = "TrioBullAA26n18_clea
 trio_bull_26_n <- trio_bull_26 %>% select(Sub.Num) %>% unique() %>% summarise(Bull_26 = n())
 ```
 
+Create a table with the number of participants in each study.
+
 ```{r}
 df_n <- data.frame(ASL = sol_n$ASL, Face = trio_n$Face, 
                    Trio_26 = trio_26_n$Trio_26, 
@@ -69,8 +75,6 @@ df_n <- data.frame(ASL = sol_n$ASL, Face = trio_n$Face,
                    Bull_Adult = trio_bull_adult_n$Bull_Adult, 
                    Bull_26 = trio_bull_26_n$Bull_26) %>% 
   mutate(Total_n = ASL + Face + Trio_26 + Trio_36 + Bull_Adult + Bull_26)
-
-knitr::kable(df_n)
 ```
 
 Add Trio Face prescreening info to iChart.
@@ -114,25 +118,30 @@ sol_df %<>% filter(include == "yes")
 Add some other relevant variables.
 
 ```{r}
-trio_face %<>% mutate(language_modality = "English", stimuli = "Face", 
-                      experiment = "Trio_Face", age_code = "child", 
-                      hearing_status_participant = "hearing")
+trio_face %<>% 
+  mutate(language_modality = "English", stimuli = "Face", 
+         experiment = "Trio_Face", age_code = "child", 
+         hearing_status_participant = "hearing")
 
-trio_26 %<>% mutate(language_modality = "English", stimuli = "Trio", 
-                    experiment = "Trio_26", age_code = "child", 
-                    hearing_status_participant = "hearing")
+trio_26 %<>% 
+  mutate(language_modality = "English", stimuli = "Trio", 
+         experiment = "Trio_26", age_code = "child", 
+         hearing_status_participant = "hearing")
 
-trio_36 %<>% mutate(language_modality = "English", stimuli = "Trio", 
-                    experiment = "Trio_36",  age_code = "child",
-                    hearing_status_participant = "hearing")
+trio_36 %<>% 
+  mutate(language_modality = "English", stimuli = "Trio", 
+         experiment = "Trio_36",  age_code = "child",
+         hearing_status_participant = "hearing")
 
-trio_bull_adult %<>% mutate(language_modality = "English", stimuli = "Bull", 
-                            experiment = "Trio_Bull", age_code = "adult",
-                            hearing_status_participant = "hearing")
+trio_bull_adult %<>%
+  mutate(language_modality = "English", stimuli = "Bull", 
+         experiment = "Trio_Bull", age_code = "adult",
+         hearing_status_participant = "hearing")
 
-trio_bull_26 %<>% mutate(language_modality = "English", stimuli = "Bull", 
-                         experiment = "Trio_Bull",  age_code = "child",
-                         hearing_status_participant = "hearing")
+trio_bull_26 %<>% 
+  mutate(language_modality = "English", stimuli = "Bull", 
+         experiment = "Trio_Bull",  age_code = "child",
+         hearing_status_participant = "hearing")
 ```
 
 ### Filter all data to keep frames 0 - 3000
@@ -143,7 +152,7 @@ trio_bull_26 %<>% mutate(language_modality = "English", stimuli = "Bull",
 select_vars_fun <- function(data_frame) {
   data_frame %<>%
     select(Sub.Num, Months, Tr.Num, stimuli, Months, experiment, age_code, Target.Image,
-         hearing_status_participant, Prescreen.Notes, language_modality, `0`:`3000`) 
+           hearing_status_participant, Prescreen.Notes, language_modality, `0`:`3000`) 
 }
 ```
 
@@ -159,7 +168,8 @@ trio_bull_26_final <- select_vars_fun(trio_bull_26)
 ### Bind data frames together
 
 ```{r}
-speed_acc_df_final <- bind_rows(sol_df_final, trio_face_final, trio_26_final, trio_36_final, 
+speed_acc_df_final <- bind_rows(sol_df_final, trio_face_final, 
+                                trio_26_final, trio_36_final, 
                                 trio_bull_adult_final, trio_bull_26_final)
 ```
 
@@ -175,9 +185,7 @@ make_clean_target <- function (target_image, targets) {
   target_img_clean <- targets[str_detect(target_image, targets)]
   return(target_img_clean)
 }
-```
 
-```{r}
 speed_acc_df_final$clean_target_img <- unlist(sapply(speed_acc_df_final$Target.Image, 
                                                      function (x) make_clean_target(x, targets)))
 speed_acc_df_final %<>% select(-Target.Image)
@@ -236,10 +244,7 @@ iChart %>%
 ```{r}
 total_trials <- 32
 trials_cut_point <- total_trials * .20
-```
 
-
-```{r}
 ss_prescreened <- iChart %>% 
   select(Sub.Num, Tr.Num, Prescreen.Notes) %>% 
   unique() %>% 
@@ -248,11 +253,9 @@ ss_prescreened <- iChart %>%
   select(Sub.Num, Prescreen.Notes) %>% 
   summarise(num_prescreened = n())
 
-
 ss_trials_df <- iChart %>% 
-  select(Sub.Num, Tr.Num) %>% 
-  unique() %>% 
-  group_by(Sub.Num) %>% 
+  distinct(Sub.Num, Tr.Num, experiment, age_code, language_modality) %>% 
+  group_by(Sub.Num, experiment, age_code, language_modality) %>% 
   summarise(Trials = n()) 
 
 ss_trials_df <- left_join(ss_trials_df, ss_prescreened) %>% 
@@ -269,6 +272,13 @@ trials_filter %>% group_by(exclude_few_trials) %>% dplyr::summarise(n())
 
 # merge filtering information with iChart
 iChart <- left_join(iChart, trials_filter, by = "Sub.Num")
+
+# save filtering information
+filter_path <- "data/0b_trial_information/speed_acc_data_filters/"
+ss_trials_df %>% 
+  mutate(exclude_few_trials = ifelse(n_good_trials <= trials_cut_point, 
+                                     "exclude", "include")) %>% 
+  write_csv(here::here(filter_path, "speed-acc-trio-sub-filters.csv"))
 
 # now filter
 iChart <- filter(iChart, exclude_few_trials == "include")

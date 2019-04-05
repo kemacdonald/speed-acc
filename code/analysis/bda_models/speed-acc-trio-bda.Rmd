@@ -38,7 +38,8 @@ df %<>% mutate(stimuli = ifelse(stimuli == "V1" | stimuli == "V2", "ASL",
                                         stimuli))),
          stimuli = factor(stimuli, levels = c("ASL", "Face", "Object", "Bullseye")))
 
-df %<>% mutate(log_rt = log(RT)) %>% 
+df %<>% 
+  mutate(log_rt = log(RT)) %>% 
   filter(RT <= upper_bound_RT)
 ```
 
