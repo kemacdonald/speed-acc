@@ -9,8 +9,8 @@ This document contains the codebase for the bayesian data analysis of Experiment
 
 ```{r set global_options, include=FALSE}
 library(here)
-source(here::here("R/helper_functions/libraries_and_functions.R"))
-source(here::here("R/helper_functions/ewma_helper_funs.R"))
+source(here::here("code/helper_functions/libraries_and_functions.R"))
+source(here::here("code/helper_functions/ewma_helper_funs.R"))
 
 data_path <- "data/3_final_merged_data/first_shifts/"
 ewma_path <- "data/3_final_merged_data/ewma_output/"
@@ -106,6 +106,9 @@ samples_e1_acc_int <- m_bglm_acc_e1_int %>%
                 age_beta = age_categoryadults,
                 int_beta = `noise_conditionnoise:age_categoryadults`) %>% 
   select(clear_children, noise_beta, age_beta, int_beta)
+
+# store in list so we can add RT catgorical interaction samples later on
+noise_age_int_categorical <- list(acc_cat_int = samples_e1_acc_int)
 ```
 
 ### Accuracy Age (continuous)
@@ -190,8 +193,8 @@ m_bglm_rt_e1_int <- stan_glmer(
   prior_covariance = decov(regularization = 2), # prior on Covariance matrices for mixed effects model
   chains = 4)
 
-## RT age-continous interaction
-samples_e1_rt_age_cont_int <- m_bglm_rt_e1_int %>% 
+## RT age-categorical interaction
+samples_e1_rt_age_cat_int <- m_bglm_rt_e1_int %>% 
   as.data.frame() %>% 
   as_tibble() %>% 
   dplyr::rename(clear_children = `(Intercept)`,
@@ -199,6 +202,13 @@ samples_e1_rt_age_cont_int <- m_bglm_rt_e1_int %>%
                 age_beta = age_categoryadults,
                 int_beta = `noise_conditionnoise:age_categoryadults`) %>% 
   select(clear_children, noise_beta, age_beta, int_beta)
+```
+
+Add samples to list and save
+
+```{r save catgorical age interaction samples}
+noise_age_int_categorical$rt_cat_int <- samples_e1_rt_age_cat_int
+write_rds(noise_age_int_categorical, here::here(write_path, "speed-acc-noise-cat-int-samples.rds"))
 ```
 
 ### RT age (continous)
@@ -269,7 +279,6 @@ samples_e1_rt_tidy <- samples_e1_rt %>%
   mutate(rt_ms_scale = exp(param_est)) %>% 
   separate(condition, into = c("noise_condition", "age_category")) 
 ```
-
 
 ## EWMA models
 

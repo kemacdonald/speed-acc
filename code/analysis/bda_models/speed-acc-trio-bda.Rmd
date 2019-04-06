@@ -207,7 +207,6 @@ samples_trio_ewma_cuts <- m_ewma_trio %>%
   select(sample_id, asl:face)
 ```
 
-
 ```{r}
 d_ewma_trio %>% 
   filter(stimuli %in% c("ASL", "Face")) %>% 

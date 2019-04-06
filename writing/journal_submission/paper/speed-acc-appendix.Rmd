@@ -1,4 +1,18 @@
-# Experiment 1
+# Parallel set of non-Bayesian analyses
+
+E1: 
+- RT: stan_glmer(log_rt ~ stimuli + scale(Months) + (1 | Sub.Num) + (1 | clean_target_img), 
+- ACC: stan_glmer(correct ~ stimuli + scale(Months) + (1 | Sub.Num) + (1 | clean_target_img), 
+- EWMA: stan_glmer(guess_num ~ stimuli + scale(months) + (1|subid) + (1|clean_target_img),
+- HDDM: stan_lm(param_est ~ stimuli)
+
+E2: 
+- RT: 
+- ACC: 
+- EWMA: 
+- HDDM: 
+
+# Full output for analysis models in Experiment 1
 
 ```{r trio-rt-model, results = 'asis'}
 ms_rt_trio %>% 
@@ -97,7 +111,7 @@ ms.hddm_trio %>%
   caption = "Summary of the Drift Diffusion Model output for the drift rate and boundary separation parameters for both all four center stimulus types in Experiment 1.")
 ```
 
-# Experiment 2
+# Full output for analysis models in Experiment 2
 
 ```{r noise-acc-model, results = 'asis'}
 ms_acc_noise %>% 
@@ -142,7 +156,6 @@ ms_guess_noise %>%
   apa_table(placement = 'h',
   caption = "Output of the model estimating the mean proportion of shifts categorized as language-driven by the Exponentially Weighted Moving Average model for the each noise condition and age group in Experiment 2.")
 ```
-
 
 ```{r noise-hddm, results = 'asis'}
 hddm_table_age %>% 
