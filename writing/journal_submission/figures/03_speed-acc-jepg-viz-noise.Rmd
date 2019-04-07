@@ -9,14 +9,14 @@ knitr::opts_chunk$set(fig.width=3, fig.height=3, fig.crop = F, fig.pos = "tb",
                       sanitize = T)
 ```
 
-# Set up 
+## Set up 
 
 This document contains the codebase for generating the plots for Study 3 in the paper, "An information-seeking account of children's eye movements during grounded signed and spoken language comprehension"
 
 ```{r load libraries}
-source(here::here("R/helper_functions/libraries_and_functions.R"))
-source(here::here("R/helper_functions/ewma_helper_funs.R"))
-source(here::here("R/helper_functions/paper_helpers.R"))
+source(here::here("code/helper_functions/libraries_and_functions.R"))
+source(here::here("code/helper_functions/ewma_helper_funs.R"))
+source(here::here("code/helper_functions/paper_helpers.R"))
 
 # set data paths
 data_path <- "data/3_final_merged_data/first_shifts/"
@@ -65,9 +65,7 @@ d_bda_noise <- readRDS(here::here(models_path, "speed-acc-noise-posterior-sample
 d_hddm <- read_csv(here::here(hddm_path, "hddm_tidy.csv"))
 ```
 
-# Plots for speech in background noise experiment
-
-### Timecourse plots
+## Timecourse plots
 
 Select plotting window and downsample the t.rel.noun time bins based on the sampling rate of the tracker. 
 
@@ -185,7 +183,7 @@ noise_time_gvs %>%
 plot_grid(child_tc, adult_tc) -> noise_timecourse_plot
 ```
 
-### First shifts plots
+## First shifts plots
 
 ```{r filter noise experiment}
 d_fst <- d %>% 
@@ -370,7 +368,7 @@ p_rt <- plot_grid(p_rt, pairwise_diffs_plot_rt, ncol = 2, rel_widths = c(0.9, 1)
                   scale = c(1, 0.85))
 ```
 
-### Merge behavioral plots and save
+Merge behavioral plots and save
 
 ```{r}
 noise_fst_shifts <- plot_grid(pairwise_diffs_plot_rt, pairwise_diffs_plot_acc, 
@@ -463,7 +461,6 @@ p_ewma_noise <- d_ewma %>%
                                alpha = pt_alpha) +
   lims(y = c(0,1)) +
   guides(fill = F, alpha = F)+
-  #ggthemes::scale_fill_ptol() +
   scale_fill_brewer(palette="Dark2") +
   scale_x_discrete(expand = c(0,0.8), drop = FALSE) +
   facet_wrap(~age_code) +
@@ -495,27 +492,6 @@ p_ewma_noise
 
 ### HDDM parameter estimates
 
-```{r ridges plot hddm}
-p_hddm_noise <- d_hddm %>% 
-  filter(experiment %in% c("noise_gaze", "noise"),
-         condition %in% c("gaze_noise", "straight_ahead_clear",
-                          "clear", "noise")) %>%
-  mutate(condition = ifelse(str_detect(condition, "noise"), "noise", "clear"),
-         age_code = factor(age_code, levels = c("children", "adults"))) %>% 
-  ggplot(aes(x = param_value, y = param_name, fill = condition, 
-             alpha = age_code, linetype = age_code)) +
-  geom_density_ridges(scale = 0.8, rel_min_height = 0.005, size = 1) + 
-  labs(x = "Parameter value", y = NULL, color = "",
-       fill = "Condition:",
-       linetype = "Age group:") +
-  guides(alpha = F) +
-  scale_y_discrete(expand = c(0.2,0)) +
-  scale_alpha_manual(values = c(0.9, 0.6)) + 
-  ggthemes::scale_fill_ptol() 
-
-p_hddm_noise
-```
-
 ```{r dot plot hddm}
 p_hddm_noise <- d_hddm %>% 
   filter(experiment %in% c("noise_gaze", "noise"),
@@ -526,8 +502,8 @@ p_hddm_noise <- d_hddm %>%
          param_name = fct_rev(param_name)) %>% 
   group_by(param_name, condition, age_code) %>% 
   summarise(m = mean(param_value),
-            lower = quantile(param_value, probs = 0.05),
-            upper = quantile (param_value, probs = 0.95)) %>% 
+            lower = quantile(param_value, probs = 0.025),
+            upper = quantile (param_value, probs = 0.975)) %>% 
   ggplot(aes(x = condition, y = m, color = condition)) +
   geom_pointrange(aes(ymin = lower, ymax = upper), 
                   size = 1,
@@ -535,15 +511,13 @@ p_hddm_noise <- d_hddm %>%
                   position = position_dodge(width = .4)) +
   labs(y = "Parameter value", x = NULL, color = "Center stimulus: ") +
   guides(color = F)+
-  #ggthemes::scale_color_ptol() +
   scale_color_brewer(palette="Dark2") +
-  lims(y = c(0.2,2.2)) +
+  lims(y = c(0.2,2.3)) +
   facet_grid(age_code~param_name, scales = "free") +
   coord_flip() 
 
 p_hddm_noise
 ```
-
 
 ### Merge and save model plots
 
