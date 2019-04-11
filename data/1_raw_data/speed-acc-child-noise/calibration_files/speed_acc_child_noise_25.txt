@@ -1,0 +1,25 @@
+speed-acc-stimuli2	speed_acc_child_noise_25	00:00:00:000	Calibration	
+speed-acc-stimuli2	speed_acc_child_noise_25	00:00:26:082	Validation accuracy: LeftDevX = 0.2435 LeftDevY = 0.2539 RightDevX = 0.2439 RightDevY = 0.2178
+speed-acc-stimuli2	speed_acc_child_noise_25	00:00:27:946	Movie	mika_intro.avi
+speed-acc-stimuli2	speed_acc_child_noise_25	00:00:41:916	Composite	ol_sa_boat_noise_look
+speed-acc-stimuli2	speed_acc_child_noise_25	00:00:50:707	Composite	ol_sa_bunny_noise_look
+speed-acc-stimuli2	speed_acc_child_noise_25	00:00:58:985	Composite	ol_sa_shoe_noise_look
+speed-acc-stimuli2	speed_acc_child_noise_25	00:01:07:286	Composite	ol_sa_bunny_noise_hey
+speed-acc-stimuli2	speed_acc_child_noise_25	00:01:16:441	Composite	ol_sa_chicken_noise_hey
+speed-acc-stimuli2	speed_acc_child_noise_25	00:01:25:670	Composite	ol_sa_boat_noise_hey
+speed-acc-stimuli2	speed_acc_child_noise_25	00:01:34:323	Composite	ol_sa_bottle_noise_look
+speed-acc-stimuli2	speed_acc_child_noise_25	00:01:42:354	Composite	ol_sa_juice_noise_hey
+speed-acc-stimuli2	speed_acc_child_noise_25	00:01:50:226	Composite	ol_sa_juice_noise_hey
+speed-acc-stimuli2	speed_acc_child_noise_25	00:01:58:648	Composite	ol_sa_cookie_noise_look
+speed-acc-stimuli2	speed_acc_child_noise_25	00:02:06:814	Composite	ol_sa_shoe_noise_hey
+speed-acc-stimuli2	speed_acc_child_noise_25	00:02:15:148	Composite	ol_sa_bottle_noise_hey
+speed-acc-stimuli2	speed_acc_child_noise_25	00:02:24:306	Composite	ol_sa_cookie_noise_hey
+speed-acc-stimuli2	speed_acc_child_noise_25	00:02:33:224	Composite	ol_sa_chicken_noise_look
+speed-acc-stimuli2	speed_acc_child_noise_25	00:02:41:835	Composite	ol_sa_ball_noise_hey
+speed-acc-stimuli2	speed_acc_child_noise_25	00:02:49:932	Composite	ol_sa_ball_noise_look
+speed-acc-stimuli2	speed_acc_child_noise_25	00:02:58:832	Composite	great_job_ol
+speed-acc-stimuli2	speed_acc_child_noise_25	00:03:03:861	Composite	gr_sa_cookie_nonoise_hey
+speed-acc-stimuli2	speed_acc_child_noise_25	00:03:12:251	Composite	gr_sa_shoe_nonoise_hey
+speed-acc-stimuli2	speed_acc_child_noise_25	00:03:21:534	Composite	gr_sa_shoe_nonoise_hey
+speed-acc-stimuli2	speed_acc_child_noise_25	00:03:30:771	Composite	gr_sa_chicken_nonoise_hey
+speed-acc-stimuli2	speed_acc_child_noise_25	00:03:38:876	End - User terminated

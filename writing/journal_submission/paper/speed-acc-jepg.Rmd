@@ -49,7 +49,7 @@ bib <- knitcitations::read.bibtex(here::here("writing/journal_submission/paper/s
 ```{r analysis_preferences}
 knitr::opts_chunk$set(fig.pos = '!t', fig.width = 6, fig.asp=0.8, out.width = "90%", 
                       cache = T, fig.path='figs/', fig.align = 'center',
-                      echo=F, warning=F, cache=T, 
+                      echo=F, warning=F, cache=T, warning = F,
                       message=F, sanitize = T)
 set.seed(42)
 upper_bound_RT <- 2000
@@ -64,6 +64,7 @@ my_citations <- cite_r(file = "r-references.bib",
 # relevant paths
 stimuli_info_path <- "data/0b_trial_information/"
 filters_path <- "data/0b_trial_information/speed_acc_data_filters/"
+calib_path <- "data/3_final_merged_data/calibration/"
 data_path <- "data/3_final_merged_data/first_shifts/"
 ewma_path <- "data/3_final_merged_data/ewma_output/"
 hddm_path <- "data/3_final_merged_data/hddm_output/"
@@ -457,13 +458,13 @@ d_trio_hddm <- d_hddm %>% filter(experiment == "trio")
 ```
 
 ```{r trio hddm hypothesis test}
-boundary_asl <- d_trio_hddm %>% filter(param_name == "boundary", condition == "asl")
-boundary_face <- d_trio_hddm %>% filter(param_name == "boundary", condition == "face")
+boundary_asl <- d_trio_hddm %>% filter(param_name == "boundary", condition == "ASL")
+boundary_face <- d_trio_hddm %>% filter(param_name == "boundary", condition == "Face")
 p_hddm_boundary <- mean(boundary_face$param_value > boundary_asl$param_value)
 
 # drift
-drift_asl <- d_trio_hddm %>% filter(param_name == "drift", condition == "asl")
-drift_face <- d_trio_hddm %>% filter(param_name == "drift", condition == "face")
+drift_asl <- d_trio_hddm %>% filter(param_name == "drift", condition == "ASL")
+drift_face <- d_trio_hddm %>% filter(param_name == "drift", condition == "Face")
 p_hddm_drift <- mean(drift_face$param_value < drift_asl$param_value)
 
 # means and 95% HDI
@@ -481,9 +482,6 @@ ms.hddm_trio <- d_trio_hddm %>%
 ## Discussion
 
 There were several key findings from Study 1. First, focusing on only the spoken language learners, children were slower to shift gaze away from a speaker's face as compared to a static bullseye or a concrete familiar object. These gaze shifts, however, were more likely to land on the language-consistent object and more accurate overall, suggesting that fixating on the speaker supported language processing. Second, both behavioral and model-based analyses provided converging support that ASL learners were more sensitive to the value of delaying eye movements away from a language source. Compared to spoken language learners, ASL learners prioritized accuracy over speed (HDDM), produced more language-consistent shifts away from the center stimulus (EWMA and behavioral analyses). Importantly, we did not see evidence in the HDDM model fits that these accuracy differences could be explained by differential efficiency in processing the linguistic information. Instead, the pattern of results suggests that ASL learners increased their decision threshold to gather more information before shifting gaze away from the signer and to a named object.
-```{r}
-
-```
 
 We hypothesized that the Bullseye, Object, Face, and ASL contexts map onto a continuum of usefulness for language processing, ranging from least to most useful. In our data, we found that children tended to fixate longer on locations that were more language-relevant and in turn produced more accurate responses in these contexts. Moreover, we interpreted ASL learners' prioritization of accuracy above speed as an adaptive response. That is, to map referential language to the visual world in ASL involves competition for visual attention. When ASL learners choose to shift their gaze away from a signer, they are leaving an area that provides a great deal of useful information. Further, unlike children learning spoken languages, ASL learners cannot gather more of the linguistic signal if their gaze is directed away from a signer. Thus, it is reasonable that ASL learners would adapt the timing of their gaze shifts to gather additional information that increases certainty before seeking a named object.
 
@@ -645,7 +643,31 @@ ms_words_length <- d_word_lengths %>%
 
 ### Design and procedure
 
-Participants viewed the task on a screen while their gaze was tracked using an SMI RED corneal-reflection eye-tracker mounted on an LCD monitor, sampling at 30 Hz. The eye-tracker was first calibrated for each participant using a 6-point calibration. On each trial, participants saw two images of familiar objects on the screen for two seconds before the center stimulus appeared. Next, they processed the target sentence -- which consisted of a carrier phrase, a target noun, and a question -- followed by two seconds without language to allow for a response. Child participants saw 32 trials (16 noise trials; 16 clear trials) with several filler trials interspersed to maintain interest. Adult participants saw 64 trials (32 noise; 32 clear). The noise manipulation was presented in a blocked design with the order of block counterbalanced across participants.
+```{r noise analyze calibration, echo=F, message=FALSE, warning=FALSE, include = F}
+calib_data <- list.files(here(calib_path), full.names = T)
+d_calib <- calib_data %>% map_df(read_csv)
+d_calib <- d_noise_analysis %>% distinct(subid, age, age_category) %>% left_join(d_calib) 
+
+ss_calib <- d_calib %>% 
+  gather(key = "dev_type", value = "dev_value", left_dev_x:right_dev_y) %>% 
+  group_by(subid, age, age_category) %>% 
+  summarise(m_dev = mean(dev_value, na.rm = T))
+
+ms_calib <- ss_calib %>% 
+  group_by(age_category) %>% 
+  summarise(m = mean(m_dev, na.rm = T) %>% printnum(digits = 2),
+            std = sd(m_dev, na.rm = T) %>% printnum(digits = 2)) 
+
+mod_dev_age <- ss_calib %>% 
+  filter(age_category == "children") %>%
+  brms::brm(data = ., m_dev ~ scale(age), family = "gaussian")
+
+mod_dev_output <- broom::tidy(mod_dev_age) %>% mutate_if(is.numeric, papaja::printnum, digits = 2)
+```
+
+Participants viewed the task on a screen while their gaze was tracked using an SMI RED corneal-reflection eye-tracker mounted on an LCD monitor, sampling at 30 Hz. The eye-tracker was first calibrated for each participant using a 6-point calibration. The average validation accuracy after calibration was `r mean(ss_calib$m_dev, na.rm = T) %>% printnum()` degrees, with similar deviations for children ($M$ = `r ms_calib$m[1]`, $sd$ = `r ms_calib$std[1]`) and adults ($M$ = `r ms_calib$m[2]`, $sd$ = `r ms_calib$std[2]`), and little evidence for an effect of age within the child sample ($\beta_{age} =$ `r mod_dev_output$estimate[2]`, [`r mod_dev_output$lower[2]`, `r mod_dev_output$upper[2]`]).
+
+On each trial, participants saw two images of familiar objects on the screen for two seconds before the center stimulus appeared. Next, they processed the target sentence -- which consisted of a carrier phrase, a target noun, and a question -- followed by two seconds without language to allow for a response. Child participants saw 32 trials (16 noise trials; 16 clear trials) with several filler trials interspersed to maintain interest. Adult participants saw 64 trials (32 noise; 32 clear). The noise manipulation was presented in a blocked design with the order of block counterbalanced across participants.
 
 ## Results and Discussion
 

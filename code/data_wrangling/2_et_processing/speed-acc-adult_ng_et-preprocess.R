@@ -8,16 +8,16 @@
 ## Gaze and the signal-to-noise ratio of the language
 
 ## PRELIMINARIES
-source("../../helper_functions/libraries_and_functions.R")
+source(here::here("code/helper_functions/libraries_and_functions.R"))
 
-raw.data.path <- "../../../data/1_raw_data/speed-acc-adult-ng/"
-processed.data.path <- "../../../data/2_cleaned_data/"
+raw.data.path <- here::here("data/1_raw_data/speed-acc-adult-ng/et_files/")
+processed.data.path <- here::here("data/2_cleaned_data/")
 
 ## LOOP TO READ IN FILES
 all.data <- data.frame()
 files <- dir(raw.data.path,pattern="*.txt")
 
-for (file.name in files[10]) {
+for (file.name in files) {
   ## print file name, so if loop breaks, we know where
   print(file.name)
   
@@ -25,43 +25,20 @@ for (file.name in files[10]) {
   d <- read.smi.idf(paste(raw.data.path,file.name,sep=""))
   d <- preprocess.data(d, x.max = 1920, y.max= 1080, samp.rate = 30) 
   
-  ## now here's where data get bound togetherq
+  ## now here's where data get bound together
   all.data <- bind_rows(all.data, d)
 }
 
-## some diagnostic plots
-d_plot <- all.data %>%
-  filter(!is.na(x), !is.na(y)) %>%
-  mutate(x = ifelse(x < 1 | x > 1919, NA, x), 
-         y = ifelse(y < 1 | y > 1079, NA, y))
-
-stimulus_test_idx <- 20
-
-d_plot %>% 
-  filter(stimulus == stimulus[stimulus_test_idx]) %>% 
-  ggplot(aes(x = t.stim, y = x)) + 
-  geom_line(col = "darkgrey") + 
-  geom_point(alpha = .3) + 
-  ylim(c(0,1920)) + 
-  geom_hline(yintercept = 1920/2, lty = 2) +
-  facet_wrap(~subid) 
-
-d_plot %>% 
-  filter(stimulus == stimulus[stimulus_test_idx]) %>% 
-  ggplot(aes(x = x, y = y)) + 
-  geom_line(col = "darkgrey") + 
-  geom_point(alpha = .3) + 
-  xlim(c(0,1920)) + 
-  ylim(c(0,1080)) +
-  theme(legend.position = "top") +
-  facet_wrap(~subid) 
-
-# check how many unique trial labels we have for each participant
-all.data %>% 
-  mutate(subid = str_trim(subid)) %>% 
-  group_by(subid) %>% 
-  summarise(n = length(unique(stimulus))) %>% 
-  kable()
-
 ## WRITE DATA OUT TO ZIPPED CSV FOR EASY ACCESS AND SMALL FILE SIZE
 write_csv(all.data, path=paste0(processed.data.path, "speed_acc_processed_adult_ng_data.csv.gz"))
+
+## READ CALIBRATION INFORMATION AND SAVE TO DISK
+calibration_path <- "data/1_raw_data/speed-acc-adult-ng/calibration_files"
+calib_files <- list.files(here::here(calibration_path)) %>% here::here(calibration_path, .)
+calib_col_names = c("order", "subid", "timestamp", "calibration_info")
+
+d_calib <- calib_files %>% 
+  map_df(read_calib_file, skip = 1, n_max = 1, 
+         col_types = "cccc", col_names = calib_col_names)
+
+write_csv(d_calib, here::here("data/3_final_merged_data/calibration/speed-acc-adult-ng-calibration.csv"))

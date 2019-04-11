@@ -9,6 +9,16 @@
 \section{Parallel set of non-Bayesian
 analyses}\label{parallel-set-of-non-bayesian-analyses}}
 
+E1: - RT: stan\_glmer(log\_rt \textasciitilde{} stimuli + scale(Months)
++ (1 \textbar{} Sub.Num) + (1 \textbar{} clean\_target\_img), - ACC:
+stan\_glmer(correct \textasciitilde{} stimuli + scale(Months) + (1
+\textbar{} Sub.Num) + (1 \textbar{} clean\_target\_img), - EWMA:
+stan\_glmer(guess\_num \textasciitilde{} stimuli + scale(months) +
+(1\textbar{}subid) + (1\textbar{}clean\_target\_img), - HDDM:
+stan\_lm(param\_est \textasciitilde{} stimuli)
+
+E2: - RT: - ACC: - EWMA: - HDDM:
+
 \hypertarget{full-output-for-analysis-models-in-experiment-1}{%
 \section{Full output for analysis models in Experiment
 1}\label{full-output-for-analysis-models-in-experiment-1}}

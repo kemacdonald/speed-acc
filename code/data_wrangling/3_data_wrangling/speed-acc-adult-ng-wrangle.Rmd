@@ -6,7 +6,7 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo=T, warning=F, cache=F, message=F, sanitize = T)
-source(here::here("R/helper_functions/libraries_and_functions.R"))
+source(here::here("code/helper_functions/libraries_and_functions.R"))
 filter_path <- 'data/0b_trial_information/speed_acc_data_filters/'
 ```
 

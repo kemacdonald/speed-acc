@@ -2,7 +2,7 @@
 #### and returns an order sheet with the target images, ROIs, and trial tag
 
 ######## Load libraries
-source("../../helper_functions/libraries_and_functions.R")
+source(here::here("code/helper_functions/libraries_and_functions.R"))
 
 ######## Define global variables
 read.path <- "../../../data/0b_trial_information/speed_acc_child_gaze_xml/"

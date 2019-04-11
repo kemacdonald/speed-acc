@@ -15,12 +15,26 @@ library(rstanarm);
 # load tidyverse last, so no functions get masked
 library(tidyverse); 
 
-# set ggplot theme
-#theme_set(
-  #ggthemes::theme_few() #+
-  #theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
-#)
-
+# process calibration file
+# takes a .txt calibration file
+# returns a data frame with the subid and deviation values for each eye (lr) and dimension (xy)
+read_calib_file <- function(file_path, skip, n_max, col_types, col_names) {
+  d_calib <-read_tsv(file_path, skip = skip, n_max = n_max, 
+                     col_types = col_types, col_names = col_names) %>% 
+    select(subid, calibration_info)
+  
+  calib_str <- d_calib$calibration_info %>% str_split(., pattern = " ", simplify = T)
+  
+  calib_info <- tibble (
+    left_dev_x = calib_str[5],
+    left_dev_y = calib_str[8],
+    right_dev_x = calib_str[11],
+    right_dev_y = calib_str[14],
+  )
+  
+  d_calib %>% bind_cols(calib_info) %>% select(-calibration_info)
+  
+}
 
 # make function to convert logit back to probability 
 logit_to_prob <- function(logit) {

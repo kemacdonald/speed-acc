@@ -14,3 +14,4 @@ experiments/
 *.icloud
 hddm/
 .ipynb_checkpoints/
+deprecated_local/

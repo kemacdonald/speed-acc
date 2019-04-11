@@ -8,12 +8,9 @@
 ## Gaze and the signal-to-noise ratio of the language
 
 ## PRELIMINARIES
-library(readr); library(magrittr); library(pryr); library(stringr); 
-source("../../helper_functions/libraries_and_functions.R")
-library(tidyverse)
-
-raw.data.path <- "../../../data/1_raw_data/speed-acc-child-noise/"
-processed.data.path <- "../../../data/2_cleaned_data/"
+source(here::here("code/helper_functions/libraries_and_functions.R"))
+raw.data.path <- here::here("data/1_raw_data/speed-acc-child-noise/et_files/")
+processed.data.path <- here::here("data/2_cleaned_data/")
 
 ## LOOP TO READ IN FILES
 all.data <- data.frame()
@@ -33,3 +30,15 @@ for (file.name in files) {
 
 ## WRITE DATA OUT TO ZIPPED CSV FOR EASY ACCESS AND SMALL FILE SIZE
 write_csv(all.data, path=paste0(processed.data.path, "speed_acc_processed_child_noise.csv.gz"))
+
+
+## READ CALIBRATION INFORMATION AND SAVE TO DISK
+calibration_path <- "data/1_raw_data/speed-acc-child-noise/calibration_files"
+calib_files <- list.files(here::here(calibration_path)) %>% here::here(calibration_path, .)
+calib_col_names = c("order", "subid", "timestamp", "calibration_info")
+
+d_calib <- calib_files %>% 
+  map_df(read_calib_file, skip = 1, n_max = 1, 
+         col_types = "cccc", col_names = calib_col_names)
+
+write_csv(d_calib, here::here("data/3_final_merged_data/calibration/speed-acc-child-noise-calibration.csv"))

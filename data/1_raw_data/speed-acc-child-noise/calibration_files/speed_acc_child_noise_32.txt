@@ -1,0 +1,15 @@
+speed-acc-stimuli1	speed_acc_child_noise_32	00:00:00:000	Calibration	
+speed-acc-stimuli1	speed_acc_child_noise_32	00:00:21:906	Validation accuracy: LeftDevX = 0.4157 LeftDevY = 0.3929 RightDevX = 0.4576 RightDevY = 0.3516
+speed-acc-stimuli1	speed_acc_child_noise_32	00:00:23:790	Movie	mika_intro.avi
+speed-acc-stimuli1	speed_acc_child_noise_32	00:00:38:022	Composite	gr_sa_cookie_nonoise_hey
+speed-acc-stimuli1	speed_acc_child_noise_32	00:00:46:415	Composite	gr_sa_juice_nonoise_hey
+speed-acc-stimuli1	speed_acc_child_noise_32	00:00:55:473	Composite	gr_sa_shoe_nonoise_look
+speed-acc-stimuli1	speed_acc_child_noise_32	00:01:03:719	Composite	gr_sa_bottle_nonoise_look
+speed-acc-stimuli1	speed_acc_child_noise_32	00:01:12:185	Composite	gr_sa_juice_nonoise_look
+speed-acc-stimuli1	speed_acc_child_noise_32	00:01:20:568	Composite	gr_sa_boat_nonoise_look
+speed-acc-stimuli1	speed_acc_child_noise_32	00:01:28:678	Composite	gr_sa_chicken_nonoise_look
+speed-acc-stimuli1	speed_acc_child_noise_32	00:01:37:216	Composite	gr_sa_bottle_nonoise_look
+speed-acc-stimuli1	speed_acc_child_noise_32	00:01:45:675	Composite	gr_sa_cookie_nonoise_hey
+speed-acc-stimuli1	speed_acc_child_noise_32	00:01:54:199	Composite	gr_sa_bunny_nonoise_look
+speed-acc-stimuli1	speed_acc_child_noise_32	00:02:02:427	Composite	gr_sa_bunny_nonoise_hey
+speed-acc-stimuli1	speed_acc_child_noise_32	00:02:05:149	End - User terminated

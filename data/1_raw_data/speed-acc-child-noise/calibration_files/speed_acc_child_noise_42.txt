@@ -1,0 +1,39 @@
+speed-acc-stimuli2	speed_acc_child_noise_42	00:00:00:000	Calibration	
+speed-acc-stimuli2	speed_acc_child_noise_42	00:00:22:412	Validation accuracy: LeftDevX = 0.1970 LeftDevY = 0.4330 RightDevX = 0.1990 RightDevY = 0.5238
+speed-acc-stimuli2	speed_acc_child_noise_42	00:00:24:364	Movie	mika_intro.avi
+speed-acc-stimuli2	speed_acc_child_noise_42	00:00:38:966	Composite	ol_sa_boat_noise_hey
+speed-acc-stimuli2	speed_acc_child_noise_42	00:00:47:608	Composite	ol_sa_juice_noise_hey
+speed-acc-stimuli2	speed_acc_child_noise_42	00:00:55:521	Composite	ol_sa_cookie_noise_hey
+speed-acc-stimuli2	speed_acc_child_noise_42	00:01:04:439	Composite	ol_sa_boat_noise_look
+speed-acc-stimuli2	speed_acc_child_noise_42	00:01:13:212	Composite	ol_sa_ball_noise_hey
+speed-acc-stimuli2	speed_acc_child_noise_42	00:01:21:312	Composite	ol_sa_ball_noise_look
+speed-acc-stimuli2	speed_acc_child_noise_42	00:01:30:169	Composite	ol_sa_shoe_noise_hey
+speed-acc-stimuli2	speed_acc_child_noise_42	00:01:38:482	Composite	ol_sa_bunny_noise_look
+speed-acc-stimuli2	speed_acc_child_noise_42	00:01:46:718	Composite	ol_sa_cookie_noise_look
+speed-acc-stimuli2	speed_acc_child_noise_42	00:01:54:876	Composite	ol_sa_chicken_noise_look
+speed-acc-stimuli2	speed_acc_child_noise_42	00:02:03:476	Composite	ol_sa_chicken_noise_hey
+speed-acc-stimuli2	speed_acc_child_noise_42	00:02:12:697	Composite	ol_sa_shoe_noise_look
+speed-acc-stimuli2	speed_acc_child_noise_42	00:02:20:966	Composite	ol_sa_juice_noise_hey
+speed-acc-stimuli2	speed_acc_child_noise_42	00:02:29:367	Composite	ol_sa_bottle_noise_look
+speed-acc-stimuli2	speed_acc_child_noise_42	00:02:37:408	Composite	ol_sa_bottle_noise_hey
+speed-acc-stimuli2	speed_acc_child_noise_42	00:02:46:566	Composite	ol_sa_bunny_noise_hey
+speed-acc-stimuli2	speed_acc_child_noise_42	00:02:55:600	Composite	great_job_ol
+speed-acc-stimuli2	speed_acc_child_noise_42	00:03:00:533	Composite	gr_sa_cookie_nonoise_hey
+speed-acc-stimuli2	speed_acc_child_noise_42	00:03:08:901	Composite	gr_sa_bottle_nonoise_look
+speed-acc-stimuli2	speed_acc_child_noise_42	00:03:17:333	Composite	gr_sa_cookie_nonoise_look
+speed-acc-stimuli2	speed_acc_child_noise_42	00:03:26:155	Composite	gr_sa_ball_nonoise_look
+speed-acc-stimuli2	speed_acc_child_noise_42	00:03:35:474	Composite	gr_sa_juice_nonoise_hey
+speed-acc-stimuli2	speed_acc_child_noise_42	00:03:44:563	Composite	gr_sa_boat_nonoise_hey
+speed-acc-stimuli2	speed_acc_child_noise_42	00:03:53:130	Composite	gr_sa_shoe_nonoise_hey
+speed-acc-stimuli2	speed_acc_child_noise_42	00:04:02:419	Composite	gr_sa_ball_nonoise_look
+speed-acc-stimuli2	speed_acc_child_noise_42	00:04:11:794	Composite	gr_sa_chicken_nonoise_hey
+speed-acc-stimuli2	speed_acc_child_noise_42	00:04:20:168	Composite	gr_sa_chicken_nonoise_hey
+speed-acc-stimuli2	speed_acc_child_noise_42	00:04:28:589	Composite	gr_sa_bunny_nonoise_look
+speed-acc-stimuli2	speed_acc_child_noise_42	00:04:36:829	Composite	gr_sa_bottle_nonoise_look
+speed-acc-stimuli2	speed_acc_child_noise_42	00:04:45:294	Composite	gr_sa_juice_nonoise_look
+speed-acc-stimuli2	speed_acc_child_noise_42	00:04:53:769	Composite	gr_sa_shoe_nonoise_hey
+speed-acc-stimuli2	speed_acc_child_noise_42	00:05:03:019	Composite	gr_sa_bunny_nonoise_look
+speed-acc-stimuli2	speed_acc_child_noise_42	00:05:11:229	Composite	gr_sa_boat_nonoise_hey
+speed-acc-stimuli2	speed_acc_child_noise_42	00:05:19:784	Composite	all_done_gr
+speed-acc-stimuli2	speed_acc_child_noise_42	00:05:23:906	Movie	elmo_quiet_curtains.avi
+speed-acc-stimuli2	speed_acc_child_noise_42	00:05:50:778	End of Experiment

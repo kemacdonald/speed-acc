@@ -211,7 +211,7 @@ Bullseye & 16.0 & 26.1 (26, 27) & 22.3 (12, 29)\\
 \end{center}
 \end{table}
 
-Table 1 contains details about the age distributions and sample sizes for children in all four studies. After excluding trials for inattention or parental interfence, children contributed on average 22.71 trials to the analysis (min = 6, max = 32).
+Table 1 contains details about the age distributions and sample sizes for children in all four studies. After excluding trials for inattention or parental interference, children contributed on average 22.71 trials to the analysis (min = 6, max = 32).
 
 \emph{Spoken English samples.} Participants were 80 native, monolingual English-learning children divided across three samples with no reported history of developmental or language delay.
 
@@ -323,7 +323,9 @@ Participants were native, monolingual English-learning children (\(n=\) 39; 22 F
 \hypertarget{design-and-procedure-1}{%
 \subsubsection{Design and procedure}\label{design-and-procedure-1}}
 
-Participants viewed the task on a screen while their gaze was tracked using an SMI RED corneal-reflection eye-tracker mounted on an LCD monitor, sampling at 30 Hz. The eye-tracker was first calibrated for each participant using a 6-point calibration. On each trial, participants saw two images of familiar objects on the screen for two seconds before the center stimulus appeared. Next, they processed the target sentence -- which consisted of a carrier phrase, a target noun, and a question -- followed by two seconds without language to allow for a response. Child participants saw 32 trials (16 noise trials; 16 clear trials) with several filler trials interspersed to maintain interest. Adult participants saw 64 trials (32 noise; 32 clear). The noise manipulation was presented in a blocked design with the order of block counterbalanced across participants.
+Participants viewed the task on a screen while their gaze was tracked using an SMI RED corneal-reflection eye-tracker mounted on an LCD monitor, sampling at 30 Hz. The eye-tracker was first calibrated for each participant using a 6-point calibration. The average cvalidation accuracy for calibration was 0.39 degrees, with similar deviations for children (\(M\) = 0.38, \(sd\) = 0.21) and adults (\(M\) = 0.39, \(sd\) = 0.14), and little evidence for an effect of age within the child sample (\(\beta_{age} =\) -0.03, {[}-0.09, 0.03{]}).
+
+On each trial, participants saw two images of familiar objects on the screen for two seconds before the center stimulus appeared. Next, they processed the target sentence -- which consisted of a carrier phrase, a target noun, and a question -- followed by two seconds without language to allow for a response. Child participants saw 32 trials (16 noise trials; 16 clear trials) with several filler trials interspersed to maintain interest. Adult participants saw 64 trials (32 noise; 32 clear). The noise manipulation was presented in a blocked design with the order of block counterbalanced across participants.
 
 \hypertarget{results-and-discussion}{%
 \subsection{Results and Discussion}\label{results-and-discussion}}
@@ -592,6 +594,16 @@ Zangl, R., \& Fernald, A. (2007). Increasing flexibility in children's online pr
 \hypertarget{parallel-set-of-non-bayesian-analyses}{%
 \section{Parallel set of non-Bayesian
 analyses}\label{parallel-set-of-non-bayesian-analyses}}
+
+E1: - RT: stan\_glmer(log\_rt \textasciitilde{} stimuli + scale(Months)
++ (1 \textbar{} Sub.Num) + (1 \textbar{} clean\_target\_img), - ACC:
+stan\_glmer(correct \textasciitilde{} stimuli + scale(Months) + (1
+\textbar{} Sub.Num) + (1 \textbar{} clean\_target\_img), - EWMA:
+stan\_glmer(guess\_num \textasciitilde{} stimuli + scale(months) +
+(1\textbar{}subid) + (1\textbar{}clean\_target\_img), - HDDM:
+stan\_lm(param\_est \textasciitilde{} stimuli)
+
+E2: - RT: - ACC: - EWMA: - HDDM:
 
 \hypertarget{full-output-for-analysis-models-in-experiment-1}{%
 \section{Full output for analysis models in Experiment

@@ -1,0 +1,11 @@
+speed-acc-stimuli2	speed_acc_child_noise_23	00:00:00:000	Calibration	
+speed-acc-stimuli2	speed_acc_child_noise_23	00:00:30:490	Validation accuracy: LeftDevX = 4.5505 LeftDevY = 1.6698 RightDevX = 0.4437 RightDevY = 0.4994
+speed-acc-stimuli2	speed_acc_child_noise_23	00:00:32:256	Movie	mika_intro.avi
+speed-acc-stimuli2	speed_acc_child_noise_23	00:00:46:197	Composite	ol_sa_bottle_noise_hey
+speed-acc-stimuli2	speed_acc_child_noise_23	00:00:55:343	Composite	ol_sa_juice_noise_hey
+speed-acc-stimuli2	speed_acc_child_noise_23	00:01:03:724	Composite	ol_sa_cookie_noise_hey
+speed-acc-stimuli2	speed_acc_child_noise_23	00:01:12:660	Composite	ol_sa_bunny_noise_hey
+speed-acc-stimuli2	speed_acc_child_noise_23	00:01:21:810	Composite	ol_sa_chicken_noise_look
+speed-acc-stimuli2	speed_acc_child_noise_23	00:01:30:426	Composite	ol_sa_ball_noise_hey
+speed-acc-stimuli2	speed_acc_child_noise_23	00:01:38:543	Composite	ol_sa_cookie_noise_look
+speed-acc-stimuli2	speed_acc_child_noise_23	00:01:41:772	End - User terminated
