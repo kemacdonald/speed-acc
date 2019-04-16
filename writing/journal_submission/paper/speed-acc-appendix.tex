@@ -9,19 +9,82 @@
 \section{Parallel set of non-Bayesian
 analyses}\label{parallel-set-of-non-bayesian-analyses}}
 
-E1: - RT: stan\_glmer(log\_rt \textasciitilde{} stimuli + scale(Months)
-+ (1 \textbar{} Sub.Num) + (1 \textbar{} clean\_target\_img), - ACC:
-stan\_glmer(correct \textasciitilde{} stimuli + scale(Months) + (1
-\textbar{} Sub.Num) + (1 \textbar{} clean\_target\_img), - EWMA:
-stan\_glmer(guess\_num \textasciitilde{} stimuli + scale(months) +
-(1\textbar{}subid) + (1\textbar{}clean\_target\_img), - HDDM:
-stan\_lm(param\_est \textasciitilde{} stimuli)
+\(p\) values for each coefficient were computed via the Satterthwaite
+approximation using the \texttt{lmerTest} R package (Kuznetsova,
+Brockhoff, \& Christensen, 2017).
 
-E2: - RT: - ACC: - EWMA: - HDDM:
+\hypertarget{experiment-1}{%
+\subsection{Experiment 1}\label{experiment-1}}
 
-\hypertarget{full-output-for-analysis-models-in-experiment-1}{%
-\section{Full output for analysis models in Experiment
-1}\label{full-output-for-analysis-models-in-experiment-1}}
+\begin{table}[h]
+\begin{center}
+\begin{threeparttable}
+\caption{\label{tab:mle rt  trio}Output of the MLE model predicting log reaction time as a function of center stimulus type in Experiment 1.}
+\begin{tabular}{llllll}
+\toprule
+term & \multicolumn{1}{c}{estimate} & \multicolumn{1}{c}{std.error} & \multicolumn{1}{c}{statistic} & \multicolumn{1}{c}{df} & \multicolumn{1}{c}{p.value}\\
+\midrule
+Intercept (ASL) & 6.96 & 0.08 & 91.84 & 62.58 & p < .001\\
+Face & -0.37 & 0.11 & -3.32 & 84.45 & p < .01\\
+Object & -1.12 & 0.10 & -11.13 & 79.76 & p < .001\\
+Bullseye & -1.30 & 0.13 & -10.04 & 97.77 & p < .001\\
+scale(Months) & -0.01 & 0.04 & -0.18 & 75.55 & 0.86\\
+\bottomrule
+\end{tabular}
+\end{threeparttable}
+\end{center}
+\end{table}
+
+\begin{table}[h]
+\begin{center}
+\begin{threeparttable}
+\caption{\label{tab:mle acc trio}Output of the MLE model predicting accuracy as a function of center stimulus type in Experiment 1.}
+\begin{tabular}{lllll}
+\toprule
+term & \multicolumn{1}{c}{estimate} & \multicolumn{1}{c}{std.error} & \multicolumn{1}{c}{statistic} & \multicolumn{1}{c}{p.value}\\
+\midrule
+Intercept (ASL) & 1.07 & 0.14 & 7.66 & p < .001\\
+Face & -0.64 & 0.20 & -3.19 & p < .01\\
+Object & -1.14 & 0.19 & -6.16 & p < .001\\
+Bullseye & -1.15 & 0.22 & -5.26 & p < .001\\
+\bottomrule
+\end{tabular}
+\end{threeparttable}
+\end{center}
+\end{table}
+
+\begin{table}[h]
+\begin{center}
+\begin{threeparttable}
+\caption{\label{tab:mle ewma trio prop lang}Output of the MLE model estimating the difference in random responding in the EWMA as a function of center stimulus type in Experiment 1.}
+\begin{tabular}{lllll}
+\toprule
+term & \multicolumn{1}{c}{estimate} & \multicolumn{1}{c}{std.error} & \multicolumn{1}{c}{statistic} & \multicolumn{1}{c}{p.value}\\
+\midrule
+Intercept (ASL) & 1.73 & 0.21 & 8.31 & p < .001\\
+Face & -1.80 & 0.29 & -6.26 & p < .001\\
+\bottomrule
+\end{tabular}
+\end{threeparttable}
+\end{center}
+\end{table}
+
+\hypertarget{experiment-2}{%
+\subsection{Experiment 2}\label{experiment-2}}
+
+\begin{itemize}
+\tightlist
+\item
+  RT:
+\item
+  ACC:
+\item
+  EWMA:
+\end{itemize}
+
+\hypertarget{full-output-for-bayesian-data-analysis-models-in-experiment-1}{%
+\section{Full output for Bayesian data analysis models in Experiment
+1}\label{full-output-for-bayesian-data-analysis-models-in-experiment-1}}
 
 \begin{table}[h]
 \begin{center}
@@ -145,9 +208,9 @@ Drift & ASL & 0.63 & [0.44, 0.82]\\
 \end{center}
 \end{table}
 
-\hypertarget{full-output-for-analysis-models-in-experiment-2}{%
-\section{Full output for analysis models in Experiment
-2}\label{full-output-for-analysis-models-in-experiment-2}}
+\hypertarget{full-output-for-bayesian-data-analysis-models-in-experiment-2}{%
+\section{Full output for Bayesian data analysis models in Experiment
+2}\label{full-output-for-bayesian-data-analysis-models-in-experiment-2}}
 
 \begin{table}[h]
 \begin{center}
@@ -220,4 +283,10 @@ Boundary & Adults & 1.78 & [1.53, 2.05]\\
 \end{threeparttable}
 \end{center}
 \end{table}
+
+\hypertarget{refs}{}
+\leavevmode\hypertarget{ref-kuznetsova2017lmertest}{}%
+Kuznetsova, A., Brockhoff, P. B., \& Christensen, R. H. B. (2017).
+LmerTest package: Tests in linear mixed effects models. \emph{Journal of
+Statistical Software}, \emph{82}(13).
 \end{appendix}

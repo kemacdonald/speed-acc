@@ -40,7 +40,7 @@ appendix          : "speed-acc-appendix.Rmd"
 ---
 
 ```{r load_packages, include = FALSE}
-library(papaja)
+library(papaja); library(lmerTest)
 source(here::here("code/helper_functions/paper_helpers.R"))
 source(here::here("code/helper_functions/ewma_helper_funs.R"))
 bib <- knitcitations::read.bibtex(here::here("writing/journal_submission/paper/speed-acc.bib"))
@@ -73,6 +73,10 @@ image_path <- "writing/journal_submission/figures/figs_output/"
 ```
 
 ```{r read hddm and bda data}
+# read ewma output 
+trio_ewma <- c("speed_acc_kids_trio_ewma_results.csv")
+d_ewma_trio <- trio_ewma %>% purrr::map_df(read_ewma, path = here::here(ewma_path))
+
 # read hddm output
 d_hddm <- read_csv(here::here(hddm_path, "hddm_tidy.csv"))
 
@@ -449,12 +453,12 @@ ms_guess_trio_contrast <- d_models_trio$ewma_guess_trio %>%
   mutate_if(.predicate = is.numeric, .funs = round, digits = 2) 
 ```
 
-*EWMA.* Our third question of interest was how the tendency to generate random vs. language-driven gaze shifts evolved as a function of reaction time across the different processing contexts. Figure\ \ref{fig:trio-model-plot}A shows changes in the control statistic (CS) and the upper control limit (UCL) as a function of RT. Each CS starts at chance performance and below the UCL. In the ASL and Face tasks, the CS value begins to increase with RTs around 0.7 seconds after noun onset and eventually crosses the UCL, indicating that responses > 0.7 sec were on average above chance levels. In contrast, the CS in the Object and Bullseye tasks never crossed the UCL, indicating that children's shifts were equally likely to land on the target or the distracter, regardless of when they were initiated. This result suggests that first shifts measured in the Bullseye/Object tasks were qualitatively different behaviors than those in the ASL and Face contexts. That is, these shifts are likely the result of a different generative process such as gathering more information about the referents in the visual world.
+*EWMA.* Our third question of interest was how the tendency to generate random vs. language-driven gaze shifts evolved as a function of reaction time across the different processing contexts. Figure\ \ref{fig:trio-model-plot}A shows changes in the control statistic (CS) and the upper control limit (UCL) as a function of RT. Each CS starts at chance performance and below the UCL. In the ASL and Face tasks, the CS value begins to increase with RTs around 0.8 seconds after noun onset and eventually crosses the UCL, indicating that responses > 0.8 sec were on average above chance levels. In contrast, the CS in the Object and Bullseye tasks never crossed the UCL, indicating that children's shifts were equally likely to land on the target or the distracter, regardless of when they were initiated. This result suggests that first shifts measured in the Bullseye/Object tasks were qualitatively different behaviors than those in the ASL and Face contexts. That is, these shifts are likely the result of a different generative process such as gathering more information about the referents in the visual world.
 
-Next, we compared the EWMA model fits for participants in the ASL and Face processing contexts since these groups showed evidence of language-driven responding. We found that ASL learners generated fewer shifts when the CS was below the UCL compared to children learning spoken language ($\beta$ = `r ms_guess_trio_contrast$MAP[1]`, 95% HDI [`r ms_guess_trio_contrast$hdi_lower[1]`, `r ms_guess_trio_contrast$hdi_upper[1]`]). This result indicates that ASL-learners were more likely to have gathered sufficient information about the linguistic signal prior to shifting gaze away from the language source. We found some evidence that ASL learners started producing language-driven shifts earlier in the RT distribution as indicated by the point at which the CS crossed the UCL ($\beta$ = `r ms_cuts_trio_contrast$MAP[1]` sec, 95% HDI [`r ms_cuts_trio_contrast$hdi_lower[1]`, `r ms_cuts_trio_contrast$hdi_upper[1]`]), indicating that these children were less likely to generate early, random gaze shifts away from the signer.
+Next, we compared the EWMA model fits for participants in the ASL and Face processing contexts since these groups showed evidence of language-driven responding. We found that ASL learners generated fewer shifts when the CS was below the UCL compared to children learning spoken language ($\beta$ = `r ms_guess_trio_contrast$MAP[1]`, 95% HDI [`r ms_guess_trio_contrast$hdi_lower[1]`, `r ms_guess_trio_contrast$hdi_upper[1]`]). This result indicates that ASL-learners were more likely to have gathered sufficient information about the linguistic signal prior to shifting gaze away from the language source.
 
 ```{r trio read and munge hddm params}
-d_trio_hddm <- d_hddm %>% filter(experiment == "trio")
+d_trio_hddm <- d_hddm %>% filter(experiment == "trio", age_code == "children")
 ```
 
 ```{r trio hddm hypothesis test}
@@ -643,7 +647,7 @@ ms_words_length <- d_word_lengths %>%
 
 ### Design and procedure
 
-```{r noise analyze calibration, echo=F, message=FALSE, warning=FALSE, include = F}
+```{r noise analyze calibration, message=FALSE, warning=FALSE, include=FALSE}
 calib_data <- list.files(here(calib_path), full.names = T)
 d_calib <- calib_data %>% map_df(read_csv)
 d_calib <- d_noise_analysis %>% distinct(subid, age, age_category) %>% left_join(d_calib) 

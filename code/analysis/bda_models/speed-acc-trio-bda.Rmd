@@ -9,8 +9,8 @@ This document contains the codebase for the bayesian data analysis in Experiment
 
 ```{r set global_options, include=FALSE}
 library(here); library(tidybayes)
-source(here::here("R/helper_functions/libraries_and_functions.R"))
-source(here::here("R/helper_functions/ewma_helper_funs.R"))
+source(here::here("code/helper_functions/libraries_and_functions.R"))
+source(here::here("code/helper_functions/ewma_helper_funs.R"))
 
 data_path <- "data/3_final_merged_data/first_shifts/"
 ewma_path <- "data/3_final_merged_data/ewma_output/"
@@ -182,12 +182,13 @@ d_ewma_trio <- trio_ewma %>% purrr::map_df(read_ewma, path = ewma_path)
 
 ### Cutoff points
 
-```{r}
-# Aggregate cutoffs for each participant
+Get cutoff point for each participant.
+
+```{r get cutoff points}
 ss_cutoffs <- d_ewma_trio %>% 
   filter(guess == "response") %>% 
-  group_by(stimuli, subid, months) %>% 
-  summarise_(cutoff = interp(~ min(x), x = as.name("rt")))
+  group_by(stimuli, subid, age_code) %>% 
+  summarise(cutoff = min(rt)) 
 ```
 
 ```{r}

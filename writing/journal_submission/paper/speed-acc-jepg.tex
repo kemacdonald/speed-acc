@@ -281,9 +281,9 @@ Based on a nonparametric cluster-based permutation analysis, the ASL learners' c
 \caption{Results for the model-based analyses in Experiment 1. Panel A shows a control chart representing the timecourse of the EWMA statistic. The black curve represents the evolution of the control statistic (CS) as a function of reaction time. The grey curve represents the upper control limit (UCL) or the pre-defined upper limit on random responding. The vertical dashed line is the median cutoff value (point in the RT distribution when children's gaze shifts were no longer random). The grey shaded area represents the 95\% Highest Density Interval around the estimate of the median cutoff point, and the shaded ribbons represent the classification of responses as guesses (red, below the UCL) and language-driven (green, above the UCL). Panel B shows a summary of the proportion of shifts that were categorized as language-driven for the Face and ASL processing contexts. Panel C shows the point estimate and 95\% Highest Density Intervals for the boundary and drift rate parameters for the Face and ASL contexts.}\label{fig:trio-model-plot}
 \end{figure}
 
-\emph{EWMA.} Our third question of interest was how the tendency to generate random vs.~language-driven gaze shifts evolved as a function of reaction time across the different processing contexts. Figure~\ref{fig:trio-model-plot}A shows changes in the control statistic (CS) and the upper control limit (UCL) as a function of RT. Each CS starts at chance performance and below the UCL. In the ASL and Face tasks, the CS value begins to increase with RTs around 0.7 seconds after noun onset and eventually crosses the UCL, indicating that responses \textgreater{} 0.7 sec were on average above chance levels. In contrast, the CS in the Object and Bullseye tasks never crossed the UCL, indicating that children's shifts were equally likely to land on the target or the distracter, regardless of when they were initiated. This result suggests that first shifts measured in the Bullseye/Object tasks were qualitatively different behaviors than those in the ASL and Face contexts. That is, these shifts are likely the result of a different generative process such as gathering more information about the referents in the visual world.
+\emph{EWMA.} Our third question of interest was how the tendency to generate random vs.~language-driven gaze shifts evolved as a function of reaction time across the different processing contexts. Figure~\ref{fig:trio-model-plot}A shows changes in the control statistic (CS) and the upper control limit (UCL) as a function of RT. Each CS starts at chance performance and below the UCL. In the ASL and Face tasks, the CS value begins to increase with RTs around 0.8 seconds after noun onset and eventually crosses the UCL, indicating that responses \textgreater{} 0.8 sec were on average above chance levels. In contrast, the CS in the Object and Bullseye tasks never crossed the UCL, indicating that children's shifts were equally likely to land on the target or the distracter, regardless of when they were initiated. This result suggests that first shifts measured in the Bullseye/Object tasks were qualitatively different behaviors than those in the ASL and Face contexts. That is, these shifts are likely the result of a different generative process such as gathering more information about the referents in the visual world.
 
-Next, we compared the EWMA model fits for participants in the ASL and Face processing contexts since these groups showed evidence of language-driven responding. We found that ASL learners generated fewer shifts when the CS was below the UCL compared to children learning spoken language (\(\beta\) = 0.14, 95\% HDI {[}0.08, 0.23{]}). This result indicates that ASL-learners were more likely to have gathered sufficient information about the linguistic signal prior to shifting gaze away from the language source. We found some evidence that ASL learners started producing language-driven shifts earlier in the RT distribution as indicated by the point at which the CS crossed the UCL (\(\beta\) = 0.22 sec, 95\% HDI {[}0.05, 0.39{]}), indicating that these children were less likely to generate early, random gaze shifts away from the signer.
+Next, we compared the EWMA model fits for participants in the ASL and Face processing contexts since these groups showed evidence of language-driven responding. We found that ASL learners generated fewer shifts when the CS was below the UCL compared to children learning spoken language (\(\beta\) = 0.14, 95\% HDI {[}0.08, 0.23{]}). This result indicates that ASL-learners were more likely to have gathered sufficient information about the linguistic signal prior to shifting gaze away from the language source.
 
 \emph{HDDM.} We fit a hierarchical Drift Diffusion Model using only the gaze shifts categorized as language-driven by the EWMA. This allowed us to ask what underlying decision processes are likely to account for the measured differences in First Shift Accuracy and RT.\footnote{We chose not to interpret the HDDM fits for the Bullseye or Face tasks since there was no suggestion of any non-guessing signal from the EWMA analysis.} ASL learners had a higher estimate for the boundary separation parameter compared to children processing spoken English from a speaker (ASL boundary = 1.76, 95\% HDI {[}1.65, 1.88{]}; Face boundary = 1.34, 95\% HDI {[}1.21, 1.47{]}), with no overlap in the HDIs (see Figure~\ref{fig:trio-model-plot}C). This suggests that ASL learners' higher accuracy was driven by accumulating more evidence about the linguistic signal before generating an eye movement. We found high overlap for estimates of the drift rate parameter, indicating that both groups processed the linguistic information with similar efficiency (ASL drift = 0.63, 95\% HDI {[}0.44, 0.82{]}; Face drift = 0.55, 95\% HDI {[}0.30, 0.80{]}).
 
@@ -323,7 +323,7 @@ Participants were native, monolingual English-learning children (\(n=\) 39; 22 F
 \hypertarget{design-and-procedure-1}{%
 \subsubsection{Design and procedure}\label{design-and-procedure-1}}
 
-Participants viewed the task on a screen while their gaze was tracked using an SMI RED corneal-reflection eye-tracker mounted on an LCD monitor, sampling at 30 Hz. The eye-tracker was first calibrated for each participant using a 6-point calibration. The average cvalidation accuracy for calibration was 0.39 degrees, with similar deviations for children (\(M\) = 0.38, \(sd\) = 0.21) and adults (\(M\) = 0.39, \(sd\) = 0.14), and little evidence for an effect of age within the child sample (\(\beta_{age} =\) -0.03, {[}-0.09, 0.03{]}).
+Participants viewed the task on a screen while their gaze was tracked using an SMI RED corneal-reflection eye-tracker mounted on an LCD monitor, sampling at 30 Hz. The eye-tracker was first calibrated for each participant using a 6-point calibration. The average validation accuracy after calibration was 0.39 degrees, with similar deviations for children (\(M\) = 0.38, \(sd\) = 0.21) and adults (\(M\) = 0.39, \(sd\) = 0.14), and little evidence for an effect of age within the child sample (\(\beta_{age} =\) -0.03, {[}-0.09, 0.03{]}).
 
 On each trial, participants saw two images of familiar objects on the screen for two seconds before the center stimulus appeared. Next, they processed the target sentence -- which consisted of a carrier phrase, a target noun, and a question -- followed by two seconds without language to allow for a response. Child participants saw 32 trials (16 noise trials; 16 clear trials) with several filler trials interspersed to maintain interest. Adult participants saw 64 trials (32 noise; 32 clear). The noise manipulation was presented in a blocked design with the order of block counterbalanced across participants.
 
@@ -595,19 +595,82 @@ Zangl, R., \& Fernald, A. (2007). Increasing flexibility in children's online pr
 \section{Parallel set of non-Bayesian
 analyses}\label{parallel-set-of-non-bayesian-analyses}}
 
-E1: - RT: stan\_glmer(log\_rt \textasciitilde{} stimuli + scale(Months)
-+ (1 \textbar{} Sub.Num) + (1 \textbar{} clean\_target\_img), - ACC:
-stan\_glmer(correct \textasciitilde{} stimuli + scale(Months) + (1
-\textbar{} Sub.Num) + (1 \textbar{} clean\_target\_img), - EWMA:
-stan\_glmer(guess\_num \textasciitilde{} stimuli + scale(months) +
-(1\textbar{}subid) + (1\textbar{}clean\_target\_img), - HDDM:
-stan\_lm(param\_est \textasciitilde{} stimuli)
+\(p\) values for each coefficient were computed via the Satterthwaite
+approximation using the \texttt{lmerTest} R package (Kuznetsova,
+Brockhoff, \& Christensen, 2017).
 
-E2: - RT: - ACC: - EWMA: - HDDM:
+\hypertarget{experiment-1}{%
+\subsection{Experiment 1}\label{experiment-1}}
 
-\hypertarget{full-output-for-analysis-models-in-experiment-1}{%
-\section{Full output for analysis models in Experiment
-1}\label{full-output-for-analysis-models-in-experiment-1}}
+\begin{table}[h]
+\begin{center}
+\begin{threeparttable}
+\caption{\label{tab:mle rt  trio}Output of the MLE model predicting log reaction time as a function of center stimulus type in Experiment 1.}
+\begin{tabular}{llllll}
+\toprule
+term & \multicolumn{1}{c}{estimate} & \multicolumn{1}{c}{std.error} & \multicolumn{1}{c}{statistic} & \multicolumn{1}{c}{df} & \multicolumn{1}{c}{p.value}\\
+\midrule
+Intercept (ASL) & 6.96 & 0.08 & 91.84 & 62.58 & p < .001\\
+Face & -0.37 & 0.11 & -3.32 & 84.45 & p < .01\\
+Object & -1.12 & 0.10 & -11.13 & 79.76 & p < .001\\
+Bullseye & -1.30 & 0.13 & -10.04 & 97.77 & p < .001\\
+scale(Months) & -0.01 & 0.04 & -0.18 & 75.55 & 0.86\\
+\bottomrule
+\end{tabular}
+\end{threeparttable}
+\end{center}
+\end{table}
+
+\begin{table}[h]
+\begin{center}
+\begin{threeparttable}
+\caption{\label{tab:mle acc trio}Output of the MLE model predicting accuracy as a function of center stimulus type in Experiment 1.}
+\begin{tabular}{lllll}
+\toprule
+term & \multicolumn{1}{c}{estimate} & \multicolumn{1}{c}{std.error} & \multicolumn{1}{c}{statistic} & \multicolumn{1}{c}{p.value}\\
+\midrule
+Intercept (ASL) & 1.07 & 0.14 & 7.66 & p < .001\\
+Face & -0.64 & 0.20 & -3.19 & p < .01\\
+Object & -1.14 & 0.19 & -6.16 & p < .001\\
+Bullseye & -1.15 & 0.22 & -5.26 & p < .001\\
+\bottomrule
+\end{tabular}
+\end{threeparttable}
+\end{center}
+\end{table}
+
+\begin{table}[h]
+\begin{center}
+\begin{threeparttable}
+\caption{\label{tab:mle ewma trio prop lang}Output of the MLE model estimating the difference in random responding in the EWMA as a function of center stimulus type in Experiment 1.}
+\begin{tabular}{lllll}
+\toprule
+term & \multicolumn{1}{c}{estimate} & \multicolumn{1}{c}{std.error} & \multicolumn{1}{c}{statistic} & \multicolumn{1}{c}{p.value}\\
+\midrule
+Intercept (ASL) & 1.73 & 0.21 & 8.31 & p < .001\\
+Face & -1.80 & 0.29 & -6.26 & p < .001\\
+\bottomrule
+\end{tabular}
+\end{threeparttable}
+\end{center}
+\end{table}
+
+\hypertarget{experiment-2}{%
+\subsection{Experiment 2}\label{experiment-2}}
+
+\begin{itemize}
+\tightlist
+\item
+RT:
+\item
+ACC:
+\item
+EWMA:
+\end{itemize}
+
+\hypertarget{full-output-for-bayesian-data-analysis-models-in-experiment-1}{%
+\section{Full output for Bayesian data analysis models in Experiment
+1}\label{full-output-for-bayesian-data-analysis-models-in-experiment-1}}
 
 \begin{table}[h]
 \begin{center}
@@ -731,9 +794,9 @@ Drift & ASL & 0.63 & [0.44, 0.82]\\
 \end{center}
 \end{table}
 
-\hypertarget{full-output-for-analysis-models-in-experiment-2}{%
-\section{Full output for analysis models in Experiment
-2}\label{full-output-for-analysis-models-in-experiment-2}}
+\hypertarget{full-output-for-bayesian-data-analysis-models-in-experiment-2}{%
+\section{Full output for Bayesian data analysis models in Experiment
+2}\label{full-output-for-bayesian-data-analysis-models-in-experiment-2}}
 
 \begin{table}[h]
 \begin{center}
@@ -806,6 +869,12 @@ Boundary & Adults & 1.78 & [1.53, 2.05]\\
 \end{threeparttable}
 \end{center}
 \end{table}
+
+\hypertarget{refs}{}
+\leavevmode\hypertarget{ref-kuznetsova2017lmertest}{}%
+Kuznetsova, A., Brockhoff, P. B., \& Christensen, R. H. B. (2017).
+LmerTest package: Tests in linear mixed effects models. \emph{Journal of
+Statistical Software}, \emph{82}(13).
 \end{appendix}
 
 

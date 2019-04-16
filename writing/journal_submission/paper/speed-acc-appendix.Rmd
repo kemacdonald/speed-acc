@@ -1,18 +1,77 @@
 # Parallel set of non-Bayesian analyses
 
-E1: 
-- RT: stan_glmer(log_rt ~ stimuli + scale(Months) + (1 | Sub.Num) + (1 | clean_target_img), 
-- ACC: stan_glmer(correct ~ stimuli + scale(Months) + (1 | Sub.Num) + (1 | clean_target_img), 
-- EWMA: stan_glmer(guess_num ~ stimuli + scale(months) + (1|subid) + (1|clean_target_img),
-- HDDM: stan_lm(param_est ~ stimuli)
+```{r read data and create helpers}
+clean_p_vals <- function(x) {
+  case_when(x < .001 ~ "p < .001",
+            x < .01 ~ "p < .01", 
+            TRUE ~ round(x, 2) %>% as.character(x))
+}
+munge_table <- function(d, mod_type =  'multilevel') {
+  if (mod_type == 'multilevel') {
+    d <- d %>% filter(effect == "fixed")   
+  }
+  
+  d %>% 
+  select(term:p.value) %>% 
+  mutate(p.value = clean_p_vals(p.value),
+         term = str_remove(term, "stimuli"),
+         term = str_remove(term, "condition"),
+         term = ifelse(term == "(Intercept)", "Intercept (ASL)", term)) %>% 
+  mutate_if(is.numeric, printnum)  
+}
+```
 
-E2: 
+$p$ values for each coefficient were computed via the Satterthwaite approximation using the `lmerTest` R package [@kuznetsova2017lmertest]. 
+
+## Experiment 1
+
+```{r mle rt  trio, results = 'asis'}
+trio_rt_mle <- df_trio %>% 
+  mutate(log_rt = log(RT)) %>% 
+  filter(age_code == "child", correct == 1, RT <= upper_bound_RT) %>% 
+  lmer(log_rt ~ stimuli + scale(Months) + (1 | Sub.Num) + (1 | clean_target_img),
+       data = .)
+
+broom.mixed::tidy(trio_rt_mle) %>% 
+  munge_table(mod_type =  'multilevel') %>% 
+  apa_table(placement = 'h',
+            caption = "Output of the MLE model predicting log reaction time as a function of center stimulus type in Experiment 1.")
+```
+
+```{r mle acc trio, results = 'asis'}
+trio_acc_mle <- df_trio %>% 
+  filter(age_code == "child", trial_type %in% c("C_T", "C_D")) %>% 
+  glmer(correct ~ stimuli + (1 | Sub.Num) + (1 | clean_target_img), 
+        family = binomial(link = "logit"), 
+        data = .)
+
+broom.mixed::tidy(trio_acc_mle) %>% 
+  munge_table(mod_type =  'multilevel') %>% 
+  apa_table(placement = 'h',
+            caption = "Output of the MLE model predicting accuracy as a function of center stimulus type in Experiment 1.")
+```
+
+```{r mle ewma trio prop lang, results = 'asis'}
+trio_ewma_mle <- d_ewma_trio %>% 
+  filter(age_code == "child", stimuli %in% c("ASL", "Face")) %>% 
+  glmer(guess_num ~ stimuli + (1|subid) + (1|clean_target_img),
+        family = binomial(link = "logit"),
+        data = .)
+
+broom.mixed::tidy(trio_ewma_mle) %>% 
+  munge_table(mod_type =  'multilevel') %>% 
+  apa_table(placement = 'h',
+            caption = "Output of the MLE model estimating the difference in random responding in the EWMA as a function of center stimulus type in Experiment 1.")
+```
+
+## Experiment 2
 - RT: 
 - ACC: 
 - EWMA: 
-- HDDM: 
 
-# Full output for analysis models in Experiment 1
+
+# Full output for Bayesian data analysis models in Experiment 1
+
 
 ```{r trio-rt-model, results = 'asis'}
 ms_rt_trio %>% 
@@ -111,7 +170,7 @@ ms.hddm_trio %>%
   caption = "Summary of the Drift Diffusion Model output for the drift rate and boundary separation parameters for both all four center stimulus types in Experiment 1.")
 ```
 
-# Full output for analysis models in Experiment 2
+# Full output for Bayesian data analysis models in Experiment 2
 
 ```{r noise-acc-model, results = 'asis'}
 ms_acc_noise %>% 
