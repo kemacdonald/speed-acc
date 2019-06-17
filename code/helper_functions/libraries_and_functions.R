@@ -10,6 +10,7 @@ library(GGally); library(lsr)
 library(effsize); library(cowplot)
 library(scales); library(feather) 
 library(stringr); library(pryr)
+library(png); library(kableExtra)
 library(rstanarm);
 
 # load tidyverse last, so no functions get masked
