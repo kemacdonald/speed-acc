@@ -1,31 +1,40 @@
 # Parallel set of non-Bayesian analyses
 
-```{r read data and create helpers}
+In this appendix, we report the output of a parallel set of non-Bayesian linear mixed-effects models for the primary analyses (Reaction Time, Accuracy, EWMA) in Experiments 1 and 2. The $p$ values for each coefficient were computed via the Satterthwaite approximation using the `lmerTest` R package (Kuznetsova, Brockhoff, & Christensen, 2017). 
+
+```{r helpers}
 clean_p_vals <- function(x) {
-  case_when(x < .001 ~ "p < .001",
-            x < .01 ~ "p < .01", 
+  case_when(x < .001 ~ "< .001",
+            x < .01 ~ "< .01", 
             TRUE ~ round(x, 2) %>% as.character(x))
 }
-munge_table <- function(d, mod_type =  'multilevel') {
+
+munge_table <- function(d, mod_type = 'multilevel', exp) {
   if (mod_type == 'multilevel') {
     d <- d %>% filter(effect == "fixed")   
   }
   
-  d %>% 
-  select(term:p.value) %>% 
-  mutate(p.value = clean_p_vals(p.value),
-         term = str_remove(term, "stimuli"),
-         term = str_remove(term, "condition"),
-         term = ifelse(term == "(Intercept)", "Intercept (ASL)", term)) %>% 
-  mutate_if(is.numeric, printnum)  
+  d <- d %>% select(term:p.value) 
+  
+  if (exp == "e1") {
+    d %>% 
+      mutate(p.value = clean_p_vals(p.value),
+             term = str_remove(term, "stimuli"),
+             term = str_remove(term, "condition"),
+             term = ifelse(term == "(Intercept)", "Intercept (ASL)", term)) %>% 
+      mutate_if(is.numeric, printnum)  
+  } else {
+    d %>% 
+      mutate(p.value = clean_p_vals(p.value),
+             term = str_remove(term, "noise_condition"),
+             term = str_remove(term, "age_category"),
+             term = ifelse(term == "(Intercept)", "Intercept (Clear)", term)) %>% 
+      mutate_if(is.numeric, printnum)  
+  }
 }
 ```
 
-$p$ values for each coefficient were computed via the Satterthwaite approximation using the `lmerTest` R package [@kuznetsova2017lmertest]. 
-
-## Experiment 1
-
-```{r mle rt  trio, results = 'asis'}
+```{r mle rt trio, results = 'asis'}
 trio_rt_mle <- df_trio %>% 
   mutate(log_rt = log(RT)) %>% 
   filter(age_code == "child", correct == 1, RT <= upper_bound_RT) %>% 
@@ -33,8 +42,9 @@ trio_rt_mle <- df_trio %>%
        data = .)
 
 broom.mixed::tidy(trio_rt_mle) %>% 
-  munge_table(mod_type =  'multilevel') %>% 
-  apa_table(placement = 'h',
+  munge_table(mod_type =  'multilevel', exp = "e1") %>% 
+  apa_table(placement = 'h', 
+            note = "Model specification: log(RT) ~ stimuli + scale(Months) + (1 | Sub.Num) + (1 | clean_target_img)",
             caption = "Output of the MLE model predicting log reaction time as a function of center stimulus type in Experiment 1.")
 ```
 
@@ -46,8 +56,9 @@ trio_acc_mle <- df_trio %>%
         data = .)
 
 broom.mixed::tidy(trio_acc_mle) %>% 
-  munge_table(mod_type =  'multilevel') %>% 
+  munge_table(mod_type =  'multilevel', exp = "e1") %>% 
   apa_table(placement = 'h',
+            note = "Model specification: correct ~ stimuli + (1 | Sub.Num) + (1 | clean_target_img)",
             caption = "Output of the MLE model predicting accuracy as a function of center stimulus type in Experiment 1.")
 ```
 
@@ -59,19 +70,54 @@ trio_ewma_mle <- d_ewma_trio %>%
         data = .)
 
 broom.mixed::tidy(trio_ewma_mle) %>% 
-  munge_table(mod_type =  'multilevel') %>% 
+  munge_table(mod_type =  'multilevel', exp = "e1") %>% 
   apa_table(placement = 'h',
+            note = "Model specification: guess ~ stimuli + (1|subid) + (1|clean_target_img)",
             caption = "Output of the MLE model estimating the difference in random responding in the EWMA as a function of center stimulus type in Experiment 1.")
 ```
 
-## Experiment 2
-- RT: 
-- ACC: 
-- EWMA: 
+```{r mle rt noise, results = 'asis'}
+noise_rt_mle <- d_noise_analysis %>% 
+  lmer(log_rt ~ noise_condition + age_category + (noise_condition | subid) + (1 | target_image),
+       data = .)
 
+broom.mixed::tidy(noise_rt_mle) %>% 
+  munge_table(mod_type =  'multilevel', exp = "e2") %>% 
+  apa_table(placement = 'h',
+            note = "Model specification: log(rt) ~ noise_condition + age_category + (1 | target_image)",
+            caption = "Output of the MLE model predicting log reaction time as a function of noise condition and age category (adults vs. children) in Experiment 2.")
+```
 
-# Full output for Bayesian data analysis models in Experiment 1
+```{r mle acc noise, results = 'asis'}
+noise_acc_mle <- d_noise_analysis %>% 
+  glmer(shift_acc_num ~ noise_condition + age_category + (noise_condition | subid) + (1|target_image), 
+        family = binomial(link = "logit"),
+        nAGQ = 0,
+        data = .)
 
+broom.mixed::tidy(noise_acc_mle) %>% 
+  munge_table(mod_type =  'multilevel', exp = "e2") %>% 
+  apa_table(placement = 'h',
+            note = "Model specification: correct ~ noise_condition + age_category + (noise_condition | subid) + (1 | target_image)",
+            caption = "Output of the MLE model predicting accuracy as a function of noise condition and age category (adults vs. children) in Experiment 2.")
+```
+
+```{r mle ewma noise, results = 'asis'}
+noise_ewma_mle <- d_ewma_noise %>% 
+  glmer(guess_num ~ noise_condition + age_category + (noise_condition | subid) + (noise_condition | target_image),
+        family = binomial(link = "logit"),
+        data = .)
+
+broom.mixed::tidy(noise_ewma_mle) %>% 
+  munge_table(mod_type =  'multilevel', exp = "e2") %>% 
+  apa_table(placement = 'h',
+            note = "Model specification: guess_num ~ noise_condition + age_category + (noise_condition | subid) + (noise_condition | target_image)",
+            caption = "Output of the MLE model estimating the difference in random responding (EWMA model) as a function of noise condition and age category (adults vs. children) in Experiment 2.")
+```
+
+# Bayesian data analysis models: Experiment 1
+
+In this appendix, we report the full output of the Bayesian linear mixed effects models in Experiment 1.
 
 ```{r trio-rt-model, results = 'asis'}
 ms_rt_trio %>% 
@@ -82,7 +128,7 @@ ms_rt_trio %>%
   rename(`Center Stimulus Type` = condition,
          `Mean RT` = m_rt) %>% 
   apa_table(placement = 'h',
-  caption = "Output of the regression predicting reaction time (milliseconds) as a function of center stimulus type in Experiment 1.")
+            caption = "Output of the regression predicting reaction time (milliseconds) as a function of center stimulus type in Experiment 1.")
 ```
 
 ```{r trio-acc-model, results = 'asis'}
@@ -94,7 +140,7 @@ ms_acc_trio %>%
   rename(`Center Stimulus Type` = condition,
          `Mean Accuracy` = prop) %>% 
   apa_table(placement = 'h',
-  caption = "Output of the logistic regression predicting accuracy as a function of center stimulus type in Experiment 1.")
+            caption = "Output of the logistic regression predicting accuracy as a function of center stimulus type in Experiment 1.")
 ```
 
 ```{r trio-acc-contrasts, results = 'asis'}
@@ -112,7 +158,7 @@ ms_contrasts_trio_acc %>%
   rename(`Contrast` = contrast,
          `Mean Difference Accuracy` = prop) %>% 
   apa_table(placement = 'h',
-  caption = "Output of the model estimating differences in Accuracy for specific contrasts of interest in Experiment 1.")
+            caption = "Output of the model estimating differences in Accuracy for specific contrasts of interest in Experiment 1.")
 ```
 
 ```{r trio-rt-contrasts, results = 'asis'}
@@ -128,7 +174,7 @@ ms_contrasts_trio_rt %>%
   rename(`Contrast` = contrast,
          `Mean Difference RT` = rt) %>% 
   apa_table(placement = 'h',
-  caption = "Output of the model estimating differences in RT for specific contrasts of interest in Experiment 1.")
+            caption = "Output of the model estimating differences in RT for specific contrasts of interest in Experiment 1.")
 ```
 
 ```{r trio-ewma-cuts, results = 'asis'}
@@ -140,7 +186,7 @@ ms_cuts_trio %>%
   rename(`Center Stimulus Type` = condition,
          `Mean EWMA Cut Point` = MAP) %>% 
   apa_table(placement = 'h',
-  caption = "Output of the model estimating the point in the Reaction Time distribution when children's Exponentially Weighted Moving Average statistic crossed the pre-defined guessing threshold for the ASL and Face center stimulus types in Experiment 1.")
+            caption = "Output of the model estimating the point in the Reaction Time distribution when children's Exponentially Weighted Moving Average statistic crossed the pre-defined guessing threshold for the ASL and Face center stimulus types in Experiment 1.")
 ```
 
 ```{r trio-guess-cuts, results = 'asis'}
@@ -153,7 +199,7 @@ ms_guess_trio %>%
   rename(`Center Stimulus Type` = condition,
          `Mean Language-driven` = MAP) %>% 
   apa_table(placement = 'h',
-  caption = "Output of the model estimating the mean proportion of shifts categorized as language-driven by the Exponentially Weighted Moving Average model for the ASL and Face center stimulus types in Experiment 1.")
+            caption = "Output of the model estimating the mean proportion of shifts categorized as language-driven by the Exponentially Weighted Moving Average model for the ASL and Face center stimulus types in Experiment 1.")
 ```
 
 ```{r trio-hddm, results = 'asis'}
@@ -167,10 +213,12 @@ ms.hddm_trio %>%
   rename(`Mean Param Estimate` = Mean,
          `Center Stim Type` = condition) %>% 
   apa_table(placement = 'h',
-  caption = "Summary of the Drift Diffusion Model output for the drift rate and boundary separation parameters for both all four center stimulus types in Experiment 1.")
+            caption = "Summary of the Drift Diffusion Model output for the drift rate and boundary separation parameters for both all four center stimulus types in Experiment 1.")
 ```
 
-# Full output for Bayesian data analysis models in Experiment 2
+# Bayesian data analysis models: Experiment 2
+
+In this appendix, we report the full output of the Bayesian linear mixed effects models in Experiment 2.
 
 ```{r noise-acc-model, results = 'asis'}
 ms_acc_noise %>% 
@@ -183,7 +231,7 @@ ms_acc_noise %>%
          `Mean Accuracy` = prop,
          `Age Group` = age_category) %>% 
   apa_table(placement = 'h',
-  caption = "Output of the logistic regression predicting accuracy as a function of noise condition and age group in Experiment 2.")
+            caption = "Output of the logistic regression predicting accuracy as a function of noise condition and age group in Experiment 2.")
 ```
 
 ```{r noise-rt-model, results = 'asis'}
@@ -197,7 +245,7 @@ ms_rt_noise %>%
          `Mean RT` = m_rt,
          `Age Group` = age_category) %>% 
   apa_table(placement = 'h',
-  caption = "Output of the regression estimating reaction times (milliseconds) as a function of noise condition and age group in Experiment 2.")
+            caption = "Output of the regression estimating reaction times (milliseconds) as a function of noise condition and age group in Experiment 2.")
 ```
 
 ```{r noise-guess-cuts, results = 'asis'}
@@ -213,7 +261,7 @@ ms_guess_noise %>%
          `Mean Language-driven` = MAP,
          `Age Group` = age_category) %>% 
   apa_table(placement = 'h',
-  caption = "Output of the model estimating the mean proportion of shifts categorized as language-driven by the Exponentially Weighted Moving Average model for the each noise condition and age group in Experiment 2.")
+            caption = "Output of the model estimating the mean proportion of shifts categorized as language-driven by the Exponentially Weighted Moving Average model for the each noise condition and age group in Experiment 2.")
 ```
 
 ```{r noise-hddm, results = 'asis'}
@@ -229,5 +277,5 @@ hddm_table_age %>%
          `Mean Parameter Estimate` = MAP,
          `Age Group` = age_code) %>% 
   apa_table(placement = 'h',
-  caption = "Summary of the Drift Diffusion Model output for the drift rate and boundary separation parameters for both processing contexts and age groups in Experiment 2.")
+            caption = "Summary of the Drift Diffusion Model output for the drift rate and boundary separation parameters for both processing contexts and age groups in Experiment 2.")
 ```

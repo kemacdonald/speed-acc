@@ -215,7 +215,7 @@ Table 1 contains details about the age distributions and sample sizes for childr
 
 \emph{Spoken English samples.} Participants were 80 native, monolingual English-learning children divided across three samples with no reported history of developmental or language delay.
 
-\emph{ASL sample.} Participants were 30 native, monolingual ASL-learning children (18 deaf, 12 hearing). All children, regardless of hearing status, were exposed to ASL from birth through extensive interaction with at least one caregiver fluent in ASL and were reported to experience at least 80\% ASL in their daily lives. The ASL sample included a wider age range compared to the spoken English samples because this population is very challenging to recruit. The incidence of deafness at birth in the US is less than .003\%, and only 10\% of the 2-3 per 1000 children born with hearing loss have a deaf parent who is likely to be fluent in ASL (Mitchell \& KARCHMER, 2004).
+\emph{ASL sample.} Participants were 30 native, monolingual ASL-learning children (18 deaf, 12 hearing). All children, regardless of hearing status, were exposed to ASL from birth through extensive interaction with at least one caregiver fluent in ASL and were reported to experience at least 80\% ASL in their daily lives. The ASL sample included a wider age range compared to the spoken English samples because this population is very challenging to recruit. The incidence of deafness at birth in the US is less than .003\%, and only 10\% of the 2-3 per 1000 children born with hearing loss have a deaf parent who is likely to be fluent in ASL (Mitchell \& Karchmer, 2004).
 
 \hypertarget{stimuli}{%
 \subsubsection{Stimuli}\label{stimuli}}
@@ -500,6 +500,9 @@ Huettig, F., \& Altmann, G. T. (2005). Word meaning and the control of eye fixat
 \leavevmode\hypertarget{ref-kelly2010two}{}%
 Kelly, S. D., Özyürek, A., \& Maris, E. (2010). Two sides of the same coin: Speech and gesture mutually interact to enhance comprehension. \emph{Psychological Science}, \emph{21}(2), 260--267.
 
+\leavevmode\hypertarget{ref-kuznetsova2017lmertest}{}%
+Kuznetsova, A., Brockhoff, P. B., \& Christensen, R. H. B. (2017). LmerTest package: Tests in linear mixed effects models. \emph{Journal of Statistical Software}, \emph{82}(13).
+
 \leavevmode\hypertarget{ref-liszkowski2012prelinguistic}{}%
 Liszkowski, U., Brown, P., Callaghan, T., Takada, A., \& De Vos, C. (2012). A prelinguistic gestural universal of human communication. \emph{Cognitive Science}, \emph{36}(4), 698--713.
 
@@ -531,7 +534,7 @@ McClelland, J. L., Mirman, D., \& Holt, L. L. (2006). Are there interactive proc
 McMurray, B., Farris-Trimble, A., \& Rigler, H. (2017). Waiting for lexical access: Cochlear implants or severely degraded input lead listeners to process speech less incrementally. \emph{Cognition}, \emph{169}, 147--164.
 
 \leavevmode\hypertarget{ref-mitchell2004chasing}{}%
-Mitchell, R. E., \& KARCHMER, M. (2004). Chasing the mythical ten percent: Parental hearing status of deaf and hard of hearing students in the united states. \emph{Sign Language Studies}, \emph{4}(2), 138--163.
+Mitchell, R. E., \& Karchmer, M. (2004). Chasing the mythical ten percent: Parental hearing status of deaf and hard of hearing students in the united states. \emph{Sign Language Studies}, \emph{4}(2), 138--163.
 
 \leavevmode\hypertarget{ref-munhall2004visual}{}%
 Munhall, K. G., Jones, J. A., Callan, D. E., Kuratate, T., \& Vatikiotis-Bateson, E. (2004). Visual prosody and speech intelligibility: Head movement improves auditory speech perception. \emph{Psychological Science}, \emph{15}(2), 133--137.
@@ -601,28 +604,32 @@ Zangl, R., \& Fernald, A. (2007). Increasing flexibility in children's online pr
 \section{Parallel set of non-Bayesian
 analyses}\label{parallel-set-of-non-bayesian-analyses}}
 
-\(p\) values for each coefficient were computed via the Satterthwaite
-approximation using the \texttt{lmerTest} R package (Kuznetsova,
-Brockhoff, \& Christensen, 2017).
-
-\hypertarget{experiment-1}{%
-\subsection{Experiment 1}\label{experiment-1}}
+In this appendix, we report the output of a parallel set of non-Bayesian
+linear mixed-effects models for the primary analyses (Reaction Time,
+Accuracy, EWMA) in Experiments 1 and 2. The \(p\) values for each
+coefficient were computed via the Satterthwaite approximation using the
+\texttt{lmerTest} R package (Kuznetsova, Brockhoff, \& Christensen,
+2017).
 
 \begin{table}[h]
 \begin{center}
 \begin{threeparttable}
-\caption{\label{tab:mle rt  trio}Output of the MLE model predicting log reaction time as a function of center stimulus type in Experiment 1.}
+\caption{\label{tab:mle rt trio}Output of the MLE model predicting log reaction time as a function of center stimulus type in Experiment 1.}
 \begin{tabular}{llllll}
 \toprule
 term & \multicolumn{1}{c}{estimate} & \multicolumn{1}{c}{std.error} & \multicolumn{1}{c}{statistic} & \multicolumn{1}{c}{df} & \multicolumn{1}{c}{p.value}\\
 \midrule
-Intercept (ASL) & 6.96 & 0.08 & 91.84 & 62.58 & p < .001\\
-Face & -0.37 & 0.11 & -3.32 & 84.45 & p < .01\\
-Object & -1.12 & 0.10 & -11.13 & 79.76 & p < .001\\
-Bullseye & -1.30 & 0.13 & -10.04 & 97.77 & p < .001\\
+Intercept (ASL) & 6.96 & 0.08 & 91.84 & 62.58 & < .001\\
+Face & -0.37 & 0.11 & -3.32 & 84.45 & < .01\\
+Object & -1.12 & 0.10 & -11.13 & 79.76 & < .001\\
+Bullseye & -1.30 & 0.13 & -10.04 & 97.77 & < .001\\
 scale(Months) & -0.01 & 0.04 & -0.18 & 75.55 & 0.86\\
 \bottomrule
+\addlinespace
 \end{tabular}
+\begin{tablenotes}[para]
+\normalsize{\textit{Note.} Model specification: log(RT) \textasciitilde{} stimuli + scale(Months) + (1 | Sub.Num) + (1 | clean\_target\_img)}
+\end{tablenotes}
 \end{threeparttable}
 \end{center}
 \end{table}
@@ -635,12 +642,16 @@ scale(Months) & -0.01 & 0.04 & -0.18 & 75.55 & 0.86\\
 \toprule
 term & \multicolumn{1}{c}{estimate} & \multicolumn{1}{c}{std.error} & \multicolumn{1}{c}{statistic} & \multicolumn{1}{c}{p.value}\\
 \midrule
-Intercept (ASL) & 1.07 & 0.14 & 7.66 & p < .001\\
-Face & -0.64 & 0.20 & -3.19 & p < .01\\
-Object & -1.14 & 0.19 & -6.16 & p < .001\\
-Bullseye & -1.15 & 0.22 & -5.26 & p < .001\\
+Intercept (ASL) & 1.07 & 0.14 & 7.66 & < .001\\
+Face & -0.64 & 0.20 & -3.19 & < .01\\
+Object & -1.14 & 0.19 & -6.16 & < .001\\
+Bullseye & -1.15 & 0.22 & -5.26 & < .001\\
 \bottomrule
+\addlinespace
 \end{tabular}
+\begin{tablenotes}[para]
+\normalsize{\textit{Note.} Model specification: correct \textasciitilde{} stimuli + (1 | Sub.Num) + (1 | clean\_target\_img)}
+\end{tablenotes}
 \end{threeparttable}
 \end{center}
 \end{table}
@@ -653,30 +664,87 @@ Bullseye & -1.15 & 0.22 & -5.26 & p < .001\\
 \toprule
 term & \multicolumn{1}{c}{estimate} & \multicolumn{1}{c}{std.error} & \multicolumn{1}{c}{statistic} & \multicolumn{1}{c}{p.value}\\
 \midrule
-Intercept (ASL) & 1.73 & 0.21 & 8.31 & p < .001\\
-Face & -1.80 & 0.29 & -6.26 & p < .001\\
+Intercept (ASL) & 1.73 & 0.21 & 8.31 & < .001\\
+Face & -1.80 & 0.29 & -6.26 & < .001\\
 \bottomrule
+\addlinespace
 \end{tabular}
+\begin{tablenotes}[para]
+\normalsize{\textit{Note.} Model specification: guess \textasciitilde{} stimuli + (1|subid) + (1|clean\_target\_img)}
+\end{tablenotes}
 \end{threeparttable}
 \end{center}
 \end{table}
 
-\hypertarget{experiment-2}{%
-\subsection{Experiment 2}\label{experiment-2}}
+\begin{table}[h]
+\begin{center}
+\begin{threeparttable}
+\caption{\label{tab:mle rt noise}Output of the MLE model predicting log reaction time as a function of noise condition and age category (adults vs. children) in Experiment 2.}
+\begin{tabular}{llllll}
+\toprule
+term & \multicolumn{1}{c}{estimate} & \multicolumn{1}{c}{std.error} & \multicolumn{1}{c}{statistic} & \multicolumn{1}{c}{df} & \multicolumn{1}{c}{p.value}\\
+\midrule
+Intercept (Clear) & -0.76 & 0.05 & -13.92 & 49.62 & < .001\\
+noise & 0.09 & 0.04 & 2.31 & 54.35 & 0.02\\
+adults & 0.16 & 0.06 & 2.88 & 56.01 & < .01\\
+\bottomrule
+\addlinespace
+\end{tabular}
+\begin{tablenotes}[para]
+\normalsize{\textit{Note.} Model specification: log(rt) \textasciitilde{} noise\_condition + age\_category + (1 | target\_image)}
+\end{tablenotes}
+\end{threeparttable}
+\end{center}
+\end{table}
 
-\begin{itemize}
-\tightlist
-\item
-RT:
-\item
-ACC:
-\item
-EWMA:
-\end{itemize}
+\begin{table}[h]
+\begin{center}
+\begin{threeparttable}
+\caption{\label{tab:mle acc noise}Output of the MLE model predicting accuracy as a function of noise condition and age category (adults vs. children) in Experiment 2.}
+\begin{tabular}{lllll}
+\toprule
+term & \multicolumn{1}{c}{estimate} & \multicolumn{1}{c}{std.error} & \multicolumn{1}{c}{statistic} & \multicolumn{1}{c}{p.value}\\
+\midrule
+Intercept (Clear) & 0.48 & 0.13 & 3.78 & < .001\\
+noise & 0.22 & 0.14 & 1.52 & 0.13\\
+adults & 1.75 & 0.15 & 11.54 & < .001\\
+\bottomrule
+\addlinespace
+\end{tabular}
+\begin{tablenotes}[para]
+\normalsize{\textit{Note.} Model specification: correct \textasciitilde{} noise\_condition + age\_category + (noise\_condition | subid) + (1 | target\_image)}
+\end{tablenotes}
+\end{threeparttable}
+\end{center}
+\end{table}
 
-\hypertarget{full-output-for-bayesian-data-analysis-models-in-experiment-1}{%
-\section{Full output for Bayesian data analysis models in Experiment
-1}\label{full-output-for-bayesian-data-analysis-models-in-experiment-1}}
+\begin{table}[h]
+\begin{center}
+\begin{threeparttable}
+\caption{\label{tab:mle ewma noise}Output of the MLE model estimating the difference in random responding (EWMA model) as a function of noise condition and age category (adults vs. children) in Experiment 2.}
+\begin{tabular}{lllll}
+\toprule
+term & \multicolumn{1}{c}{estimate} & \multicolumn{1}{c}{std.error} & \multicolumn{1}{c}{statistic} & \multicolumn{1}{c}{p.value}\\
+\midrule
+Intercept (Clear) & 1.81 & 0.15 & 12.23 & < .001\\
+noise & 0.73 & 0.17 & 4.18 & < .001\\
+children & -2.56 & 0.10 & -25.75 & < .001\\
+\bottomrule
+\addlinespace
+\end{tabular}
+\begin{tablenotes}[para]
+\normalsize{\textit{Note.} Model specification: guess\_num \textasciitilde{} noise\_condition + age\_category + (noise\_condition | subid) + (noise\_condition | target\_image)}
+\end{tablenotes}
+\end{threeparttable}
+\end{center}
+\end{table}
+
+\hypertarget{bayesian-data-analysis-models-experiment-1}{%
+\section{Bayesian data analysis models: Experiment
+1}\label{bayesian-data-analysis-models-experiment-1}}
+
+In this appendix, we report the full output of the Bayesian linear mixed
+effects models in Experiment 1.
 
 \begin{table}[h]
 \begin{center}
@@ -800,9 +868,12 @@ Drift & ASL & 0.63 & [0.44, 0.82]\\
 \end{center}
 \end{table}
 
-\hypertarget{full-output-for-bayesian-data-analysis-models-in-experiment-2}{%
-\section{Full output for Bayesian data analysis models in Experiment
-2}\label{full-output-for-bayesian-data-analysis-models-in-experiment-2}}
+\hypertarget{bayesian-data-analysis-models-experiment-2}{%
+\section{Bayesian data analysis models: Experiment
+2}\label{bayesian-data-analysis-models-experiment-2}}
+
+In this appendix, we report the full output of the Bayesian linear mixed
+effects models in Experiment 2.
 
 \begin{table}[h]
 \begin{center}
@@ -875,12 +946,6 @@ Boundary & Adults & 1.78 & [1.53, 2.05]\\
 \end{threeparttable}
 \end{center}
 \end{table}
-
-\hypertarget{refs}{}
-\leavevmode\hypertarget{ref-kuznetsova2017lmertest}{}%
-Kuznetsova, A., Brockhoff, P. B., \& Christensen, R. H. B. (2017).
-LmerTest package: Tests in linear mixed effects models. \emph{Journal of
-Statistical Software}, \emph{82}(13).
 \end{appendix}
 
 

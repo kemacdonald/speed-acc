@@ -49,7 +49,7 @@ bib <- knitcitations::read.bibtex(here::here("writing/journal_submission/paper/s
 ```{r analysis_preferences}
 knitr::opts_chunk$set(fig.pos = '!t', fig.width = 6, fig.asp=0.8, out.width = "90%", 
                       cache = T, fig.path='figs/', fig.align = 'center',
-                      echo=F, warning=F, cache=T, warning = F,
+                      echo=F, warning=F, cache=F, warning = F,
                       message=F, sanitize = T)
 set.seed(42)
 upper_bound_RT <- 2000
@@ -502,7 +502,14 @@ d_adults <- read_csv(here::here(data_path, "speed_acc_adult_ng_fstshift_tidy.csv
 noise_ewma_files <- c("speed_acc_kids_noise_ewma_results.csv",
                       "speed_acc_adult_ng_ewma_results.csv")
 
-d_ewma_noise <- noise_ewma_files %>% purrr::map_df(read_ewma, path = here::here(ewma_path))
+d_ewma_noise <- noise_ewma_files %>% purrr::map_df(read_ewma, path = here::here(ewma_path)) %>% 
+  filter(experiment %in% c("noise", "noise_gaze"),
+         condition %in% c("clear", 
+                          "noise", 
+                          "straight_ahead_noise", 
+                          "straight_ahead_clear")) %>% 
+  mutate(noise_condition = ifelse(str_detect(condition, "noise"), "noise", "clear"),
+         age_category = ifelse(age_code == "child", "children", "adults")) 
 
 # clean datasets for merge
 d_adults %<>% select(-age)
@@ -524,7 +531,7 @@ d <- bind_rows(mutate(d_kids_noise, experiment = "kids_noise", age_category = "c
   mutate(age_category = factor(age_category) %>% fct_rev()) 
 
 # test that we have the right number of rows after the merge (result should be TRUE)
- nrow(d_kids_gaze) + nrow(d_kids_noise) + nrow(d_adults) == nrow(d)
+nrow(d_kids_gaze) + nrow(d_kids_noise) + nrow(d_adults) == nrow(d)
 ```
 
 In Experiment 2, we created an experimental context where we could manipulate the information-seeking demands in ways that parallel some aspects of the differences between young ASL- and English-learners. ^[See https://osf.io/g8h9r/ for a pre-registration of the analysis plan.] We measured adults and children's eye movements during a real-time language comprehension task where participants processed sentences with familiar words (e.g., "Where's the ball?") while looking at a simplified visual world with three fixation targets. Using a within-participants design, we manipulated the signal-to-noise ratio of the auditory signal by convolving the acoustic input with brown noise (random noise with higher energy at lower frequencies). We chose to manipulate background noise because it allowed us to increase the value of fixation on a speaker for the task of language comprehension, and it could be used with both children and adults. In Experiment 2, we chose to collect an adult sample so that we could ask whether children might rely more on visual information because they have had less exposure to the target words and less experience processing language in the presence of background noise, a developmental difference that has been found in prior work [@yurovsky2017preschoolers].
@@ -647,7 +654,7 @@ ms_words_length <- d_word_lengths %>%
 
 ### Design and procedure
 
-```{r noise analyze calibration, message=FALSE, warning=FALSE, include=FALSE}
+```{r noise analyze calibration, message=FALSE, warning=FALSE, include=FALSE, cache=T}
 calib_data <- list.files(here(calib_path), full.names = T)
 d_calib <- calib_data %>% map_df(read_csv)
 d_calib <- d_noise_analysis %>% distinct(subid, age, age_category) %>% left_join(d_calib) 
@@ -949,6 +956,7 @@ The current studies were motivated by an inability to explain why children in th
 
 ---
 nocite: | 
+  @kuznetsova2017lmertest
   @huettig2005word
   @vigliocco2014language
   @tomasello1986joint

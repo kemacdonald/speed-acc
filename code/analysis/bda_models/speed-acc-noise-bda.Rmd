@@ -46,8 +46,6 @@ d <- bind_rows(mutate(d_kids_noise, experiment = "kids_noise", age_category = "c
 nrow(d_kids_noise) + nrow(d_adults) == nrow(d)
 ```
 
-## Accuracy models
-
 ```{r filter e1 data}
 d_e1_analysis <- d %>% 
   filter(keep_runsheet %in% c("yes", "keep"), 
@@ -62,6 +60,8 @@ d_e1_analysis <- d %>%
   mutate(shift_acc_num = ifelse(shift_accuracy_clean == "correct", 1, 0),
          log_rt = log(rt))
 ```
+
+## Accuracy models
 
 ### Accuracy age (categorical)
 
@@ -347,7 +347,7 @@ samples_ewma_cuts_noise <- m_cutoffs %>%
 
 #### EWMA guessing (noise)
 
-```{r fit aggregate prop guessing ewma nosie}
+```{r fit aggregate prop guessing ewma noise}
 # fit model
 m_guessing_noise <- stan_glmer(
   guess_num ~ noise_condition + age_category + (noise_condition | subid),
