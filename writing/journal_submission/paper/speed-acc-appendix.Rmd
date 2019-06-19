@@ -44,7 +44,7 @@ trio_rt_mle <- df_trio %>%
 broom.mixed::tidy(trio_rt_mle) %>% 
   munge_table(mod_type =  'multilevel', exp = "e1") %>% 
   apa_table(placement = 'h', 
-            note = "Model specification: log(RT) ~ stimuli + scale(Months) + (1 | Sub.Num) + (1 | clean_target_img)",
+            note = "Model specification: log(RT) ~ stimuli + scale(Months) + (1 | subid) + (1 | target_image)",
             caption = "Output of the MLE model predicting log reaction time as a function of center stimulus type in Experiment 1.")
 ```
 
@@ -58,7 +58,7 @@ trio_acc_mle <- df_trio %>%
 broom.mixed::tidy(trio_acc_mle) %>% 
   munge_table(mod_type =  'multilevel', exp = "e1") %>% 
   apa_table(placement = 'h',
-            note = "Model specification: correct ~ stimuli + (1 | Sub.Num) + (1 | clean_target_img)",
+            note = "Model specification: correct ~ stimuli + (1 | subid) + (1 | target_image)",
             caption = "Output of the MLE model predicting accuracy as a function of center stimulus type in Experiment 1.")
 ```
 
@@ -72,7 +72,7 @@ trio_ewma_mle <- d_ewma_trio %>%
 broom.mixed::tidy(trio_ewma_mle) %>% 
   munge_table(mod_type =  'multilevel', exp = "e1") %>% 
   apa_table(placement = 'h',
-            note = "Model specification: guess ~ stimuli + (1|subid) + (1|clean_target_img)",
+            note = "Model specification: guess ~ stimuli + (1 | subid) + (1 | target_image)",
             caption = "Output of the MLE model estimating the difference in random responding in the EWMA as a function of center stimulus type in Experiment 1.")
 ```
 
@@ -84,7 +84,7 @@ noise_rt_mle <- d_noise_analysis %>%
 broom.mixed::tidy(noise_rt_mle) %>% 
   munge_table(mod_type =  'multilevel', exp = "e2") %>% 
   apa_table(placement = 'h',
-            note = "Model specification: log(rt) ~ noise_condition + age_category + (1 | target_image)",
+            note = "Model specification: log(rt) ~ noise_condition + age_category + (noise_condition | subid) + (1 | target_image)",
             caption = "Output of the MLE model predicting log reaction time as a function of noise condition and age category (adults vs. children) in Experiment 2.")
 ```
 

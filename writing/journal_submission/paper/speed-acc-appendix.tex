@@ -33,7 +33,7 @@ scale(Months) & -0.01 & 0.04 & -0.18 & 75.55 & 0.86\\
 \addlinespace
 \end{tabular}
 \begin{tablenotes}[para]
-\normalsize{\textit{Note.} Model specification: log(RT) \textasciitilde{} stimuli + scale(Months) + (1 | Sub.Num) + (1 | clean\_target\_img)}
+\normalsize{\textit{Note.} Model specification: log(RT) \textasciitilde{} stimuli + scale(Months) + (1 | subid) + (1 | target\_image)}
 \end{tablenotes}
 \end{threeparttable}
 \end{center}
@@ -55,7 +55,7 @@ Bullseye & -1.15 & 0.22 & -5.26 & < .001\\
 \addlinespace
 \end{tabular}
 \begin{tablenotes}[para]
-\normalsize{\textit{Note.} Model specification: correct \textasciitilde{} stimuli + (1 | Sub.Num) + (1 | clean\_target\_img)}
+\normalsize{\textit{Note.} Model specification: correct \textasciitilde{} stimuli + (1 | subid) + (1 | target\_image)}
 \end{tablenotes}
 \end{threeparttable}
 \end{center}
@@ -75,7 +75,7 @@ Face & -1.80 & 0.29 & -6.26 & < .001\\
 \addlinespace
 \end{tabular}
 \begin{tablenotes}[para]
-\normalsize{\textit{Note.} Model specification: guess \textasciitilde{} stimuli + (1|subid) + (1|clean\_target\_img)}
+\normalsize{\textit{Note.} Model specification: guess \textasciitilde{} stimuli + (1 | subid) + (1 | target\_image)}
 \end{tablenotes}
 \end{threeparttable}
 \end{center}
@@ -96,7 +96,7 @@ adults & 0.16 & 0.06 & 2.88 & 56.01 & < .01\\
 \addlinespace
 \end{tabular}
 \begin{tablenotes}[para]
-\normalsize{\textit{Note.} Model specification: log(rt) \textasciitilde{} noise\_condition + age\_category + (1 | target\_image)}
+\normalsize{\textit{Note.} Model specification: log(rt) \textasciitilde{} noise\_condition + age\_category + (noise\_condition | subid) + (1 | target\_image)}
 \end{tablenotes}
 \end{threeparttable}
 \end{center}
