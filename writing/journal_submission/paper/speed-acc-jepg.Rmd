@@ -22,7 +22,7 @@ affiliation:
     institution   : "University of California, Los Angeles"
 
 author_note: |
-  Parts of this work were presented at the Annual Meeting of the Cognitive Science Society: MacDonald et al. (2017) and MacDonald et al. (2018b). The American Sign Language data are also reported in MacDonald et al. (2018a).
+  Parts of this work were presented at the Annual Meeting of the Cognitive Science Society: MacDonald et al. (2017) and MacDonald et al. (2018b). The American Sign Language data are also reported in MacDonald et al. (2018a). A preprint was posted to PsyArXiv (https://psyarxiv.com/2r95b).
   
 abstract: |
   During grounded language comprehension, listeners must link the incoming linguistic signal to the visual world despite uncertainty in the input. Information gathered through visual fixations can facilitate understanding. But do listeners flexibly seek supportive visual information? Here, we propose that even young children can adapt their gaze and actively gather information for the goal of language comprehension. We present two studies of eye movements during real-time language processing, where the value of fixating on a social partner varies across different contexts. First, compared to children learning spoken English (n=80), young American Sign Language (ASL) learners (n=30) delayed gaze shifts away from a language source and produced a higher proportion of language-consistent eye movements. This result provides evidence that ASL learners adapt their gaze to effectively divide attention between language and referents, which both compete for processing via the visual channel. Second, English-speaking preschoolers (n=39) and adults (n=31) fixated longer on a speaker's face while processing language in a noisy auditory environment. Critically, like the ASL learners in Study 1, this delay resulted in gathering more visual information and a higher proportion of language-consistent gaze shifts. Taken together, these studies suggest that young listeners can adapt their gaze to seek visual information from social partners to support real-time language comprehension.
@@ -193,6 +193,8 @@ d.signs.length <- read_csv(here::here("data/0b_trial_information/sol_target_sign
 In Experiment 1, we compared eye movements of children learning American Sign Language to children learning a spoken language using parallel real-time language comprehension tasks. In the task, children processed simple sentences (e.g., "Where's the ball?") while looking at a simplified visual world with three fixation targets (a center stimulus that varied by condition, a target picture, and a distracter picture; see Figure\ \ref{fig:trio-stim}). The spoken language data are a reanalysis of three unpublished data sets, and the ASL data are reported in @macdonald2018real. Our primary question of interest is whether processing a sign language like ASL would increase the value of fixating on the language source and decrease the value of generating exploratory, nonlanguage-driven shifts even after the disambiguation point in the linguistic signal. If ASL learners are sensitive to the cost of shifting gaze away from a signer, then they should show evidence of prioritizing accuracy over and above the speed of shifting gaze to the named object.
 
 ## Methods
+
+Experiments 1 and 2  were approved by the Stanford University Institutional Review Board.
 
 ### Participants
 
