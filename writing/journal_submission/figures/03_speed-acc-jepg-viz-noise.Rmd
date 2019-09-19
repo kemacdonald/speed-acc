@@ -384,7 +384,7 @@ noise_behav_plot <- plot_grid(noise_timecourse_plot, noise_fst_shifts,
 
 save_plot(filename = here::here("writing/journal_submission/figures/figs_output/fig5_noise_behav.png"), 
           noise_behav_plot,
-          ncol = 3,
+          ncol = 3.5,
           nrow = 1.5,
           base_aspect_ratio = 1)
 ```

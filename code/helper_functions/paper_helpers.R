@@ -1,13 +1,13 @@
 # load libraries
-library(papaja); library(here); library(lme4); library(directlabels); library(lazyeval)
-library(knitr); library(pander); library(magrittr); library(forcats); 
+library(here); library(lme4); library(directlabels); library(lazyeval)
+library(knitr); library(pander); library(magrittr); 
 library(cowplot); library(rstanarm); library(xtable);
 library(png); library(grid); library(ggthemes)
 library(kableExtra); library(ggridges); library(ggrepel)
-library(broom.mixed)
+library(broom.mixed); library(lmerTest)
 
 # load tidyverse last, so no functions get masked
-library(tidyverse); 
+library(tidyverse)
 
 # set ggplot theme
 theme_set(theme_minimal() + 

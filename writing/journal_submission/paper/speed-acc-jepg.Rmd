@@ -36,15 +36,17 @@ tablelist         : no
 footnotelist      : no
 lineno            : no
 class             : "man"
-output            : papaja::apa6_pdf
+output            : papaja::apa6_docx
 appendix          : "speed-acc-appendix.Rmd"
 ---
 
 ```{r load_packages, include = FALSE}
-library(papaja); library(lmerTest)
-source(here::here("code/helper_functions/paper_helpers.R"))
-source(here::here("code/helper_functions/ewma_helper_funs.R"))
-bib <- knitcitations::read.bibtex(here::here("writing/journal_submission/paper/speed-acc.bib"))
+library(papaja); library(here)
+source(here("code/helper_functions/paper_helpers.R"))
+source(here("code/helper_functions/ewma_helper_funs.R"))
+bib <- knitcitations::read.bibtex(here::here(
+  "writing/journal_submission/paper/speed-acc.bib")
+  )
 ```
 
 ```{r analysis_preferences}
@@ -458,7 +460,7 @@ ms_guess_trio_contrast <- d_models_trio$ewma_guess_trio %>%
 
 *EWMA.* Our third question of interest was how the tendency to generate random vs. language-driven gaze shifts evolved as a function of reaction time across the different processing contexts. Figure\ \ref{fig:trio-model-plot}A shows changes in the control statistic (CS) and the upper control limit (UCL) as a function of RT. Each CS starts at chance performance and below the UCL. In the ASL and Face tasks, the CS value begins to increase with RTs around 0.8 seconds after noun onset and eventually crosses the UCL, indicating that responses > 0.8 sec were on average above chance levels. In contrast, the CS in the Object and Bullseye tasks never passed the UCL, meaning that children's shifts were equally likely to land on the target or the distracter, regardless of when they were initiated. This result suggests that first shifts measured in the Bullseye/Object tasks were qualitatively different behaviors than those in the ASL and Face contexts. That is, these shifts are likely the result of a different generative process, such as gathering more information about the referents in the visual world.
 
-Next, we compared the EWMA model fits for participants in the ASL and Face processing contexts since these groups showed evidence of language-driven responding. We found that ASL learners generated fewer shifts when the CS was below the UCL compared to children learning spoken language ($\beta$ = `r ms_guess_trio_contrast$MAP[1]`, 95% HDI [`r ms_guess_trio_contrast$hdi_lower[1]`, `r ms_guess_trio_contrast$hdi_upper[1]`]). This result indicates that ASL-learners were more likely to have gathered sufficient information about the linguistic signal before shifting their gaze away from the language source.
+Next, we compared the EWMA model fits for participants in the ASL and Face processing contexts since these groups showed evidence of language-driven responding. We found that ASL learners generated a higher proprotion of language-driven shifts as compared to children learning spoken language ($M_{ASL}$ = `r ms_guess_trio$MAP[1] * 100`%; $M_{face}$ = `r ms_guess_trio$MAP[2] * 100`%; $\beta$ = `r ms_guess_trio_contrast$MAP[1]`, 95% HDI [`r ms_guess_trio_contrast$hdi_lower[1]`, `r ms_guess_trio_contrast$hdi_upper[1]`]). This result indicates that ASL-learners were more likely to have gathered sufficient information about the linguistic signal before shifting their gaze away from the language source.
 
 ```{r trio read and munge hddm params}
 d_trio_hddm <- d_hddm %>% filter(experiment == "trio", age_code == "children")
@@ -492,7 +494,7 @@ There were several key findings from Study 1. First, focusing on only the spoken
 
 We hypothesized that the Bullseye, Object, Face, and ASL contexts map onto a continuum of usefulness for language processing, ranging from least to most useful. In our data, we found that children tended to fixate longer on locations that were more language-relevant and in turn, produced more accurate responses in these contexts. Moreover, we interpreted ASL learners' prioritization of accuracy above speed as an adaptive response. That is, to map referential language to the visual world in ASL involves competition for visual attention. When ASL learners choose to shift their gaze away from a signer, they are leaving an area that provides a great deal of useful information. Further, unlike children learning spoken languages, ASL learners cannot gather more of the linguistic signal if their gaze is directed away from a signer. Thus, it is reasonable that ASL learners would adapt the timing of their gaze shifts to gather additional information that increases certainty before seeking a named object.
 
-These findings, however, were based on exploratory analyses, and our information-seeking explanation was developed post hoc to explain this pattern of results. There are several, potentially important differences between the stimuli, apparatus, and populations to point out. For example, the length of the target signs was, on average, longer and more variable than the English words. And while our prior work shows that children and adult signers tend to generate gaze shifts before sign offset [@macdonald2018real], the differences between stimulus sets limit the strength of our interpretation and the generality of our account. Moreover, we cannot make causal conclusions because of the observational nature of research comparing children who are learning different languages. Thus, we designed Experiment 2 to address these concerns by constructing a well-controlled situation that created information-seeking demands that are analogous on some dimensions to the modality-based differences in Experiment 1.
+These findings, however, were based on exploratory analyses, and our information-seeking explanation was developed post hoc to explain this pattern of results. There are several, potentially important differences between the stimuli, apparatus, and populations to point out. For example, the length of the target signs was, on average, longer and more variable than the English words. Further, the videos of ASL consisted of more movement, thus increasing saliency and creating the possibility that any additional information seeking was a by-product of looking at more salient locations in the visual world. While our prior work shows that children and adult signers tend to generate gaze shifts before sign offset [@macdonald2018real], these differences between stimulus sets limit the strength of our interpretation and the generality of our account. Importantly, we also cannot make causal conclusions because of the observational nature of research comparing children who are learning different languages. Thus, we designed Experiment 2 to address these concerns by constructing a well-controlled situation that created information-seeking demands that are analogous along some dimensions to the modality-based differences in Experiment 1.
 
 # Experiment 2
 
